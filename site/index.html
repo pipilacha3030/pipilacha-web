@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pipilacha · El único restaurante construido sobre las flores</title>
+  <meta name="description" content="Pipilacha es un restaurante de degustación en Madrid donde las flores no son adorno: son el concepto. 16 plazas por servicio. Jueves a domingo." />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Pipilacha · Cocina construida sobre las flores" />
+  <meta property="og:description" content="Restaurante de degustación floral en Madrid. 16 plazas por servicio." />
+  <meta property="og:image" content="assets/img/hero.jpg" />
+
+  <!-- Fonts: Marcellus (display) + Hanken Grotesk (texto, sustituto de Roobert) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hanken+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+
+  <!-- Preloader -->
+  <div class="preloader" id="preloader">
+    <div class="preloader__mark">
+      <svg viewBox="0 0 100 70" class="dragonfly" aria-hidden="true">
+        <use href="#dragonfly-path"></use>
+      </svg>
+    </div>
+  </div>
+
+  <!-- SVG sprite: libélula -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <g id="dragonfly-path">
+        <path d="M50 8c-1.6 0-2.6 1.4-2.6 3.4 0 1.3.4 7 .7 12.2-6-3.6-18.4-9.6-30.8-9.6-5 0-7.5 1.7-7.5 3.4 0 1.6 2.2 2.7 6.4 3.3 9.8 1.4 22.4 5.6 30.6 9.1-8.2 3.4-20.8 7.6-30.6 9-4.2.6-6.4 1.8-6.4 3.4 0 1.7 2.5 3.4 7.5 3.4 12.4 0 24.8-6 30.8-9.6-.3 5.2-.7 10.9-.7 12.2 0 2 1 3.4 2.6 3.4s2.6-1.4 2.6-3.4c0-1.3-.4-7-.7-12.2 6 3.6 18.4 9.6 30.8 9.6 5 0 7.5-1.7 7.5-3.4 0-1.6-2.2-2.8-6.4-3.4-9.8-1.4-22.4-5.6-30.6-9 8.2-3.5 20.8-7.7 30.6-9.1 4.2-.6 6.4-1.7 6.4-3.3 0-1.7-2.5-3.4-7.5-3.4-12.4 0-24.8 6-30.8 9.6.3-5.2.7-10.9.7-12.2 0-2-1-3.4-2.6-3.4z"/>
+      </g>
+    </defs>
+  </svg>
+
+  <!-- NAV -->
+  <header class="nav" id="nav">
+    <a href="#top" class="nav__logo" aria-label="Pipilacha inicio">
+      <svg viewBox="0 0 100 70" class="nav__mark"><use href="#dragonfly-path"></use></svg>
+      <span>PIPILACHA</span>
+    </a>
+    <nav class="nav__links">
+      <a href="#concepto">Conócenos</a>
+      <a href="#menu">Menú</a>
+      <a href="#galeria">Galería</a>
+      <a href="#reserva" class="nav__cta">Reservar</a>
+    </nav>
+    <button class="nav__burger" id="burger" aria-label="Abrir menú"><span></span><span></span></button>
+  </header>
+
+  <main id="top">
+
+    <!-- HERO -->
+    <section class="hero" id="hero">
+      <div class="hero__media" data-parallax="0.25">
+        <img src="assets/img/hero.jpg" alt="Cuenco de cerámica lleno de flores comestibles sostenido entre las manos" />
+        <div class="hero__veil"></div>
+      </div>
+      <div class="hero__content">
+        <p class="eyebrow reveal" data-delay="0.1">Restaurante de degustación · Madrid</p>
+        <h1 class="hero__title">
+          <span class="line"><span class="reveal-mask">Todo empieza</span></span>
+          <span class="line"><span class="reveal-mask">con una flor</span></span>
+        </h1>
+        <p class="hero__sub reveal" data-delay="0.5">El único restaurante del mundo construido íntegramente sobre las flores.</p>
+        <a href="#reserva" class="btn btn--solid reveal" data-delay="0.65">Reservar mesa</a>
+      </div>
+      <div class="hero__scroll reveal" data-delay="0.9"><span>Desliza</span><i></i></div>
+    </section>
+
+    <!-- MANIFIESTO -->
+    <section class="manifesto" id="manifesto">
+      <p class="manifesto__text">
+        <span class="reveal-line">Dieciséis piezas. Un mapa de sabor</span>
+        <span class="reveal-line">donde las flores no son decoración,</span>
+        <span class="reveal-line"><em>son la materia prima,</em> la técnica</span>
+        <span class="reveal-line">y el origen de cada plato.</span>
+      </p>
+    </section>
+
+    <!-- CONCEPTO / CHEFS -->
+    <section class="concepto" id="concepto">
+      <div class="concepto__imgs">
+        <figure class="concepto__img concepto__img--a" data-parallax="0.12">
+          <img src="assets/img/chef-1.jpg" alt="Arán Rodrigo, cofundador y chef" />
+        </figure>
+        <figure class="concepto__img concepto__img--b" data-parallax="0.22">
+          <img src="assets/img/chef-2.jpg" alt="Noé David, cofundador y chef" />
+        </figure>
+      </div>
+      <div class="concepto__text">
+        <p class="eyebrow reveal">Quiénes somos</p>
+        <h2 class="reveal">Todo empieza<br>con una pregunta</h2>
+        <p class="reveal">Las flores llevan siglos en la cocina. Como adorno, como guiño, como firma visual de quien quiere que el plato quede bonito en foto.</p>
+        <p class="reveal">Nosotros nos preguntamos qué pasa cuando las tratas como un ingrediente de verdad. Con el mismo rigor con el que otros trabajan la carne, el pescado o el vegetal. Qué sabores tienen, cómo se comportan con el calor, qué ocurre cuando las fermentas, las secas o las conviertes en harina.</p>
+        <p class="reveal">Hay miles de flores comestibles. Llevamos tiempo trabajando con ellas. Y todavía nos queda mucho por descubrir.</p>
+        <div class="concepto__signs reveal">
+          <div><strong>Arán Rodrigo</strong><span>Cofundador &amp; Chef</span></div>
+          <div><strong>Noé David</strong><span>Cofundador &amp; Chef</span></div>
+        </div>
+      </div>
+      <img src="assets/img/petal-fig.png" class="petal petal--1" alt="" aria-hidden="true" />
+    </section>
+
+    <!-- MENÚ DEGUSTACIÓN (viaje) -->
+    <section class="menu" id="menu">
+      <div class="menu__intro">
+        <p class="eyebrow reveal">El menú</p>
+        <h2 class="reveal">Un menú que florece</h2>
+        <p class="reveal">No es una carta. Es una secuencia. Cada plato abre el siguiente, como una estación que da paso a la próxima.</p>
+      </div>
+
+      <article class="course">
+        <figure class="course__media" data-parallax="0.15">
+          <img src="assets/img/dish-1.jpg" alt="Plato de pétalos y flores frescas" />
+        </figure>
+        <div class="course__text">
+          <span class="course__num">01</span>
+          <h3 class="reveal">El despertar</h3>
+          <p class="reveal">Lo crudo y lo vivo. Pétalos frescos, hierbas y un caldo que huele a tierra mojada después de la lluvia.</p>
+        </div>
+      </article>
+
+      <article class="course course--reverse">
+        <figure class="course__media" data-parallax="0.15">
+          <img src="assets/img/dish-2.jpg" alt="Plato pasado por la brasa" />
+        </figure>
+        <div class="course__text">
+          <span class="course__num">02</span>
+          <h3 class="reveal">El fuego</h3>
+          <p class="reveal">Aquí la flor pasa por la brasa. Cambia de color, de carácter, de nombre. Se vuelve otra cosa sin dejar de ser ella.</p>
+        </div>
+      </article>
+
+      <article class="course">
+        <figure class="course__media" data-parallax="0.15">
+          <img src="assets/img/dish-3.jpg" alt="Postre floral de la degustación" />
+        </figure>
+        <div class="course__text">
+          <span class="course__num">03</span>
+          <h3 class="reveal">El cierre</h3>
+          <p class="reveal">Dulce, fermentado, ligeramente rebelde. La última flor del menú se queda contigo cuando ya te has ido.</p>
+        </div>
+      </article>
+    </section>
+
+    <!-- GALERÍA -->
+    <section class="gallery" id="galeria">
+      <div class="gallery__head">
+        <p class="eyebrow reveal">Galería</p>
+        <h2 class="reveal">Lo que ocurre en la mesa</h2>
+      </div>
+      <div class="gallery__grid">
+        <figure class="g-item" data-span="tall"><img src="assets/img/g1.jpg" alt="Espárragos con flor de tajete" loading="lazy" /></figure>
+        <figure class="g-item"><img src="assets/img/g3.jpg" alt="Guisantes y saúco" loading="lazy" /></figure>
+        <figure class="g-item" data-span="wide"><img src="assets/img/g9.jpg" alt="Los chefs en el pase" loading="lazy" /></figure>
+        <figure class="g-item"><img src="assets/img/g4.jpg" alt="Emplatado de ajo blanco" loading="lazy" /></figure>
+        <figure class="g-item" data-span="tall"><img src="assets/img/g6.jpg" alt="Servicio en cocina" loading="lazy" /></figure>
+        <figure class="g-item"><img src="assets/img/g5.jpg" alt="Guiso de setas" loading="lazy" /></figure>
+        <figure class="g-item"><img src="assets/img/g2.jpg" alt="Saco de colirrábano" loading="lazy" /></figure>
+        <figure class="g-item"><img src="assets/img/g7.jpg" alt="Corvina" loading="lazy" /></figure>
+        <figure class="g-item"><img src="assets/img/g8.jpg" alt="Vieira con flor de higo" loading="lazy" /></figure>
+      </div>
+    </section>
+
+    <!-- RESERVA -->
+    <section class="reserva" id="reserva">
+      <img src="assets/img/petal-sauco.png" class="petal petal--2" alt="" aria-hidden="true" />
+      <img src="assets/img/petal-peony.png" class="petal petal--3" alt="" aria-hidden="true" />
+      <div class="reserva__card reveal">
+        <p class="eyebrow">La mesa</p>
+        <h2>Solo 16 plazas<br>por servicio</h2>
+        <p class="reserva__lead">De jueves a domingo. La reserva con antelación es la norma, no la excepción.</p>
+        <ul class="reserva__details">
+          <li><span>Días</span><strong>Jueves a domingo</strong></li>
+          <li><span>Servicios</span><strong>14:00 y 21:00</strong></li>
+          <li><span>Menú degustación</span><strong>85 € / persona</strong></li>
+          <li><span>Maridaje</span><strong>+60 € / persona</strong></li>
+          <li><span>Duración</span><strong>2 horas</strong></li>
+        </ul>
+        <!-- TheFork: sustituye el href por tu enlace real de reserva de TheFork -->
+        <a href="https://www.thefork.es/" target="_blank" rel="noopener" class="btn btn--solid btn--lg">Reservar en TheFork</a>
+        <p class="reserva__note">¿Dudas? Escríbenos por <a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">Instagram</a> o llama al <a href="tel:+34919125998">919 12 59 98</a>.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer" id="footer">
+    <div class="footer__brand reveal">
+      <svg viewBox="0 0 100 70" class="footer__mark"><use href="#dragonfly-path"></use></svg>
+      <span class="footer__word">PIPILACHA</span>
+      <p>El único restaurante del mundo construido íntegramente sobre las flores.</p>
+    </div>
+    <div class="footer__cols">
+      <div class="reveal">
+        <h4>Horario</h4>
+        <p>Jueves a domingo<br>Comida 14:00 · Cena 21:00<br>16 plazas por servicio</p>
+      </div>
+      <div class="reveal">
+        <h4>Ubicación</h4>
+        <p>C. del Azulejo<br>28028 Madrid</p>
+        <a href="https://maps.google.com/?q=C.+del+Azulejo+28028+Madrid" target="_blank" rel="noopener">Cómo llegar →</a>
+      </div>
+      <div class="reveal">
+        <h4>Contacto</h4>
+        <p><a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">@restaurante.pipilacha</a><br><a href="tel:+34919125998">+34 919 12 59 98</a></p>
+      </div>
+    </div>
+    <div class="footer__base">
+      <span>© 2025 Pipilacha</span>
+      <span>Madrid</span>
+    </div>
+  </footer>
+
+  <!-- Lenis (scroll suave) + GSAP (animaciones) por CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+---
+import Base from '../layouts/Base.astro';
+
+// Despertar de las flores — 15 pases (nombres reales).
+// El nº 10 va oculto a propósito: pase sorpresa.
+const pases = [
+  'Pipilacha',
+  'Sabores de las flores',
+  'Taco de tila y alisos',
+  'Explosión de flor de higo',
+  'Fusión entre vieiras e hibiscus',
+  'La magia del alhelí',
+  'Pan y mantequilla',
+  'Guisante coco-saúco',
+  'Espárragos, romesco y tagetes',
+  { surprise: true },
+  'Chong de glicinias sobre caballa',
+  'Atún y margaritas',
+  'Ternera unagi con flores de huerto',
+  'Torrija de mandarina',
+  'Fresas con nata madrileña',
+];
+---
+
+<Base
+  title="Menú · Despertar de las flores · Pipilacha"
+  description="Despertar de las flores: el menú de degustación de Pipilacha. Quince pases con las flores como ingrediente. Madrid, 85 € por persona."
+>
+
+  <section class="page-header">
+    <p class="eyebrow">Degustación · Primavera</p>
+    <h1>Despertar de las flores</h1>
+    <p>Quince pases. Sin carta, sin alternativa: se sirve completo. Los nombres están aquí; lo que hace cada flor te lo contamos en la mesa. Uno te lo guardamos.</p>
+  </section>
+
+  <!-- LISTA DE PASES (solo nombres) -->
+  <section class="menu" id="menu">
+    <ol class="pases">
+      {pases.map((p, i) => (
+        <li class={`pase reveal${typeof p === 'string' ? '' : ' pase--secret'}`}>
+          <span class="pase__n">{String(i + 1).padStart(2, '0')}</span>
+          {typeof p === 'string'
+            ? <span class="pase__name">{p}</span>
+            : <span class="pase__name pase__name--secret" aria-label="Pase sorpresa, sin desvelar">✳ ✳ ✳ ✳ ✳ ✳</span>}
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <!-- MARIDAJE -->
+  <section class="maridaje" id="maridaje">
+    <div class="maridaje__inner">
+      <p class="eyebrow reveal">La otra mitad</p>
+      <h2 class="reveal">Maridaje</h2>
+      <p class="reveal">Cada pase tiene una bebida pensada al lado: vinos de productores pequeños y los fermentos que hacemos en casa —kombuchas, kéfires de agua y cheongs de flor—. Se decide al sentarse.</p>
+      <ul class="maridaje__opts reveal">
+        <li><strong>Con vino</strong><span>Siete copas para el menú · +60 € / persona</span></li>
+        <li><strong>Sin alcohol</strong><span>Siete copas de fermentos de la casa · +60 € / persona</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <h2 class="reveal">El menú se cuenta en mesa</h2>
+    <p class="cta-band__lead reveal">Qué flor entra en cada plato, qué hace y de dónde viene la idea. Reserva y te lo contamos pase a pase.</p>
+    <a href="/reservas/" class="btn btn--solid btn--lg reveal">Reservar mesa</a>
+  </section>
+
+</Base>

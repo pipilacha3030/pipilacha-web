@@ -1,0 +1,282 @@
+- generic [ref=e2]:
+  - generic:
+    - generic:
+      - generic:
+        - generic: © 2026
+    - generic:
+      - generic:
+        - img
+        - generic:
+          - generic: Made in SLC.
+  - link [ref=e5] [cursor=pointer]:
+    - /url: /
+    - img [ref=e6]
+    - img
+  - generic [ref=e20]:
+    - generic [ref=e22]:
+      - navigation [ref=e23]:
+        - list [ref=e24]:
+          - link "Work" [ref=e25] [cursor=pointer]:
+            - /url: /work
+            - generic [ref=e26]: Work
+          - link "Originals" [ref=e27] [cursor=pointer]:
+            - /url: /originals
+            - generic [ref=e28]: Originals
+          - link "The Studio" [ref=e29] [cursor=pointer]:
+            - /url: /studio
+            - generic [ref=e30]: The Studio
+      - generic [ref=e31]:
+        - generic [ref=e32] [cursor=pointer]:
+          - link "Contact Us" [ref=e34]:
+            - /url: mailto:hi@letsplayfight.com
+            - generic [ref=e35]: Contact Us
+          - generic: Contact Us
+          - generic: hi@letsplayfight.com
+        - link "Playground" [ref=e36] [cursor=pointer]:
+          - /url: /playground
+        - link "LinkedIn" [ref=e37] [cursor=pointer]:
+          - /url: https://www.linkedin.com/in/playfight/
+        - link "Instagram" [ref=e38] [cursor=pointer]:
+          - /url: https://www.instagram.com/letsplayfight
+    - generic [ref=e42]:
+      - link "Let’s chat. 801.673.8588 Schedule a Call" [ref=e44] [cursor=pointer]:
+        - /url: https://calendar.app.google/TADgw3kg9Xy4KQaC8
+        - generic [ref=e45]:
+          - generic [ref=e46]: Let’s chat. 801.673.8588
+          - generic: Schedule a Call
+      - generic [ref=e47]:
+        - generic [ref=e48]: Subscribe for the latest.
+        - form "EMAIL" [ref=e50]:
+          - generic [ref=e51]:
+            - textbox "Submit" [ref=e52]:
+              - /placeholder: Email
+            - generic [ref=e53]:
+              - button "Submit" [ref=e55] [cursor=pointer]:
+                - generic [ref=e56]: Submit
+              - img [ref=e57]
+  - generic:
+    - img
+    - generic:
+      - generic: "10"
+    - img
+  - main [ref=e59]:
+    - generic [ref=e63]:
+      - generic:
+        - generic:
+          - generic:
+            - list:
+              - listitem:
+                - figure
+        - generic:
+          - generic:
+            - list:
+              - listitem
+        - generic:
+          - generic:
+            - list:
+              - listitem:
+                - figure
+        - generic:
+          - generic:
+            - list:
+              - listitem:
+                - figure
+        - generic:
+          - generic:
+            - list:
+              - listitem:
+                - figure
+      - generic:
+        - generic:
+          - generic:
+            - heading "Different is Everything." [level=1]
+          - generic:
+            - generic:
+              - generic:
+                - paragraph: Creative, Story and Production. Made
+    - generic [ref=e68]:
+      - paragraph [ref=e69]: We are Playfight, an independent creative, story, and production studio. We believe brands need art and commerce. Founder-led and craft-driven, because the future of creativity lives in tight, experienced teams. No bureaucracy, just better relationships, better customer connection, and ultimately, a better business.
+      - paragraph [ref=e70]: ‍
+      - paragraph [ref=e71]: ‍
+      - paragraph [ref=e72]: ‍
+      - paragraph [ref=e73]: ‍
+      - paragraph [ref=e74]: ‍
+      - paragraph [ref=e75]: Fighting for authenticity. Making the different.
+    - generic [ref=e78]:
+      - heading "What we do" [level=2] [ref=e82]:
+        - strong [ref=e83]: What we do
+      - list [ref=e86]:
+        - listitem [ref=e87]:
+          - generic:
+            - generic:
+              - figure
+          - generic:
+            - generic: Art Direction
+          - generic [ref=e88]:
+            - generic: Art Direction
+          - generic:
+            - generic: Art Direction
+        - listitem [ref=e89]:
+          - generic:
+            - generic:
+              - figure
+          - generic:
+            - generic: Branding
+          - generic [ref=e90]:
+            - generic: Branding
+          - generic:
+            - generic: Branding
+        - listitem [ref=e91]:
+          - generic:
+            - generic:
+              - figure
+          - generic:
+            - generic: Content
+          - generic [ref=e92]:
+            - generic: Content
+          - generic:
+            - generic: Content
+        - listitem [ref=e93]:
+          - generic:
+            - generic:
+              - figure
+          - generic:
+            - generic: Design
+          - generic [ref=e94]:
+            - generic: Design
+          - generic:
+            - generic: Design
+        - listitem [ref=e95]:
+          - generic:
+            - generic:
+              - figure
+          - generic:
+            - generic: Digital & Web
+          - generic [ref=e96]:
+            - generic: Digital & Web
+          - generic:
+            - generic: Digital & Web
+        - listitem [ref=e97]:
+          - generic:
+            - generic:
+              - figure
+          - generic:
+            - generic: Film Production
+          - generic [ref=e98]:
+            - generic: Film Production
+          - generic:
+            - generic: Film Production
+        - listitem [ref=e99]:
+          - generic:
+            - generic:
+              - figure
+          - generic:
+            - generic: Photography
+          - generic [ref=e100]:
+            - generic: Photography
+          - generic:
+            - generic: Photography
+        - listitem [ref=e101]:
+          - generic:
+            - generic:
+              - figure
+          - generic:
+            - generic: Post Production
+          - generic [ref=e102]:
+            - generic: Post Production
+          - generic:
+            - generic: Post Production
+        - listitem [ref=e103]:
+          - generic:
+            - generic:
+              - figure
+          - generic:
+            - generic: Strategy
+          - generic [ref=e104]:
+            - generic: Strategy
+          - generic:
+            - generic: Strategy
+    - generic [ref=e107]:
+      - heading "Recent work" [level=2] [ref=e109]:
+        - strong [ref=e110]: Recent work
+      - list [ref=e112]:
+        - listitem [ref=e113]:
+          - link "project link" [ref=e114] [cursor=pointer]:
+            - /url: /project/adventure-safe
+            - figure [ref=e116]
+            - generic [ref=e117]:
+              - heading "Frank & Morris" [level=3] [ref=e119]
+              - heading "Adventure Safe" [level=4] [ref=e121]
+        - listitem [ref=e122]:
+          - link "project link" [ref=e123] [cursor=pointer]:
+            - /url: /project/utah-office-of-tourism-parks-beyond
+            - figure [ref=e125]
+            - generic [ref=e126]:
+              - heading "Parks & Beyond" [level=3] [ref=e128]
+              - heading "Utah Office of Tourism" [level=4] [ref=e130]
+        - listitem [ref=e131]:
+          - link "project link" [ref=e132] [cursor=pointer]:
+            - /url: /project/grit-moto---blue-danube
+            - figure [ref=e134]
+            - generic [ref=e135]:
+              - heading "Blue Danube" [level=3] [ref=e137]
+              - heading "Grit Moto" [level=4] [ref=e139]
+        - listitem [ref=e140]:
+          - link "project link" [ref=e141] [cursor=pointer]:
+            - /url: /project/wgu---lilly-project
+            - figure [ref=e143]
+            - generic [ref=e144]:
+              - heading "Lilly Project" [level=3] [ref=e146]
+              - heading "WGU" [level=4] [ref=e148]
+        - listitem [ref=e149]:
+          - link "project link" [ref=e150] [cursor=pointer]:
+            - /url: /project/utah-office-of-tourism-ski-winter
+            - figure [ref=e152]
+            - generic [ref=e153]:
+              - heading "Utah Person (Winter)" [level=3] [ref=e155]
+              - heading "Utah Office of Tourism" [level=4] [ref=e157]
+    - generic [ref=e158]:
+      - figure
+      - list [ref=e160]
+    - generic [ref=e163]:
+      - generic [ref=e165]:
+        - navigation [ref=e166]:
+          - list [ref=e167]:
+            - link "Work" [ref=e168] [cursor=pointer]:
+              - /url: /work
+              - generic [ref=e169]: Work
+            - link "Originals" [ref=e170] [cursor=pointer]:
+              - /url: /originals
+              - generic [ref=e171]: Originals
+            - link "The Studio" [ref=e172] [cursor=pointer]:
+              - /url: /studio
+              - generic [ref=e173]: The Studio
+        - generic [ref=e174]:
+          - generic [ref=e175] [cursor=pointer]:
+            - link "Contact Us" [ref=e177]:
+              - /url: mailto:hi@letsplayfight.com
+              - generic [ref=e178]: Contact Us
+            - generic: Contact Us
+            - generic: hi@letsplayfight.com
+          - link "Playground" [ref=e179] [cursor=pointer]:
+            - /url: /playground
+          - link "LinkedIn" [ref=e180] [cursor=pointer]:
+            - /url: https://www.linkedin.com/in/playfight/
+          - link "Instagram" [ref=e181] [cursor=pointer]:
+            - /url: https://www.instagram.com/letsplayfight
+      - generic [ref=e185]:
+        - link "Let’s chat. 801.673.8588 Schedule a Call" [ref=e187] [cursor=pointer]:
+          - /url: https://calendar.app.google/TADgw3kg9Xy4KQaC8
+          - generic [ref=e188]:
+            - generic [ref=e189]: Let’s chat. 801.673.8588
+            - generic: Schedule a Call
+        - generic [ref=e190]:
+          - generic [ref=e191]: Subscribe for the latest.
+          - form "Email Form" [ref=e193]:
+            - generic [ref=e194]:
+              - textbox "Submit" [ref=e195]:
+                - /placeholder: Email
+              - generic [ref=e196]:
+                - button "Submit" [ref=e198] [cursor=pointer]:
+                  - generic [ref=e199]: Submit
+                - img [ref=e200]

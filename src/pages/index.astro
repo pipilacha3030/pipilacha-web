@@ -1,0 +1,64 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Pipilacha · El único restaurante construido sobre las flores"
+  description="Pipilacha es un restaurante de degustación en Madrid donde las flores no son adorno: son el concepto. 16 plazas por servicio. Jueves a domingo."
+  solidNav={false}
+  intro={true}
+>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero__media" data-parallax="0.25">
+      <img src="/assets/img/hero.jpg" alt="Cuenco de cerámica lleno de flores comestibles sostenido entre las manos" />
+      <div class="hero__veil"></div>
+    </div>
+    <div class="hero__content">
+      <p class="eyebrow reveal" data-delay="0.1">Restaurante de degustación · Madrid</p>
+      <h1 class="hero__title">
+        <span class="line"><span class="reveal-mask">Todo empieza</span></span>
+        <span class="line"><span class="reveal-mask">con una flor</span></span>
+      </h1>
+      <p class="hero__sub reveal" data-delay="0.5">El único restaurante del mundo construido íntegramente sobre las flores.</p>
+      <a href="/reservas/" class="btn btn--solid reveal" data-delay="0.65">Reservar mesa</a>
+    </div>
+    <div class="hero__scroll reveal" data-delay="0.9"><span>Desliza</span></div>
+  </section>
+
+  <!-- MANIFIESTO -->
+  <section class="manifesto" id="manifesto">
+    <p class="manifesto__text">
+      <span class="m-word">El</span> <span class="m-word">único</span> <span class="m-word">restaurante</span> <span class="m-word">de</span> <span class="m-word">flores</span> <span class="m-word">del</span> <span class="m-word">mundo.</span>
+    </p>
+  </section>
+
+  <!-- CUADRO FOTO (los pases) -->
+  <a class="showcase reveal" href="/menu/" aria-label="Ver el menú Despertar de las flores">
+    <figure class="showcase__frame">
+      <img src="/assets/img/dish-1.jpg" alt="Uno de los pases del menú Despertar de las flores" />
+    </figure>
+    <span class="showcase__cap">
+      <span class="eyebrow">El menú</span>
+      <span class="showcase__title">Despertar de las flores</span>
+      <span class="showcase__more">Ver los pases →</span>
+    </span>
+  </a>
+
+  <!-- EXPLORAR -->
+  <nav class="explore" aria-label="Secciones">
+    <a href="/conocenos/"><span class="explore__n">01</span>Conócenos</a>
+    <a href="/menu/"><span class="explore__n">02</span>El menú</a>
+    <a href="/galeria/"><span class="explore__n">03</span>Galería</a>
+  </nav>
+
+  <!-- RESERVA (banda) -->
+  <section class="cta-band">
+    <p class="eyebrow reveal">La mesa</p>
+    <h2 class="reveal">Solo 16 plazas por servicio</h2>
+    <p class="cta-band__lead reveal">De jueves a domingo. La reserva con antelación es la norma, no la excepción.</p>
+    <a href="/reservas/" class="btn btn--solid btn--lg reveal">Reservar mesa</a>
+  </section>
+
+</Base>

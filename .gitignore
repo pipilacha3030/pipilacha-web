@@ -1,0 +1,17 @@
+# dependencias
+node_modules/
+
+# build output (generado)
+dist/
+.astro/
+
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# logs / env
+*.log
+.env
+.env.*

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "pipilacha-web",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [".claude/preview-server.cjs"],
+      "port": 4321
+    }
+  ]
+}

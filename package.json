@@ -1,0 +1,16 @@
+{
+  "name": "pipilacha-web",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Web del restaurante Pipilacha — degustación floral en Madrid",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "devDependencies": {
+    "astro": "^4.16.18"
+  }
+}

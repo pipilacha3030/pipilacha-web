@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "/Users/jonahmoyetones/.nvm/versions/node/v20.20.2/bin/node",
+      "args": [
+        "/Users/jonahmoyetones/.nvm/versions/node/v20.20.2/lib/node_modules/@playwright/mcp/cli.js"
+      ],
+      "env": {
+        "PATH": "/Users/jonahmoyetones/.nvm/versions/node/v20.20.2/bin:/usr/local/bin:/usr/bin:/bin"
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+
+const fotos = [
+  { src: '/assets/img/g1.jpg', alt: 'Espárragos con flor de tajete' },
+  { src: '/assets/img/g3.jpg', alt: 'Guisantes y saúco' },
+  { src: '/assets/img/g9.jpg', alt: 'Los chefs en el pase' },
+  { src: '/assets/img/g4.jpg', alt: 'Emplatado de ajo blanco' },
+  { src: '/assets/img/g6.jpg', alt: 'Servicio en cocina' },
+  { src: '/assets/img/g5.jpg', alt: 'Guiso de setas' },
+  { src: '/assets/img/g2.jpg', alt: 'Saco de colirrábano' },
+  { src: '/assets/img/g7.jpg', alt: 'Corvina' },
+  { src: '/assets/img/g8.jpg', alt: 'Vieira con flor de higo' },
+];
+---
+
+<Base
+  title="Galería · Pipilacha"
+  description="Platos, flores y servicio en Pipilacha, restaurante de degustación floral en Madrid."
+>
+
+  <section class="page-header">
+    <p class="eyebrow">Galería</p>
+    <h1>Lo que ocurre en la mesa</h1>
+  </section>
+
+  <section class="gallery" id="galeria">
+    <div class="gallery__grid">
+      {fotos.map((f, i) => (
+        <button type="button" class="g-item" data-index={i} aria-label={`Ampliar: ${f.alt}`}>
+          <img src={f.src} alt={f.alt} loading="lazy" />
+        </button>
+      ))}
+    </div>
+  </section>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Galería ampliada">
+    <button class="lightbox__close" id="lbClose" type="button" aria-label="Cerrar galería">&times;</button>
+    <button class="lightbox__nav lightbox__prev" id="lbPrev" type="button" aria-label="Foto anterior">&lsaquo;</button>
+    <figure class="lightbox__stage">
+      <img id="lbImg" src="" alt="" />
+      <figcaption class="lightbox__cap" id="lbCap"></figcaption>
+    </figure>
+    <button class="lightbox__nav lightbox__next" id="lbNext" type="button" aria-label="Foto siguiente">&rsaquo;</button>
+  </div>
+
+</Base>
