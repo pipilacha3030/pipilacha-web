@@ -2,23 +2,24 @@
 import Base from '../layouts/Base.astro';
 
 // Despertar de las flores — 15 pases (nombres reales).
-// El nº 10 va oculto a propósito: pase sorpresa.
+// Cada pase lleva una pista: lo que hace la flor, no la receta entera.
+// El nº 10 va oculto a propósito: pase sorpresa, a ciegas.
 const pases = [
-  'Pipilacha',
-  'Sabores de las flores',
-  'Taco de tila y alisos',
-  'Explosión de flor de higo',
-  'Fusión entre vieiras e hibiscus',
-  'La magia del alhelí',
-  'Pan y mantequilla',
-  'Guisante coco-saúco',
-  'Espárragos, romesco y tagetes',
+  { name: 'Pipilacha', hook: 'La flor eléctrica despierta el paladar para todo lo que viene.' },
+  { name: 'Sabores de las flores', hook: 'Cinco flores en su punto. Un mapa de boca antes de empezar.' },
+  { name: 'Taco de tila y alisos', hook: 'La tila calma; el aliso cierra con un punto de mostaza.' },
+  { name: 'Explosión de flor de higo', hook: 'Hueles otoño y comes primavera.' },
+  { name: 'Fusión entre vieiras e hibiscus', hook: 'El hibiscus corta la grasa de la vieira.' },
+  { name: 'La magia del alhelí', hook: 'Pasa de azul a violeta y deja el paladar a cero.' },
+  { name: 'Pan y mantequilla', hook: 'Masa madre con flores y mantequilla de caléndula.' },
+  { name: 'Guisante coco-saúco', hook: 'El saúco sube el dulzor del guisante sin azúcar.' },
+  { name: 'Espárragos, romesco y tagetes', hook: 'Brasa de encina y romesco reformulado con tagete.' },
   { surprise: true },
-  'Chong de glicinias sobre caballa',
-  'Atún y margaritas',
-  'Ternera unagi con flores de huerto',
-  'Torrija de mandarina',
-  'Fresas con nata madrileña',
+  { name: 'Cheong de glicinias sobre caballa', hook: 'Un fermento floral coreano sobre caballa.' },
+  { name: 'Atún y margaritas', hook: 'Almadraba y manzanilla silvestre en el ponzu.' },
+  { name: 'Ternera unagi con flores de huerto', hook: 'Robata, lacado unagi y hojas del huerto.' },
+  { name: 'Torrija de mandarina', hook: 'Flambeada, con un gel picante de mandarina.' },
+  { name: 'Fresas con nata madrileña', hook: 'Fresón de Aranjuez rallado al momento.' },
 ];
 ---
 
@@ -30,19 +31,30 @@ const pases = [
   <section class="page-header">
     <p class="eyebrow">Degustación · Primavera</p>
     <h1>Despertar de las flores</h1>
-    <p>Quince pases. Sin carta, sin alternativa: se sirve completo. Los nombres están aquí; lo que hace cada flor te lo contamos en la mesa. Uno te lo guardamos.</p>
+    <p>Quince pases. Sin carta, sin alternativa: se sirve completo. Cada uno con una pista; el resto te lo contamos en la mesa. El décimo te lo guardamos.</p>
   </section>
 
-  <!-- LISTA DE PASES (solo nombres) -->
+  <!-- LISTA DE PASES (nombre + pista) -->
   <section class="menu" id="menu">
     <ol class="pases">
       {pases.map((p, i) => (
-        <li class={`pase reveal${typeof p === 'string' ? '' : ' pase--secret'}`}>
-          <span class="pase__n">{String(i + 1).padStart(2, '0')}</span>
-          {typeof p === 'string'
-            ? <span class="pase__name">{p}</span>
-            : <span class="pase__name pase__name--secret" aria-label="Pase sorpresa, sin desvelar">✳ ✳ ✳ ✳ ✳ ✳</span>}
-        </li>
+        p.surprise ? (
+          <li class="pase pase--secret reveal">
+            <span class="pase__n">{String(i + 1).padStart(2, '0')}</span>
+            <span class="pase__body" aria-label="Pase sorpresa, sin desvelar">
+              <span class="pase__name pase__name--secret">Te lo guardamos</span>
+              <span class="pase__hook">Un pase a ciegas. Lo descubres en la mesa, sin saber qué flor llega.</span>
+            </span>
+          </li>
+        ) : (
+          <li class="pase reveal">
+            <span class="pase__n">{String(i + 1).padStart(2, '0')}</span>
+            <span class="pase__body">
+              <span class="pase__name">{p.name}</span>
+              <span class="pase__hook">{p.hook}</span>
+            </span>
+          </li>
+        )
       ))}
     </ol>
   </section>
@@ -52,18 +64,28 @@ const pases = [
     <div class="maridaje__inner">
       <p class="eyebrow reveal">La otra mitad</p>
       <h2 class="reveal">Maridaje</h2>
-      <p class="reveal">Cada pase tiene una bebida pensada al lado: vinos de productores pequeños y los fermentos que hacemos en casa —kombuchas, kéfires de agua y cheongs de flor—. Se decide al sentarse.</p>
-      <ul class="maridaje__opts reveal">
-        <li><strong>Con vino</strong><span>Siete copas para el menú · +60 € / persona</span></li>
-        <li><strong>Sin alcohol</strong><span>Siete copas de fermentos de la casa · +60 € / persona</span></li>
-      </ul>
+      <p class="maridaje__intro reveal">Seis copas para recorrer los quince pases. Vinos de productores pequeños o los fermentos que hacemos en casa. Se elige al sentarse y ninguno está en carta: se sirve y se explica en sala.</p>
+      <div class="maridaje__cards">
+        <article class="maridaje__card reveal">
+          <span class="maridaje__count">Seis copas</span>
+          <h3>Con vino</h3>
+          <p>Elegidas para la temporada. Cambian con las flores que entran cada servicio.</p>
+          <span class="maridaje__price">+60 € / persona</span>
+        </article>
+        <article class="maridaje__card reveal">
+          <span class="maridaje__count">Seis fermentos</span>
+          <h3>Sin alcohol</h3>
+          <p>Kombuchas, kéfires de agua y cheongs de flor, hechos en casa. La misma ambición, sin vino.</p>
+          <span class="maridaje__price">+60 € / persona</span>
+        </article>
+      </div>
     </div>
   </section>
 
   <section class="cta-band">
     <h2 class="reveal">El menú se cuenta en mesa</h2>
     <p class="cta-band__lead reveal">Qué flor entra en cada plato, qué hace y de dónde viene la idea. Reserva y te lo contamos pase a pase.</p>
-    <a href="/reservas/" class="btn btn--solid btn--lg reveal">Reservar mesa</a>
+    <a href="/reservas/" class="btn btn--solid btn--lg reveal">Reservar</a>
   </section>
 
 </Base>

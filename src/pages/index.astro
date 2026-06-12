@@ -22,29 +22,33 @@ import Base from '../layouts/Base.astro';
         <span class="line"><span class="reveal-mask">con una flor</span></span>
       </h1>
       <p class="hero__sub reveal" data-delay="0.5">El único restaurante del mundo construido íntegramente sobre las flores.</p>
-      <a href="/reservas/" class="btn btn--solid reveal" data-delay="0.65">Reservar mesa</a>
+      <a href="/reservas/" class="btn btn--solid reveal" data-delay="0.65">Reservar</a>
     </div>
     <div class="hero__scroll reveal" data-delay="0.9"><span>Desliza</span></div>
   </section>
 
-  <!-- MANIFIESTO -->
+  <!-- MANIFIESTO (pinned: las palabras se encienden con el scroll) -->
   <section class="manifesto" id="manifesto">
+    <img src="/assets/img/petal-oxalis.png" class="manifesto__bloom" alt="" aria-hidden="true" />
     <p class="manifesto__text">
-      <span class="m-word">El</span> <span class="m-word">único</span> <span class="m-word">restaurante</span> <span class="m-word">de</span> <span class="m-word">flores</span> <span class="m-word">del</span> <span class="m-word">mundo.</span>
+      <span class="m-word">El</span> <span class="m-word">único</span> <span class="m-word">restaurante</span> <span class="m-word">de</span> <span class="m-word"><em>flores</em></span> <span class="m-word">del</span> <span class="m-word">mundo.</span>
     </p>
   </section>
 
-  <!-- CUADRO FOTO (los pases) -->
-  <a class="showcase reveal" href="/menu/" aria-label="Ver el menú Despertar de las flores">
-    <figure class="showcase__frame">
-      <img src="/assets/img/dish-1.jpg" alt="Uno de los pases del menú Despertar de las flores" />
-    </figure>
-    <span class="showcase__cap">
-      <span class="eyebrow">El menú</span>
-      <span class="showcase__title">Despertar de las flores</span>
-      <span class="showcase__more">Ver los pases →</span>
-    </span>
-  </a>
+  <!-- DESPERTAR DE LAS FLORES (pinned: la foto se expande a pantalla completa) -->
+  <section class="showcase-wrap" id="despertar">
+    <a class="showcase" href="/menu/" aria-label="Ver el menú Despertar de las flores">
+      <figure class="showcase__frame">
+        <img src="/assets/img/esparragos-tagete.jpg" alt="Espárragos a la brasa con romesco de tagete, sobre plato de piedra" />
+        <span class="showcase__veil" aria-hidden="true"></span>
+      </figure>
+      <span class="showcase__cap">
+        <span class="eyebrow">El menú</span>
+        <span class="showcase__title">Despertar de las flores</span>
+        <span class="showcase__more">Ver los pases →</span>
+      </span>
+    </a>
+  </section>
 
   <!-- EXPLORAR -->
   <nav class="explore" aria-label="Secciones">
@@ -53,12 +57,41 @@ import Base from '../layouts/Base.astro';
     <a href="/galeria/"><span class="explore__n">03</span>Galería</a>
   </nav>
 
-  <!-- RESERVA (banda) -->
+  <!-- LA BARRA -->
+  <section class="barra" id="barra">
+    <div class="barra__media" data-parallax="0.18">
+      <img src="/assets/img/barra.jpg" alt="La barra de iroko de seis metros, puesta para el servicio" />
+      <div class="barra__veil"></div>
+    </div>
+    <div class="barra__content">
+      <p class="eyebrow reveal">La barra</p>
+      <h2 class="barra__title reveal">Seis metros de iroko.<br>Los chefs al otro lado.</h2>
+      <p class="barra__lead reveal">Ocho asientos en primera línea. Arán y Noé cocinan delante de ti y cuentan cada flor según la sirven. Tu plato nace ahí, a un brazo de distancia.</p>
+    </div>
+  </section>
+
+  <!-- CIERRE: escasez -->
   <section class="cta-band">
-    <p class="eyebrow reveal">La mesa</p>
+    <p class="eyebrow reveal">La barra</p>
     <h2 class="reveal">Solo 16 plazas por servicio</h2>
-    <p class="cta-band__lead reveal">De jueves a domingo. La reserva con antelación es la norma, no la excepción.</p>
-    <a href="/reservas/" class="btn btn--solid btn--lg reveal">Reservar mesa</a>
+    <p class="cta-band__lead reveal">Ocho de ellas en la barra de iroko, frente a Arán y Noé mientras cocinan. De jueves a domingo, y se llenan con antelación.</p>
+  </section>
+
+  <!-- RESERVA (tarjeta de datos) -->
+  <section class="reserva" id="reserva">
+    <img src="/assets/img/petal-borraja.png" class="petal petal--2" alt="" aria-hidden="true" />
+    <img src="/assets/img/petal-oxalis.png" class="petal petal--3" alt="" aria-hidden="true" />
+    <div class="reserva__card reveal">
+      <ul class="reserva__details">
+        <li><span>Días</span><strong>Jueves a domingo</strong></li>
+        <li><span>Servicios</span><strong>14:00 y 21:00</strong></li>
+        <li><span>Menú degustación</span><strong>85 € / persona</strong></li>
+        <li><span>Maridaje</span><strong>+60 € / persona</strong></li>
+        <li><span>Duración</span><strong>2 horas</strong></li>
+      </ul>
+      <a href="/reservas/" class="btn btn--solid btn--lg">Reservar</a>
+      <p class="reserva__note">¿Dudas? Escríbenos por <a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">Instagram</a> o llama al <a href="tel:+34919125998">919 12 59 98</a>.</p>
+    </div>
   </section>
 
 </Base>

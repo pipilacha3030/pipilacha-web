@@ -32,7 +32,7 @@ function cycleIntroWord() {
     void introWord.offsetWidth;
     introWord.classList.add('is-in');
     i++;
-    if (i < introFlowers.length) setTimeout(step, 120 + i * 28); // se va frenando
+    if (i < introFlowers.length) setTimeout(step, 60 + i * 16); // rápido, frenando solo al final
   })();
 }
 
@@ -110,10 +110,14 @@ if (!reduceMotion && window.Lenis) {
   });
 }
 
+/* botón flotante de reserva: aparece tras el primer scroll (solo móvil, vía CSS) */
+const reservaFab = document.getElementById('reservaFab');
+
 /* nav background toggle (umbral pequeño si la nav ya es sólida) */
 const onScroll = y => {
   const threshold = nav.classList.contains('nav--solid') ? 10 : window.innerHeight * 0.6;
   nav.classList.toggle('scrolled', y > threshold);
+  if (reservaFab) reservaFab.classList.toggle('is-visible', y > window.innerHeight * 0.5);
 };
 if (lenis) lenis.on('scroll', e => onScroll(e.scroll));
 else window.addEventListener('scroll', () => onScroll(window.scrollY));
@@ -144,11 +148,34 @@ if (window.gsap) {
       });
     });
 
-    /* manifiesto: palabras que entran escalonadas */
-    gsap.from('.manifesto .m-word', {
-      yPercent: 60, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.06,
-      scrollTrigger: { trigger: '.manifesto', start: 'top 78%' }
-    });
+    /* manifiesto pinned: las palabras se encienden una a una con el scrub,
+       la flor azul cruza por detrás */
+    if (document.querySelector('.manifesto')) {
+      const mTl = gsap.timeline({
+        scrollTrigger: { trigger: '.manifesto', start: 'top top', end: '+=110%', pin: true, scrub: 0.5 }
+      });
+      mTl.fromTo('.manifesto .m-word',
+        { opacity: 0.08, yPercent: 36, filter: 'blur(6px)' },
+        { opacity: 1, yPercent: 0, filter: 'blur(0px)', stagger: 0.14, ease: 'none' })
+        .fromTo('.manifesto__bloom',
+          { yPercent: 45, rotate: -16 },
+          { yPercent: -55, rotate: 12, ease: 'none' }, 0);
+    }
+
+    /* despertar de las flores: la foto no está — y florece desde el centro
+       hasta pantalla completa en poco scroll */
+    const sFrame = document.querySelector('.showcase__frame');
+    if (sFrame) {
+      const sTl = gsap.timeline({
+        scrollTrigger: { trigger: '.showcase-wrap', start: 'top top', end: '+=75%', pin: true, scrub: 0.4 }
+      });
+      sTl.fromTo(sFrame,
+        { clipPath: 'inset(50% 50% 50% 50% round 30px)' },
+        { clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'power1.out', duration: 0.7 })
+        .fromTo(sFrame.querySelector('img'), { scale: 1.4 }, { scale: 1, ease: 'none', duration: 1 }, 0)
+        .fromTo('.showcase__veil', { opacity: 0 }, { opacity: 1, duration: 0.2 }, 0.5)
+        .fromTo('.showcase__cap', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.25 }, 0.65);
+    }
 
     /* parallax CENTRADO: a mitad de recorrido (incluido el scroll 0 del hero)
        el desplazamiento es 0, así nunca se ve el fondo por arriba ni por abajo */
@@ -175,6 +202,30 @@ if (window.gsap) {
       opacity: 0, y: 50, duration: 0.9, ease: 'power3.out', stagger: 0.08,
       scrollTrigger: { trigger: '.gallery__grid', start: 'top 80%' }
     });
+
+    /* galería cinética: cada imagen deriva a su ritmo dentro del marco */
+    gsap.utils.toArray('.g-item img').forEach(img => {
+      gsap.fromTo(img,
+        { yPercent: -6, scale: 1.12 },
+        { yPercent: 6, scale: 1.12, ease: 'none',
+          scrollTrigger: { trigger: img.closest('.g-item'), start: 'top bottom', end: 'bottom top', scrub: true } });
+    });
+    /* botones magnéticos: el botón se inclina hacia el cursor y vuelve elástico */
+    if (window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+      document.querySelectorAll('.btn, .nav__cta, .intro__enter, .intro__choice').forEach(btn => {
+        btn.addEventListener('mousemove', e => {
+          const r = btn.getBoundingClientRect();
+          gsap.to(btn, {
+            x: (e.clientX - r.left - r.width / 2) * 0.28,
+            y: (e.clientY - r.top - r.height / 2) * 0.38,
+            duration: 0.4, ease: 'power3.out'
+          });
+        });
+        btn.addEventListener('mouseleave', () => {
+          gsap.to(btn, { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1, 0.45)' });
+        });
+      });
+    }
   } else {
     gsap.set('.reveal', { opacity: 1, y: 0 });
   }

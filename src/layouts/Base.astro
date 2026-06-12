@@ -32,18 +32,43 @@ const here = (href) => path === href;
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hanken+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "Pipilacha",
+    "description": "El único restaurante del mundo construido íntegramente sobre las flores. Menú de degustación en Madrid.",
+    "servesCuisine": "Cocina floral de autor",
+    "priceRange": "€€€",
+    "image": "https://astounding-halva-485c9a.netlify.app/assets/img/hero.jpg",
+    "url": "https://astounding-halva-485c9a.netlify.app/",
+    "telephone": "+34919125998",
+    "acceptsReservations": "https://widget.thefork.com/867dcee9-49b5-47ed-90c0-c6c87149b328",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "C. del Azulejo, 2",
+      "addressLocality": "Madrid",
+      "postalCode": "28028",
+      "addressCountry": "ES"
+    },
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday","Friday","Saturday","Sunday"], "opens": "14:00", "closes": "16:30" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday","Friday","Saturday","Sunday"], "opens": "21:00", "closes": "23:30" }
+    ],
+    "sameAs": ["https://instagram.com/restaurante.pipilacha"]
+  })} />
 </head>
 <body>
 
   {intro && (
     <div class="intro" id="intro" role="dialog" aria-label="Bienvenida a Pipilacha">
       <div class="intro__garden" aria-hidden="true">
-        <img src="/assets/img/petal-sauco.png" class="intro__petal intro__petal--1" alt="" loading="eager" />
-        <img src="/assets/img/petal-peony.png" class="intro__petal intro__petal--2" alt="" loading="eager" />
+        <img src="/assets/img/petal-borraja.png" class="intro__petal intro__petal--1" alt="" loading="eager" />
+        <img src="/assets/img/petal-oxalis.png" class="intro__petal intro__petal--2" alt="" loading="eager" />
         <img src="/assets/img/petal-fig.png" class="intro__petal intro__petal--3" alt="" loading="eager" />
-        <img src="/assets/img/petal-sauco.png" class="intro__petal intro__petal--4" alt="" loading="eager" />
-        <img src="/assets/img/petal-peony.png" class="intro__petal intro__petal--5" alt="" loading="eager" />
-        <img src="/assets/img/petal-fig.png" class="intro__petal intro__petal--6" alt="" loading="eager" />
+        <img src="/assets/img/petal-fig.png" class="intro__petal intro__petal--4" alt="" loading="eager" />
+        <img src="/assets/img/petal-roja.png" class="intro__petal intro__petal--5" alt="" loading="eager" />
+        <img src="/assets/img/petal-borraja.png" class="intro__petal intro__petal--6" alt="" loading="eager" />
       </div>
       <img src="/assets/img/iso-light.png" class="intro__mark" alt="" aria-hidden="true" />
       <div class="intro__inner">
@@ -84,29 +109,33 @@ const here = (href) => path === href;
     <slot />
   </main>
 
-  <!-- FOOTER -->
+  {path !== '/reservas' && (
+    <a href="/reservas/" class="reserva-fab" id="reservaFab" aria-label="Reservar en Pipilacha">Reservar</a>
+  )}
+
+  <!-- FOOTER (estático, sin animación) -->
   <footer class="footer" id="footer">
-    <div class="footer__brand reveal">
+    <div class="footer__brand">
       <img src="/assets/img/logo-light.png" class="footer__logo" alt="Pipilacha" width="560" height="216" />
       <p>El único restaurante del mundo construido íntegramente sobre las flores.</p>
     </div>
     <div class="footer__cols">
-      <div class="reveal">
+      <div>
         <h4>Horario</h4>
         <p>Jueves a domingo<br>Comida 14:00 · Cena 21:00<br>16 plazas por servicio</p>
       </div>
-      <div class="reveal">
+      <div>
         <h4>Ubicación</h4>
-        <p>C. del Azulejo<br>28028 Madrid</p>
-        <a href="https://maps.google.com/?q=C.+del+Azulejo+28028+Madrid" target="_blank" rel="noopener">Cómo llegar →</a>
+        <p>C. del Azulejo, 2<br>28028 Madrid</p>
+        <a href="https://maps.google.com/?q=C.+del+Azulejo+2+28028+Madrid" target="_blank" rel="noopener">Cómo llegar →</a>
       </div>
-      <div class="reveal">
+      <div>
         <h4>Contacto</h4>
         <p><a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">@restaurante.pipilacha</a><br><a href="tel:+34919125998">+34 919 12 59 98</a></p>
       </div>
     </div>
     <div class="footer__base">
-      <span>© 2025 Pipilacha</span>
+      <span>© 2026 Pipilacha</span>
       <span>Madrid</span>
     </div>
   </footer>
@@ -115,6 +144,6 @@ const here = (href) => path === href;
   <script is:inline src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
   <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-  <script is:inline src="/js/main.js?v=10"></script>
+  <script is:inline src="/js/main.js?v=15"></script>
 </body>
 </html>
