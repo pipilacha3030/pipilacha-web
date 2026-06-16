@@ -2,15 +2,21 @@
 import Base from '../layouts/Base.astro';
 
 const fotos = [
-  { src: '/assets/img/g1.jpg', alt: 'Espárragos a la brasa con tagete' },
-  { src: '/assets/img/g3.jpg', alt: 'Guisante coco-saúco' },
-  { src: '/assets/img/g9.jpg', alt: 'Arán y Noé en el pase' },
-  { src: '/assets/img/g4.jpg', alt: 'Ajo blanco con flores' },
-  { src: '/assets/img/g6.jpg', alt: 'Servicio en cocina' },
-  { src: '/assets/img/g5.jpg', alt: 'Guiso de setas' },
-  { src: '/assets/img/g2.jpg', alt: 'Saco de colirrábano' },
-  { src: '/assets/img/g7.jpg', alt: 'Corvina y flores de huerto' },
-  { src: '/assets/img/g8.jpg', alt: 'Vieira con flor de higo' },
+  { src: '/assets/img/g10.jpg', alt: 'Esferificación de hierba luisa' },
+  { src: '/assets/img/g15.jpg', alt: 'Pho de flores' },
+  { src: '/assets/img/g1.jpg',  alt: 'Espárragos a la brasa con tagete' },
+  { src: '/assets/img/g13.jpg', alt: 'Claveles sobre fresas con nata' },
+  { src: '/assets/img/g9.jpg',  alt: 'Arán y Noé en el pase' },
+  { src: '/assets/img/g4.jpg',  alt: 'Ajo blanco con flores' },
+  { src: '/assets/img/g11.jpg', alt: 'Helado de tupinambo' },
+  { src: '/assets/img/g7.jpg',  alt: 'Corvina y flores de huerto' },
+  { src: '/assets/img/g14.jpg', alt: 'La sala' },
+  { src: '/assets/img/g3.jpg',  alt: 'Guisante coco-saúco' },
+  { src: '/assets/img/g12.jpg', alt: 'Tartaleta de remolacha' },
+  { src: '/assets/img/g6.jpg',  alt: 'Servicio en cocina' },
+  { src: '/assets/img/g8.jpg',  alt: 'Vieira con flor de higo' },
+  { src: '/assets/img/g2.jpg',  alt: 'Saco de colirrábano' },
+  { src: '/assets/img/g5.jpg',  alt: 'Guiso de setas' },
 ];
 ---
 
@@ -21,17 +27,34 @@ const fotos = [
 
   <section class="page-header">
     <p class="eyebrow">Galería</p>
-    <h1>Lo que ocurre en la mesa</h1>
+    <h1>Lo que ocurre<br>en la mesa</h1>
+    <p>Arrastra para recorrerla. Toca cualquier imagen para verla en grande.</p>
   </section>
 
-  <section class="gallery" id="galeria">
-    <div class="gallery__grid">
-      {fotos.map((f, i) => (
-        <button type="button" class="g-item" data-index={i} aria-label={`Ampliar: ${f.alt}`}>
-          <img src={f.src} alt={f.alt} loading="lazy" />
-          <span class="g-item__cap" aria-hidden="true">{f.alt}</span>
-        </button>
-      ))}
+  <!-- CARRUSEL -->
+  <section class="carousel" id="galeria">
+    <div class="carousel__viewport" id="carViewport">
+      <ul class="carousel__track" id="carTrack">
+        {fotos.map((f, i) => (
+          <li class="slide">
+            <button type="button" class="slide__btn" data-index={i} aria-label={`Ampliar: ${f.alt}`}>
+              <span class="slide__media"><img src={f.src} alt={f.alt} loading={i < 3 ? 'eager' : 'lazy'} /></span>
+              <span class="slide__cap" aria-hidden="true">
+                <span class="slide__num">{String(i + 1).padStart(2, '0')}</span>{f.alt}
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="carousel__ui">
+      <div class="carousel__progress" aria-hidden="true"><span id="carBar"></span></div>
+      <p class="carousel__counter" aria-hidden="true"><b id="carCur">01</b> / {String(fotos.length).padStart(2, '0')}</p>
+      <div class="carousel__arrows">
+        <button type="button" id="carPrev" aria-label="Imagen anterior">&larr;</button>
+        <button type="button" id="carNext" aria-label="Imagen siguiente">&rarr;</button>
+      </div>
     </div>
   </section>
 

@@ -199,33 +199,38 @@ if (window.gsap) {
       });
     });
 
-    /* manifiesto pinned: las palabras se encienden una a una con el scrub,
-       la flor azul cruza por detrás */
+    /* manifiesto pinned: cada palabra se levanta en 3D (sin blur = sin tirones),
+       la flor cruza por detrás. scrub más ajustado para que siga al dedo */
     if (document.querySelector('.manifesto')) {
       const mTl = gsap.timeline({
-        scrollTrigger: { trigger: '.manifesto', start: 'top top', end: '+=110%', pin: true, scrub: 0.5 }
+        scrollTrigger: { trigger: '.manifesto', start: 'top top', end: '+=130%', pin: true, scrub: 0.8 }
       });
       mTl.fromTo('.manifesto .m-word',
-        { opacity: 0.08, yPercent: 36, filter: 'blur(6px)' },
-        { opacity: 1, yPercent: 0, filter: 'blur(0px)', stagger: 0.14, ease: 'none' })
+        { opacity: 0.12, yPercent: 100, rotateX: -75 },
+        { opacity: 1, yPercent: 0, rotateX: 0, stagger: 0.16, ease: 'power3.out', duration: 1 })
+        .to('.manifesto__text em',
+          { scale: 1.06, ease: 'power2.out', duration: 0.4 }, '>-0.2')
         .fromTo('.manifesto__bloom',
-          { yPercent: 45, rotate: -16 },
-          { yPercent: -55, rotate: 12, ease: 'none' }, 0);
+          { yPercent: 55, rotate: -18, scale: .9 },
+          { yPercent: -60, rotate: 14, scale: 1.05, ease: 'none' }, 0);
     }
 
-    /* despertar de las flores: la foto no está — y florece desde el centro
-       hasta pantalla completa en poco scroll */
+    /* despertar de las flores: la foto florece desde una tarjeta centrada
+       hasta pantalla completa, con la imagen empujando en profundidad */
     const sFrame = document.querySelector('.showcase__frame');
     if (sFrame) {
       const sTl = gsap.timeline({
-        scrollTrigger: { trigger: '.showcase-wrap', start: 'top top', end: '+=75%', pin: true, scrub: 0.4 }
+        scrollTrigger: { trigger: '.showcase-wrap', start: 'top top', end: '+=95%', pin: true, scrub: 0.7 }
       });
       sTl.fromTo(sFrame,
-        { clipPath: 'inset(50% 50% 50% 50% round 30px)' },
-        { clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'power1.out', duration: 0.7 })
-        .fromTo(sFrame.querySelector('img'), { scale: 1.4 }, { scale: 1, ease: 'none', duration: 1 }, 0)
-        .fromTo('.showcase__veil', { opacity: 0 }, { opacity: 1, duration: 0.2 }, 0.5)
-        .fromTo('.showcase__cap', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.25 }, 0.65);
+        { clipPath: 'inset(38% 32% 38% 32% round 26px)' },
+        { clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'power2.inOut', duration: 0.85 })
+        .fromTo(sFrame.querySelector('img'),
+          { scale: 1.55 }, { scale: 1, ease: 'none', duration: 1 }, 0)
+        .fromTo('.showcase__veil', { opacity: 0 }, { opacity: 1, duration: 0.25 }, 0.5)
+        .fromTo('.showcase__cap',
+          { opacity: 0, yPercent: 80, filter: 'blur(4px)' },
+          { opacity: 1, yPercent: 0, filter: 'blur(0px)', ease: 'power3.out', duration: 0.3 }, 0.62);
     }
 
     /* parallax CENTRADO: a mitad de recorrido (incluido el scroll 0 del hero)
@@ -248,19 +253,13 @@ if (window.gsap) {
       });
     });
 
-    /* galería en cascada */
-    gsap.from('.g-item', {
-      opacity: 0, y: 50, duration: 0.9, ease: 'power3.out', stagger: 0.08,
-      scrollTrigger: { trigger: '.gallery__grid', start: 'top 80%' }
-    });
-
-    /* galería cinética: cada imagen deriva a su ritmo dentro del marco */
-    gsap.utils.toArray('.g-item img').forEach(img => {
-      gsap.fromTo(img,
-        { yPercent: -6, scale: 1.12 },
-        { yPercent: 6, scale: 1.12, ease: 'none',
-          scrollTrigger: { trigger: img.closest('.g-item'), start: 'top bottom', end: 'bottom top', scrub: true } });
-    });
+    /* entrada del carrusel en cascada */
+    if (document.querySelector('.carousel')) {
+      gsap.from('.carousel .slide', {
+        opacity: 0, y: 64, duration: 0.9, ease: 'power3.out', stagger: 0.07,
+        scrollTrigger: { trigger: '.carousel', start: 'top 82%' }
+      });
+    }
     /* botones magnéticos: el botón se inclina hacia el cursor y vuelve elástico */
     if (window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
       document.querySelectorAll('.btn, .nav__cta, .intro__enter, .intro__choice').forEach(btn => {
@@ -315,11 +314,91 @@ if (window.gsap) {
 }
 
 /* ============================================================
+   CARRUSEL (galería) — arrastre + inercia + parallax + progreso
+   ============================================================ */
+const carousel = document.querySelector('.carousel');
+if (carousel) {
+  const vp = carousel.querySelector('.carousel__viewport');
+  const slides = Array.from(carousel.querySelectorAll('.slide'));
+  const bar = document.getElementById('carBar');
+  const cur = document.getElementById('carCur');
+  const prevBtn = document.getElementById('carPrev');
+  const nextBtn = document.getElementById('carNext');
+  const maxScroll = () => Math.max(0, vp.scrollWidth - vp.clientWidth);
+
+  const update = () => {
+    const max = maxScroll();
+    const sl = vp.scrollLeft;
+    if (bar) bar.style.width = (max > 0 ? (sl / max) * 100 : 0) + '%';
+    const center = sl + vp.clientWidth / 2;
+    let nearest = 0, nd = Infinity;
+    slides.forEach((s, i) => {
+      const c = s.offsetLeft + s.offsetWidth / 2;
+      const d = center - c;
+      if (Math.abs(d) < nd) { nd = Math.abs(d); nearest = i; }
+      if (!reduceMotion) {
+        const img = s.querySelector('img');
+        if (img) {
+          const rel = Math.max(-1, Math.min(1, d / vp.clientWidth));
+          img.style.transform = 'translateX(' + (-8 + rel * 7) + '%)';
+        }
+      }
+    });
+    if (cur) cur.textContent = String(nearest + 1).padStart(2, '0');
+    if (prevBtn) prevBtn.disabled = sl <= 2;
+    if (nextBtn) nextBtn.disabled = sl >= max - 2;
+  };
+
+  let ticking = false;
+  vp.addEventListener('scroll', () => {
+    if (!ticking) { requestAnimationFrame(() => { update(); ticking = false; }); ticking = true; }
+  }, { passive: true });
+
+  const step = () => (slides[0] ? slides[0].offsetWidth + 24 : vp.clientWidth * 0.6);
+  if (prevBtn) prevBtn.addEventListener('click', () => vp.scrollBy({ left: -step(), behavior: 'smooth' }));
+  if (nextBtn) nextBtn.addEventListener('click', () => vp.scrollBy({ left: step(), behavior: 'smooth' }));
+
+  /* arrastre con inercia (solo ratón) */
+  if (window.matchMedia('(pointer:fine)').matches) {
+    let down = false, startX = 0, startScroll = 0, moved = false, lastX = 0, lastT = 0, vel = 0;
+    vp.addEventListener('pointerdown', e => {
+      down = true; moved = false; startX = e.clientX; startScroll = vp.scrollLeft;
+      lastX = e.clientX; lastT = performance.now(); vel = 0;
+      if (window.gsap) gsap.killTweensOf(vp);
+      vp.classList.add('is-dragging');
+    });
+    window.addEventListener('pointermove', e => {
+      if (!down) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 4) moved = true;
+      vp.scrollLeft = startScroll - dx;
+      const now = performance.now(), dt = now - lastT;
+      if (dt > 0) vel = (e.clientX - lastX) / dt;
+      lastX = e.clientX; lastT = now;
+    });
+    window.addEventListener('pointerup', () => {
+      if (!down) return;
+      down = false; vp.classList.remove('is-dragging');
+      if (window.gsap && Math.abs(vel) > 0.1) {
+        const target = Math.max(0, Math.min(maxScroll(), vp.scrollLeft - vel * 260));
+        gsap.to(vp, { scrollLeft: target, duration: 0.9, ease: 'power3.out' });
+      }
+    });
+    // si hubo arrastre, no abrir el lightbox
+    vp.addEventListener('click', e => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
+  }
+
+  update();
+  window.addEventListener('resize', update);
+  window.addEventListener('load', update);
+}
+
+/* ============================================================
    LIGHTBOX (galería)
    ============================================================ */
 const lightbox = document.getElementById('lightbox');
 if (lightbox) {
-  const items = Array.from(document.querySelectorAll('.g-item'));
+  const items = Array.from(document.querySelectorAll('.slide__btn'));
   const lbImg = document.getElementById('lbImg');
   const lbCap = document.getElementById('lbCap');
   const lbClose = document.getElementById('lbClose');
