@@ -1,9 +1,17 @@
 ---
 import Base from '../layouts/Base.astro';
 
-// Menciones reales en medios (verificadas). Para añadir: medio, titular, fecha, autor, url, img.
+// Menciones reales en medios. Campos: medio, titular, fecha, autor (opcional), url, img.
 // img = foto propia self-hosted que aparece como preview al pasar el cursor.
 const menciones = [
+  {
+    medio: 'El País',
+    titular: 'Pipilacha, el restaurante donde averiguar a qué saben las margaritas',
+    fecha: 'Abril 2026',
+    autor: '',
+    url: 'https://elpais.com/gastronomia/restaurantes/2026-04-30/pipilacha-el-restaurante-donde-averiguar-a-que-saben-las-margaritas.html',
+    img: '/assets/img/dish-1.jpg',
+  },
   {
     medio: 'El Español',
     titular: 'Los chefs de 20 años que cocinan flores: «Ahora damos que hablar»',
@@ -27,6 +35,14 @@ const menciones = [
     autor: 'Ana S. Diéguez',
     url: 'https://beandlifemagazine.com/pipilacha-madrid/',
     img: '/assets/img/dish-2.jpg',
+  },
+  {
+    medio: 'El Mundo Financiero',
+    titular: 'Pipilacha, el original restaurante donde Madrid huele a pétalos y sabe siempre a primavera',
+    fecha: '',
+    autor: '',
+    url: 'https://www.elmundofinanciero.com/noticia/124560/mundo-del-vino---gastro/pipilacha-el-original-restaurante-donde-madrid-huele-a-petalos-y-sabe-siempre-a-primavera.html',
+    img: '/assets/img/g5.jpg',
   },
 ];
 ---
@@ -57,7 +73,7 @@ const menciones = [
           >
             <span class="press-row__index">{String(i + 1).padStart(2, '0')}</span>
             <span class="press-row__main">
-              <span class="press-row__medio">{m.medio} · {m.fecha} · {m.autor}</span>
+              <span class="press-row__medio">{[m.medio, m.fecha, m.autor].filter(Boolean).join(' · ')}</span>
               <span class="press-row__titular">{m.titular}</span>
             </span>
             <span class="press-row__cta" aria-hidden="true">Leer →</span>
