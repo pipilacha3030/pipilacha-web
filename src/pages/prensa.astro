@@ -1,0 +1,91 @@
+---
+import Base from '../layouts/Base.astro';
+
+// Menciones reales en medios (verificadas). Para añadir: medio, titular, fecha, autor, url, img.
+// img = foto propia self-hosted que aparece como preview al pasar el cursor.
+const menciones = [
+  {
+    medio: 'El Español',
+    titular: 'Los chefs de 20 años que cocinan flores: «Ahora damos que hablar»',
+    fecha: 'Noviembre 2025',
+    autor: 'Mar León',
+    url: 'https://www.elespanol.com/madrid/ocio/20251102/noe-david-aran-rodrigo-chefs-anos-cocinan-flores-menu-eur-ahora-damos-hablar/1003743994304_0.html',
+    img: '/assets/img/chef-1.jpg',
+  },
+  {
+    medio: 'Neo2 Magazine',
+    titular: 'Restaurante Pipilacha: cuando las flores son protagonistas',
+    fecha: 'Octubre 2025',
+    autor: 'Miguel A. Palomo',
+    url: 'https://www.neo2.com/restaurante-pipilacha/',
+    img: '/assets/img/esparragos-tagete.jpg',
+  },
+  {
+    medio: 'Beandlife Magazine',
+    titular: 'Pipilacha, cuando las flores se convierten en cocina',
+    fecha: 'Enero 2026',
+    autor: 'Ana S. Diéguez',
+    url: 'https://beandlifemagazine.com/pipilacha-madrid/',
+    img: '/assets/img/dish-2.jpg',
+  },
+];
+---
+
+<Base
+  title="Prensa · Pipilacha"
+  description="Pipilacha en los medios. Lo que la prensa cuenta del restaurante de flores comestibles de Madrid: 15 pases, de jueves a domingo. Información y contacto de prensa."
+>
+
+  <section class="page-header">
+    <p class="eyebrow">Prensa</p>
+    <h1>Pipilacha<br>en los medios</h1>
+    <p>Pipilacha es un restaurante de Madrid que cocina con flores comestibles como ingrediente principal, no como decoración. Abre de jueves a domingo, en dos servicios (14:00 y 21:00), con un menú de degustación de quince pases —«Despertar de las flores»— a 85 € por persona, con maridaje opcional de seis copas (+60 €). Dieciséis plazas por servicio, ocho de ellas en una barra de iroko frente a la cocina. Los chefs fundadores son Arán Rodrigo y Noé David. Dirección: C. del Azulejo, 2, 28028 Madrid.</p>
+  </section>
+
+  <!-- MENCIONES (filas editoriales + preview que sigue al cursor) -->
+  <section class="press" id="press">
+    <ol class="press-list">
+      {menciones.map((m, i) => (
+        <li class="press-row">
+          <a
+            class="press-row__link"
+            href={m.url}
+            target="_blank"
+            rel="noopener"
+            data-img={m.img}
+            aria-label={`${m.titular} — ${m.medio}, ${m.fecha}. Abre en una pestaña nueva.`}
+          >
+            <span class="press-row__index">{String(i + 1).padStart(2, '0')}</span>
+            <span class="press-row__main">
+              <span class="press-row__medio">{m.medio} · {m.fecha} · {m.autor}</span>
+              <span class="press-row__titular">{m.titular}</span>
+            </span>
+            <span class="press-row__cta" aria-hidden="true">Leer →</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+
+    <!-- preview flotante (se monta junto al cursor por JS) -->
+    <div class="press-cursor" aria-hidden="true">
+      {menciones.map((m) => (
+        <img src={m.img} alt="" data-img={m.img} loading="lazy" />
+      ))}
+    </div>
+  </section>
+
+  <!-- KIT DE PRENSA / CONTACTO -->
+  <section class="prensa-kit">
+    <div class="prensa-kit__inner">
+      <p class="eyebrow reveal">Para medios</p>
+      <h2 class="reveal">Kit de prensa</h2>
+      <p class="reveal">Fotografías en alta resolución, dossier e información del restaurante a disposición de periodistas y creadores. Escríbenos y te lo enviamos.</p>
+      <ul class="prensa-kit__contact reveal">
+        <li><span>Instagram</span><a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">@restaurante.pipilacha</a></li>
+        <li><span>Teléfono</span><a href="tel:+34919125998">+34 919 12 59 98</a></li>
+        <li><span>Dirección</span><a href="https://maps.google.com/?q=C.+del+Azulejo+2+28028+Madrid" target="_blank" rel="noopener">C. del Azulejo, 2 · Madrid</a></li>
+      </ul>
+    </div>
+  </section>
+
+</Base>

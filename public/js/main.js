@@ -226,6 +226,36 @@ if (window.gsap) {
         });
       });
     }
+
+    /* ── PRENSA: filas editoriales con reveal de clip-path y preview que sigue al cursor ── */
+    const pressRows = gsap.utils.toArray('.press-row');
+    if (pressRows.length) {
+      pressRows.forEach(row => {
+        gsap.fromTo(row,
+          { opacity: 0, y: 42, clipPath: 'inset(0 0 100% 0)' },
+          { opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)', duration: 1, ease: 'power3.out',
+            scrollTrigger: { trigger: row, start: 'top 88%' } });
+      });
+
+      const pressCursor = document.querySelector('.press-cursor');
+      if (pressCursor && window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+        const imgs = pressCursor.querySelectorAll('img');
+        gsap.set(pressCursor, { autoAlpha: 0, scale: 0.85, xPercent: -50, yPercent: -50 });
+        const xTo = gsap.quickTo(pressCursor, 'x', { duration: 0.5, ease: 'power3' });
+        const yTo = gsap.quickTo(pressCursor, 'y', { duration: 0.5, ease: 'power3' });
+        window.addEventListener('mousemove', e => { xTo(e.clientX); yTo(e.clientY); });
+        document.querySelectorAll('.press-row__link').forEach(link => {
+          const key = link.dataset.img;
+          link.addEventListener('mouseenter', () => {
+            imgs.forEach(im => im.classList.toggle('is-active', im.dataset.img === key));
+            gsap.to(pressCursor, { autoAlpha: 1, scale: 1, duration: 0.45, ease: 'power3.out' });
+          });
+          link.addEventListener('mouseleave', () => {
+            gsap.to(pressCursor, { autoAlpha: 0, scale: 0.85, duration: 0.3, ease: 'power3.out' });
+          });
+        });
+      }
+    }
   } else {
     gsap.set('.reveal', { opacity: 1, y: 0 });
   }

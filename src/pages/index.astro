@@ -26,6 +26,24 @@ import Base from '../layouts/Base.astro';
     <div class="hero__scroll reveal" data-delay="0.9"><span>Desliza</span></div>
   </section>
 
+  <!-- MARQUEE (banda en movimiento bajo el hero) -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <div class="marquee__group">
+        <span>Quince pases</span><span class="marquee__sep">·</span>
+        <span>Dieciséis plazas</span><span class="marquee__sep">·</span>
+        <span>Jueves a domingo · Madrid</span><span class="marquee__sep">·</span>
+        <span>Las flores como ingrediente, no como adorno</span><span class="marquee__sep">·</span>
+      </div>
+      <div class="marquee__group">
+        <span>Quince pases</span><span class="marquee__sep">·</span>
+        <span>Dieciséis plazas</span><span class="marquee__sep">·</span>
+        <span>Jueves a domingo · Madrid</span><span class="marquee__sep">·</span>
+        <span>Las flores como ingrediente, no como adorno</span><span class="marquee__sep">·</span>
+      </div>
+    </div>
+  </div>
+
   <!-- MANIFIESTO (pinned: las palabras se encienden con el scroll) -->
   <section class="manifesto" id="manifesto">
     <img src="/assets/img/petal-oxalis.png" class="manifesto__bloom" alt="" aria-hidden="true" />
@@ -67,13 +85,6 @@ import Base from '../layouts/Base.astro';
       <h2 class="barra__title reveal">Seis metros de iroko.<br>Los chefs al otro lado.</h2>
       <p class="barra__lead reveal">Ocho asientos en primera línea. Arán y Noé cocinan delante de ti y cuentan cada flor según la sirven. Tu plato nace ahí, a un brazo de distancia.</p>
     </div>
-  </section>
-
-  <!-- CIERRE: escasez -->
-  <section class="cta-band">
-    <p class="eyebrow reveal">La barra</p>
-    <h2 class="reveal">Solo 16 plazas por servicio</h2>
-    <p class="cta-band__lead reveal">Ocho de ellas en la barra de iroko, frente a Arán y Noé mientras cocinan. De jueves a domingo, y se llenan con antelación.</p>
   </section>
 
   <!-- RESERVA (tarjeta de datos) -->
