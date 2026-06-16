@@ -135,6 +135,57 @@ if (window.gsap) {
     gsap.ticker.lagSmoothing(0);
   }
 
+  /* ── transición entre páginas: cortina de marca (cols + libélula) ── */
+  const pt = document.getElementById('pageTransition');
+  if (pt) {
+    const ptCols = gsap.utils.toArray('#pageTransition .page-transition__col');
+    const ptMark = pt.querySelector('.page-transition__mark');
+    const hidePT = () => { pt.style.visibility = 'hidden'; pt.style.pointerEvents = 'none'; };
+
+    // ENTRADA: la cortina cubre al cargar y se retira hacia arriba
+    const revealPage = () => {
+      if (reduceMotion) { hidePT(); return; }
+      pt.style.visibility = 'visible';
+      gsap.set(ptCols, { yPercent: 0 });
+      gsap.set(ptMark, { xPercent: -50, yPercent: -50, autoAlpha: 1, scale: 1 });
+      gsap.timeline({ onComplete: hidePT })
+        .to(ptMark, { autoAlpha: 0, scale: 0.92, duration: 0.3, ease: 'power2.out' }, 0)
+        .to(ptCols, { yPercent: -100, duration: 0.7, ease: 'power4.inOut', stagger: 0.06 }, 0.05);
+    };
+
+    // SALIDA: la cortina sube a cubrir y luego navega
+    const coverPage = (href) => {
+      pt.style.visibility = 'visible';
+      pt.style.pointerEvents = 'auto';
+      gsap.set(ptCols, { yPercent: 100 });
+      gsap.set(ptMark, { xPercent: -50, yPercent: -50, autoAlpha: 0, scale: 0.92 });
+      gsap.timeline({ onComplete: () => { window.location.href = href; } })
+        .to(ptCols, { yPercent: 0, duration: 0.55, ease: 'power4.inOut', stagger: 0.05 }, 0)
+        .to(ptMark, { autoAlpha: 1, scale: 1, duration: 0.35, ease: 'power2.out' }, 0.2);
+    };
+
+    revealPage();
+    // volver con "atrás" (bfcache) restaura la cortina cubierta → revelar
+    window.addEventListener('pageshow', e => { if (e.persisted) revealPage(); });
+
+    // interceptar enlaces internos para encadenar salida → entrada
+    if (!reduceMotion) {
+      document.addEventListener('click', e => {
+        const a = e.target.closest('a');
+        if (!a) return;
+        const href = a.getAttribute('href');
+        if (!href || a.target === '_blank' || a.hasAttribute('download')) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        if (!href.startsWith('/') || href.startsWith('//') || href.startsWith('#')) return;
+        const url = new URL(href, location.href);
+        if (url.pathname === location.pathname) return; // misma página: no cubrir
+        e.preventDefault();
+        if (lenis) lenis.stop();
+        coverPage(url.href);
+      });
+    }
+  }
+
   // si el visitante ya entró en esta sesión, no hay portada: anima el hero ya
   if (!introNeedsGate) playHero();
 
@@ -240,7 +291,7 @@ if (window.gsap) {
       const pressCursor = document.querySelector('.press-cursor');
       if (pressCursor && window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
         const imgs = pressCursor.querySelectorAll('img');
-        gsap.set(pressCursor, { autoAlpha: 0, scale: 0.85, xPercent: -50, yPercent: -50 });
+        gsap.set(pressCursor, { autoAlpha: 0, scale: 0.8, rotation: -5, xPercent: -50, yPercent: -50 });
         const xTo = gsap.quickTo(pressCursor, 'x', { duration: 0.5, ease: 'power3' });
         const yTo = gsap.quickTo(pressCursor, 'y', { duration: 0.5, ease: 'power3' });
         window.addEventListener('mousemove', e => { xTo(e.clientX); yTo(e.clientY); });
@@ -248,10 +299,10 @@ if (window.gsap) {
           const key = link.dataset.img;
           link.addEventListener('mouseenter', () => {
             imgs.forEach(im => im.classList.toggle('is-active', im.dataset.img === key));
-            gsap.to(pressCursor, { autoAlpha: 1, scale: 1, duration: 0.45, ease: 'power3.out' });
+            gsap.to(pressCursor, { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.5, ease: 'back.out(2)' });
           });
           link.addEventListener('mouseleave', () => {
-            gsap.to(pressCursor, { autoAlpha: 0, scale: 0.85, duration: 0.3, ease: 'power3.out' });
+            gsap.to(pressCursor, { autoAlpha: 0, scale: 0.8, rotation: -5, duration: 0.3, ease: 'power3.out' });
           });
         });
       }
