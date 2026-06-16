@@ -6,7 +6,8 @@
 :root{
   --moss:      #31331F;   /* verde oscuro */
   --olive:     #645D3B;   /* oliva */
-  --terracotta:#C73B6B;   /* acento (rosa magenta) */
+  --terracotta:#645D3B;   /* acento sobre fondo CLARO (verde olivo de marca; antes rosa) */
+  --accent-soft:#B0A77F;  /* acento sobre fondo OSCURO (olivo aclarado, contraste AA sobre moss) */
   --cream:     #F4EFE6;   /* fondo cálido */
   --cloud:     #FBFAF5;   /* casi blanco */
   --ink:       #2A2A22;   /* texto sobre claro */
@@ -58,27 +59,31 @@ html.lenis,html.lenis body{height:auto}
   transition:background .45s var(--ease), color .4s,
              box-shadow .5s var(--ease), letter-spacing .5s var(--ease);
 }
+/* botón principal sobre fondo CLARO: relleno moss profundo (~14:1), hover olivo */
 .btn--solid{
-  background:var(--terracotta);color:var(--cream);
-  box-shadow:0 10px 22px -12px rgba(199,59,107,.7);
+  background:var(--moss);color:var(--cream);
+  box-shadow:0 10px 22px -12px rgba(49,51,31,.55);
 }
 .btn--solid:hover{
-  background:var(--moss);letter-spacing:.16em;
+  background:var(--olive);letter-spacing:.16em;
   box-shadow:0 18px 34px -14px rgba(49,51,31,.6);
 }
+/* botón sobre fondo OSCURO (hero con velo, banda CTA moss): relleno claro para que destaque */
+.hero .btn--solid,.cta-band .btn--solid{background:var(--cream);color:var(--moss);box-shadow:0 14px 30px -16px rgba(0,0,0,.55)}
+.hero .btn--solid:hover,.cta-band .btn--solid:hover{background:var(--accent-soft);color:var(--moss)}
 .btn--lg{padding:1.2em 3em;font-size:.9rem}
 
 /* ---------- botón flotante de reserva (aparece tras el primer scroll) ---------- */
 .reserva-fab{
   position:fixed;right:clamp(1rem,4vw,2rem);bottom:clamp(1rem,4vw,2rem);z-index:90;
   font-family:var(--sans);font-weight:500;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;
-  background:var(--terracotta);color:var(--cream);padding:1em 1.8em;border-radius:999px;
-  box-shadow:0 14px 30px -10px rgba(199,59,107,.75);
+  background:var(--moss);color:var(--cream);padding:1em 1.8em;border-radius:999px;
+  box-shadow:0 14px 30px -10px rgba(49,51,31,.6);
   opacity:0;transform:translateY(20px) scale(.96);pointer-events:none;
   transition:opacity .5s var(--ease), transform .5s var(--ease), background .4s;
 }
 .reserva-fab.is-visible{opacity:1;transform:none;pointer-events:auto}
-.reserva-fab:hover{background:var(--moss)}
+.reserva-fab:hover{background:var(--olive)}
 body.intro-open .reserva-fab{opacity:0!important;pointer-events:none!important}
 @media (min-width:901px){ .reserva-fab{display:none} }
 
@@ -95,7 +100,7 @@ body.intro-open{overflow:hidden}
 .intro::before{
   content:"";position:absolute;inset:-25%;z-index:0;pointer-events:none;
   background:
-    radial-gradient(38% 48% at 28% 30%, rgba(199,59,107,.20), transparent 70%),
+    radial-gradient(38% 48% at 28% 30%, rgba(100,93,59,.20), transparent 70%),
     radial-gradient(42% 52% at 74% 72%, rgba(100,93,59,.26), transparent 72%);
   filter:blur(26px);
   animation:gardenBreathe 18s ease-in-out infinite;
@@ -197,7 +202,7 @@ body.intro-open{overflow:hidden}
 .nav__cta{
   border:1px solid currentColor;padding:.6em 1.4em;border-radius:var(--radius-btn);
 }
-.nav.scrolled .nav__cta{background:var(--terracotta);color:var(--cream)!important;border-color:var(--terracotta)}
+.nav.scrolled .nav__cta{background:var(--moss);color:var(--cream)!important;border-color:var(--moss)}
 .nav__burger{display:none;flex-direction:column;gap:6px;background:none;border:0;cursor:pointer}
 .nav__burger span{width:26px;height:2px;background:var(--cream)}
 .nav.scrolled .nav__burger span{background:var(--moss)}
@@ -208,7 +213,7 @@ body.intro-open{overflow:hidden}
 .nav--solid .nav__logo-img--light{opacity:0}
 .nav--solid .nav__logo-img--dark{opacity:1}
 .nav--solid .nav__links a{color:var(--moss)}
-.nav--solid .nav__cta{background:var(--terracotta);color:var(--cream)!important;border-color:var(--terracotta)}
+.nav--solid .nav__cta{background:var(--moss);color:var(--cream)!important;border-color:var(--moss)}
 .nav__cta{transition:background .4s var(--ease), color .4s var(--ease), border-color .4s var(--ease), transform .4s var(--ease)}
 .nav.scrolled .nav__cta:hover,.nav--solid .nav__cta:hover{background:var(--moss);border-color:var(--moss);opacity:1}
 .nav--solid .nav__burger span{background:var(--moss)}
@@ -331,7 +336,7 @@ body.intro-open{overflow:hidden}
 .menu{padding:clamp(4rem,10vh,9rem) 0;background:var(--moss);color:var(--cream);overflow:hidden}
 .menu__intro{text-align:center;max-width:720px;margin:0 auto clamp(3rem,7vh,6rem);padding:0 var(--gutter)}
 .menu__intro h2{font-size:clamp(2.2rem,5vw,4rem);margin:.3rem 0 1.2rem}
-.menu__intro .eyebrow{color:var(--terracotta)}
+.menu__intro .eyebrow{color:var(--accent-soft)}
 .menu__intro p{opacity:.8;font-size:1.05rem}
 .course{
   display:grid;grid-template-columns:1.15fr 1fr;align-items:center;gap:clamp(2rem,5vw,5rem);
@@ -341,7 +346,7 @@ body.intro-open{overflow:hidden}
 .course--reverse>*{direction:ltr}
 .course__media{height:min(72vh,620px);overflow:hidden;border-radius:var(--radius)}
 .course__media img{will-change:transform;transform:scale(1.12)}
-.course__num{font-family:var(--serif);font-size:1rem;color:var(--terracotta);letter-spacing:.3em}
+.course__num{font-family:var(--serif);font-size:1rem;color:var(--accent-soft);letter-spacing:.3em}
 .course__text h3{font-size:clamp(2rem,4.5vw,3.6rem);margin:.6rem 0 1.2rem}
 .course__text p{opacity:.82;max-width:42ch;font-size:1.08rem}
 
@@ -349,18 +354,18 @@ body.intro-open{overflow:hidden}
 .pases{list-style:none;max-width:880px;margin:0 auto;padding:0 var(--gutter)}
 .pase{display:flex;align-items:baseline;gap:clamp(1rem,3vw,2.2rem);padding:clamp(1.1rem,2.6vh,1.7rem) 0;border-bottom:1px solid rgba(244,239,230,.16)}
 .pase:first-child{border-top:1px solid rgba(244,239,230,.16)}
-.pase__n{font-family:var(--serif);color:var(--terracotta);font-size:1rem;letter-spacing:.18em;min-width:2.6em;flex:none}
+.pase__n{font-family:var(--serif);color:var(--accent-soft);font-size:1rem;letter-spacing:.18em;min-width:2.6em;flex:none}
 .pase__body{display:flex;flex-direction:column;gap:.35rem}
 .pase__name{font-family:var(--serif);font-size:clamp(1.3rem,3.2vw,2.3rem);color:var(--cream);line-height:1.12}
 .pase__hook{font-family:var(--sans);font-weight:300;font-size:clamp(.86rem,1.3vw,1rem);color:rgba(244,239,230,.62);max-width:48ch;line-height:1.5}
 
 /* pase sorpresa: nada de asteriscos. Se guarda, se intuye, se difumina */
 .pase--secret .pase__name--secret{
-  position:relative;color:var(--terracotta);font-style:italic;
+  position:relative;color:var(--accent-soft);font-style:italic;
 }
 .pase--secret .pase__name--secret::after{
   content:"";position:absolute;left:0;right:0;bottom:.12em;height:.5em;
-  background:linear-gradient(90deg,transparent,rgba(199,59,107,.18),transparent);
+  background:linear-gradient(90deg,transparent,rgba(100,93,59,.18),transparent);
   filter:blur(6px);pointer-events:none;
 }
 .pase--secret .pase__hook{color:rgba(244,239,230,.5);font-style:italic}
@@ -379,7 +384,7 @@ body.intro-open{overflow:hidden}
   display:flex;flex-direction:column;
   transition:transform .55s var(--ease), box-shadow .55s var(--ease), border-color .55s var(--ease);
 }
-.maridaje__card:hover{transform:translateY(-5px);box-shadow:0 34px 64px -36px rgba(49,51,31,.55);border-color:rgba(199,59,107,.35)}
+.maridaje__card:hover{transform:translateY(-5px);box-shadow:0 34px 64px -36px rgba(49,51,31,.55);border-color:rgba(100,93,59,.35)}
 .maridaje__count{font-family:var(--serif);font-size:.92rem;letter-spacing:.22em;text-transform:uppercase;color:var(--terracotta)}
 .maridaje__card h3{font-family:var(--serif);font-size:clamp(1.7rem,3.2vw,2.4rem);color:var(--moss);margin:.55rem 0 .8rem}
 .maridaje__card p{color:#55554a;font-size:1rem;max-width:36ch;margin-bottom:1.8rem}
@@ -430,7 +435,7 @@ body.intro-open{overflow:hidden}
 .lightbox__nav{top:50%;transform:translateY(-50%);font-size:3.2rem;padding:0 1rem}
 .lightbox__prev{left:clamp(.2rem,2vw,1.5rem)}
 .lightbox__next{right:clamp(.2rem,2vw,1.5rem)}
-.lightbox__close:focus-visible,.lightbox__nav:focus-visible{outline:2px solid var(--terracotta);outline-offset:4px;opacity:1}
+.lightbox__close:focus-visible,.lightbox__nav:focus-visible{outline:2px solid var(--accent-soft);outline-offset:4px;opacity:1}
 
 /* ---------- reserva ---------- */
 .reserva{position:relative;padding:clamp(5rem,12vh,11rem) var(--gutter);display:flex;justify-content:center;align-items:center;overflow:hidden}
@@ -494,7 +499,7 @@ body.intro-open{overflow:hidden}
   background:var(--moss);color:var(--cream);text-align:center;
   padding:clamp(4rem,11vh,8rem) var(--gutter);
 }
-.cta-band .eyebrow{color:var(--terracotta)}
+.cta-band .eyebrow{color:var(--accent-soft)}
 .cta-band h2{font-size:clamp(2rem,4.5vw,3.4rem);color:var(--cream);margin:.2rem auto 0;max-width:18ch}
 .cta-band__lead{max-width:46ch;margin:1.2rem auto 2.2rem;opacity:.82}
 
