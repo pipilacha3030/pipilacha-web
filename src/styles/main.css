@@ -438,26 +438,52 @@ body.intro-open{overflow:hidden}
 @media(min-width:901px){ .gcard{width:clamp(360px,30vw,440px)} }
 @media(max-width:560px){ .gcard{width:min(80vw,380px);height:60vh} }
 
-/* ---------- maridaje (artefacto propio) ---------- */
-.maridaje{padding:clamp(4.5rem,12vh,9rem) var(--gutter)}
-.maridaje__inner{max-width:1000px;margin:0 auto}
+/* respiro: las tarjetas suben/bajan de escala desfasadas → flotan */
+@keyframes cardBreathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.025)}}
+.gcard{animation:cardBreathe 6s ease-in-out infinite;will-change:transform}
+.carousel--menu .slide:nth-child(even) .gcard{animation-delay:-3s}
+.carousel--menu .slide:nth-child(3n) .gcard{animation-delay:-4.4s}
+.carousel--menu .slide:nth-child(3n+2) .gcard{animation-delay:-1.7s}
+
+/* isotipo de la libélula en la tarjeta (marca de agua sutil) */
+.gcard__mark{
+  position:absolute;z-index:3;top:clamp(1.1rem,2.2vw,1.7rem);right:clamp(1.1rem,2.2vw,1.7rem);
+  width:clamp(26px,3.2vw,42px);height:auto;opacity:.32;pointer-events:none;
+  filter:brightness(0) saturate(100%);
+}
+.gcard--secret .gcard__mark{filter:none;opacity:.5}
+
+/* ---------- maridaje (mismas tarjetas de cristal + respiro) ---------- */
+.maridaje{position:relative;overflow:hidden;padding:clamp(4.5rem,12vh,9rem) var(--gutter)}
+.maridaje .menu-blooms{z-index:0}
+.maridaje__inner{position:relative;z-index:1;max-width:1000px;margin:0 auto}
 .maridaje__inner .eyebrow{color:var(--terracotta)}
 .maridaje h2{font-size:clamp(2.2rem,5vw,3.8rem);color:var(--moss);margin:.2rem 0 1.2rem}
-.maridaje__intro{max-width:62ch;color:#4a4a3e;font-size:clamp(1rem,1.5vw,1.18rem)}
-.maridaje__cards{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1rem,2vw,1.4rem);margin-top:clamp(2.4rem,5vh,3.6rem)}
+.maridaje__intro{max-width:62ch;color:#45453a;font-size:clamp(1rem,1.5vw,1.18rem)}
+.maridaje__cards{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1rem,2vw,1.6rem);margin-top:clamp(2.4rem,5vh,3.6rem)}
 .maridaje__card{
-  position:relative;background:var(--cloud);border:1px solid rgba(49,51,31,.14);
-  border-radius:var(--radius);padding:clamp(1.8rem,4vw,3rem);
-  display:flex;flex-direction:column;
-  transition:transform .55s var(--ease), box-shadow .55s var(--ease), border-color .55s var(--ease);
+  position:relative;overflow:hidden;isolation:isolate;border-radius:var(--radius);
+  min-height:clamp(280px,40vh,360px);
+  animation:cardBreathe 7s ease-in-out infinite;will-change:transform;
 }
-.maridaje__card:hover{transform:translateY(-5px);box-shadow:0 34px 64px -36px rgba(49,51,31,.55);border-color:rgba(100,93,59,.35)}
+.maridaje__card:nth-child(2){animation-delay:-3.5s}
+.maridaje__glass{
+  position:relative;z-index:1;height:100%;display:flex;flex-direction:column;
+  padding:clamp(1.8rem,4vw,3rem);border-radius:var(--radius);
+  background:rgba(251,250,245,.4);
+  -webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3);
+  border:1px solid rgba(255,255,255,.5);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6), inset 0 -70px 60px -40px rgba(251,250,245,.78), 0 30px 60px -34px rgba(49,51,31,.4);
+}
 .maridaje__count{font-family:var(--serif);font-size:.92rem;letter-spacing:.22em;text-transform:uppercase;color:var(--terracotta)}
 .maridaje__card h3{font-family:var(--serif);font-size:clamp(1.7rem,3.2vw,2.4rem);color:var(--moss);margin:.55rem 0 .8rem}
-.maridaje__card p{color:#55554a;font-size:1rem;max-width:36ch;margin-bottom:1.8rem}
+.maridaje__card p{color:#3c3b30;font-size:1rem;max-width:36ch;margin-bottom:1.8rem}
 .maridaje__price{
   margin-top:auto;font-family:var(--sans);font-weight:500;letter-spacing:.05em;color:var(--moss);
-  border-top:1px solid rgba(49,51,31,.14);padding-top:1.1rem;
+  border-top:1px solid rgba(49,51,31,.18);padding-top:1.1rem;
+}
+@supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){
+  .maridaje__glass{background:rgba(251,250,245,.9)}
 }
 
 /* ---------- galería (retícula asimétrica, cinética) ---------- */
@@ -518,7 +544,7 @@ body.intro-open{overflow:hidden}
 .lightbox{position:fixed;inset:0;z-index:1200;display:none;align-items:center;justify-content:center;padding:clamp(1rem,4vw,3rem);background:rgba(16,16,11,.992);opacity:0;transition:opacity .4s var(--ease)}
 .lightbox.is-open{display:flex;opacity:1}
 .lightbox__stage{margin:0;max-width:min(1100px,92vw);display:flex;flex-direction:column;align-items:center;gap:1rem}
-.lightbox__stage img{width:auto;height:auto;max-width:100%;max-height:80vh;object-fit:contain;border-radius:var(--radius-sm)}
+.lightbox__stage img{width:auto;height:auto;max-width:100%;max-height:80vh;object-fit:contain;clip-path:inset(2.5% round var(--radius-sm))}
 .lightbox__cap{color:var(--cream);font-size:.9rem;letter-spacing:.04em;opacity:.85;text-align:center}
 .lightbox__close,.lightbox__nav{position:absolute;background:none;border:0;color:var(--cream);cursor:pointer;line-height:1;opacity:.8;transition:opacity .3s var(--ease)}
 .lightbox__close:hover,.lightbox__nav:hover{opacity:1}
