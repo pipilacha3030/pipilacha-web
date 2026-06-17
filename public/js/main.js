@@ -394,6 +394,60 @@ if (carousel) {
 }
 
 /* ============================================================
+   MENÚ: el recorrido (scroll horizontal, pin en desktop)
+   ============================================================ */
+const journey = document.querySelector('.journey');
+if (journey) {
+  const viewport = document.getElementById('journeyViewport');
+  const track = document.getElementById('journeyTrack');
+  const panels = Array.from(journey.querySelectorAll('.jpanel'));
+  const jbar = document.getElementById('journeyBar');
+  const jcur = document.getElementById('journeyCur');
+  const desktop = window.matchMedia('(min-width:901px)').matches;
+  const setCount = n => { if (jcur) jcur.textContent = String(Math.min(panels.length, Math.max(1, n))).padStart(2, '0'); };
+
+  if (window.gsap && desktop && !reduceMotion) {
+    journey.classList.add('is-pinned');
+    const amount = () => Math.max(0, track.scrollWidth - window.innerWidth);
+    const tween = gsap.to(track, {
+      x: () => -amount(), ease: 'none',
+      scrollTrigger: {
+        trigger: journey, start: 'top top', end: () => '+=' + amount(),
+        pin: true, scrub: 1, invalidateOnRefresh: true,
+        onUpdate: self => {
+          if (jbar) jbar.style.width = (6 + self.progress * 94) + '%';
+          setCount(Math.round(self.progress * (panels.length - 1)) + 1);
+        }
+      }
+    });
+    panels.forEach(p => {
+      const petal = p.querySelector('.jpanel__petal');
+      if (petal) gsap.fromTo(petal,
+        { yPercent: -64, rotate: -16 },
+        { yPercent: -36, rotate: 16, ease: 'none',
+          scrollTrigger: { trigger: p, containerAnimation: tween, start: 'left right', end: 'right left', scrub: true } });
+      gsap.fromTo(p.querySelector('.jpanel__inner'),
+        { opacity: 0.45, y: 26 },
+        { opacity: 1, y: 0, ease: 'power2.out',
+          scrollTrigger: { trigger: p, containerAnimation: tween, start: 'left 82%', end: 'left 45%', scrub: true } });
+    });
+  } else if (viewport) {
+    const upd = () => {
+      const max = viewport.scrollWidth - viewport.clientWidth;
+      const sl = viewport.scrollLeft;
+      if (jbar) jbar.style.width = (max > 0 ? 6 + (sl / max) * 94 : 6) + '%';
+      const center = sl + viewport.clientWidth / 2;
+      let nearest = 0, nd = Infinity;
+      panels.forEach((p, i) => { const c = p.offsetLeft + p.offsetWidth / 2; const d = Math.abs(center - c); if (d < nd) { nd = d; nearest = i; } });
+      setCount(nearest + 1);
+    };
+    let t = false;
+    viewport.addEventListener('scroll', () => { if (!t) { requestAnimationFrame(() => { upd(); t = false; }); t = true; } }, { passive: true });
+    upd();
+  }
+}
+
+/* ============================================================
    LIGHTBOX (galería)
    ============================================================ */
 const lightbox = document.getElementById('lightbox');

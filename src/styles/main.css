@@ -332,12 +332,27 @@ body.intro-open{overflow:hidden}
 .showcooking__text p:not(.eyebrow){margin-bottom:1.1rem;max-width:46ch;color:#4a4a3e}
 .showcooking__text .btn{margin-top:1.4rem}
 
-/* ---------- menú ---------- */
-.menu{padding:clamp(4rem,10vh,9rem) 0;background:var(--moss);color:var(--cream);overflow:hidden}
-.menu__intro{text-align:center;max-width:720px;margin:0 auto clamp(3rem,7vh,6rem);padding:0 var(--gutter)}
-.menu__intro h2{font-size:clamp(2.2rem,5vw,4rem);margin:.3rem 0 1.2rem}
-.menu__intro .eyebrow{color:var(--accent-soft)}
-.menu__intro p{opacity:.8;font-size:1.05rem}
+/* ---------- menú: intro (el amanecer) ---------- */
+.menu-intro{
+  position:relative;min-height:clamp(78vh,92svh,100svh);display:flex;align-items:center;
+  padding:clamp(6rem,14vh,9rem) var(--gutter) clamp(3rem,8vh,5rem);overflow:hidden;
+}
+.menu-intro__inner{position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;width:100%}
+.menu-intro .eyebrow{color:var(--terracotta)}
+.menu-intro__title{
+  font-family:var(--serif);font-size:clamp(3rem,11vw,7.5rem);line-height:.92;color:var(--moss);
+  letter-spacing:-0.015em;margin:.4rem 0 1.6rem;text-wrap:balance;
+}
+.menu-intro__lead{max-width:60ch;color:#45453a;font-size:clamp(1.05rem,1.6vw,1.35rem);line-height:1.6;text-wrap:pretty}
+.menu-intro__cue{
+  margin-top:clamp(2rem,5vh,3.5rem);font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--olive);display:flex;align-items:center;gap:.7rem;
+}
+.menu-intro__cue span{display:inline-block;animation:cueNudge 1.8s var(--ease) infinite}
+@keyframes cueNudge{0%,100%{transform:translateX(0)}50%{transform:translateX(9px)}}
+.menu-intro__petal{position:absolute;z-index:1;width:clamp(150px,24vw,360px);height:auto;opacity:.5;pointer-events:none;will-change:transform}
+.menu-intro__petal--1{top:9%;right:5%;animation:float 9s ease-in-out infinite}
+.menu-intro__petal--2{bottom:7%;left:4%;width:clamp(110px,16vw,230px);opacity:.4;animation:float2 11s ease-in-out infinite}
 .course{
   display:grid;grid-template-columns:1.15fr 1fr;align-items:center;gap:clamp(2rem,5vw,5rem);
   max-width:var(--maxw);margin:0 auto;padding:clamp(2rem,5vh,4.5rem) var(--gutter);
@@ -350,26 +365,78 @@ body.intro-open{overflow:hidden}
 .course__text h3{font-size:clamp(2rem,4.5vw,3.6rem);margin:.6rem 0 1.2rem}
 .course__text p{opacity:.82;max-width:42ch;font-size:1.08rem}
 
-/* lista de pases (nombre + pista) */
-.pases{list-style:none;max-width:880px;margin:0 auto;padding:0 var(--gutter)}
-.pase{display:flex;align-items:baseline;gap:clamp(1rem,3vw,2.2rem);padding:clamp(1.1rem,2.6vh,1.7rem) 0;border-bottom:1px solid rgba(244,239,230,.16)}
-.pase:first-child{border-top:1px solid rgba(244,239,230,.16)}
-.pase__n{font-family:var(--serif);color:var(--accent-soft);font-size:1rem;letter-spacing:.18em;min-width:2.6em;flex:none}
-.pase__body{display:flex;flex-direction:column;gap:.35rem}
-.pase__name{font-family:var(--serif);font-size:clamp(1.3rem,3.2vw,2.3rem);color:var(--cream);line-height:1.12}
-.pase__hook{font-family:var(--sans);font-weight:300;font-size:clamp(.86rem,1.3vw,1rem);color:rgba(244,239,230,.62);max-width:48ch;line-height:1.5}
+/* ---------- menú: el recorrido (tarjetas de cristal en carrusel) ---------- */
+.carousel--menu{
+  position:relative;overflow:hidden;
+  /* mismo crema que la intro y el maridaje: sin corte entre secciones */
+  background:var(--cream);
+  padding-top:clamp(1.5rem,4vh,3rem);
+}
+/* flores en blur flotando por detrás; se funden arriba y abajo (sin borde de sección) */
+.menu-blooms{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 14%,#000 86%,transparent 100%);
+  mask-image:linear-gradient(180deg,transparent 0%,#000 14%,#000 86%,transparent 100%);
+}
+.menu-bloom{position:absolute;height:auto;filter:blur(13px) saturate(1.15);will-change:transform}
+.menu-bloom--1{top:4%;left:3%;width:clamp(220px,30vw,460px);opacity:.6;animation:float 14s ease-in-out infinite}
+.menu-bloom--2{bottom:8%;left:24%;width:clamp(160px,20vw,320px);opacity:.5;animation:float2 17s ease-in-out infinite}
+.menu-bloom--3{top:11%;right:7%;width:clamp(240px,32vw,500px);opacity:.55;animation:float2 15s ease-in-out infinite}
+.menu-bloom--4{bottom:12%;right:25%;width:clamp(150px,18vw,300px);opacity:.5;animation:float 19s ease-in-out infinite}
+.menu-bloom--5{top:42%;left:47%;width:clamp(180px,22vw,360px);opacity:.4;animation:float 16s ease-in-out infinite}
+/* ruido sutil sobre las flores (apenas perceptible) */
+.menu-blooms::after{
+  content:'';position:absolute;inset:0;opacity:.2;mix-blend-mode:soft-light;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.carousel--menu .carousel__viewport{position:relative;z-index:1}
+.carousel--menu .carousel__track{padding-top:clamp(2rem,6vh,5rem);padding-bottom:clamp(1.5rem,4vh,3rem);align-items:center}
+.carousel--menu .slide{display:flex;align-items:center}
+.carousel--menu .carousel__ui{position:relative;z-index:2}
 
-/* pase sorpresa: nada de asteriscos. Se guarda, se intuye, se difumina */
-.pase--secret .pase__name--secret{
-  position:relative;color:var(--accent-soft);font-style:italic;
+/* tarjeta de cristal con la flor detrás */
+.gcard{
+  position:relative;width:clamp(280px,33vw,440px);height:clamp(430px,64vh,620px);
+  border-radius:var(--radius);overflow:hidden;isolation:isolate;
 }
-.pase--secret .pase__name--secret::after{
-  content:"";position:absolute;left:0;right:0;bottom:.12em;height:.5em;
-  background:linear-gradient(90deg,transparent,rgba(100,93,59,.18),transparent);
-  filter:blur(6px);pointer-events:none;
+.gcard__flower{
+  position:absolute;inset:-12%;z-index:0;background-size:cover;background-position:center;
+  background-repeat:no-repeat;opacity:.92;will-change:transform;animation:bloomDrift 18s ease-in-out infinite;
 }
-.pase--secret .pase__hook{color:rgba(244,239,230,.5);font-style:italic}
-.pase--secret .pase__n{color:var(--cream);opacity:.7}
+@keyframes bloomDrift{0%,100%{transform:scale(1) translate(0,0)}50%{transform:scale(1.08) translate(2%,-2%)}}
+/* el cristal esmerilado que va por delante de la flor */
+.gcard__glass{
+  position:absolute;inset:0;z-index:1;display:flex;align-items:flex-end;border-radius:var(--radius);
+  background:rgba(251,250,245,.34);
+  -webkit-backdrop-filter:blur(20px) saturate(1.4);backdrop-filter:blur(20px) saturate(1.4);
+  border:1px solid rgba(255,255,255,.55);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.65), inset 0 -70px 60px -40px rgba(251,250,245,.82), 0 30px 60px -34px rgba(49,51,31,.45);
+}
+.gcard__glass::after{
+  content:'';position:absolute;inset:0;pointer-events:none;opacity:.08;mix-blend-mode:overlay;border-radius:inherit;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.gcard__inner{position:relative;z-index:2;width:100%;padding:clamp(1.6rem,3vw,2.4rem)}
+.gcard__num{display:block;font-family:var(--serif);font-size:clamp(2.6rem,6vw,4.6rem);line-height:1;color:rgba(100,93,59,.7);margin-bottom:.6rem}
+.gcard__name{font-family:var(--serif);font-size:clamp(1.7rem,3.4vw,2.6rem);line-height:1.06;color:var(--moss);text-wrap:balance;margin-bottom:.7rem}
+.gcard__hook{font-family:var(--sans);font-weight:400;font-size:clamp(.95rem,1.4vw,1.12rem);line-height:1.5;color:#3a392f;max-width:34ch}
+/* pase sorpresa: cristal sellado, más oscuro */
+.gcard--secret .gcard__glass{background:rgba(49,51,31,.34);border-color:rgba(255,255,255,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.25), 0 30px 60px -34px rgba(49,51,31,.5)}
+.gcard--secret .gcard__num{color:rgba(244,239,230,.5)}
+.gcard--secret .gcard__name{color:var(--cream);font-style:italic}
+.gcard--secret .gcard__hook{color:rgba(244,239,230,.82)}
+.gcard--secret .gcard__seal{
+  display:inline-block;font-family:var(--sans);font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--moss);background:var(--accent-soft);padding:.5em 1.1em;border-radius:999px;margin-bottom:1rem;
+}
+
+/* sin soporte de backdrop-filter: cristal más opaco para que el texto se lea */
+@supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){
+  .gcard__glass{background:rgba(251,250,245,.88)}
+  .gcard--secret .gcard__glass{background:rgba(49,51,31,.84)}
+}
+@media(min-width:901px){ .gcard{width:clamp(360px,30vw,440px)} }
+@media(max-width:560px){ .gcard{width:min(80vw,380px);height:60vh} }
 
 /* ---------- maridaje (artefacto propio) ---------- */
 .maridaje{padding:clamp(4.5rem,12vh,9rem) var(--gutter)}
@@ -415,7 +482,7 @@ body.intro-open{overflow:hidden}
 .slide__btn:hover{transform:translateY(-10px);box-shadow:0 30px 60px -28px rgba(49,51,31,.55)}
 .slide__media{position:absolute;inset:0;overflow:hidden;will-change:transform;transition:transform .9s var(--ease)}
 .slide__btn:hover .slide__media{transform:scale(1.08)}
-.slide__media img{width:118%;height:100%;object-fit:cover;transform:translateX(-8%);will-change:transform}
+.slide__media img{width:132%;height:100%;object-fit:cover;transform:translateX(-12%);will-change:transform}
 .slide__btn::after{content:'';position:absolute;inset:0;background:rgba(20,20,12,0);transition:background .5s var(--ease)}
 .slide__btn:hover::after{background:rgba(20,20,12,.16)}
 .slide__cap{
@@ -448,7 +515,7 @@ body.intro-open{overflow:hidden}
 .carousel__arrows button:disabled:hover{background:transparent;color:var(--moss);border-color:rgba(49,51,31,.28)}
 
 /* ---------- lightbox ---------- */
-.lightbox{position:fixed;inset:0;z-index:1200;display:none;align-items:center;justify-content:center;padding:clamp(1rem,4vw,3rem);background:rgba(20,20,12,.94);opacity:0;transition:opacity .4s var(--ease)}
+.lightbox{position:fixed;inset:0;z-index:1200;display:none;align-items:center;justify-content:center;padding:clamp(1rem,4vw,3rem);background:rgba(16,16,11,.992);opacity:0;transition:opacity .4s var(--ease)}
 .lightbox.is-open{display:flex;opacity:1}
 .lightbox__stage{margin:0;max-width:min(1100px,92vw);display:flex;flex-direction:column;align-items:center;gap:1rem}
 .lightbox__stage img{width:auto;height:auto;max-width:100%;max-height:80vh;object-fit:contain;border-radius:var(--radius-sm)}

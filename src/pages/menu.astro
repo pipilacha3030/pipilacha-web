@@ -21,6 +21,11 @@ const pases = [
   { name: 'Torrija de mandarina', hook: 'Flambeada, con un gel picante de mandarina.' },
   { name: 'Fresas con nata madrileña', hook: 'Fresón de Aranjuez rallado al momento.' },
 ];
+
+const petals = [
+  'petal-peony.png', 'petal-borraja.png', 'petal-oxalis.png',
+  'petal-roja.png', 'petal-sauco.png', 'petal-fig.png',
+];
 ---
 
 <Base
@@ -28,35 +33,69 @@ const pases = [
   description="Despertar de las flores: el menú de degustación de Pipilacha. Quince pases con las flores como ingrediente. Madrid, 85 € por persona."
 >
 
-  <section class="page-header">
-    <p class="eyebrow">Degustación · Primavera</p>
-    <h1>Despertar de las flores</h1>
-    <p>Quince pases. Sin carta, sin alternativa: se sirve completo. Cada uno con una pista; el resto te lo contamos en la mesa. El décimo te lo guardamos.</p>
+  <!-- INTRO: el amanecer -->
+  <section class="menu-intro">
+    <img src="/assets/img/petal-oxalis.png" class="menu-intro__petal menu-intro__petal--1" alt="" aria-hidden="true" />
+    <img src="/assets/img/petal-borraja.png" class="menu-intro__petal menu-intro__petal--2" alt="" aria-hidden="true" />
+    <div class="menu-intro__inner">
+      <p class="eyebrow reveal">Degustación · Primavera</p>
+      <h1 class="menu-intro__title">Despertar<br>de las flores</h1>
+      <p class="menu-intro__lead reveal">Quince pases. Sin carta, sin alternativa: se sirve completo. Cada uno con una pista; el resto te lo contamos en la mesa. El décimo te lo guardamos.</p>
+      <p class="menu-intro__cue reveal" aria-hidden="true">Recorre los pases <span>→</span></p>
+    </div>
   </section>
 
-  <!-- LISTA DE PASES (nombre + pista) -->
-  <section class="menu" id="menu">
-    <ol class="pases">
-      {pases.map((p, i) => (
-        p.surprise ? (
-          <li class="pase pase--secret reveal">
-            <span class="pase__n">{String(i + 1).padStart(2, '0')}</span>
-            <span class="pase__body" aria-label="Pase sorpresa, sin desvelar">
-              <span class="pase__name pase__name--secret">Te lo guardamos</span>
-              <span class="pase__hook">Un pase a ciegas. Lo descubres en la mesa, sin saber qué flor llega.</span>
-            </span>
+  <!-- EL RECORRIDO: tarjetas de cristal sobre flores flotantes, en carrusel -->
+  <section class="carousel carousel--menu" id="menu" aria-label="Los quince pases del menú">
+    <div class="menu-blooms" aria-hidden="true">
+      <img class="menu-bloom menu-bloom--1" src="/assets/img/petal-peony.png" alt="" />
+      <img class="menu-bloom menu-bloom--2" src="/assets/img/petal-borraja.png" alt="" />
+      <img class="menu-bloom menu-bloom--3" src="/assets/img/petal-roja.png" alt="" />
+      <img class="menu-bloom menu-bloom--4" src="/assets/img/petal-oxalis.png" alt="" />
+      <img class="menu-bloom menu-bloom--5" src="/assets/img/petal-sauco.png" alt="" />
+    </div>
+
+    <div class="carousel__viewport" id="carViewport">
+      <ul class="carousel__track" id="carTrack">
+        {pases.map((p, i) => (
+          <li class="slide">
+            {p.surprise ? (
+              <article class="gcard gcard--secret">
+                <span class="gcard__flower" style="background-image:url(/assets/img/petal-roja.png)"></span>
+                <div class="gcard__glass">
+                  <div class="gcard__inner">
+                    <span class="gcard__num">10</span>
+                    <span class="gcard__seal">Te lo guardamos</span>
+                    <h2 class="gcard__name">Un pase a ciegas</h2>
+                    <p class="gcard__hook">Lo descubres en la mesa, sin saber qué flor llega.</p>
+                  </div>
+                </div>
+              </article>
+            ) : (
+              <article class="gcard">
+                <span class="gcard__flower" style={`background-image:url(/assets/img/${petals[i % petals.length]})`}></span>
+                <div class="gcard__glass">
+                  <div class="gcard__inner">
+                    <span class="gcard__num">{String(i + 1).padStart(2, '0')}</span>
+                    <h2 class="gcard__name">{p.name}</h2>
+                    <p class="gcard__hook">{p.hook}</p>
+                  </div>
+                </div>
+              </article>
+            )}
           </li>
-        ) : (
-          <li class="pase reveal">
-            <span class="pase__n">{String(i + 1).padStart(2, '0')}</span>
-            <span class="pase__body">
-              <span class="pase__name">{p.name}</span>
-              <span class="pase__hook">{p.hook}</span>
-            </span>
-          </li>
-        )
-      ))}
-    </ol>
+        ))}
+      </ul>
+    </div>
+
+    <div class="carousel__ui">
+      <div class="carousel__progress" aria-hidden="true"><span id="carBar"></span></div>
+      <p class="carousel__counter" aria-hidden="true"><b id="carCur">01</b> / {String(pases.length).padStart(2, '0')}</p>
+      <div class="carousel__arrows">
+        <button type="button" id="carPrev" aria-label="Pase anterior">&larr;</button>
+        <button type="button" id="carNext" aria-label="Pase siguiente">&rarr;</button>
+      </div>
+    </div>
   </section>
 
   <!-- MARIDAJE -->
