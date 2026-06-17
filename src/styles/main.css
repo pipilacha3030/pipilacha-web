@@ -72,6 +72,26 @@ html.lenis,html.lenis body{height:auto}
 .hero .btn--solid,.cta-band .btn--solid{background:var(--cream);color:var(--moss);box-shadow:0 14px 30px -16px rgba(0,0,0,.55)}
 .hero .btn--solid:hover,.cta-band .btn--solid:hover{background:var(--accent-soft);color:var(--moss)}
 .btn--lg{padding:1.2em 3em;font-size:.9rem}
+/* botón secundario (contorno, transparente) — sobre fondo CLARO */
+.btn--ghost{
+  background:transparent;color:var(--moss);
+  box-shadow:inset 0 0 0 1px rgba(49,51,31,.5);
+}
+.btn--ghost:hover{
+  background:var(--moss);color:var(--cream);letter-spacing:.16em;
+  box-shadow:inset 0 0 0 1px var(--moss),0 16px 30px -16px rgba(49,51,31,.55);
+}
+/* botón secundario sobre fondo OSCURO (hero) — contorno claro, se rellena al hover */
+.hero .btn--ghost,.cta-band .btn--ghost{
+  background:transparent;color:var(--cream);
+  box-shadow:inset 0 0 0 1px rgba(244,239,230,.6);
+}
+.hero .btn--ghost:hover,.cta-band .btn--ghost:hover{
+  background:var(--cream);color:var(--moss);
+  box-shadow:inset 0 0 0 1px var(--cream),0 16px 30px -16px rgba(0,0,0,.5);
+}
+/* fila de acciones del hero (Reservar + Regalar) */
+.hero__actions{display:flex;flex-wrap:wrap;gap:.9rem;align-items:center}
 
 /* ---------- botón flotante de reserva (aparece tras el primer scroll) ---------- */
 .reserva-fab{
@@ -460,6 +480,9 @@ body.intro-open{overflow:hidden}
 .maridaje__inner .eyebrow{color:var(--terracotta)}
 .maridaje h2{font-size:clamp(2.2rem,5vw,3.8rem);color:var(--moss);margin:.2rem 0 1.2rem}
 .maridaje__intro{max-width:62ch;color:#45453a;font-size:clamp(1rem,1.5vw,1.18rem)}
+.maridaje__more{margin-top:2.4rem}
+.maridaje__more a{font-family:var(--serif);font-size:1.15rem;color:var(--moss);border-bottom:1px solid rgba(49,51,31,.35);padding-bottom:.2rem;transition:color .3s,border-color .3s}
+.maridaje__more a:hover{color:var(--terracotta);border-color:var(--terracotta)}
 .maridaje__cards{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1rem,2vw,1.6rem);margin-top:clamp(2.4rem,5vh,3.6rem)}
 .maridaje__card{
   position:relative;overflow:hidden;isolation:isolate;border-radius:var(--radius);
@@ -582,7 +605,10 @@ body.intro-open{overflow:hidden}
 .footer__cols p{opacity:.8;line-height:1.9;font-size:.95rem}
 .footer__cols a{text-decoration:underline;text-underline-offset:3px;opacity:.85;transition:opacity .3s}
 .footer__cols a:hover{opacity:1}
-.footer__base{display:flex;justify-content:space-between;max-width:var(--maxw);margin:2rem auto 0;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;opacity:.6}
+.footer__nav{display:flex;flex-wrap:wrap;gap:1.2rem 2rem;max-width:var(--maxw);margin:2.2rem auto 0;font-size:.82rem;letter-spacing:.06em}
+.footer__nav a{opacity:.82;transition:opacity .3s}
+.footer__nav a:hover{opacity:1}
+.footer__base{display:flex;justify-content:space-between;max-width:var(--maxw);margin:1.6rem auto 0;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;opacity:.6}
 
 /* ---------- cabecera de página (páginas internas) ---------- */
 .page-header{
@@ -710,6 +736,37 @@ body.intro-open{overflow:hidden}
 .prensa-kit__contact span{color:var(--accent-soft);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;white-space:nowrap}
 .prensa-kit__contact a{font-family:var(--serif);font-size:1.05rem;text-align:right;transition:color .3s var(--ease)}
 .prensa-kit__contact a:hover{color:var(--accent-soft)}
+.prensa-kit__download{margin:1.8rem 0 2.4rem}
+
+/* ---------- regala: cómo funciona ---------- */
+.regala-steps{max-width:var(--maxw);margin:0 auto;padding:clamp(3.5rem,9vh,6.5rem) var(--gutter) clamp(1rem,4vh,2rem);text-align:center}
+.regala-steps h2{font-size:clamp(1.9rem,4.5vw,3.2rem);color:var(--moss);margin-bottom:clamp(2.2rem,5vh,3.4rem)}
+.regala-steps__grid{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(1.6rem,3vw,2.6rem);text-align:left}
+.regala-step{padding-top:1.4rem;border-top:1px solid rgba(49,51,31,.16)}
+.regala-step__n{font-family:var(--serif);font-size:1.6rem;color:var(--accent-soft)}
+.regala-step h3{font-family:var(--serif);font-size:1.4rem;color:var(--moss);margin:.5rem 0 .6rem}
+.regala-step p{color:#55554a;font-size:.98rem;line-height:1.7}
+
+/* ---------- vinos: carta ---------- */
+.wine{max-width:920px;margin:0 auto;padding:clamp(1.5rem,4vh,3rem) var(--gutter) clamp(2rem,6vh,4rem)}
+.wine-group{margin-bottom:clamp(2.6rem,6vh,4rem)}
+.wine-group__head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;border-bottom:2px solid rgba(49,51,31,.5);padding-bottom:.7rem;margin-bottom:.4rem}
+.wine-group__head h2{font-family:var(--serif);font-size:clamp(1.6rem,3.5vw,2.4rem);color:var(--moss)}
+.wine-group__cols{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:#9a9a86;white-space:nowrap}
+.wine-list{list-style:none}
+.wine-row{display:grid;grid-template-columns:1fr auto;column-gap:1.5rem;align-items:baseline;padding:.95rem 0;border-bottom:1px solid rgba(49,51,31,.12)}
+.wine-row__name{grid-column:1;grid-row:1;font-family:var(--serif);font-size:1.12rem;color:var(--moss);line-height:1.3}
+.wine-row__grape{grid-column:1;grid-row:2;color:#7a7a6c;font-size:.86rem;margin-top:.15rem}
+.wine-row__price{grid-column:2;grid-row:1 / span 2;align-self:center;display:flex;gap:.4rem;font-variant-numeric:tabular-nums}
+.wine-row__price b{display:inline-block;min-width:3.2rem;text-align:right;font-family:var(--serif);font-weight:400;color:var(--moss)}
+.wine-row__price b:first-child{color:#8a8a76}
+.wine-row__price i{display:inline-block;min-width:3.2rem;text-align:right;color:#c4c2b3;font-style:normal}
+.wine-note{margin-top:2rem;color:#7a7a6c;font-size:.9rem;line-height:1.8}
+.wine-note a{color:var(--terracotta);text-decoration:underline;text-underline-offset:3px;margin-left:.4rem}
+@media (max-width:560px){
+  .regala-steps__grid{grid-template-columns:1fr}
+  .wine-row__price b,.wine-row__price i{min-width:2.7rem}
+}
 
 /* ---------- transición entre páginas (cortina de marca) ---------- */
 .page-transition{
@@ -719,10 +776,6 @@ body.intro-open{overflow:hidden}
 @keyframes ptSafety{to{visibility:hidden}}
 .page-transition__col{flex:1 1 0;height:100%;background:var(--moss);transform:translateY(0)}
 .page-transition__col + .page-transition__col{margin-left:-1px}
-.page-transition__mark{
-  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:clamp(56px,9vw,96px);height:auto;object-fit:contain;
-}
 @media (prefers-reduced-motion:reduce){.page-transition{display:none}}
 
 /* ---------- reveal base ---------- */

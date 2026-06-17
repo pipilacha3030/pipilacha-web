@@ -1,0 +1,63 @@
+---
+import Base from '../layouts/Base.astro';
+
+const pasos = [
+  { n: '01', t: 'Nos escribes', d: 'A admin@pipilacha.es nos dices para cuántas personas y si quieres una dedicatoria.' },
+  { n: '02', t: 'Preparamos la tarjeta', d: 'Te la enviamos con un código, en digital para imprimir o en papel si la prefieres física.' },
+  { n: '03', t: 'Reserva cuando quiera', d: 'Quien la recibe elige día y turno por TheFork. Sin prisa: vale durante un año.' },
+];
+---
+
+<Base
+  title="Regala Pipilacha · El menú de flores, para regalar"
+  description="Regala una experiencia en Pipilacha: el menú de degustación Despertar de las flores, quince pases entre flores, en Madrid. Tarjeta regalo válida un año."
+>
+
+  <section class="page-header">
+    <p class="eyebrow">Regalar</p>
+    <h1>Regala una mesa<br>entre flores</h1>
+    <p>Un regalo para quien tú quieras: el menú de degustación en el único restaurante construido sobre las flores. Tú eliges el gesto; quien lo recibe elige el día.</p>
+  </section>
+
+  <!-- TARJETA REGALO -->
+  <section class="reserva" id="tarjeta">
+    <img src="/assets/img/petal-borraja.png" class="petal petal--2" alt="" aria-hidden="true" />
+    <img src="/assets/img/petal-oxalis.png" class="petal petal--3" alt="" aria-hidden="true" />
+    <div class="reserva__card reveal">
+      <p class="eyebrow">La tarjeta regalo</p>
+      <h2>Despertar de las flores</h2>
+      <p class="reserva__lead">Nuestro menú de quince pases, para regalar. Sin fecha cerrada: quien la recibe reserva cuando le apetezca.</p>
+      <ul class="reserva__details">
+        <li><span>Incluye</span><strong>Menú degustación · 15 pases</strong></li>
+        <li><span>Para</span><strong>Una o dos personas</strong></li>
+        <li><span>Precio</span><strong>85 € / persona</strong></li>
+        <li><span>Maridaje</span><strong>+60 € / persona (opcional)</strong></li>
+        <li><span>Validez</span><strong>12 meses</strong></li>
+      </ul>
+      <a href="mailto:admin@pipilacha.es?subject=Tarjeta%20regalo%20Pipilacha" class="btn btn--solid btn--lg">Quiero regalarlo</a>
+      <p class="reserva__note">Te la enviamos en digital o impresa. ¿Dudas? Escríbenos a <a href="mailto:admin@pipilacha.es">admin@pipilacha.es</a> o llama al <a href="tel:+34919125998">919 12 59 98</a>.</p>
+    </div>
+  </section>
+
+  <!-- CÓMO FUNCIONA -->
+  <section class="regala-steps">
+    <p class="eyebrow reveal">En tres pasos</p>
+    <h2 class="reveal">Cómo se regala</h2>
+    <ol class="regala-steps__grid">
+      {pasos.map((p) => (
+        <li class="regala-step reveal">
+          <span class="regala-step__n">{p.n}</span>
+          <h3>{p.t}</h3>
+          <p>{p.d}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="cta-band">
+    <h2 class="reveal">El mejor regalo se cuenta en mesa</h2>
+    <p class="cta-band__lead reveal">Quince pases, las flores como ingrediente y dos chefs contándolos uno a uno. Regálalo y deja que elijan cuándo.</p>
+    <a href="mailto:admin@pipilacha.es?subject=Tarjeta%20regalo%20Pipilacha" class="btn btn--solid btn--lg reveal">Escríbenos para regalar</a>
+  </section>
+
+</Base>

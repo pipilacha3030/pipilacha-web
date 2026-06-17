@@ -1,0 +1,104 @@
+---
+import Base from '../layouts/Base.astro';
+
+// Carta de vinos real (copa / botella, en €). Cambia con la temporada.
+const grupos = [
+  {
+    titulo: 'Blancos',
+    vinos: [
+      { nombre: 'JAG', uva: 'Godello y Doña Blanca', copa: '5', bot: '20' },
+      { nombre: 'Stallmann-Hiestand', uva: 'Riesling', copa: '5', bot: '20' },
+      { nombre: 'Barco del Corneta «Loseco»', uva: 'Verdejo y Viura', copa: '5', bot: '21' },
+      { nombre: 'Desig · Mas Candi', uva: 'Xarel·lo', copa: '4,5', bot: '18' },
+      { nombre: 'Tricó', uva: 'Albariño', copa: '', bot: '35' },
+      { nombre: 'David & Nadia', uva: 'Chenin Blanc', copa: '', bot: '50' },
+      { nombre: 'Viña Somoza «Ededia»', uva: 'Godello', copa: '', bot: '65' },
+      { nombre: 'Chablis 1er Cru Montmains', uva: 'Chardonnay', copa: '', bot: '99' },
+    ],
+  },
+  {
+    titulo: 'Naranja',
+    vinos: [
+      { nombre: 'Puiggròs «Impresionant»', uva: 'Vino naranja', copa: '5,5', bot: '23' },
+      { nombre: 'Ulterior', uva: 'Naranja', copa: '5', bot: '20' },
+    ],
+  },
+  {
+    titulo: 'Tintos',
+    vinos: [
+      { nombre: 'Ulterior Parcela 6', uva: 'Garnacha', copa: '6', bot: '26' },
+      { nombre: 'La Brecha', uva: 'Ribera', copa: '5,5', bot: '23' },
+      { nombre: 'Gómez Cruzado', uva: 'Rioja', copa: '4,5', bot: '17' },
+      { nombre: 'Cati Ribot «Cambuix» · 1 L', uva: 'Escursac y Callet', copa: '', bot: '30' },
+      { nombre: 'Joan d’Anguera «Finca l’Argata»', uva: 'Garnacha', copa: '', bot: '58' },
+      { nombre: 'Dom. de Villeneuve · Châteauneuf-du-Pape', uva: 'Ródano', copa: '', bot: '88' },
+      { nombre: 'Guy Amiot · Chassagne-Montrachet', uva: 'Pinot Noir', copa: '', bot: '80' },
+    ],
+  },
+  {
+    titulo: 'Espumosos',
+    vinos: [
+      { nombre: 'Mas Candi', uva: 'Brut Nature', copa: '5', bot: '20' },
+      { nombre: 'Con Altura', uva: 'Pet-Nat', copa: '5,5', bot: '23' },
+      { nombre: 'Marteaux', uva: 'Champagne · Brut Réserve', copa: '', bot: '55' },
+      { nombre: 'Calsac «Cuvée l’Échappée Belle»', uva: 'Champagne', copa: '', bot: '70' },
+      { nombre: 'Bérêche', uva: 'Champagne · Brut Réserve', copa: '', bot: '80' },
+    ],
+  },
+  {
+    titulo: 'Dulces',
+    vinos: [
+      { nombre: 'Dulce Enero', uva: 'Vino dulce', copa: '6', bot: '30' },
+      { nombre: 'La Chispa Negra', uva: 'Vino dulce', copa: '8', bot: '50' },
+    ],
+  },
+];
+---
+
+<Base
+  title="Vinos · La bodega de Pipilacha"
+  description="La carta de vinos de Pipilacha: productores pequeños y referencias singulares por copa y botella, para acompañar el menú de flores en Madrid."
+>
+
+  <section class="page-header">
+    <p class="eyebrow">La bodega</p>
+    <h1>Vinos</h1>
+    <p>El maridaje se elige en la mesa. Pero si prefieres ir a tu aire, esta es la bodega: productores pequeños, vinos de oficio y alguna rareza, por copa y por botella. Cambia con la temporada, igual que las flores.</p>
+  </section>
+
+  <!-- CARTA -->
+  <section class="wine">
+    {grupos.map((g) => (
+      <div class="wine-group reveal">
+        <div class="wine-group__head">
+          <h2>{g.titulo}</h2>
+          <span class="wine-group__cols" aria-hidden="true">Copa · Botella</span>
+        </div>
+        <ul class="wine-list">
+          {g.vinos.map((v) => (
+            <li class="wine-row">
+              <span class="wine-row__name">{v.nombre}</span>
+              <span class="wine-row__grape">{v.uva}</span>
+              <span class="wine-row__price">
+                {v.copa ? <b>{v.copa} €</b> : <i aria-hidden="true">—</i>}
+                <b>{v.bot} €</b>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+
+    <p class="wine-note reveal">
+      Precios en euros, copa y botella. La carta se mueve cada servicio según lo que entra en la bodega.
+      <a href="/assets/docs/pipilacha-carta-vinos.pdf" download>Descargar la carta (PDF)</a>
+    </p>
+  </section>
+
+  <section class="cta-band">
+    <h2 class="reveal">Lo fácil: déjate llevar</h2>
+    <p class="cta-band__lead reveal">Seis copas pensadas para los quince pases, vino o fermentos de la casa. Se elige al sentarse y se explica en sala.</p>
+    <a href="/reservas/" class="btn btn--solid btn--lg reveal">Reservar</a>
+  </section>
+
+</Base>

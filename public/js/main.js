@@ -139,7 +139,6 @@ if (window.gsap) {
   const pt = document.getElementById('pageTransition');
   if (pt) {
     const ptCols = gsap.utils.toArray('#pageTransition .page-transition__col');
-    const ptMark = pt.querySelector('.page-transition__mark');
     const hidePT = () => { pt.style.visibility = 'hidden'; pt.style.pointerEvents = 'none'; };
 
     // ENTRADA: la cortina cubre al cargar y se retira hacia arriba
@@ -147,9 +146,7 @@ if (window.gsap) {
       if (reduceMotion) { hidePT(); return; }
       pt.style.visibility = 'visible';
       gsap.set(ptCols, { yPercent: 0 });
-      gsap.set(ptMark, { xPercent: -50, yPercent: -50, autoAlpha: 1, scale: 1 });
       gsap.timeline({ onComplete: hidePT })
-        .to(ptMark, { autoAlpha: 0, scale: 0.92, duration: 0.3, ease: 'power2.out' }, 0)
         .to(ptCols, { yPercent: -100, duration: 0.7, ease: 'power4.inOut', stagger: 0.06 }, 0.05);
     };
 
@@ -158,10 +155,8 @@ if (window.gsap) {
       pt.style.visibility = 'visible';
       pt.style.pointerEvents = 'auto';
       gsap.set(ptCols, { yPercent: 100 });
-      gsap.set(ptMark, { xPercent: -50, yPercent: -50, autoAlpha: 0, scale: 0.92 });
       gsap.timeline({ onComplete: () => { window.location.href = href; } })
-        .to(ptCols, { yPercent: 0, duration: 0.55, ease: 'power4.inOut', stagger: 0.05 }, 0)
-        .to(ptMark, { autoAlpha: 1, scale: 1, duration: 0.35, ease: 'power2.out' }, 0.2);
+        .to(ptCols, { yPercent: 0, duration: 0.55, ease: 'power4.inOut', stagger: 0.05 }, 0);
     };
 
     revealPage();
