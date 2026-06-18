@@ -32,8 +32,13 @@ const fotos = [
     <p>Arrastra para recorrerla. Toca cualquier imagen para verla en grande.</p>
   </section>
 
-  <!-- CARRUSEL -->
-  <section class="carousel" id="galeria">
+  <!-- CARRUSEL (ambiente de cristal: flores en blur detrás + marco glass) -->
+  <section class="carousel carousel--glass" id="galeria">
+    <div class="menu-blooms" aria-hidden="true">
+      <img class="menu-bloom menu-bloom--1" src="/assets/img/petal-peony.png" alt="" />
+      <img class="menu-bloom menu-bloom--3" src="/assets/img/petal-oxalis.png" alt="" />
+      <img class="menu-bloom menu-bloom--5" src="/assets/img/petal-sauco.png" alt="" />
+    </div>
     <div class="carousel__viewport" id="carViewport">
       <ul class="carousel__track" id="carTrack">
         {fotos.map((f, i) => (

@@ -40,6 +40,10 @@ function playHero() {
   if (heroPlayed || !window.gsap || reduceMotion) return;
   heroPlayed = true;
   // y:0 limpia el translateY(110%) que GSAP interpreta como px; el reveal lo mueve solo por yPercent
+  // acercamiento de cámara: la foto se asienta desde un leve zoom
+  gsap.fromTo('.hero__media img',
+    { scale: 1.12 }, { scale: 1, duration: 1.8, ease: 'power2.out' });
+  // el título sube tras su máscara
   gsap.fromTo('.hero__title .reveal-mask',
     { yPercent: 110, y: 0 },
     { yPercent: 0, y: 0, duration: 1.2, ease: 'expo.out', stagger: 0.12, delay: 0.15 });
@@ -195,16 +199,17 @@ if (window.gsap) {
        la flor cruza por detrás. scrub más ajustado para que siga al dedo */
     if (document.querySelector('.manifesto')) {
       const mTl = gsap.timeline({
-        scrollTrigger: { trigger: '.manifesto', start: 'top top', end: '+=130%', pin: true, scrub: 0.8 }
+        scrollTrigger: { trigger: '.manifesto', start: 'top top', end: '+=130%', pin: true, scrub: 0.9 }
       });
+      // las palabras se encienden con una subida suave (sin volteo 3D)
       mTl.fromTo('.manifesto .m-word',
-        { opacity: 0.12, yPercent: 100, rotateX: -75 },
-        { opacity: 1, yPercent: 0, rotateX: 0, stagger: 0.16, ease: 'power3.out', duration: 1 })
+        { opacity: 0.22, yPercent: 16 },
+        { opacity: 1, yPercent: 0, stagger: 0.12, ease: 'power2.out', duration: 1 })
         .to('.manifesto__text em',
-          { scale: 1.06, ease: 'power2.out', duration: 0.4 }, '>-0.2')
+          { scale: 1.04, ease: 'power2.out', duration: 0.4 }, '>-0.25')
         .fromTo('.manifesto__bloom',
-          { yPercent: 55, rotate: -18, scale: .9 },
-          { yPercent: -60, rotate: 14, scale: 1.05, ease: 'none' }, 0);
+          { yPercent: 28, rotate: -10, scale: .95 },
+          { yPercent: -28, rotate: 8, scale: 1.02, ease: 'none' }, 0);
     }
 
     /* despertar de las flores: la foto florece desde una tarjeta centrada
@@ -215,14 +220,14 @@ if (window.gsap) {
         scrollTrigger: { trigger: '.showcase-wrap', start: 'top top', end: '+=95%', pin: true, scrub: 0.7 }
       });
       sTl.fromTo(sFrame,
-        { clipPath: 'inset(38% 32% 38% 32% round 26px)' },
-        { clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'power2.inOut', duration: 0.85 })
+        { clipPath: 'inset(9% 14% 9% 14% round 22px)' },
+        { clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'power2.out', duration: 0.9 })
         .fromTo(sFrame.querySelector('img'),
-          { scale: 1.55 }, { scale: 1, ease: 'none', duration: 1 }, 0)
-        .fromTo('.showcase__veil', { opacity: 0 }, { opacity: 1, duration: 0.25 }, 0.5)
+          { scale: 1.16 }, { scale: 1, ease: 'none', duration: 1 }, 0)
+        .fromTo('.showcase__veil', { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.45)
         .fromTo('.showcase__cap',
-          { opacity: 0, yPercent: 80, filter: 'blur(4px)' },
-          { opacity: 1, yPercent: 0, filter: 'blur(0px)', ease: 'power3.out', duration: 0.3 }, 0.62);
+          { opacity: 0, yPercent: 36 },
+          { opacity: 1, yPercent: 0, ease: 'power3.out', duration: 0.4 }, 0.5);
     }
 
     /* parallax CENTRADO: a mitad de recorrido (incluido el scroll 0 del hero)
@@ -519,3 +524,4 @@ if (cellar) {
 
   if (sections[0]) setActive(sections[0].id);
 }
+

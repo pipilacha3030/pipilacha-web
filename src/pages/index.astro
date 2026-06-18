@@ -29,24 +29,6 @@ import Base from '../layouts/Base.astro';
     <div class="hero__scroll reveal" data-delay="0.9"><span>Desliza</span></div>
   </section>
 
-  <!-- MARQUEE (banda en movimiento bajo el hero) -->
-  <div class="marquee" aria-hidden="true">
-    <div class="marquee__track">
-      <div class="marquee__group">
-        <span>Quince pases</span><span class="marquee__sep">·</span>
-        <span>Dieciséis plazas</span><span class="marquee__sep">·</span>
-        <span>Jueves a domingo · Madrid</span><span class="marquee__sep">·</span>
-        <span>Las flores como ingrediente, no como adorno</span><span class="marquee__sep">·</span>
-      </div>
-      <div class="marquee__group">
-        <span>Quince pases</span><span class="marquee__sep">·</span>
-        <span>Dieciséis plazas</span><span class="marquee__sep">·</span>
-        <span>Jueves a domingo · Madrid</span><span class="marquee__sep">·</span>
-        <span>Las flores como ingrediente, no como adorno</span><span class="marquee__sep">·</span>
-      </div>
-    </div>
-  </div>
-
   <!-- MANIFIESTO (pinned: las palabras se encienden con el scroll) -->
   <section class="manifesto" id="manifesto">
     <img src="/assets/img/petal-oxalis.png" class="manifesto__bloom" alt="" aria-hidden="true" />
@@ -70,23 +52,54 @@ import Base from '../layouts/Base.astro';
     </a>
   </section>
 
-  <!-- EXPLORAR -->
+  <!-- CINTA (marquee grande y disruptivo, justo debajo del menú destacado) -->
+  <div class="marquee marquee--bold" aria-hidden="true">
+    <div class="marquee__track">
+      <div class="marquee__group">
+        <span>Quince pases</span><span class="marquee__sep">✿</span>
+        <span>Dieciséis plazas</span><span class="marquee__sep">✿</span>
+        <span>Jueves a domingo</span><span class="marquee__sep">✿</span>
+        <span>Las flores como ingrediente</span><span class="marquee__sep">✿</span>
+      </div>
+      <div class="marquee__group">
+        <span>Quince pases</span><span class="marquee__sep">✿</span>
+        <span>Dieciséis plazas</span><span class="marquee__sep">✿</span>
+        <span>Jueves a domingo</span><span class="marquee__sep">✿</span>
+        <span>Las flores como ingrediente</span><span class="marquee__sep">✿</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPLORAR (al pasar el cursor, la imagen entra como fondo de la celda) -->
   <nav class="explore" aria-label="Secciones">
-    <a href="/conocenos/"><span class="explore__n">01</span>Conócenos</a>
-    <a href="/menu/"><span class="explore__n">02</span>El menú</a>
-    <a href="/galeria/"><span class="explore__n">03</span>Galería</a>
+    <a href="/conocenos/" class="explore__cell" style="--img:url(/assets/img/chef-1.jpg)">
+      <span class="explore__n">01</span><span class="explore__label">Conócenos</span>
+    </a>
+    <a href="/menu/" class="explore__cell" style="--img:url(/assets/img/dish-1.jpg)">
+      <span class="explore__n">02</span><span class="explore__label">El menú</span>
+    </a>
+    <a href="/galeria/" class="explore__cell" style="--img:url(/assets/img/g16.jpg)">
+      <span class="explore__n">03</span><span class="explore__label">Galería</span>
+    </a>
   </nav>
 
-  <!-- LA BARRA -->
+  <!-- LA BARRA (imagen + texto, retícula editorial) -->
   <section class="barra" id="barra">
-    <div class="barra__media" data-parallax="0.18">
-      <img src="/assets/img/barra.jpg" alt="La barra de iroko de seis metros, puesta para el servicio" />
-      <div class="barra__veil"></div>
-    </div>
-    <div class="barra__content">
-      <p class="eyebrow reveal">La barra</p>
-      <h2 class="barra__title reveal">Seis metros de iroko.<br>Los chefs al otro lado.</h2>
-      <p class="barra__lead reveal">Ocho asientos en primera línea. Arán y Noé cocinan delante de ti y cuentan cada flor según la sirven. Tu plato nace ahí, a un brazo de distancia.</p>
+    <div class="barra__grid">
+      <figure class="barra__media reveal">
+        <img src="/assets/img/barra.jpg" alt="La barra de iroko de seis metros, puesta para el servicio" loading="lazy" />
+        <figcaption class="barra__tag">Barra de iroko</figcaption>
+      </figure>
+      <div class="barra__content">
+        <p class="eyebrow reveal">La barra</p>
+        <h2 class="barra__title reveal">Seis metros de iroko.<br>Los chefs al otro lado.</h2>
+        <p class="barra__lead reveal">Ocho asientos en primera línea. Arán y Noé cocinan delante de ti y cuentan cada flor según la sirven. Tu plato nace ahí, a un brazo de distancia.</p>
+        <ul class="barra__facts reveal">
+          <li><strong>8</strong><span>asientos en barra</span></li>
+          <li><strong>6 m</strong><span>de iroko macizo</span></li>
+          <li><strong>2</strong><span>chefs enfrente</span></li>
+        </ul>
+      </div>
     </div>
   </section>
 
