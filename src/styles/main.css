@@ -213,6 +213,8 @@ body.intro-open{overflow:hidden}
 .nav.scrolled .nav__logo-img--light{opacity:0}
 .nav.scrolled .nav__logo-img--dark{opacity:1}
 .nav__links{display:flex;align-items:center;gap:2.4rem}
+/* laptops estrechas: menos hueco para que quepan los 6 enlaces + el botón */
+@media (min-width:901px) and (max-width:1180px){.nav__links{gap:1.5rem}}
 .nav__links a{
   font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cream);
   transition:color .5s,opacity .3s;position:relative;
