@@ -93,19 +93,22 @@ html.lenis,html.lenis body{height:auto}
 /* fila de acciones del hero (Reservar + Regalar) */
 .hero__actions{display:flex;flex-wrap:wrap;gap:.9rem;align-items:center}
 
-/* ---------- botón flotante de reserva (aparece tras el primer scroll) ---------- */
-.reserva-fab{
-  position:fixed;right:clamp(1rem,4vw,2rem);bottom:clamp(1rem,4vw,2rem);z-index:90;
-  font-family:var(--sans);font-weight:500;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;
-  background:var(--moss);color:var(--cream);padding:1em 1.8em;border-radius:999px;
-  box-shadow:0 14px 30px -10px rgba(49,51,31,.6);
-  opacity:0;transform:translateY(20px) scale(.96);pointer-events:none;
-  transition:opacity .5s var(--ease), transform .5s var(--ease), background .4s;
+/* ---------- barra fija de reserva en móvil (aparece tras el primer scroll) ---------- */
+.reserva-bar{
+  position:fixed;left:0;right:0;bottom:0;z-index:90;
+  display:flex;align-items:center;justify-content:center;min-height:56px;
+  font-family:var(--sans);font-weight:500;font-size:.82rem;letter-spacing:.2em;text-transform:uppercase;
+  background:var(--moss);color:var(--cream);
+  padding:1.1em 1.5em;padding-bottom:max(1.1em, env(safe-area-inset-bottom));
+  box-shadow:0 -1px 0 rgba(244,239,230,.12), 0 -12px 30px -20px rgba(0,0,0,.5);
+  transform:translateY(100%);transition:transform .55s var(--ease), background .4s;
 }
-.reserva-fab.is-visible{opacity:1;transform:none;pointer-events:auto}
-.reserva-fab:hover{background:var(--olive)}
-body.intro-open .reserva-fab{opacity:0!important;pointer-events:none!important}
-@media (min-width:901px){ .reserva-fab{display:none} }
+.reserva-bar.is-visible{transform:translateY(0)}
+.reserva-bar:active{background:var(--olive)}
+body.intro-open .reserva-bar{transform:translateY(100%)!important}
+@media (min-width:901px){ .reserva-bar{display:none} }
+/* el pie deja sitio para que la barra no tape el © al final */
+@media (max-width:900px){ .footer{padding-bottom:calc(2.5rem + 64px + env(safe-area-inset-bottom))} }
 
 /* ---------- intro / portada disruptiva ---------- */
 body.intro-open{overflow:hidden}

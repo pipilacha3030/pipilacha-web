@@ -110,14 +110,14 @@ if (!reduceMotion && window.Lenis) {
   });
 }
 
-/* botón flotante de reserva: aparece tras el primer scroll (solo móvil, vía CSS) */
-const reservaFab = document.getElementById('reservaFab');
+/* barra fija de reserva: aparece tras el primer scroll (solo móvil, vía CSS) */
+const reservaBar = document.getElementById('reservaBar');
 
 /* nav background toggle (umbral pequeño si la nav ya es sólida) */
 const onScroll = y => {
   const threshold = nav.classList.contains('nav--solid') ? 10 : window.innerHeight * 0.6;
   nav.classList.toggle('scrolled', y > threshold);
-  if (reservaFab) reservaFab.classList.toggle('is-visible', y > window.innerHeight * 0.5);
+  if (reservaBar) reservaBar.classList.toggle('is-visible', y > window.innerHeight * 0.5);
 };
 if (lenis) lenis.on('scroll', e => onScroll(e.scroll));
 else window.addEventListener('scroll', () => onScroll(window.scrollY));
