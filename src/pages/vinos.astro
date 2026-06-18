@@ -1,104 +1,151 @@
 ---
 import Base from '../layouts/Base.astro';
 
-// Carta de vinos real (copa / botella, en €). Cambia con la temporada.
+// La bodega de Pipilacha. Sin precios: se cuentan en sala (como el maridaje).
+// Cada tipo lleva una palabra-sensación: la carta se lee por lo que provoca, no por lo que cuesta.
 const grupos = [
   {
-    titulo: 'Blancos',
+    id: 'blancos', titulo: 'Blancos', sensacion: 'Tensión',
+    nota: 'Filo y verticalidad. Para empezar con la boca despierta.',
     vinos: [
-      { nombre: 'JAG', uva: 'Godello y Doña Blanca', copa: '5', bot: '20' },
-      { nombre: 'Stallmann-Hiestand', uva: 'Riesling', copa: '5', bot: '20' },
-      { nombre: 'Barco del Corneta «Loseco»', uva: 'Verdejo y Viura', copa: '5', bot: '21' },
-      { nombre: 'Desig · Mas Candi', uva: 'Xarel·lo', copa: '4,5', bot: '18' },
-      { nombre: 'Tricó', uva: 'Albariño', copa: '', bot: '35' },
-      { nombre: 'David & Nadia', uva: 'Chenin Blanc', copa: '', bot: '50' },
-      { nombre: 'Viña Somoza «Ededia»', uva: 'Godello', copa: '', bot: '65' },
-      { nombre: 'Chablis 1er Cru Montmains', uva: 'Chardonnay', copa: '', bot: '99' },
+      { nombre: 'JAG', uva: 'Godello y Doña Blanca' },
+      { nombre: 'Stallmann-Hiestand', uva: 'Riesling' },
+      { nombre: 'Barco del Corneta «Loseco»', uva: 'Verdejo y Viura' },
+      { nombre: 'Desig · Mas Candi', uva: 'Xarel·lo' },
+      { nombre: 'Tricó', uva: 'Albariño' },
+      { nombre: 'David & Nadia', uva: 'Chenin Blanc' },
+      { nombre: 'Viña Somoza «Ededia»', uva: 'Godello' },
+      { nombre: 'Chablis 1er Cru Montmains', uva: 'Chardonnay' },
     ],
   },
   {
-    titulo: 'Naranja',
+    id: 'naranja', titulo: 'Naranja', sensacion: 'Piel',
+    nota: 'Maceración con pieles. Textura y un punto salvaje.',
     vinos: [
-      { nombre: 'Puiggròs «Impresionant»', uva: 'Vino naranja', copa: '5,5', bot: '23' },
-      { nombre: 'Ulterior', uva: 'Naranja', copa: '5', bot: '20' },
+      { nombre: 'Puiggròs «Impresionant»', uva: 'Vino naranja' },
+      { nombre: 'Ulterior', uva: 'Naranja' },
     ],
   },
   {
-    titulo: 'Tintos',
+    id: 'tintos', titulo: 'Tintos', sensacion: 'Brasa',
+    nota: 'De la encina a la copa. Fruta, tierra y humo.',
     vinos: [
-      { nombre: 'Ulterior Parcela 6', uva: 'Garnacha', copa: '6', bot: '26' },
-      { nombre: 'La Brecha', uva: 'Ribera', copa: '5,5', bot: '23' },
-      { nombre: 'Gómez Cruzado', uva: 'Rioja', copa: '4,5', bot: '17' },
-      { nombre: 'Cati Ribot «Cambuix» · 1 L', uva: 'Escursac y Callet', copa: '', bot: '30' },
-      { nombre: 'Joan d’Anguera «Finca l’Argata»', uva: 'Garnacha', copa: '', bot: '58' },
-      { nombre: 'Dom. de Villeneuve · Châteauneuf-du-Pape', uva: 'Ródano', copa: '', bot: '88' },
-      { nombre: 'Guy Amiot · Chassagne-Montrachet', uva: 'Pinot Noir', copa: '', bot: '80' },
+      { nombre: 'Ulterior Parcela 6', uva: 'Garnacha' },
+      { nombre: 'La Brecha', uva: 'Ribera' },
+      { nombre: 'Gómez Cruzado', uva: 'Rioja' },
+      { nombre: 'Cati Ribot «Cambuix» · 1 L', uva: 'Escursac y Callet' },
+      { nombre: 'Joan d’Anguera «Finca l’Argata»', uva: 'Garnacha' },
+      { nombre: 'Dom. de Villeneuve · Châteauneuf-du-Pape', uva: 'Ródano' },
+      { nombre: 'Guy Amiot · Chassagne-Montrachet', uva: 'Pinot Noir' },
     ],
   },
   {
-    titulo: 'Espumosos',
+    id: 'espumosos', titulo: 'Espumosos', sensacion: 'Burbuja',
+    nota: 'Tensión con aire. Cava, pet-nat y champán.',
     vinos: [
-      { nombre: 'Mas Candi', uva: 'Brut Nature', copa: '5', bot: '20' },
-      { nombre: 'Con Altura', uva: 'Pet-Nat', copa: '5,5', bot: '23' },
-      { nombre: 'Marteaux', uva: 'Champagne · Brut Réserve', copa: '', bot: '55' },
-      { nombre: 'Calsac «Cuvée l’Échappée Belle»', uva: 'Champagne', copa: '', bot: '70' },
-      { nombre: 'Bérêche', uva: 'Champagne · Brut Réserve', copa: '', bot: '80' },
+      { nombre: 'Mas Candi', uva: 'Brut Nature' },
+      { nombre: 'Con Altura', uva: 'Pet-Nat' },
+      { nombre: 'Marteaux', uva: 'Champagne · Brut Réserve' },
+      { nombre: 'Calsac «Cuvée l’Échappée Belle»', uva: 'Champagne' },
+      { nombre: 'Bérêche', uva: 'Champagne · Brut Réserve' },
     ],
   },
   {
-    titulo: 'Dulces',
+    id: 'dulces', titulo: 'Dulces', sensacion: 'Final',
+    nota: 'El cierre. Poco, frío y con flor.',
     vinos: [
-      { nombre: 'Dulce Enero', uva: 'Vino dulce', copa: '6', bot: '30' },
-      { nombre: 'La Chispa Negra', uva: 'Vino dulce', copa: '8', bot: '50' },
+      { nombre: 'Dulce Enero', uva: 'Vino dulce' },
+      { nombre: 'La Chispa Negra', uva: 'Vino dulce' },
     ],
   },
 ];
+
+// SEO: datos estructurados de la carta (schema.org Menu).
+const menuLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Menu',
+  name: 'Carta de vinos · Pipilacha',
+  inLanguage: 'es',
+  description: 'La bodega de Pipilacha: vinos de productores pequeños, naturales y de oficio, por copa y botella, para acompañar el menú de degustación floral en Madrid.',
+  hasMenuSection: grupos.map((g) => ({
+    '@type': 'MenuSection',
+    name: g.titulo,
+    description: g.nota,
+    hasMenuItem: g.vinos.map((v) => ({
+      '@type': 'MenuItem',
+      name: v.nombre,
+      description: v.uva,
+    })),
+  })),
+};
 ---
 
 <Base
-  title="Vinos · La bodega de Pipilacha"
-  description="La carta de vinos de Pipilacha: productores pequeños y referencias singulares por copa y botella, para acompañar el menú de flores en Madrid."
+  title="Vinos · La bodega de Pipilacha · Madrid"
+  description="La carta de vinos de Pipilacha: productores pequeños, vinos naturales y de oficio, por copa y botella, elegidos para acompañar el menú de flores en Madrid. Cambia con la temporada."
 >
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(menuLd)} />
 
-  <section class="page-header">
-    <p class="eyebrow">La bodega</p>
-    <h1>Vinos</h1>
-    <p>El maridaje se elige en la mesa. Pero si prefieres ir a tu aire, esta es la bodega: productores pequeños, vinos de oficio y alguna rareza, por copa y por botella. Cambia con la temporada, igual que las flores.</p>
-  </section>
+  <!-- HERO -->
+  <header class="cellar-hero">
+    <div class="menu-blooms" aria-hidden="true">
+      <img class="menu-bloom menu-bloom--1" src="/assets/img/petal-roja.png" alt="" />
+      <img class="menu-bloom menu-bloom--3" src="/assets/img/petal-sauco.png" alt="" />
+      <img class="menu-bloom menu-bloom--5" src="/assets/img/petal-oxalis.png" alt="" />
+    </div>
+    <div class="cellar-hero__inner">
+      <p class="eyebrow reveal">La bodega</p>
+      <h1 class="cellar-hero__title">Vinos</h1>
+      <p class="cellar-hero__lead reveal">
+        El maridaje se elige en la mesa. Si prefieres ir a tu aire, esta es la bodega:
+        productores pequeños, vinos naturales y alguna rareza, por copa y por botella.
+        Cambia con la temporada, igual que las flores.
+      </p>
+      <p class="cellar-hero__meta reveal">No leemos precios aquí: te los contamos en sala. Lo que sí te decimos es a qué saben.</p>
+    </div>
+    <span class="cellar-hero__scrollcue" aria-hidden="true">La carta<i></i></span>
+  </header>
 
-  <!-- CARTA -->
-  <section class="wine">
-    {grupos.map((g) => (
-      <div class="wine-group reveal">
-        <div class="wine-group__head">
-          <h2>{g.titulo}</h2>
-          <span class="wine-group__cols" aria-hidden="true">Copa · Botella</span>
-        </div>
-        <ul class="wine-list">
-          {g.vinos.map((v) => (
-            <li class="wine-row">
-              <span class="wine-row__name">{v.nombre}</span>
-              <span class="wine-row__grape">{v.uva}</span>
-              <span class="wine-row__price">
-                {v.copa ? <b>{v.copa} €</b> : <i aria-hidden="true">—</i>}
-                <b>{v.bot} €</b>
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    ))}
+  <!-- BODEGA: índice pegajoso + secciones editoriales -->
+  <div class="cellar">
+    <aside class="cellar-index" aria-label="Tipos de vino">
+      <p class="cellar-index__title">La carta</p>
+      <ol class="cellar-index__list">
+        {grupos.map((g) => (
+          <li>
+            <a href={`#${g.id}`} data-spy={g.id}>
+              <span class="cellar-index__sense">{g.sensacion}</span>
+              <span class="cellar-index__name">{g.titulo}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </aside>
 
-    <p class="wine-note reveal">
-      Precios en euros, copa y botella. La carta se mueve cada servicio según lo que entra en la bodega.
-      <a href="/assets/docs/pipilacha-carta-vinos.pdf" download>Descargar la carta (PDF)</a>
-    </p>
-  </section>
+    <div class="cellar-body">
+      {grupos.map((g) => (
+        <section class="wine-cat" id={g.id} aria-labelledby={`${g.id}-h`}>
+          <div class="wine-cat__head">
+            <p class="wine-cat__sense reveal">{g.sensacion}</p>
+            <h2 class="wine-cat__title reveal" id={`${g.id}-h`}>{g.titulo}</h2>
+            <p class="wine-cat__note reveal">{g.nota}</p>
+          </div>
+          <ul class="wine-list">
+            {g.vinos.map((v) => (
+              <li class="wine-row reveal">
+                <span class="wine-row__name">{v.nombre}</span>
+                <span class="wine-row__grape">{v.uva}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  </div>
 
   <section class="cta-band">
     <h2 class="reveal">Lo fácil: déjate llevar</h2>
     <p class="cta-band__lead reveal">Seis copas pensadas para los quince pases, vino o fermentos de la casa. Se elige al sentarse y se explica en sala.</p>
     <a href="/reservas/" class="btn btn--solid btn--lg reveal">Reservar</a>
   </section>
-
 </Base>

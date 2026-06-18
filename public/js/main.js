@@ -138,25 +138,22 @@ if (window.gsap) {
   /* ── transición entre páginas: cortina de marca (cols + libélula) ── */
   const pt = document.getElementById('pageTransition');
   if (pt) {
-    const ptCols = gsap.utils.toArray('#pageTransition .page-transition__col');
-    const hidePT = () => { pt.style.visibility = 'hidden'; pt.style.pointerEvents = 'none'; };
+    const hidePT = () => { pt.style.visibility = 'hidden'; pt.style.opacity = '0'; pt.style.pointerEvents = 'none'; };
 
-    // ENTRADA: la cortina cubre al cargar y se retira hacia arriba
+    // ENTRADA: la capa crema cubre al cargar y se desvanece (fundido suave)
     const revealPage = () => {
       if (reduceMotion) { hidePT(); return; }
       pt.style.visibility = 'visible';
-      gsap.set(ptCols, { yPercent: 0 });
-      gsap.timeline({ onComplete: hidePT })
-        .to(ptCols, { yPercent: -100, duration: 0.7, ease: 'power4.inOut', stagger: 0.06 }, 0.05);
+      gsap.fromTo(pt, { opacity: 1 },
+        { opacity: 0, duration: 0.5, ease: 'power2.out', onComplete: hidePT });
     };
 
-    // SALIDA: la cortina sube a cubrir y luego navega
+    // SALIDA: la capa crema aparece y luego navega
     const coverPage = (href) => {
       pt.style.visibility = 'visible';
       pt.style.pointerEvents = 'auto';
-      gsap.set(ptCols, { yPercent: 100 });
-      gsap.timeline({ onComplete: () => { window.location.href = href; } })
-        .to(ptCols, { yPercent: 0, duration: 0.55, ease: 'power4.inOut', stagger: 0.05 }, 0);
+      gsap.fromTo(pt, { opacity: 0 },
+        { opacity: 1, duration: 0.32, ease: 'power2.inOut', onComplete: () => { window.location.href = href; } });
     };
 
     revealPage();
@@ -491,4 +488,34 @@ if (lightbox) {
     else if (e.key === 'ArrowLeft') show(current - 1);
     else if (e.key === 'ArrowRight') show(current + 1);
   });
+}
+
+/* ============================================================
+   VINOS: índice pegajoso (scrollspy) + scroll suave por sección
+   ============================================================ */
+const cellar = document.querySelector('.cellar');
+if (cellar) {
+  const links = Array.from(cellar.querySelectorAll('.cellar-index a'));
+  const sections = links.map(a => document.getElementById(a.dataset.spy)).filter(Boolean);
+  const setActive = id => links.forEach(a => a.classList.toggle('is-active', a.dataset.spy === id));
+
+  // marca la sección visible mientras se hace scroll
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id); });
+    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+    sections.forEach(s => io.observe(s));
+  }
+
+  // clic en el índice: lleva a la sección con el scroll suave de Lenis
+  links.forEach(a => a.addEventListener('click', e => {
+    const target = document.getElementById(a.dataset.spy);
+    if (!target) return;
+    e.preventDefault();
+    setActive(a.dataset.spy);
+    if (window.lenis) window.lenis.scrollTo(target, { offset: -110 });
+    else target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }));
+
+  if (sections[0]) setActive(sections[0].id);
 }

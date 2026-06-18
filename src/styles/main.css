@@ -749,35 +749,75 @@ body.intro-open{overflow:hidden}
 .regala-step h3{font-family:var(--serif);font-size:1.4rem;color:var(--moss);margin:.5rem 0 .6rem}
 .regala-step p{color:#55554a;font-size:.98rem;line-height:1.7}
 
-/* ---------- vinos: carta ---------- */
-.wine{max-width:920px;margin:0 auto;padding:clamp(1.5rem,4vh,3rem) var(--gutter) clamp(2rem,6vh,4rem)}
-.wine-group{margin-bottom:clamp(2.6rem,6vh,4rem)}
-.wine-group__head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;border-bottom:2px solid rgba(49,51,31,.5);padding-bottom:.7rem;margin-bottom:.4rem}
-.wine-group__head h2{font-family:var(--serif);font-size:clamp(1.6rem,3.5vw,2.4rem);color:var(--moss)}
-.wine-group__cols{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:#9a9a86;white-space:nowrap}
-.wine-list{list-style:none}
-.wine-row{display:grid;grid-template-columns:1fr auto;column-gap:1.5rem;align-items:baseline;padding:.95rem 0;border-bottom:1px solid rgba(49,51,31,.12)}
-.wine-row__name{grid-column:1;grid-row:1;font-family:var(--serif);font-size:1.12rem;color:var(--moss);line-height:1.3}
-.wine-row__grape{grid-column:1;grid-row:2;color:#7a7a6c;font-size:.86rem;margin-top:.15rem}
-.wine-row__price{grid-column:2;grid-row:1 / span 2;align-self:center;display:flex;gap:.4rem;font-variant-numeric:tabular-nums}
-.wine-row__price b{display:inline-block;min-width:3.2rem;text-align:right;font-family:var(--serif);font-weight:400;color:var(--moss)}
-.wine-row__price b:first-child{color:#8a8a76}
-.wine-row__price i{display:inline-block;min-width:3.2rem;text-align:right;color:#c4c2b3;font-style:normal}
-.wine-note{margin-top:2rem;color:#7a7a6c;font-size:.9rem;line-height:1.8}
-.wine-note a{color:var(--terracotta);text-decoration:underline;text-underline-offset:3px;margin-left:.4rem}
-@media (max-width:560px){
-  .regala-steps__grid{grid-template-columns:1fr}
-  .wine-row__price b,.wine-row__price i{min-width:2.7rem}
+/* ---------- vinos: la bodega (carta editorial + índice pegajoso) ---------- */
+/* HERO */
+.cellar-hero{position:relative;overflow:hidden;min-height:clamp(64vh,80svh,90vh);display:flex;flex-direction:column;justify-content:center;padding:clamp(7rem,16vh,11rem) var(--gutter) clamp(3rem,8vh,5rem);max-width:var(--maxw);margin:0 auto}
+.cellar-hero__inner{position:relative;z-index:2;max-width:none}
+.cellar-hero .eyebrow{color:var(--terracotta)}
+.cellar-hero__title{font-family:var(--serif);font-size:clamp(5rem,22vw,16rem);line-height:.84;color:var(--moss);letter-spacing:-0.02em;margin:.2rem 0 0}
+.cellar-hero__lead{max-width:46ch;margin-top:clamp(1.6rem,4vh,2.6rem);color:#45453a;font-size:clamp(1.05rem,1.6vw,1.32rem);line-height:1.62;text-wrap:pretty}
+.cellar-hero__meta{max-width:46ch;margin-top:1.2rem;color:var(--olive);font-style:italic;font-family:var(--serif);font-size:clamp(1rem,1.4vw,1.18rem);line-height:1.5}
+.cellar-hero__scrollcue{position:absolute;right:var(--gutter);bottom:clamp(2rem,6vh,3.5rem);z-index:2;display:flex;flex-direction:column;align-items:center;gap:.7rem;font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;color:var(--olive)}
+.cellar-hero__scrollcue i{width:1px;height:46px;background:var(--olive);transform-origin:top;animation:scrollline 2.2s var(--ease) infinite}
+
+/* LAYOUT: índice lateral + cuerpo */
+.cellar{display:grid;grid-template-columns:minmax(190px,260px) 1fr;gap:clamp(2rem,6vw,6rem);max-width:var(--maxw);margin:0 auto;padding:clamp(1rem,3vh,2.5rem) var(--gutter) clamp(3rem,9vh,7rem)}
+
+/* índice pegajoso (scrollspy) */
+.cellar-index{position:sticky;top:clamp(6rem,12vh,8rem);align-self:start;height:max-content}
+.cellar-index__title{font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;color:#9a9a86;margin-bottom:1.4rem}
+.cellar-index__list{list-style:none;display:flex;flex-direction:column;gap:.2rem}
+.cellar-index__list a{display:flex;flex-direction:column;gap:.05rem;padding:.55rem 0 .55rem 1.1rem;position:relative;color:#8a8a76;transition:color .4s var(--ease)}
+/* marca viajera: una línea fina que se llena en el activo */
+.cellar-index__list a::before{content:"";position:absolute;left:0;top:50%;width:2px;height:0;background:var(--olive);transform:translateY(-50%);transition:height .45s var(--ease)}
+.cellar-index__sense{font-family:var(--serif);font-style:italic;font-size:1.18rem;line-height:1.1;color:inherit}
+.cellar-index__name{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase}
+.cellar-index__list a:hover{color:var(--olive)}
+.cellar-index__list a.is-active{color:var(--moss)}
+.cellar-index__list a.is-active::before{height:100%}
+
+/* cuerpo: secciones por tipo */
+.wine-cat{padding:clamp(2rem,6vh,4.5rem) 0;scroll-margin-top:7rem}
+.wine-cat:first-child{padding-top:0}
+.wine-cat__head{margin-bottom:clamp(1.6rem,4vh,2.6rem)}
+/* la palabra-sensación: el gesto distintivo de la carta */
+.wine-cat__sense{font-family:var(--serif);font-style:italic;font-size:clamp(2.2rem,5vw,3.6rem);line-height:1;color:var(--accent-soft);margin-bottom:.1rem}
+/* el nombre del tipo va como etiqueta pequeña: el peso visual lo lleva la sensación */
+.wine-cat__title{font-family:var(--sans);font-weight:500;font-size:clamp(.78rem,1vw,.88rem);text-transform:uppercase;letter-spacing:.26em;color:var(--olive)}
+.wine-cat__note{margin-top:.6rem;color:#55554a;max-width:42ch;font-size:1.02rem;line-height:1.55}
+
+.wine-list{list-style:none;border-top:1px solid rgba(49,51,31,.16)}
+.wine-row{display:flex;align-items:baseline;justify-content:space-between;gap:1.5rem;padding:clamp(.9rem,2vh,1.25rem) 0;border-bottom:1px solid rgba(49,51,31,.12);position:relative;transition:padding-left .45s var(--ease)}
+.wine-row__name{font-family:var(--serif);font-size:clamp(1.2rem,2.2vw,1.75rem);color:var(--moss);line-height:1.2;position:relative}
+/* subrayado que se dibuja al pasar el cursor */
+.wine-row__name::after{content:"";position:absolute;left:0;right:0;bottom:-.12em;height:1px;background:var(--olive);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease)}
+.wine-row__grape{flex:0 0 auto;text-align:right;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:#8a8a76;transition:color .4s var(--ease);max-width:42%}
+@media (hover:hover){
+  .wine-row:hover{padding-left:1rem}
+  .wine-row:hover .wine-row__name::after{transform:scaleX(1)}
+  .wine-row:hover .wine-row__grape{color:var(--olive)}
 }
 
-/* ---------- transición entre páginas (cortina de marca) ---------- */
-.page-transition{
-  position:fixed;inset:0;z-index:9999;display:flex;pointer-events:none;
-  animation:ptSafety 0s linear 2.6s forwards; /* salvavidas si el JS no llega */
+@media (max-width:900px){
+  .cellar{grid-template-columns:1fr;gap:0}
+  /* el índice se vuelve una barra horizontal pegajosa */
+  .cellar-index{position:sticky;top:64px;z-index:40;height:auto;margin:0 calc(var(--gutter)*-1) clamp(1.5rem,4vh,2.5rem);padding:.8rem var(--gutter);background:rgba(244,239,230,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid rgba(49,51,31,.1)}
+  .cellar-index__title{display:none}
+  .cellar-index__list{flex-direction:row;gap:.4rem;overflow-x:auto;scrollbar-width:none}
+  .cellar-index__list::-webkit-scrollbar{display:none}
+  .cellar-index__list a{flex-direction:row;align-items:baseline;gap:.45rem;padding:.4rem .9rem;white-space:nowrap;border:1px solid rgba(49,51,31,.16);border-radius:999px}
+  .cellar-index__list a::before{display:none}
+  .cellar-index__list a.is-active{background:var(--moss);color:var(--cream);border-color:var(--moss)}
+  .cellar-index__sense{font-size:.95rem}
+  .cellar-index__name{font-size:.6rem}
 }
-@keyframes ptSafety{to{visibility:hidden}}
-.page-transition__col{flex:1 1 0;height:100%;background:var(--moss);transform:translateY(0)}
-.page-transition__col + .page-transition__col{margin-left:-1px}
+
+/* ---------- transición entre páginas (fundido suave en crema) ---------- */
+.page-transition{
+  position:fixed;inset:0;z-index:9999;pointer-events:none;background:var(--cream);
+  animation:ptSafety 0s linear 1.4s forwards; /* salvavidas si el JS no llega */
+}
+@keyframes ptSafety{to{visibility:hidden;opacity:0}}
 @media (prefers-reduced-motion:reduce){.page-transition{display:none}}
 
 /* ---------- reveal base ---------- */
