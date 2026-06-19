@@ -142,22 +142,28 @@ if (window.gsap) {
   /* ── transición entre páginas: cortina de marca (cols + libélula) ── */
   const pt = document.getElementById('pageTransition');
   if (pt) {
+    const ptMark = pt.querySelector('.page-transition__mark');
     const hidePT = () => { pt.style.visibility = 'hidden'; pt.style.opacity = '0'; pt.style.pointerEvents = 'none'; };
 
-    // ENTRADA: la capa crema cubre al cargar y se desvanece (fundido suave)
+    // ENTRADA: la cortina olive cubre al cargar; la libélula se desvanece y la cortina se va
     const revealPage = () => {
       if (reduceMotion) { hidePT(); return; }
       pt.style.visibility = 'visible';
-      gsap.fromTo(pt, { opacity: 1 },
-        { opacity: 0, duration: 0.5, ease: 'power2.out', onComplete: hidePT });
+      pt.style.opacity = '1';
+      gsap.set(ptMark, { xPercent: -50, yPercent: -50, autoAlpha: 1, scale: 1 });
+      gsap.timeline({ onComplete: hidePT })
+        .to(ptMark, { autoAlpha: 0, scale: 1.14, duration: 0.4, ease: 'power2.in' }, 0)
+        .to(pt, { autoAlpha: 0, duration: 0.55, ease: 'power2.out' }, 0.12);
     };
 
-    // SALIDA: la capa crema aparece y luego navega
+    // SALIDA: la cortina olive aparece con la libélula (escala + rebote) y luego navega
     const coverPage = (href) => {
       pt.style.visibility = 'visible';
       pt.style.pointerEvents = 'auto';
-      gsap.fromTo(pt, { opacity: 0 },
-        { opacity: 1, duration: 0.32, ease: 'power2.inOut', onComplete: () => { window.location.href = href; } });
+      gsap.set(ptMark, { xPercent: -50, yPercent: -50, autoAlpha: 0, scale: 0.8 });
+      gsap.timeline({ onComplete: () => { window.location.href = href; } })
+        .fromTo(pt, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.34, ease: 'power2.inOut' }, 0)
+        .to(ptMark, { autoAlpha: 1, scale: 1, duration: 0.42, ease: 'back.out(1.7)' }, 0.12);
     };
 
     revealPage();
@@ -201,15 +207,15 @@ if (window.gsap) {
       const mTl = gsap.timeline({
         scrollTrigger: { trigger: '.manifesto', start: 'top top', end: '+=85%', pin: true, scrub: 0.5 }
       });
-      // las palabras se encienden con una subida suave (sin volteo 3D)
+      // las palabras arrancan invisibles (opacity 0) y se encienden una a una al subir
       mTl.fromTo('.manifesto .m-word',
-        { opacity: 0.22, yPercent: 16 },
-        { opacity: 1, yPercent: 0, stagger: 0.12, ease: 'power2.out', duration: 1 })
+        { opacity: 0, yPercent: 28 },
+        { opacity: 1, yPercent: 0, stagger: 0.1, ease: 'power3.out', duration: 1 })
         .to('.manifesto__text em',
-          { scale: 1.04, ease: 'power2.out', duration: 0.4 }, '>-0.25')
+          { scale: 1.05, ease: 'power2.out', duration: 0.4 }, '>-0.25')
         .fromTo('.manifesto__bloom',
-          { yPercent: 28, rotate: -10, scale: .95 },
-          { yPercent: -28, rotate: 8, scale: 1.02, ease: 'none' }, 0);
+          { opacity: 0, yPercent: 26, rotate: -10, scale: .92 },
+          { opacity: 0.14, yPercent: -26, rotate: 8, scale: 1.04, ease: 'none' }, 0);
     }
 
     /* despertar de las flores: la foto florece desde una tarjeta centrada
@@ -219,10 +225,13 @@ if (window.gsap) {
       const sTl = gsap.timeline({
         scrollTrigger: { trigger: '.showcase-wrap', start: 'top top', end: '+=80%', pin: true, scrub: 0.5 }
       });
-      // la foto se va armando: entra desenfocada y se enfoca con el scroll
+      // la foto se va armando: entra desenfocada (con bordes difusos) y se enfoca con el scroll
       sTl.fromTo(sFrame.querySelector('img'),
         { filter: 'blur(28px)', scale: 1.22, opacity: 0.45 },
         { filter: 'blur(0px)', scale: 1, opacity: 1, ease: 'power2.out', duration: 1 })
+        .fromTo(sFrame,
+          { '--feather': '48%' },
+          { '--feather': '100%', ease: 'power2.out', duration: 1 }, 0)
         .fromTo('.showcase__veil', { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.5)
         .fromTo('.showcase__cap',
           { opacity: 0, yPercent: 30 },

@@ -215,6 +215,15 @@ body.intro-open{overflow:hidden}
 .nav.scrolled .nav__logo-img{height:34px}
 .nav.scrolled .nav__logo-img--light{opacity:0}
 .nav.scrolled .nav__logo-img--dark{opacity:1}
+/* en móvil el logo es solo el isotipo de la libélula */
+.nav__logo-iso{display:none;height:40px;width:auto;object-fit:contain;transition:height .5s var(--ease), filter .5s var(--ease)}
+@media (max-width:560px){
+  .nav__logo-img{display:none}
+  .nav__logo-iso{display:block}
+  .nav.scrolled .nav__logo-iso{height:34px}
+  /* sobre fondo claro (nav sólida o con scroll) la libélula se oscurece para verse */
+  .nav--solid .nav__logo-iso,.nav.scrolled .nav__logo-iso{filter:brightness(0) saturate(0)}
+}
 .nav__links{display:flex;align-items:center;gap:2.4rem}
 /* laptops estrechas: menos hueco para que quepan los 6 enlaces + el botón */
 @media (min-width:901px) and (max-width:1180px){.nav__links{gap:1.5rem}}
@@ -283,7 +292,7 @@ body.intro-open{overflow:hidden}
 .manifesto .m-word{display:inline-block;will-change:transform,opacity;transform-origin:50% 100%}
 .manifesto__bloom{
   position:absolute;z-index:1;left:50%;top:50%;width:clamp(150px,20vw,300px);height:auto;
-  transform:translate(-50%,-50%);opacity:.09;filter:blur(5px);pointer-events:none;will-change:transform;
+  transform:translate(-50%,-50%);opacity:0;filter:blur(5px);pointer-events:none;will-change:transform,opacity;
 }
 .reveal-line{display:block;overflow:hidden}
 .reveal-line>*{display:inline-block}
@@ -307,8 +316,10 @@ body.intro-open{overflow:hidden}
 .showcase-wrap{position:relative}
 .showcase{display:block;position:relative;height:100svh;min-height:560px;text-decoration:none;color:inherit;overflow:hidden}
 .showcase__frame{
-  position:absolute;inset:0;margin:0;overflow:hidden;
-  clip-path:inset(0 0 0 0 round 0);will-change:clip-path;
+  position:absolute;inset:0;margin:0;overflow:hidden;will-change:mask;
+  /* bordes difuminados mientras hay blur (--feather sube a 100% = nítido) */
+  -webkit-mask-image:radial-gradient(142% 142% at 50% 50%, #000 var(--feather,100%), transparent);
+          mask-image:radial-gradient(142% 142% at 50% 50%, #000 var(--feather,100%), transparent);
 }
 .showcase__frame img{width:100%;height:100%;object-fit:cover;will-change:transform,filter}
 .showcase__veil{
@@ -771,10 +782,14 @@ body.intro-open{overflow:hidden}
 
 /* ---------- transición entre páginas (fundido suave en crema) ---------- */
 .page-transition{
-  position:fixed;inset:0;z-index:9999;pointer-events:none;background:var(--cream);
-  animation:ptSafety 0s linear 1.4s forwards; /* salvavidas si el JS no llega */
+  position:fixed;inset:0;z-index:9999;pointer-events:none;background:var(--olive);
+  animation:ptSafety 0s linear 1.6s forwards; /* salvavidas si el JS no llega */
 }
 @keyframes ptSafety{to{visibility:hidden;opacity:0}}
+.page-transition__mark{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:clamp(64px,10vw,120px);height:auto;object-fit:contain;opacity:0;will-change:transform,opacity;
+}
 @media (prefers-reduced-motion:reduce){.page-transition{display:none}}
 
 /* ---------- reveal base ---------- */
