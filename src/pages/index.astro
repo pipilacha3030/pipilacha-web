@@ -37,13 +37,16 @@ import Base from '../layouts/Base.astro';
     </p>
   </section>
 
-  <!-- DESPERTAR DE LAS FLORES (pinned: la foto se expande a pantalla completa) -->
+  <!-- DESPERTAR DE LAS FLORES (4 imágenes en bucle: Timeline + clip-path) -->
   <section class="showcase-wrap" id="despertar">
     <a class="showcase" href="/menu/" aria-label="Ver el menú Despertar de las flores">
-      <figure class="showcase__frame">
-        <img src="/assets/img/esparragos-tagete.jpg" alt="Espárragos a la brasa con romesco de tagete, sobre plato de piedra" />
+      <div class="showcase__frame">
+        <figure class="showcase__layer" data-layer="0"><img src="/assets/img/df-esparrago.jpg" alt="Espárragos a la brasa con romesco de tagete" loading="lazy" decoding="async" /></figure>
+        <figure class="showcase__layer" data-layer="1"><img src="/assets/img/df-guisante.jpg" alt="Guisante coco-saúco" loading="lazy" decoding="async" /></figure>
+        <figure class="showcase__layer" data-layer="2"><img src="/assets/img/df-vieira.jpg" alt="Vieira con flor de higo" loading="lazy" decoding="async" /></figure>
+        <figure class="showcase__layer" data-layer="3"><img src="/assets/img/df-mandarina.jpg" alt="Torrija de mandarina" loading="lazy" decoding="async" /></figure>
         <span class="showcase__veil" aria-hidden="true"></span>
-      </figure>
+      </div>
       <span class="showcase__cap">
         <span class="eyebrow">El menú</span>
         <span class="showcase__title">Despertar de las flores</span>

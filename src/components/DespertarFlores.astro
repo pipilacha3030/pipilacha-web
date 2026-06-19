@@ -1,0 +1,223 @@
+---
+/* ============================================================
+   DespertarFlores.astro
+   ------------------------------------------------------------
+   Sección con 4 imágenes superpuestas que se revelan en bucle
+   con GSAP (clip-path), simulando el "despertar" de las flores.
+
+   Requisitos del proyecto:
+   - GSAP y ScrollTrigger ya cargados/registrados de forma global
+     (window.gsap / window.ScrollTrigger). Este componente los usa.
+
+   Uso básico:
+     ---
+     import DespertarFlores from '../components/DespertarFlores.astro';
+     ---
+     <DespertarFlores />
+
+   Uso con TUS imágenes (carpeta despertar-de-las-flores-menu/):
+     <DespertarFlores
+       images={[
+         { src: '/despertar-de-las-flores-menu/1.jpg', alt: 'Flor 1' },
+         { src: '/despertar-de-las-flores-menu/2.jpg', alt: 'Flor 2' },
+         { src: '/despertar-de-las-flores-menu/3.jpg', alt: 'Flor 3' },
+         { src: '/despertar-de-las-flores-menu/4.jpg', alt: 'Flor 4' },
+       ]}
+       title="Despertar de las Flores"
+       subtitle="Pétalo a pétalo, plato a plato."
+     />
+   ============================================================ */
+
+interface Img { src: string; alt: string }
+interface Props {
+  images?: Img[];
+  title?: string;
+  subtitle?: string;
+  eyebrow?: string;
+  /** activa la animación solo cuando la sección entra en pantalla */
+  scrollTrigger?: boolean;
+}
+
+const {
+  // Por defecto usa 4 fotos reales del proyecto (cámbialas por las tuyas).
+  images = [
+    { src: '/assets/img/g15.jpg', alt: 'Pho de flores' },
+    { src: '/assets/img/esparragos-tagete.jpg', alt: 'Espárragos con tagete' },
+    { src: '/assets/img/g18.jpg', alt: 'Corvina con pétalos de tagete' },
+    { src: '/assets/img/g13.jpg', alt: 'Claveles sobre fresas con nata' },
+  ],
+  title = 'Despertar de las Flores',
+  subtitle = 'Un menú que se abre como una flor: pétalo a pétalo, sabor a sabor.',
+  eyebrow = 'Menú de degustación',
+  scrollTrigger = true,
+} = Astro.props;
+---
+
+<section class="despertar" data-scrolltrigger={scrollTrigger ? 'true' : 'false'}>
+  <div class="despertar__inner">
+
+    <!-- Título + subtítulo -->
+    <header class="despertar__head">
+      <p class="despertar__eyebrow">{eyebrow}</p>
+      <h2 class="despertar__title">{title}</h2>
+      <p class="despertar__sub">{subtitle}</p>
+    </header>
+
+    <!-- Escenario: 4 imágenes superpuestas que se revelan en bucle -->
+    <div class="despertar__stage">
+      {images.map((img, i) => (
+        <figure class="despertar__layer" data-layer={i}>
+          <img src={img.src} alt={img.alt} loading="lazy" decoding="async" />
+        </figure>
+      ))}
+    </div>
+
+  </div>
+</section>
+
+<style>
+  /* Paleta y radios locales (botánica/natural). Las fuentes se heredan del
+     proyecto si existen (--serif / --sans), con fallback elegante. */
+  .despertar {
+    --df-bg:     #f5f1e8;
+    --df-ink:    #2c3326;
+    --df-muted:  #6f7763;
+    --df-accent: #8a9a6b;
+    --df-radius: 22px;
+
+    position: relative;
+    padding: clamp(3.5rem, 9vh, 8rem) clamp(1.25rem, 5vw, 4rem);
+    background: var(--df-bg);
+    color: var(--df-ink);
+  }
+
+  .despertar__inner { max-width: 1100px; margin: 0 auto; }
+
+  /* ---------- cabecera ---------- */
+  .despertar__head {
+    text-align: center;
+    margin-bottom: clamp(2rem, 5vh, 3.5rem);
+  }
+  .despertar__eyebrow {
+    font-family: var(--sans, ui-sans-serif, system-ui, sans-serif);
+    font-size: .72rem; font-weight: 500;
+    letter-spacing: .3em; text-transform: uppercase;
+    color: var(--df-accent);
+    margin: 0 0 1.1rem;
+  }
+  .despertar__title {
+    font-family: var(--serif, ui-serif, Georgia, 'Times New Roman', serif);
+    font-weight: 400; line-height: 1.04;
+    font-size: clamp(2.2rem, 6vw, 4.6rem);
+    letter-spacing: .005em;
+    margin: 0;
+  }
+  .despertar__sub {
+    font-family: var(--sans, ui-sans-serif, system-ui, sans-serif);
+    max-width: 46ch; margin: 1.2rem auto 0;
+    color: var(--df-muted);
+    font-size: clamp(1rem, 1.4vw, 1.18rem); line-height: 1.65;
+  }
+
+  /* ---------- escenario de imágenes superpuestas ---------- */
+  .despertar__stage {
+    position: relative; width: 100%;
+    aspect-ratio: 16 / 10;           /* mantiene el tamaño antes de cargar (sin saltos) */
+    border-radius: var(--df-radius);
+    overflow: hidden; isolation: isolate;
+    box-shadow: 0 42px 80px -42px rgba(44, 51, 38, .55);
+  }
+  /* viñeta interior sutil para un acabado premium */
+  .despertar__stage::after {
+    content: ""; position: absolute; inset: 0; z-index: 30;
+    pointer-events: none; border-radius: inherit;
+    box-shadow: inset 0 0 130px rgba(20, 26, 16, .26);
+  }
+  /* cada capa ocupa todo el escenario; el clip-path la revela */
+  .despertar__layer {
+    position: absolute; inset: 0; margin: 0; overflow: hidden;
+    clip-path: inset(0 0 0 0);
+    will-change: clip-path;
+  }
+  .despertar__layer img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    will-change: transform;
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 640px) {
+    .despertar__stage { aspect-ratio: 4 / 5; }   /* más vertical en móvil */
+  }
+
+  /* ---------- accesibilidad: sin animación ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .despertar__layer { clip-path: inset(0 0 0 0) !important; }
+  }
+</style>
+
+<script>
+  /* Animación en bucle con GSAP. Usa el GSAP global del proyecto. */
+  function initDespertarFlores() {
+    const gsap = (window as any).gsap;
+    const ScrollTrigger = (window as any).ScrollTrigger;
+    if (!gsap) return; // requiere GSAP cargado globalmente
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    document.querySelectorAll<HTMLElement>('.despertar').forEach((section) => {
+      const layers = gsap.utils.toArray(section.querySelectorAll('.despertar__layer')) as HTMLElement[];
+      if (!layers.length) return;
+
+      // estado base: todas reveladas; la PRIMERA capa queda arriba (es la que se ve en reposo)
+      gsap.set(layers, { clipPath: 'inset(0 0% 0 0)', zIndex: (i: number) => layers.length - i });
+
+      // accesibilidad: si el usuario pidió menos movimiento, no animamos
+      if (reduce) {
+        gsap.set(layers, { zIndex: (i: number) => i + 1 });
+        return;
+      }
+
+      // Línea de tiempo en bucle infinito.
+      // En cada vuelta resetea z-index y clip para que el ciclo encaje perfecto.
+      const tl = gsap.timeline({
+        repeat: -1,
+        repeatDelay: 0.6,
+        defaults: { ease: 'power2.inOut' },
+        onRepeat: () => gsap.set(layers, { zIndex: 1, clipPath: 'inset(0 0% 0 0)' }),
+      });
+
+      layers.forEach((layer, i) => {
+        const img = layer.querySelector('img');
+        // 1) traemos la capa al frente
+        tl.set(layer, { zIndex: 10 + i }, i === 0 ? 0 : '+=0.8'); // pausa breve entre etapas
+        // 2) la revelamos de izquierda a derecha con clip-path (~3s)
+        //    immediateRender:false → en reposo NO se ocultan (se ve la imagen de base)
+        tl.fromTo(layer,
+          { clipPath: 'inset(0 100% 0 0)' },
+          { clipPath: 'inset(0 0% 0 0)', duration: 3, immediateRender: false }, '<');
+        // 3) y un leve zoom-out de la foto para darle vida (un poco más largo)
+        if (img) {
+          tl.fromTo(img,
+            { scale: 1.12 },
+            { scale: 1, duration: 3.4, ease: 'power1.out', immediateRender: false }, '<');
+        }
+      });
+
+      // Opcional: arranca pausada y solo se reproduce cuando está en pantalla
+      const useST = section.dataset.scrolltrigger === 'true' && ScrollTrigger;
+      if (useST) {
+        tl.pause();
+        ScrollTrigger.create({
+          trigger: section,
+          start: 'top 75%',
+          end: 'bottom 25%',
+          onToggle: (self: any) => (self.isActive ? tl.play() : tl.pause()),
+        });
+      }
+    });
+  }
+
+  // GSAP lo carga el layout antes; si aún no está, esperamos a 'load'.
+  if ((window as any).gsap) initDespertarFlores();
+  else window.addEventListener('load', initDespertarFlores);
+</script>

@@ -315,15 +315,13 @@ body.intro-open{overflow:hidden}
 /* ---------- despertar de las flores (foto que se expande con el scroll) ---------- */
 .showcase-wrap{position:relative}
 .showcase{display:block;position:relative;height:100svh;min-height:560px;text-decoration:none;color:inherit;overflow:hidden}
-.showcase__frame{
-  position:absolute;inset:0;margin:0;overflow:hidden;will-change:mask;
-  /* bordes difuminados mientras hay blur (--feather sube a 100% = nítido) */
-  -webkit-mask-image:radial-gradient(142% 142% at 50% 50%, #000 var(--feather,100%), transparent);
-          mask-image:radial-gradient(142% 142% at 50% 50%, #000 var(--feather,100%), transparent);
-}
-.showcase__frame img{width:100%;height:100%;object-fit:cover;will-change:transform,filter}
+/* isolation: encierra el z-index de las capas para que NO tapen el caption */
+.showcase__frame{position:absolute;inset:0;margin:0;overflow:hidden;isolation:isolate}
+/* cada capa ocupa todo el marco; el clip-path la revela de izquierda a derecha */
+.showcase__layer{position:absolute;inset:0;margin:0;overflow:hidden;clip-path:inset(0 0 0 0);will-change:clip-path}
+.showcase__layer img{width:100%;height:100%;object-fit:cover;display:block;will-change:transform}
 .showcase__veil{
-  position:absolute;inset:0;pointer-events:none;
+  position:absolute;inset:0;z-index:20;pointer-events:none;
   background:linear-gradient(180deg,rgba(20,20,12,0) 45%,rgba(20,20,12,.62) 100%);
 }
 .showcase__cap{

@@ -218,24 +218,33 @@ if (window.gsap) {
           { opacity: 0.14, yPercent: -26, rotate: 8, scale: 1.04, ease: 'none' }, 0);
     }
 
-    /* despertar de las flores: la foto florece desde una tarjeta centrada
-       hasta pantalla completa, con la imagen empujando en profundidad */
-    const sFrame = document.querySelector('.showcase__frame');
-    if (sFrame) {
-      const sTl = gsap.timeline({
-        scrollTrigger: { trigger: '.showcase-wrap', start: 'top top', end: '+=80%', pin: true, scrub: 0.5 }
-      });
-      // la foto se va armando: entra desenfocada (con bordes difusos) y se enfoca con el scroll
-      sTl.fromTo(sFrame.querySelector('img'),
-        { filter: 'blur(28px)', scale: 1.22, opacity: 0.45 },
-        { filter: 'blur(0px)', scale: 1, opacity: 1, ease: 'power2.out', duration: 1 })
-        .fromTo(sFrame,
-          { '--feather': '48%' },
-          { '--feather': '100%', ease: 'power2.out', duration: 1 }, 0)
-        .fromTo('.showcase__veil', { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.5)
-        .fromTo('.showcase__cap',
-          { opacity: 0, yPercent: 30 },
-          { opacity: 1, yPercent: 0, ease: 'power3.out', duration: 0.4 }, 0.55);
+    /* despertar de las flores: 4 imágenes superpuestas que se revelan en bucle
+       (Timeline + clip-path), de izquierda a derecha, con leve zoom-out */
+    const showcase = document.querySelector('.showcase');
+    if (showcase) {
+      const sLayers = gsap.utils.toArray(showcase.querySelectorAll('.showcase__layer'));
+      if (sLayers.length) {
+        // base: todas reveladas; la primera capa arriba (la que se ve en reposo)
+        gsap.set(sLayers, { clipPath: 'inset(0 0% 0 0)', zIndex: i => sLayers.length - i });
+        const sTl = gsap.timeline({
+          repeat: -1, repeatDelay: 0.6, defaults: { ease: 'power2.inOut' },
+          onRepeat: () => gsap.set(sLayers, { zIndex: 1, clipPath: 'inset(0 0% 0 0)' })
+        });
+        sLayers.forEach((layer, i) => {
+          const img = layer.querySelector('img');
+          sTl.set(layer, { zIndex: 10 + i }, i === 0 ? 0 : '+=0.8') // pausa breve entre etapas
+            .fromTo(layer, { clipPath: 'inset(0 100% 0 0)' },
+              { clipPath: 'inset(0 0% 0 0)', duration: 3, immediateRender: false }, '<')
+            .fromTo(img, { scale: 1.12 },
+              { scale: 1, duration: 3.4, ease: 'power1.out', immediateRender: false }, '<');
+        });
+        // arranca pausada; corre solo cuando la sección está en pantalla
+        sTl.pause();
+        ScrollTrigger.create({
+          trigger: '.showcase-wrap', start: 'top 75%', end: 'bottom 25%',
+          onToggle: self => self.isActive ? sTl.play() : sTl.pause()
+        });
+      }
     }
 
     /* parallax CENTRADO: a mitad de recorrido (incluido el scroll 0 del hero)
