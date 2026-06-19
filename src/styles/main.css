@@ -310,7 +310,7 @@ body.intro-open{overflow:hidden}
   position:absolute;inset:0;margin:0;overflow:hidden;
   clip-path:inset(0 0 0 0 round 0);will-change:clip-path;
 }
-.showcase__frame img{width:100%;height:100%;object-fit:cover;will-change:transform}
+.showcase__frame img{width:100%;height:100%;object-fit:cover;will-change:transform,filter}
 .showcase__veil{
   position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(180deg,rgba(20,20,12,0) 45%,rgba(20,20,12,.62) 100%);
@@ -561,11 +561,13 @@ body.intro-open{overflow:hidden}
 /* la imagen entra como FONDO de la celda al pasar el cursor */
 .explore a::before{
   content:"";position:absolute;inset:0;z-index:0;background-image:var(--img);
-  background-size:cover;background-position:center;opacity:0;transform:scale(1.06);
+  background-size:cover;background-position:center var(--posy,50%);opacity:0;transform:scale(1.06);
   transition:opacity .55s var(--ease), transform 1.3s var(--ease);
 }
+/* solo un velo abajo para leer el texto; la foto NO se oscurece */
 .explore a::after{
-  content:"";position:absolute;inset:0;z-index:1;background:rgba(18,18,11,.44);
+  content:"";position:absolute;inset:0;z-index:1;
+  background:linear-gradient(0deg, rgba(0,0,0,.5) 0%, rgba(0,0,0,0) 46%);
   opacity:0;transition:opacity .55s var(--ease);
 }
 .explore a > *{position:relative;z-index:2}
@@ -613,12 +615,8 @@ body.intro-open{overflow:hidden}
 }
 .marquee__sep{color:rgba(100,93,59,.45)}
 @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-/* variante grande y disruptiva: banda moss + tipografía serif enorme */
-.marquee--bold{background:var(--moss);border-block:0;padding:clamp(1.4rem,4vh,2.6rem) 0}
-.marquee--bold .marquee__track{animation-duration:30s}
-.marquee--bold .marquee__group{gap:clamp(1.6rem,4vw,3rem);padding-right:clamp(1.6rem,4vw,3rem)}
-.marquee--bold .marquee__group span{font-family:var(--serif);font-weight:400;font-size:clamp(1.8rem,5vw,4rem);letter-spacing:0;text-transform:none;color:var(--cream)}
-.marquee--bold .marquee__sep{color:var(--accent-soft);font-size:clamp(1rem,2.4vw,1.8rem);transform:translateY(-.12em)}
+/* la flor como separador en la cinta */
+.marquee__sep{color:var(--accent-soft)}
 
 /* ---------- prensa: menciones editoriales (disruptivo) ---------- */
 .press{max-width:var(--maxw);margin:0 auto;padding:clamp(1rem,4vh,3rem) var(--gutter) clamp(2rem,6vh,4rem)}
@@ -629,48 +627,56 @@ body.intro-open{overflow:hidden}
 .press-row:nth-child(even) .press-row__link{padding-left:clamp(2rem,9vw,10rem)}
 
 .press-row__link{
+  position:relative;overflow:hidden;
   display:grid;grid-template-columns:auto 1fr auto;align-items:center;
-  gap:clamp(1.2rem,3vw,3.2rem);padding:clamp(1.9rem,4.8vw,3.6rem) 0;color:var(--moss);
+  gap:clamp(1.2rem,3vw,3.2rem);padding:clamp(1.9rem,4.8vw,3.6rem) clamp(1rem,3vw,2.2rem);color:var(--moss);
   transition:padding .6s var(--ease), color .6s var(--ease);
 }
+/* la imagen entra como FONDO de la fila al pasar el cursor (mismo efecto que Explorar) */
+.press-row__link::before{
+  content:"";position:absolute;inset:0;z-index:0;background-image:var(--img);
+  background-size:cover;background-position:center var(--posy,42%);opacity:0;transform:scale(1.06);
+  transition:opacity .55s var(--ease), transform 1.3s var(--ease);
+}
+.press-row__link::after{
+  content:"";position:absolute;inset:0;z-index:1;
+  background:linear-gradient(90deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.18) 58%, rgba(0,0,0,0) 100%);
+  opacity:0;transition:opacity .55s var(--ease);
+}
+.press-row__link > *{position:relative;z-index:2}
 .press-row__index{
   font-family:var(--serif);font-size:clamp(2.2rem,5.5vw,4.6rem);line-height:.9;
   color:transparent;-webkit-text-stroke:1px rgba(100,93,59,.45);
-  align-self:start;transition:color .5s var(--ease), -webkit-text-stroke-color .5s var(--ease);
+  align-self:start;transition:color .5s var(--ease), -webkit-text-stroke-color .5s var(--ease), text-shadow .5s var(--ease);
 }
-.press-row__link:hover .press-row__index{color:var(--olive);-webkit-text-stroke-color:var(--olive)}
 .press-row__medio{
   display:block;font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;
-  color:#6a6a58;margin-bottom:.7rem;
+  color:#6a6a58;margin-bottom:.7rem;transition:color .5s var(--ease);
 }
 .press-row__titular{
   font-family:var(--serif);font-size:clamp(1.6rem,4.2vw,3.5rem);line-height:1.04;
-  color:var(--moss);transition:transform .6s var(--ease), color .6s var(--ease);
+  color:var(--moss);transition:transform .6s var(--ease), color .6s var(--ease), text-shadow .6s var(--ease);
 }
-.press-row__link:hover .press-row__titular{color:var(--olive);transform:translateX(clamp(.4rem,1.5vw,1.3rem))}
 .press-row__cta{
   font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--olive);
   white-space:nowrap;opacity:0;transform:translateX(-12px);
-  transition:opacity .5s var(--ease), transform .5s var(--ease);
+  transition:opacity .5s var(--ease), transform .5s var(--ease), color .5s var(--ease);
 }
-.press-row__link:hover .press-row__cta{opacity:1;transform:translateX(0)}
-
-/* preview que sigue al cursor (20% más pequeña) */
-.press-cursor{
-  position:fixed;top:0;left:0;z-index:60;
-  width:clamp(176px,17.6vw,272px);aspect-ratio:4/5;pointer-events:none;
-  border-radius:var(--radius-sm);overflow:hidden;visibility:hidden;opacity:0;
-  box-shadow:0 26px 52px -26px rgba(49,51,31,.62);
+/* al hover, con la foto detrás, el texto pasa a cream + sombra para leerse */
+@media (hover:hover) and (pointer:fine){
+  .press-row__link:hover::before{opacity:1;transform:scale(1)}
+  .press-row__link:hover::after{opacity:1}
+  .press-row__link:hover .press-row__index{color:var(--cream);-webkit-text-stroke-color:rgba(244,239,230,.55);text-shadow:0 2px 14px rgba(0,0,0,.5)}
+  .press-row__link:hover .press-row__medio{color:rgba(244,239,230,.85)}
+  .press-row__link:hover .press-row__titular{color:var(--cream);transform:translateX(clamp(.4rem,1.5vw,1.3rem));text-shadow:0 2px 16px rgba(0,0,0,.55)}
+  .press-row__link:hover .press-row__cta{opacity:1;transform:translateX(0);color:var(--cream)}
 }
-.press-cursor img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s var(--ease)}
-.press-cursor img.is-active{opacity:1}
 
 @media (max-width:760px){
   .press-row:nth-child(even) .press-row__link{padding-left:0}
   .press-row__link{grid-template-columns:auto 1fr;gap:1rem}
   .press-row__index{font-size:clamp(1.7rem,7vw,2.4rem)}
   .press-row__cta{display:none}
-  .press-cursor{display:none}
 }
 
 .prensa-kit{

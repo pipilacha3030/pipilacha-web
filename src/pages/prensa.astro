@@ -68,7 +68,7 @@ const menciones = [
             href={m.url}
             target="_blank"
             rel="noopener"
-            data-img={m.img}
+            style={`--img:url(${m.img})`}
             aria-label={`${m.titular} — ${m.medio}, ${m.fecha}. Abre en una pestaña nueva.`}
           >
             <span class="press-row__index">{String(i + 1).padStart(2, '0')}</span>
@@ -81,13 +81,6 @@ const menciones = [
         </li>
       ))}
     </ol>
-
-    <!-- preview flotante (se monta junto al cursor por JS) -->
-    <div class="press-cursor" aria-hidden="true">
-      {menciones.map((m) => (
-        <img src={m.img} alt="" data-img={m.img} loading="lazy" />
-      ))}
-    </div>
   </section>
 
   <!-- KIT DE PRENSA / CONTACTO -->
