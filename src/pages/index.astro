@@ -29,12 +29,10 @@ import Base from '../layouts/Base.astro';
     <div class="hero__scroll reveal" data-delay="0.9"><span>Desliza</span></div>
   </section>
 
-  <!-- MANIFIESTO (pinned: las palabras se encienden con el scroll) -->
+  <!-- MANIFIESTO (reveal editorial: SplitType + blur + pétalos SVG, una sola vez) -->
   <section class="manifesto" id="manifesto">
-    <img src="/assets/img/petal-oxalis.png" class="manifesto__bloom" alt="" aria-hidden="true" />
-    <p class="manifesto__text">
-      <span class="m-word">El</span> <span class="m-word">único</span> <span class="m-word">restaurante</span> <span class="m-word">de</span> <span class="m-word"><em>flores</em></span> <span class="m-word">del</span> <span class="m-word">mundo.</span>
-    </p>
+    <p class="manifesto__text">El único restaurante de <em>flores</em> del mundo.</p>
+    <div class="manifesto__petals" aria-hidden="true"></div>
   </section>
 
   <!-- DESPERTAR DE LAS FLORES (4 imágenes en bucle: Timeline + clip-path) -->

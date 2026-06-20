@@ -40,6 +40,11 @@ body{
 img{display:block;width:100%;height:100%;object-fit:cover}
 a{color:inherit;text-decoration:none}
 h1,h2,h3,h4{font-family:var(--serif);font-weight:400;line-height:1.05;letter-spacing:.01em}
+/* sombra paralela sutil en los títulos (desplazada, en em para que escale con el tamaño) */
+h1,h2,h3,
+.showcase__title,.cellar-hero__title,.pase__name,.press-row__titular{
+  text-shadow:0.014em 0.036em 0.05em rgba(20,20,12,.16);
+}
 em{font-style:italic}
 
 /* Lenis */
@@ -279,21 +284,21 @@ body.intro-open{overflow:hidden}
 .hero__scroll i{width:1px;height:50px;background:var(--cream);transform-origin:top;animation:scrollline 2.2s var(--ease) infinite}
 @keyframes scrollline{0%{transform:scaleY(0);opacity:0}40%{transform:scaleY(1);opacity:1}100%{transform:scaleY(1) translateY(50px);opacity:0}}
 
-/* ---------- manifiesto (pinned, palabras que se encienden) ---------- */
+/* ---------- manifiesto (reveal editorial: SplitType + blur + pétalos) ---------- */
 .manifesto{
   position:relative;min-height:100svh;display:flex;align-items:center;justify-content:center;
   padding:0 var(--gutter);text-align:center;overflow:hidden;
 }
 .manifesto__text{
-  position:relative;z-index:2;max-width:1100px;perspective:900px;
+  position:relative;z-index:2;max-width:1100px;text-wrap:balance;
   font-family:var(--serif);font-size:clamp(2.2rem,5.6vw,5rem);line-height:1.16;color:var(--moss);
 }
 .manifesto__text em{color:var(--terracotta);font-style:italic}
-.manifesto .m-word{display:inline-block;will-change:transform,opacity;transform-origin:50% 100%}
-.manifesto__bloom{
-  position:absolute;z-index:1;left:50%;top:50%;width:clamp(150px,20vw,300px);height:auto;
-  transform:translate(-50%,-50%);opacity:0;filter:blur(5px);pointer-events:none;will-change:transform,opacity;
-}
+/* SplitType: cada carácter, listo para el blur-reveal */
+.manifesto .char{display:inline-block;will-change:filter,opacity,transform;backface-visibility:hidden}
+/* pétalos SVG que emergen de las letras (decorativos; se eliminan al terminar) */
+.manifesto__petals{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.manifesto__petal{position:absolute;top:0;left:0;will-change:transform,opacity}
 .reveal-line{display:block;overflow:hidden}
 .reveal-line>*{display:inline-block}
 
@@ -679,6 +684,15 @@ body.intro-open{overflow:hidden}
   .press-row__link:hover .press-row__medio{color:rgba(244,239,230,.85)}
   .press-row__link:hover .press-row__titular{color:var(--cream);transform:translateX(clamp(.4rem,1.5vw,1.3rem));text-shadow:0 2px 16px rgba(0,0,0,.55)}
   .press-row__link:hover .press-row__cta{opacity:1;transform:translateX(0);color:var(--cream)}
+}
+/* en táctil/móvil no hay hover: la foto se ve SIEMPRE, con el texto legible */
+@media (hover:none), (max-width:640px){
+  .press-row__link{min-height:clamp(112px,27vw,168px)}
+  .press-row__link::before{opacity:1;transform:scale(1)}
+  .press-row__link::after{opacity:1;background:linear-gradient(90deg, rgba(0,0,0,.64) 0%, rgba(0,0,0,.44) 60%, rgba(0,0,0,.3) 100%)}
+  .press-row__index{color:var(--cream);-webkit-text-stroke-color:rgba(244,239,230,.5);text-shadow:0 2px 14px rgba(0,0,0,.55)}
+  .press-row__medio{color:rgba(244,239,230,.88)}
+  .press-row__titular{color:var(--cream);text-shadow:0 2px 16px rgba(0,0,0,.6)}
 }
 
 @media (max-width:760px){

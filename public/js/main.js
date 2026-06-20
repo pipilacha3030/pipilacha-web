@@ -201,21 +201,32 @@ if (window.gsap) {
       });
     });
 
-    /* manifiesto pinned: cada palabra se levanta en 3D (sin blur = sin tirones),
-       la flor cruza por detrás. scrub más ajustado para que siga al dedo */
-    if (document.querySelector('.manifesto')) {
+    /* MANIFIESTO: reveal editorial — SplitType (caracteres) que se enfocan desde
+       desenfoque + casi invisibles, con pétalos SVG que emergen de algunas letras.
+       Se dispara UNA sola vez y, al acabar, queda tipografía limpia. */
+    const manifesto = document.querySelector('.manifesto');
+    if (manifesto && window.SplitType) {
+      const textEl = manifesto.querySelector('.manifesto__text');
+      const petalsBox = manifesto.querySelector('.manifesto__petals');
+      const split = new SplitType(textEl, { types: 'words,chars', tagName: 'span' });
+      const chars = split.chars || [];
+      const isMobile = window.matchMedia('(max-width: 640px)').matches;
+
+      // estado inicial: borroso y casi invisible
+      gsap.set(chars, { opacity: 0, filter: 'blur(12px)', yPercent: 16 });
+
       const mTl = gsap.timeline({
-        scrollTrigger: { trigger: '.manifesto', start: 'top top', end: '+=85%', pin: true, scrub: 0.5 }
+        scrollTrigger: { trigger: manifesto, start: 'top 62%', once: true }, // solo una vez
+        onComplete: () => { try { split.revert(); } catch (e) {} } // tipografía final limpia
       });
-      // las palabras arrancan invisibles (opacity 0) y se encienden una a una al subir
-      mTl.fromTo('.manifesto .m-word',
-        { opacity: 0, yPercent: 28 },
-        { opacity: 1, yPercent: 0, stagger: 0.1, ease: 'power3.out', duration: 1 })
-        .to('.manifesto__text em',
-          { scale: 1.05, ease: 'power2.out', duration: 0.4 }, '>-0.25')
-        .fromTo('.manifesto__bloom',
-          { opacity: 0, yPercent: 26, rotate: -10, scale: .92 },
-          { opacity: 0.14, yPercent: -26, rotate: 8, scale: 1.04, ease: 'none' }, 0);
+      // los caracteres se enfocan progresivamente
+      mTl.to(chars, {
+        opacity: 1, filter: 'blur(0px)', yPercent: 0,
+        duration: 1.0, ease: 'power2.out',
+        stagger: { each: isMobile ? 0.018 : 0.028, from: 'start' }
+      });
+      // pétalos que emergen de letras seleccionadas, durante el reveal
+      mTl.add(() => spawnManifestoPetals(chars, manifesto, petalsBox, isMobile), 0.5);
     }
 
     /* despertar de las flores: 4 imágenes superpuestas que se revelan en bucle
@@ -523,3 +534,68 @@ if (cellar) {
   if (sections[0]) setActive(sections[0].id);
 }
 
+
+/* ============================================================
+   MANIFIESTO · pétalos SVG generados programáticamente
+   (decorativos, botánicos, sin caricatura; se eliminan al terminar)
+   ============================================================ */
+function makeManifestoPetal() {
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('class', 'manifesto__petal');
+  svg.setAttribute('viewBox', '0 0 24 32');
+  svg.setAttribute('width', '19');
+  svg.setAttribute('height', '25');
+  // pétalo en forma de lágrima/hoja: elegante, no caricaturesco
+  const path = document.createElementNS(NS, 'path');
+  path.setAttribute('d', 'M12 1.5 C18.5 8 21 18 12 30.5 C3 18 5.5 8 12 1.5 Z');
+  const colors = ['#645D3B', '#B0A77F', '#8E9A66']; // oliva, accent-soft, salvia
+  path.setAttribute('fill', colors[(Math.random() * colors.length) | 0]);
+  path.setAttribute('opacity', '0.92');
+  // nervadura central muy fina
+  const vein = document.createElementNS(NS, 'path');
+  vein.setAttribute('d', 'M12 4.5 L12 27.5');
+  vein.setAttribute('stroke', 'rgba(255,255,255,0.22)');
+  vein.setAttribute('stroke-width', '0.6');
+  vein.setAttribute('fill', 'none');
+  svg.appendChild(path);
+  svg.appendChild(vein);
+  return svg;
+}
+
+function spawnManifestoPetals(chars, section, box, isMobile) {
+  if (!box || !chars || !chars.length || !window.gsap) return;
+  const count = isMobile ? 3 : 5;
+  const rectS = section.getBoundingClientRect();
+  // letras seleccionadas: repartidas por la frase
+  const picks = [];
+  for (let i = 0; i < count; i++) {
+    const idx = Math.floor((i + 0.5) / count * chars.length);
+    if (chars[idx]) picks.push(chars[idx]);
+  }
+  picks.forEach((ch, i) => {
+    const r = ch.getBoundingClientRect();
+    if (!r.width) return;
+    const petal = makeManifestoPetal();
+    box.appendChild(petal);
+    const x = r.left - rectS.left + r.width / 2;
+    const y = r.top - rectS.top + r.height * 0.35;
+    gsap.set(petal, { x, y, xPercent: -50, yPercent: -50, scale: 0.4, opacity: 0, rotation: gsap.utils.random(-25, 25) });
+    // 1) emerge de la letra
+    gsap.to(petal, {
+      opacity: 0.9, scale: gsap.utils.random(0.82, 1.06), duration: 0.5, ease: 'power2.out', delay: i * 0.09,
+      onComplete: () => {
+        // 2) deriva hacia arriba y se desvanece; luego se elimina
+        gsap.to(petal, {
+          x: x + gsap.utils.random(-26, 26),
+          y: y - gsap.utils.random(70, 130),
+          rotation: '+=' + gsap.utils.random(-40, 40),
+          opacity: 0,
+          duration: gsap.utils.random(1.6, 2.4),
+          ease: 'power1.out',
+          onComplete: () => petal.remove()
+        });
+      }
+    });
+  });
+}
