@@ -8,10 +8,14 @@ const {
   ogImage = '/assets/img/hero.jpg',
   solidNav = true, // nav sólida sobre cream; en el Inicio va transparente sobre el hero
   intro = false,   // la portada disruptiva solo se monta en el Inicio
+  schema,          // JSON-LD opcional por página (string ya serializado)
 } = Astro.props;
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const here = (href) => path === href;
+// URLs absolutas (Astro.site = dominio final) para canonical, OG y schema
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImageAbs = new URL(ogImage, Astro.site).href;
 ---
 
 <!DOCTYPE html>
@@ -22,10 +26,20 @@ const here = (href) => path === href;
   <title>{title}</title>
   <meta name="description" content={description} />
 
+  <link rel="canonical" href={canonical} />
+
   <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Pipilacha" />
+  <meta property="og:locale" content="es_ES" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
-  <meta property="og:image" content={ogImage} />
+  <meta property="og:image" content={ogImageAbs} />
+  <meta property="og:url" content={canonical} />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImageAbs} />
 
   <link rel="icon" type="image/png" href="/assets/img/petal-fig.png" />
 
@@ -33,30 +47,34 @@ const here = (href) => path === href;
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hanken+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
-  <script type="application/ld+json" is:inline set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "Restaurant",
-    "name": "Pipilacha",
-    "description": "El único restaurante del mundo construido íntegramente sobre las flores. Menú de degustación en Madrid.",
-    "servesCuisine": "Cocina floral de autor",
-    "priceRange": "€€€",
-    "image": "https://astounding-halva-485c9a.netlify.app/assets/img/hero.jpg",
-    "url": "https://astounding-halva-485c9a.netlify.app/",
-    "telephone": "+34919125998",
-    "acceptsReservations": "https://widget.thefork.com/867dcee9-49b5-47ed-90c0-c6c87149b328",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "C. del Azulejo, 2",
-      "addressLocality": "Madrid",
-      "postalCode": "28028",
-      "addressCountry": "ES"
-    },
-    "openingHoursSpecification": [
-      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday","Friday","Saturday","Sunday"], "opens": "14:00", "closes": "16:30" },
-      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday","Friday","Saturday","Sunday"], "opens": "21:00", "closes": "23:30" }
-    ],
-    "sameAs": ["https://instagram.com/restaurante.pipilacha"]
-  })} />
+  {here('/') && (
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Restaurant",
+      "name": "Pipilacha",
+      "description": "El único restaurante del mundo construido íntegramente sobre las flores. Menú de degustación en Madrid.",
+      "servesCuisine": "Cocina floral de autor",
+      "priceRange": "€€€",
+      "image": new URL('/assets/img/hero.jpg', Astro.site).href,
+      "url": Astro.site.href,
+      "telephone": "+34919125998",
+      "acceptsReservations": "https://widget.thefork.com/867dcee9-49b5-47ed-90c0-c6c87149b328",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "C. del Azulejo, 2",
+        "addressLocality": "Madrid",
+        "postalCode": "28028",
+        "addressCountry": "ES"
+      },
+      "geo": { "@type": "GeoCoordinates", "latitude": 40.4291, "longitude": -3.6669 },
+      "openingHoursSpecification": [
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday","Friday","Saturday","Sunday"], "opens": "14:00", "closes": "16:30" },
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday","Friday","Saturday","Sunday"], "opens": "21:00", "closes": "23:30" }
+      ],
+      "sameAs": ["https://instagram.com/restaurante.pipilacha"]
+    })} />
+  )}
+  {schema && <Fragment set:html={schema} />}
 </head>
 <body>
 

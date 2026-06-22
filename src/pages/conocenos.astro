@@ -1,10 +1,17 @@
 ---
 import Base from '../layouts/Base.astro';
+
+// Schema.org: los dos chefs (coincide con el contenido visible de la página)
+const personSchema = `<script type="application/ld+json">${JSON.stringify([
+  { "@context": "https://schema.org", "@type": "Person", "name": "Arán Rodrigo", "jobTitle": "Chef y cofundador", "worksFor": { "@type": "Restaurant", "name": "Pipilacha", "url": "https://pipilacha.es" } },
+  { "@context": "https://schema.org", "@type": "Person", "name": "Noé David", "jobTitle": "Chef y cofundador", "worksFor": { "@type": "Restaurant", "name": "Pipilacha", "url": "https://pipilacha.es" } }
+])}</script>`;
 ---
 
 <Base
-  title="Conócenos · Pipilacha"
+  title="Conócenos · Arán y Noé · Pipilacha Madrid"
   description="Arán Rodrigo y Noé David tratan las flores comestibles como un ingrediente de verdad: sabor, técnica y origen de cada plato en Pipilacha, Madrid."
+  schema={personSchema}
 >
 
   <section class="page-header">

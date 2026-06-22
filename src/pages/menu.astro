@@ -21,11 +21,29 @@ const pases = [
   { name: 'Torrija de mandarina', hook: 'Flambeada, con un gel picante de mandarina.' },
   { name: 'Fresas con nata madrileña', hook: 'Fresón de Aranjuez rallado al momento.' },
 ];
+
+// Schema.org: el menú (coincide con los 15 pases listados en la página)
+const menuSchema = `<script type="application/ld+json">${JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Menu",
+  "name": "Despertar de las flores",
+  "inLanguage": "es",
+  "description": "Menú de degustación de quince pases con flores comestibles como ingrediente. 85 € por persona.",
+  "hasMenuSection": {
+    "@type": "MenuSection",
+    "name": "Despertar de las flores · 15 pases",
+    "hasMenuItem": pases.map((p) => p.surprise
+      ? { "@type": "MenuItem", "name": "Pase sorpresa", "description": "A ciegas, se descubre en la mesa." }
+      : { "@type": "MenuItem", "name": p.name, "description": p.hook })
+  },
+  "offers": { "@type": "Offer", "price": "85.00", "priceCurrency": "EUR" }
+})}</script>`;
 ---
 
 <Base
   title="Menú · Despertar de las flores · Pipilacha"
   description="Despertar de las flores: el menú de degustación de Pipilacha. Quince pases con las flores como ingrediente. Madrid, 85 € por persona."
+  schema={menuSchema}
 >
 
   <section class="page-header">
