@@ -26,13 +26,35 @@ import Base from '../layouts/Base.astro';
         <a href="/regala/" class="btn btn--ghost reveal" data-delay="0.75">Regalar</a>
       </div>
     </div>
-    <div class="hero__scroll reveal" data-delay="0.9"><span>Desliza</span></div>
   </section>
 
-  <!-- MANIFIESTO (reveal editorial: SplitType + blur + pétalos SVG, una sola vez) -->
-  <section class="manifesto" id="manifesto">
-    <p class="manifesto__text">El único restaurante de <em>flores</em> del mundo.</p>
-    <div class="manifesto__petals" aria-hidden="true"></div>
+  <!-- QUIÉNES SOMOS: identidad editorial, full-bleed, cascada tipográfica -->
+  <section class="quienes" id="quienes">
+    <div class="quienes__visual">
+      <figure class="quienes__media" data-parallax="0.2">
+        <img src="/assets/img/chef-3.jpg" alt="Arán Rodrigo y Noé David en la cocina de Pipilacha" loading="lazy" decoding="async" />
+      </figure>
+      <div class="quienes__veil" aria-hidden="true"></div>
+      <h2 class="quienes__headline">
+        <span class="quienes__hl-line">Dos manos.</span>
+        <span class="quienes__hl-line">Mil flores.</span>
+        <span class="quienes__hl-line">Una barra.</span>
+      </h2>
+    </div>
+    <div class="quienes__body">
+      <div class="quienes__inner">
+        <p class="eyebrow reveal">Quiénes somos</p>
+        <p class="quienes__text reveal">
+          La mayoría de restaurantes usa flores para que el plato quede bonito en foto.
+          Aquí son el único ingrediente que manda.
+          Arán Rodrigo y Noé David llevan años cocinándolas como otros trabajan el atún o el wagyu:
+          sin atajos, sin adorno.
+          El resultado son quince pases que no se parecen a nada que hayas probado.
+          Dieciséis sillas alrededor de una barra donde lo ves todo: el fuego, las manos, cada flor con nombre.
+        </p>
+<a href="/conocenos/" class="quienes__link reveal">Conocer a Arán y Noé →</a>
+      </div>
+    </div>
   </section>
 
   <!-- DESPERTAR DE LAS FLORES (4 imágenes en bucle: Timeline + clip-path) -->

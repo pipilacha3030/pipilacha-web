@@ -201,6 +201,16 @@ if (window.gsap) {
       });
     });
 
+    /* stagger de la cascada tipográfica (quiénes somos): cada línea sube con desfase */
+    const qLines = gsap.utils.toArray('.quienes__hl-line');
+    if (qLines.length) {
+      gsap.fromTo(qLines,
+        { opacity: 0, y: 28 },
+        { opacity: 1, y: 0, duration: 1.15, ease: 'power3.out', stagger: 0.16,
+          scrollTrigger: { trigger: '.quienes__visual', start: 'top 82%' } }
+      );
+    }
+
     /* MANIFIESTO: reveal editorial — SplitType (caracteres) que se enfocan desde
        desenfoque + casi invisibles, con pétalos SVG que emergen de algunas letras.
        Se dispara UNA sola vez y, al acabar, queda tipografía limpia. */
