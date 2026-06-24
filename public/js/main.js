@@ -364,83 +364,59 @@ if (window.gsap) {
 }
 
 /* ============================================================
-   CARRUSEL (galería) — arrastre + inercia + parallax + progreso
+   GALERÍA: cardumen (GSAP ScrollTrigger horizontal + escala 3D)
    ============================================================ */
-const carousel = document.querySelector('.carousel');
-if (carousel) {
-  const vp = carousel.querySelector('.carousel__viewport');
-  const slides = Array.from(carousel.querySelectorAll('.slide'));
-  const bar = document.getElementById('carBar');
-  const cur = document.getElementById('carCur');
-  const prevBtn = document.getElementById('carPrev');
-  const nextBtn = document.getElementById('carNext');
-  const maxScroll = () => Math.max(0, vp.scrollWidth - vp.clientWidth);
+const galFlow = document.querySelector('.gal-flow');
+if (galFlow && window.gsap && !reduceMotion && window.matchMedia('(min-width:901px)').matches) {
+  const strip = document.getElementById('galStrip');
+  const cards = gsap.utils.toArray('.gal-flow__card');
 
-  const update = () => {
-    const max = maxScroll();
-    const sl = vp.scrollLeft;
-    if (bar) bar.style.width = (max > 0 ? (sl / max) * 100 : 0) + '%';
-    const center = sl + vp.clientWidth / 2;
-    let nearest = 0, nd = Infinity;
-    slides.forEach((s, i) => {
-      const c = s.offsetLeft + s.offsetWidth / 2;
-      const d = center - c;
-      if (Math.abs(d) < nd) { nd = Math.abs(d); nearest = i; }
-      if (!reduceMotion) {
-        const img = s.querySelector('img');
-        if (img) {
-          const rel = Math.max(-1, Math.min(1, d / vp.clientWidth));
-          img.style.transform = 'translateX(' + (-8 + rel * 7) + '%)';
+  /* Estado inicial: rotación + escala pequeña */
+  cards.forEach(card => {
+    gsap.set(card, { rotation: parseFloat(card.dataset.rot || 0), scale: 0.55, opacity: 0.78 });
+  });
+
+  /* Panorámica horizontal principal */
+  const panTween = gsap.to(strip, {
+    x: () => -(strip.offsetWidth - window.innerWidth),
+    ease: 'none',
+    scrollTrigger: {
+      trigger: galFlow,
+      start: 'top top',
+      end: () => '+=' + (strip.offsetWidth - window.innerWidth),
+      pin: true,
+      scrub: 1.5,
+      invalidateOnRefresh: true,
+    }
+  });
+
+  /* Escala dinámica por card: crece al entrar al centro, encoge al salir */
+  cards.forEach(card => {
+    gsap.fromTo(card,
+      { scale: 0.55, opacity: 0.78 },
+      { scale: 1.22, opacity: 1, ease: 'sine.out',
+        scrollTrigger: {
+          containerAnimation: panTween,
+          trigger: card,
+          start: 'left right',
+          end: 'center center',
+          scrub: true,
         }
       }
-    });
-    if (cur) cur.textContent = String(nearest + 1).padStart(2, '0');
-    if (prevBtn) prevBtn.disabled = sl <= 2;
-    if (nextBtn) nextBtn.disabled = sl >= max - 2;
-  };
-
-  let ticking = false;
-  vp.addEventListener('scroll', () => {
-    if (!ticking) { requestAnimationFrame(() => { update(); ticking = false; }); ticking = true; }
-  }, { passive: true });
-
-  const step = () => (slides[0] ? slides[0].offsetWidth + 24 : vp.clientWidth * 0.6);
-  if (prevBtn) prevBtn.addEventListener('click', () => vp.scrollBy({ left: -step(), behavior: 'smooth' }));
-  if (nextBtn) nextBtn.addEventListener('click', () => vp.scrollBy({ left: step(), behavior: 'smooth' }));
-
-  /* arrastre con inercia (solo ratón) */
-  if (window.matchMedia('(pointer:fine)').matches) {
-    let down = false, startX = 0, startScroll = 0, moved = false, lastX = 0, lastT = 0, vel = 0;
-    vp.addEventListener('pointerdown', e => {
-      down = true; moved = false; startX = e.clientX; startScroll = vp.scrollLeft;
-      lastX = e.clientX; lastT = performance.now(); vel = 0;
-      if (window.gsap) gsap.killTweensOf(vp);
-      vp.classList.add('is-dragging');
-    });
-    window.addEventListener('pointermove', e => {
-      if (!down) return;
-      const dx = e.clientX - startX;
-      if (Math.abs(dx) > 4) moved = true;
-      vp.scrollLeft = startScroll - dx;
-      const now = performance.now(), dt = now - lastT;
-      if (dt > 0) vel = (e.clientX - lastX) / dt;
-      lastX = e.clientX; lastT = now;
-    });
-    window.addEventListener('pointerup', () => {
-      if (!down) return;
-      down = false; vp.classList.remove('is-dragging');
-      if (window.gsap && Math.abs(vel) > 0.1) {
-        const target = Math.max(0, Math.min(maxScroll(), vp.scrollLeft - vel * 260));
-        gsap.to(vp, { scrollLeft: target, duration: 0.9, ease: 'power3.out' });
+    );
+    gsap.fromTo(card,
+      { scale: 1.22, opacity: 1 },
+      { scale: 0.55, opacity: 0.78, ease: 'sine.in',
+        scrollTrigger: {
+          containerAnimation: panTween,
+          trigger: card,
+          start: 'center center',
+          end: 'right left',
+          scrub: true,
+        }
       }
-    });
-    // si hubo arrastre, no abrir el lightbox
-    vp.addEventListener('click', e => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
-  }
-
-  update();
-  window.addEventListener('resize', update);
-  window.addEventListener('load', update);
+    );
+  });
 }
 
 /* ============================================================
@@ -502,7 +478,7 @@ if (journey) {
    ============================================================ */
 const lightbox = document.getElementById('lightbox');
 if (lightbox) {
-  const items = Array.from(document.querySelectorAll('.slide__btn'));
+  const items = Array.from(document.querySelectorAll('.gal-flow__card'));
   const lbImg = document.getElementById('lbImg');
   const lbCap = document.getElementById('lbCap');
   const lbClose = document.getElementById('lbClose');

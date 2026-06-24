@@ -2,22 +2,26 @@
 import Base from '../layouts/Base.astro';
 
 const fotos = [
-  { src: '/assets/img/g10.jpg', alt: 'Esferificación de hierba luisa' },
-  { src: '/assets/img/g15.jpg', alt: 'Pho de flores' },
-  { src: '/assets/img/g16.jpg', alt: 'Arán y Noé cocinando juntos en la barra' },
-  { src: '/assets/img/g1.jpg',  alt: 'Espárragos a la brasa con tagete' },
-  { src: '/assets/img/g13.jpg', alt: 'Claveles sobre fresas con nata' },
-  { src: '/assets/img/g18.jpg', alt: 'Corvina a la brasa con pétalos de tagete' },
-  { src: '/assets/img/g17.jpg', alt: 'Ajo blanco con hojas de capuchina' },
-  { src: '/assets/img/g11.jpg', alt: 'Helado de tupinambo' },
-  { src: '/assets/img/g9.jpg',  alt: 'Arán y Noé en el pase' },
-  { src: '/assets/img/g3.jpg',  alt: 'Guisante coco-saúco' },
-  { src: '/assets/img/g19.jpg', alt: 'Saco de colirrábano con clavelina' },
-  { src: '/assets/img/g12.jpg', alt: 'Tartaleta de remolacha' },
-  { src: '/assets/img/g6.jpg',  alt: 'Servicio en cocina' },
-  { src: '/assets/img/g8.jpg',  alt: 'Vieira con flor de higo' },
-  { src: '/assets/img/g14.jpg', alt: 'La sala' },
-  { src: '/assets/img/g5.jpg',  alt: 'Guiso de setas' },
+  { src: '/assets/img/g10.jpg', alt: 'Esferificación de hierba luisa',      left: '40px',   top: '10%', w: '310px', h: '415px', rot: -2.5 },
+  { src: '/assets/img/g15.jpg', alt: 'Pho de flores',                        left: '310px',  top: '52%', w: '368px', h: '246px', rot:  2.0 },
+  { src: '/assets/img/g16.jpg', alt: 'Arán y Noé cocinando en la barra',     left: '530px',  top: '6%',  w: '288px', h: '385px', rot: -3.5 },
+  { src: '/assets/img/g1.jpg',  alt: 'Espárragos a la brasa con tagete',     left: '760px',  top: '44%', w: '344px', h: '230px', rot:  2.5 },
+  { src: '/assets/img/g13.jpg', alt: 'Claveles sobre fresas con nata',       left: '980px',  top: '56%', w: '302px', h: '403px', rot: -2.0 },
+  { src: '/assets/img/g18.jpg', alt: 'Corvina con pétalos de tagete',        left: '1230px', top: '16%', w: '356px', h: '238px', rot:  3.0 },
+  { src: '/assets/img/g17.jpg', alt: 'Ajo blanco con hojas de capuchina',    left: '1460px', top: '42%', w: '284px', h: '380px', rot: -3.0 },
+  { src: '/assets/img/g11.jpg', alt: 'Helado de tupinambo',                  left: '1700px', top: '8%',  w: '328px', h: '438px', rot:  2.5 },
+  { src: '/assets/img/g9.jpg',  alt: 'Arán y Noé en el pase',               left: '1940px', top: '36%', w: '352px', h: '236px', rot: -2.0 },
+  { src: '/assets/img/g3.jpg',  alt: 'Guisante coco-saúco',                 left: '2150px', top: '54%', w: '298px', h: '398px', rot:  3.5 },
+  { src: '/assets/img/g19.jpg', alt: 'Saco de colirrábano con clavelina',    left: '2400px', top: '12%', w: '312px', h: '418px', rot: -2.5 },
+  { src: '/assets/img/g12.jpg', alt: 'Tartaleta de remolacha',               left: '2650px', top: '44%', w: '346px', h: '232px', rot:  2.0 },
+  { src: '/assets/img/g6.jpg',  alt: 'Servicio en cocina',                  left: '2870px', top: '4%',  w: '282px', h: '377px', rot: -3.5 },
+  { src: '/assets/img/g8.jpg',  alt: 'Vieira con flor de higo',             left: '3100px', top: '40%', w: '362px', h: '242px', rot:  3.0 },
+  { src: '/assets/img/g14.jpg', alt: 'La sala',                              left: '3330px', top: '58%', w: '298px', h: '398px', rot: -2.0 },
+  { src: '/assets/img/g5.jpg',  alt: 'Guiso de setas',                      left: '3570px', top: '16%', w: '348px', h: '233px', rot:  2.5 },
+  { src: '/assets/img/g2.jpg',  alt: 'Flores y técnica',                    left: '3790px', top: '46%', w: '292px', h: '390px', rot: -3.0 },
+  { src: '/assets/img/g4.jpg',  alt: 'Detalle de mise en place',            left: '4030px', top: '6%',  w: '338px', h: '452px', rot:  3.5 },
+  { src: '/assets/img/g7.jpg',  alt: 'Pase de temporada',                   left: '4260px', top: '38%', w: '352px', h: '236px', rot: -2.0 },
+  { src: '/assets/img/esparragos-tagete.jpg', alt: 'Espárragos con tagete', left: '4480px', top: '56%', w: '312px', h: '417px', rot:  2.5 },
 ];
 ---
 
@@ -29,38 +33,23 @@ const fotos = [
   <section class="page-header">
     <p class="eyebrow">Galería</p>
     <h1>Lo que ocurre<br>en la mesa</h1>
-    <p>Arrastra para recorrerla. Toca cualquier imagen para verla en grande.</p>
+    <p>Desplázate para recorrerla. Toca cualquier imagen para verla en grande.</p>
   </section>
 
-  <!-- CARRUSEL (ambiente de cristal: flores en blur detrás + marco glass) -->
-  <section class="carousel carousel--glass" id="galeria">
-    <div class="menu-blooms" aria-hidden="true">
-      <img class="menu-bloom menu-bloom--1" src="/assets/img/petal-peony.png" alt="" />
-      <img class="menu-bloom menu-bloom--3" src="/assets/img/petal-oxalis.png" alt="" />
-      <img class="menu-bloom menu-bloom--5" src="/assets/img/petal-sauco.png" alt="" />
-    </div>
-    <div class="carousel__viewport" id="carViewport">
-      <ul class="carousel__track" id="carTrack">
-        {fotos.map((f, i) => (
-          <li class="slide">
-            <button type="button" class="slide__btn" data-index={i} aria-label={`Ampliar: ${f.alt}`}>
-              <span class="slide__media"><img src={f.src} alt={f.alt} loading={i < 3 ? 'eager' : 'lazy'} /></span>
-              <span class="slide__cap" aria-hidden="true">
-                <span class="slide__num">{String(i + 1).padStart(2, '0')}</span>{f.alt}
-              </span>
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
-
-    <div class="carousel__ui">
-      <div class="carousel__progress" aria-hidden="true"><span id="carBar"></span></div>
-      <p class="carousel__counter" aria-hidden="true"><b id="carCur">01</b> / {String(fotos.length).padStart(2, '0')}</p>
-      <div class="carousel__arrows">
-        <button type="button" id="carPrev" aria-label="Imagen anterior">&larr;</button>
-        <button type="button" id="carNext" aria-label="Imagen siguiente">&rarr;</button>
-      </div>
+  <section class="gal-flow" id="galeria">
+    <div class="gal-flow__strip" id="galStrip">
+      {fotos.map((f, i) => (
+        <button
+          class="gal-flow__card"
+          type="button"
+          data-rot={f.rot}
+          data-index={i}
+          style={`--gl:${f.left};--gt:${f.top};--gw:${f.w};--gh:${f.h}`}
+          aria-label={`Ampliar: ${f.alt}`}
+        >
+          <img src={f.src} alt={f.alt} loading={i < 4 ? 'eager' : 'lazy'} decoding="async" />
+        </button>
+      ))}
     </div>
   </section>
 
