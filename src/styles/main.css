@@ -671,6 +671,26 @@ body.intro-open{overflow:hidden}
 .page-header h1{font-size:clamp(2.4rem,6vw,5rem);color:var(--moss);line-height:1.05}
 .page-header p{max-width:58ch;margin-top:1.3rem;color:var(--text-muted);font-size:clamp(1rem,1.5vw,1.18rem)}
 
+/* ---------- fotos en scroll (Image Scroll Flow · efecto 072) ---------- */
+.img-flow{position:relative;height:300vh}
+.img-flow__pin{
+  position:sticky;top:0;height:100vh;overflow:hidden;
+  background:var(--moss);
+}
+.img-flow__row{position:relative;width:100%;height:100%}
+.img-flow__item{
+  position:absolute;top:50%;left:50%;
+  width:clamp(200px,26vw,400px);aspect-ratio:3/4;
+  border-radius:var(--radius);overflow:hidden;
+  will-change:transform,opacity;opacity:0;
+}
+.img-flow__item img{width:100%;height:100%;object-fit:cover;pointer-events:none}
+@media(prefers-reduced-motion:reduce){.img-flow{display:none}}
+@media(max-width:560px){
+  .img-flow{height:200vh}
+  .img-flow__item{width:clamp(160px,58vw,260px)}
+}
+
 /* ---------- explorar (Inicio) — full-bleed, imágenes siempre visibles ---------- */
 .explore{
   display:grid;grid-template-columns:repeat(3,1fr);

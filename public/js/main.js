@@ -280,6 +280,28 @@ if (window.gsap) {
       .to(img,  { scale: 1, duration: 2.0, ease: 'power2.out' }, 0);
     });
 
+    /* ── FOTOS EN SCROLL: imágenes de derecha a izquierda, creciendo al cruzar ── */
+    const imgFlow = document.querySelector('.img-flow');
+    if (imgFlow) {
+      const flowItems = gsap.utils.toArray('.img-flow__item');
+      const rots  = [-13,  9, -6, 14, -10,  7, -11];
+      const vOffs = [  0, 16, -10,  8,  -14, 12,  -6]; // % sobre altura propia
+      flowItems.forEach((item, i) => {
+        gsap.set(item, {
+          xPercent: -50, yPercent: -50 + (vOffs[i] || 0),
+          x: '120vw', rotation: rots[i] || 0, scale: 0.32, opacity: 0,
+        });
+      });
+      const flowTl = gsap.timeline({
+        scrollTrigger: { trigger: imgFlow, start: 'top top', end: 'bottom bottom', scrub: 1.5 }
+      });
+      flowItems.forEach((item, i) => {
+        flowTl
+          .to(item, { x: 0, scale: 1, opacity: 1, ease: 'none', duration: 0.5 })
+          .to(item, { x: '-120vw', scale: 0.32, opacity: 0, rotation: -(rots[i] || 0) * 0.7, ease: 'none', duration: 0.5 });
+      });
+    }
+
     /* parallax CENTRADO: a mitad de recorrido (incluido el scroll 0 del hero)
        el desplazamiento es 0, así nunca se ve el fondo por arriba ni por abajo */
     gsap.utils.toArray('[data-parallax]').forEach(el => {
