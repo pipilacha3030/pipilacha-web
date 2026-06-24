@@ -17,8 +17,8 @@ import Base from '../layouts/Base.astro';
     <div class="hero__content">
       <p class="eyebrow reveal" data-delay="0.1">Restaurante de degustación · Madrid</p>
       <h1 class="hero__title">
-        <span class="line"><span class="reveal-mask">Todo empieza</span></span>
-        <span class="line"><span class="reveal-mask">con una flor</span></span>
+        <span class="line"><span class="reveal-mask">Un menú entero</span></span>
+        <span class="line"><span class="reveal-mask">hecho de flores.</span></span>
       </h1>
       <p class="hero__sub reveal" data-delay="0.5">El único restaurante del mundo construido íntegramente sobre las flores.</p>
       <div class="hero__actions">
@@ -35,24 +35,17 @@ import Base from '../layouts/Base.astro';
         <img src="/assets/img/chef-3.jpg" alt="Arán Rodrigo y Noé David en la cocina de Pipilacha" loading="lazy" decoding="async" />
       </figure>
       <div class="quienes__veil" aria-hidden="true"></div>
-      <h2 class="quienes__headline">
-        <span class="quienes__hl-line">Dos manos.</span>
-        <span class="quienes__hl-line">Mil flores.</span>
-        <span class="quienes__hl-line">Una barra.</span>
-      </h2>
     </div>
     <div class="quienes__body">
       <div class="quienes__inner">
-        <p class="eyebrow reveal">Quiénes somos</p>
+        <h2 class="quienes__h2 reveal">Un restaurante para curiosos.</h2>
         <p class="quienes__text reveal">
-          La mayoría de restaurantes usa flores para que el plato quede bonito en foto.
-          Aquí son el único ingrediente que manda.
-          Arán Rodrigo y Noé David llevan años cocinándolas como otros trabajan el atún o el wagyu:
-          sin atajos, sin adorno.
-          El resultado son quince pases que no se parecen a nada que hayas probado.
-          Dieciséis sillas alrededor de una barra donde lo ves todo: el fuego, las manos, cada flor con nombre.
+          Quince pases y en todos manda una flor distinta. No de adorno: como ingrediente principal,
+          cocinada hasta donde llega su sabor. Esto no lo vas a encontrar en ningún otro restaurante
+          de Madrid, porque casi nadie lo ha intentado. Te sientas en la barra, lo ves hacerse a un
+          metro, y sales habiendo probado cosas que no existen en ningún otro sitio.
         </p>
-<a href="/conocenos/" class="quienes__link reveal">Conocer a Arán y Noé →</a>
+<a href="/conocenos/" class="quienes__link reveal">Quiénes están detrás →</a>
       </div>
     </div>
   </section>
@@ -95,15 +88,15 @@ import Base from '../layouts/Base.astro';
     </div>
   </div>
 
-  <!-- EXPLORAR (al pasar el cursor, la imagen entra como fondo de la celda) -->
+  <!-- EXPLORAR — editorial full-bleed, imágenes siempre visibles -->
   <nav class="explore" aria-label="Secciones">
-    <a href="/conocenos/" class="explore__cell" style="--img:url(/assets/img/g9.jpg); --posy:26%">
+    <a href="/conocenos/" style="--img:url(/assets/img/enlace-conocenos.jpg); --posy:38%">
       <span class="explore__n">01</span><span class="explore__label">Conócenos</span>
     </a>
-    <a href="/menu/" class="explore__cell" style="--img:url(/assets/img/dish-1.jpg)">
+    <a href="/menu/" style="--img:url(/assets/img/enlace-menu.jpg); --posy:50%">
       <span class="explore__n">02</span><span class="explore__label">El menú</span>
     </a>
-    <a href="/galeria/" class="explore__cell" style="--img:url(/assets/img/g18.jpg); --posy:58%">
+    <a href="/galeria/" style="--img:url(/assets/img/enlace-galeria.jpg); --posy:40%">
       <span class="explore__n">03</span><span class="explore__label">Galería</span>
     </a>
   </nav>

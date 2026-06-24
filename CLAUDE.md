@@ -38,7 +38,7 @@ The Claude Code preview config (`.claude/launch.json`, server `pipilacha-web`) s
 - **Parallax**: elements with `data-parallax="0.NN"` get scroll-scrubbed `yPercent` movement. **Do not put `data-parallax` on the floating petals** — GSAP's transform fights the CSS `float`/`float2` keyframe animations. Petals (`.petal--1/2/3`, transparent flower PNGs) move via CSS animation only; big media (hero, course images, chef figures) use `data-parallax`.
 
 ### Design tokens (CSS `:root`)
-Olive `#645D3B`, Terracotta `#9F5434` (accent), Moss `#31331F` (dark sections), Cream `#F4EFE6` (page bg), Cloud `#FBFAF5`. Fonts: **Marcellus** (serif, display) + **Hanken Grotesk** (sans, body) via Google Fonts. Hanken is a stand-in for the brand's licensed **Roobert** — swap if the license is available. These come from the official brand guidelines; keep new UI on these tokens.
+`--moss #31331F` (dark sections/buttons) · `--olive #645D3B` (hover, footer bg) · `--accent #645D3B` (eyebrow text, active links — alias semántico de olive) · `--accent-soft #B0A77F` (acentos sobre fondo oscuro) · `--cream #F4EFE6` (fondo) · `--cloud #FBFAF5` (tarjetas) · `--ink #2A2A22` (texto principal). Escala de texto secundario: `--text-muted #55554a` (párrafos secundarios) · `--text-subtle #7a7a6c` (etiquetas, metadata). Separadores: `--border-subtle rgba(49,51,31,.16)`. Fonts: **Marcellus** (serif, display) + **Hanken Grotesk** (sans, body) via Google Fonts. Hanken is a stand-in for the brand's licensed **Roobert** — swap if the license is available. These come from the official brand guidelines; keep new UI on these tokens.
 
 ## Assets & image workflow
 

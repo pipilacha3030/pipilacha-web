@@ -195,21 +195,13 @@ if (window.gsap) {
     /* reveal genérico */
     gsap.utils.toArray('.reveal').forEach(el => {
       if (el.closest('.hero')) return; // el hero ya se anima arriba
+      if (el.matches('.barra__media')) return; // tiene reveal editorial propio
       gsap.to(el, {
-        opacity: 1, y: 0, duration: 1, ease: 'power3.out',
-        scrollTrigger: { trigger: el, start: 'top 88%' }
+        opacity: 1, y: 0, duration: 1.1, ease: 'expo.out',
+        scrollTrigger: { trigger: el, start: 'top 86%' }
       });
     });
 
-    /* stagger de la cascada tipográfica (quiénes somos): cada línea sube con desfase */
-    const qLines = gsap.utils.toArray('.quienes__hl-line');
-    if (qLines.length) {
-      gsap.fromTo(qLines,
-        { opacity: 0, y: 28 },
-        { opacity: 1, y: 0, duration: 1.15, ease: 'power3.out', stagger: 0.16,
-          scrollTrigger: { trigger: '.quienes__visual', start: 'top 82%' } }
-      );
-    }
 
     /* MANIFIESTO: reveal editorial — SplitType (caracteres) que se enfocan desde
        desenfoque + casi invisibles, con pétalos SVG que emergen de algunas letras.
@@ -251,12 +243,14 @@ if (window.gsap) {
           repeat: -1, repeatDelay: 0.6, defaults: { ease: 'power2.inOut' },
           onRepeat: () => gsap.set(sLayers, { zIndex: 1, clipPath: 'inset(0 0% 0 0)' })
         });
+        const isMobile = window.matchMedia('(max-width:768px)').matches;
+        const scaleFrom = isMobile ? 1.06 : 1.12;
         sLayers.forEach((layer, i) => {
           const img = layer.querySelector('img');
           sTl.set(layer, { zIndex: 10 + i }, i === 0 ? 0 : '+=0.8') // pausa breve entre etapas
             .fromTo(layer, { clipPath: 'inset(0 100% 0 0)' },
               { clipPath: 'inset(0 0% 0 0)', duration: 3, immediateRender: false }, '<')
-            .fromTo(img, { scale: 1.12 },
+            .fromTo(img, { scale: scaleFrom },
               { scale: 1, duration: 3.4, ease: 'power1.out', immediateRender: false }, '<');
         });
         // arranca pausada; corre solo cuando la sección está en pantalla
@@ -267,6 +261,24 @@ if (window.gsap) {
         });
       }
     }
+
+    /* ── IMÁGENES: cortina editorial de abajo arriba + zoom suave (estilo Geranium) ── */
+    [
+      { wrap: '.quienes__visual', img: '.quienes__media img' },
+      { wrap: '.barra__media',    img: '.barra__media img'  },
+    ].forEach(({ wrap: wSel, img: iSel }) => {
+      const wrap = document.querySelector(wSel);
+      const img  = document.querySelector(iSel);
+      if (!wrap) return;
+      gsap.set(wrap, { clipPath: 'inset(0 0 100% 0)', opacity: 1, y: 0 });
+      if (img) gsap.set(img, { scale: 1.12 });
+      gsap.timeline({
+        scrollTrigger: { trigger: wrap, start: 'top 80%', once: true },
+        onComplete: () => gsap.set(wrap, { clearProps: 'clipPath' })
+      })
+      .to(wrap, { clipPath: 'inset(0 0 0% 0)', duration: 1.6, ease: 'expo.inOut' }, 0)
+      .to(img,  { scale: 1, duration: 2.0, ease: 'power2.out' }, 0);
+    });
 
     /* parallax CENTRADO: a mitad de recorrido (incluido el scroll 0 del hero)
        el desplazamiento es 0, así nunca se ve el fondo por arriba ni por abajo */
