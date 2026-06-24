@@ -542,11 +542,14 @@ body.intro-open{overflow:hidden}
 }
 
 /* ---------- galería: cardumen (GSAP ScrollTrigger + escala 3D) ---------- */
-.gal-flow{background:var(--cream);overflow:hidden}
+.gal-flow{position:relative;height:400vh;background:var(--cream)}
+.gal-flow__pin{
+  position:sticky;top:0;height:100vh;overflow:hidden;
+  background:var(--cream);
+}
 .gal-flow__strip{
-  position:relative;
-  width:5200px;
-  height:100vh;
+  position:absolute;inset:0;
+  width:3900px;height:100%;
   will-change:transform;
 }
 .gal-flow__card{
@@ -564,12 +567,14 @@ body.intro-open{overflow:hidden}
 .gal-flow__card:hover img{transform:scale(1.06)}
 .gal-flow__card:focus-visible{outline:2px solid var(--olive);outline-offset:4px}
 
-/* Fallback: sin GSAP (prefers-reduced-motion) → grid envolvente */
+/* Fallback: sin GSAP (prefers-reduced-motion) → grid */
 @media(prefers-reduced-motion:reduce){
-  .gal-flow{overflow:auto}
+  .gal-flow{height:auto}
+  .gal-flow__pin{position:relative;height:auto;overflow:visible}
   .gal-flow__strip{
-    width:auto;height:auto;display:flex;flex-wrap:wrap;
-    gap:1rem;padding:clamp(2rem,5vw,4rem) var(--gutter);
+    position:relative;width:auto;height:auto;
+    display:flex;flex-wrap:wrap;gap:1rem;
+    padding:clamp(2rem,5vw,4rem) var(--gutter);
   }
   .gal-flow__card{
     position:relative;left:auto !important;top:auto !important;
@@ -578,10 +583,15 @@ body.intro-open{overflow:hidden}
 }
 /* Móvil: carrusel horizontal nativo */
 @media(max-width:900px){
-  .gal-flow{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-  .gal-flow::-webkit-scrollbar{display:none}
+  .gal-flow{height:auto}
+  .gal-flow__pin{
+    position:relative;height:auto;
+    overflow-x:auto;overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  }
+  .gal-flow__pin::-webkit-scrollbar{display:none}
   .gal-flow__strip{
-    width:max-content;height:auto;
+    position:relative;width:max-content;height:auto;
     display:flex;gap:1.2rem;padding:2.5rem 1.5rem;align-items:center;
   }
   .gal-flow__card{

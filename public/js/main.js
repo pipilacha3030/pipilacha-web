@@ -372,29 +372,33 @@ if (galFlow && window.gsap && !reduceMotion && window.matchMedia('(min-width:901
   const cards = gsap.utils.toArray('.gal-flow__card');
 
   /* Estado inicial: rotación + escala pequeña */
-  cards.forEach(card => {
-    gsap.set(card, { rotation: parseFloat(card.dataset.rot || 0), scale: 0.55, opacity: 0.78 });
+  cards.forEach((card, i) => {
+    gsap.set(card, { rotation: parseFloat(card.dataset.rot || 0), scale: 0.52, opacity: 0.72, zIndex: i + 1 });
   });
 
-  /* Panorámica horizontal principal */
-  const panTween = gsap.to(strip, {
-    x: () => -(strip.offsetWidth - window.innerWidth),
-    ease: 'none',
-    scrollTrigger: {
-      trigger: galFlow,
-      start: 'top top',
-      end: () => '+=' + (strip.offsetWidth - window.innerWidth),
-      pin: true,
-      scrub: 1.5,
-      invalidateOnRefresh: true,
+  /* Panorámica horizontal principal — sticky CSS, sin pin GSAP */
+  const panTween = gsap.fromTo(strip,
+    { x: 0 },
+    {
+      x: () => -(strip.offsetWidth - window.innerWidth),
+      ease: 'none',
+      scrollTrigger: {
+        trigger: galFlow,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 2,
+        invalidateOnRefresh: true,
+      }
     }
-  });
+  );
 
-  /* Escala dinámica por card: crece al entrar al centro, encoge al salir */
-  cards.forEach(card => {
+  /* Escala + z-index dinámicos: cada card crece al centrarse y sube al frente */
+  cards.forEach((card, i) => {
+    /* fase entrada: escala sube, z-index sube */
     gsap.fromTo(card,
-      { scale: 0.55, opacity: 0.78 },
-      { scale: 1.22, opacity: 1, ease: 'sine.out',
+      { scale: 0.52, opacity: 0.72, zIndex: i + 1 },
+      { scale: 1.22, opacity: 1,    zIndex: 50,
+        ease: 'sine.out',
         scrollTrigger: {
           containerAnimation: panTween,
           trigger: card,
@@ -404,9 +408,11 @@ if (galFlow && window.gsap && !reduceMotion && window.matchMedia('(min-width:901
         }
       }
     );
+    /* fase salida: escala baja, z-index baja */
     gsap.fromTo(card,
-      { scale: 1.22, opacity: 1 },
-      { scale: 0.55, opacity: 0.78, ease: 'sine.in',
+      { scale: 1.22, opacity: 1,    zIndex: 50 },
+      { scale: 0.52, opacity: 0.72, zIndex: i + 1,
+        ease: 'sine.in',
         scrollTrigger: {
           containerAnimation: panTween,
           trigger: card,
