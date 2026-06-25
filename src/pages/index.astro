@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import ImageFlow from '../components/ImageFlow.astro';
 ---
 
 <Base
@@ -50,48 +51,7 @@ import Base from '../layouts/Base.astro';
     </div>
   </section>
 
-  <!-- FOTOS EN SCROLL · collage 3D: tres planos de profundidad + flores PNG -->
-  <section class="img-flow" aria-hidden="true">
-    <div class="img-flow__pin">
-      <!-- Plano lejano: pequeño, tenue, se mueve más despacio -->
-      <div class="img-flow__track track--far">
-        <figure class="img-flow__item"><img src="/assets/img/g1.jpg"  alt="" loading="lazy" decoding="async"></figure>
-        <figure class="img-flow__item"><img src="/assets/img/g4.jpg"  alt="" loading="lazy" decoding="async"></figure>
-        <figure class="img-flow__item"><img src="/assets/img/g7.jpg"  alt="" loading="lazy" decoding="async"></figure>
-        <figure class="img-flow__item"><img src="/assets/img/g3.jpg"  alt="" loading="lazy" decoding="async"></figure>
-        <figure class="img-flow__item"><img src="/assets/img/g10.jpg" alt="" loading="lazy" decoding="async"></figure>
-        <figure class="img-flow__item"><img src="/assets/img/g13.jpg" alt="" loading="lazy" decoding="async"></figure>
-        <div class="img-flow__flower" style="left:490px;top:28%;width:175px"  data-rotate="15"><img src="/assets/img/petal-borraja.png" alt="" loading="lazy" decoding="async"></div>
-        <div class="img-flow__flower" style="left:1740px;top:18%;width:198px" data-rotate="-12"><img src="/assets/img/petal-roja.png"    alt="" loading="lazy" decoding="async"></div>
-        <div class="img-flow__flower" style="left:2460px;top:60%;width:168px" data-rotate="20"><img src="/assets/img/petal-oxalis.png"   alt="" loading="lazy" decoding="async"></div>
-      </div>
-      <!-- Plano medio: tamaño base, velocidad base -->
-      <div class="img-flow__track track--mid">
-        <figure class="img-flow__item"><img src="/assets/img/g2.jpg"  alt="" loading="lazy" decoding="async"></figure>
-        <figure class="img-flow__item"><img src="/assets/img/g5.jpg"  alt="" loading="lazy" decoding="async"></figure>
-        <figure class="img-flow__item"><img src="/assets/img/g8.jpg"  alt="" loading="lazy" decoding="async"></figure>
-        <figure class="img-flow__item"><img src="/assets/img/g6.jpg"  alt="" loading="lazy" decoding="async"></figure>
-        <figure class="img-flow__item"><img src="/assets/img/g9.jpg"  alt="" loading="lazy" decoding="async"></figure>
-        <figure class="img-flow__item"><img src="/assets/img/g11.jpg" alt="" loading="lazy" decoding="async"></figure>
-        <figure class="img-flow__item"><img src="/assets/img/g14.jpg" alt="" loading="lazy" decoding="async"></figure>
-        <div class="img-flow__flower" style="left:308px;top:56%;width:228px"  data-rotate="8"><img src="/assets/img/petal-fig.png"    alt="" loading="lazy" decoding="async"></div>
-        <div class="img-flow__flower" style="left:878px;top:16%;width:268px"  data-rotate="-20"><img src="/assets/img/petal-peony.png" alt="" loading="lazy" decoding="async"></div>
-        <div class="img-flow__flower" style="left:1838px;top:62%;width:244px" data-rotate="14"><img src="/assets/img/petal-sauco.png"  alt="" loading="lazy" decoding="async"></div>
-        <div class="img-flow__flower" style="left:2980px;top:22%;width:206px" data-rotate="-10"><img src="/assets/img/petal-roja.png"  alt="" loading="lazy" decoding="async"></div>
-      </div>
-      <!-- Plano cercano: grande, sombra profunda, se mueve más rápido -->
-      <div class="img-flow__track track--near">
-        <figure class="img-flow__item"><img src="/assets/img/g12.jpg" alt="" loading="lazy" decoding="async"></figure>
-        <figure class="img-flow__item"><img src="/assets/img/g15.jpg" alt="" loading="lazy" decoding="async"></figure>
-        <figure class="img-flow__item"><img src="/assets/img/g16.jpg" alt="" loading="lazy" decoding="async"></figure>
-        <figure class="img-flow__item"><img src="/assets/img/g17.jpg" alt="" loading="lazy" decoding="async"></figure>
-        <figure class="img-flow__item"><img src="/assets/img/g18.jpg" alt="" loading="lazy" decoding="async"></figure>
-        <figure class="img-flow__item"><img src="/assets/img/g19.jpg" alt="" loading="lazy" decoding="async"></figure>
-        <div class="img-flow__flower" style="left:1898px;top:4%;width:365px"  data-rotate="10"><img src="/assets/img/petal-borraja.png" alt="" loading="lazy" decoding="async"></div>
-        <div class="img-flow__flower" style="left:3260px;top:62%;width:320px" data-rotate="-15"><img src="/assets/img/petal-peony.png"  alt="" loading="lazy" decoding="async"></div>
-      </div>
-    </div>
-  </section>
+  <ImageFlow />
 
   <!-- DESPERTAR DE LAS FLORES (4 imágenes en bucle: Timeline + clip-path) -->
   <section class="showcase-wrap" id="despertar">

@@ -1,0 +1,49 @@
+---
+import '../styles/imageFlow.css';
+
+const cards = [
+  // Layer 1 — far: slow · dimmer · smaller
+  { src:'/assets/img/g3.jpg',    p:0.04, l:1, y:8,  w:258, h:340, r:-2.5 },
+  { src:'/assets/img/g7.jpg',    p:0.16, l:1, y:55, w:244, h:182, r: 2.0 },
+  { src:'/assets/img/g11.jpg',   p:0.27, l:1, y:18, w:270, h:378, r:-1.5 },
+  { src:'/assets/img/dish-3.jpg',p:0.41, l:1, y:63, w:258, h:194, r: 3.0 },
+  { src:'/assets/img/g4.jpg',    p:0.56, l:1, y:12, w:250, h:350, r:-3.0 },
+  { src:'/assets/img/g8.jpg',    p:0.70, l:1, y:50, w:264, h:198, r: 1.5 },
+  { src:'/assets/img/g12.jpg',   p:0.84, l:1, y:25, w:256, h:358, r:-2.0 },
+
+  // Layer 2 — mid: standard depth
+  { src:'/assets/img/g1.jpg',    p:0.07, l:2, y:30, w:348, h:460, r: 1.5 },
+  { src:'/assets/img/chef-2.jpg',p:0.20, l:2, y:10, w:364, h:508, r:-2.0 },
+  { src:'/assets/img/g5.jpg',    p:0.33, l:2, y:58, w:388, h:260, r: 2.5 },
+  { src:'/assets/img/g9.jpg',    p:0.49, l:2, y:6,  w:354, h:496, r:-1.0 },
+  { src:'/assets/img/dish-1.jpg',p:0.63, l:2, y:44, w:370, h:278, r: 2.0 },
+  { src:'/assets/img/g6.jpg',    p:0.77, l:2, y:15, w:376, h:528, r:-2.5 },
+  { src:'/assets/img/g10.jpg',   p:0.91, l:2, y:60, w:342, h:230, r: 1.0 },
+
+  // Layer 3 — near: fast · dominant · large
+  { src:'/assets/img/chef-1.jpg',p:0.11, l:3, y:14, w:464, h:650, r:-1.5 },
+  { src:'/assets/img/g2.jpg',    p:0.30, l:3, y:43, w:512, h:342, r: 2.0 },
+  { src:'/assets/img/chef-3.jpg',p:0.47, l:3, y:5,  w:480, h:674, r:-2.5 },
+  { src:'/assets/img/dish-2.jpg',p:0.62, l:3, y:50, w:528, h:354, r: 1.5 },
+  { src:'/assets/img/g14.jpg',   p:0.75, l:3, y:10, w:468, h:658, r:-1.0 },
+  { src:'/assets/img/g16.jpg',   p:0.91, l:3, y:40, w:490, h:330, r: 3.0 },
+];
+---
+
+<section class="image-flow" id="imageFlow" aria-hidden="true">
+  <div class="image-flow__scene">
+    {cards.map(c => (
+      <div
+        class="image-flow__card"
+        data-phase={c.p}
+        data-layer={c.l}
+        data-w={c.w}
+        data-rot={c.r}
+        style={`width:${c.w}px;height:${c.h}px;top:${c.y}%`}
+      >
+        <img src={c.src} alt="" loading="lazy" decoding="async" />
+      </div>
+    ))}
+  </div>
+</section>
+
