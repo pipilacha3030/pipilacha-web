@@ -1,9 +1,11 @@
-/* imageFlow.js — stream of photographs through a focal plane  v3
+/* imageFlow.js — stream of photographs through a focal plane  v4
  *
- * Coefficient 1.0 = wide focal zone: at any scroll position 8-12 cards
- * are simultaneously visible (3-5 "at center"), creating a continuous
- * stream. Opacity is always 1 — no fade. Scale change is gentle (not
- * dominant) so multiple cards coexist comfortably.
+ * Two-axis modulation:
+ *   horizontal (prox)  — focal lens: card nearest viewport centre is largest
+ *   vertical   (env)   — sine envelope over scroll: small→big→small
+ *                        env = sin(π × progress)  → 0 at start/end, 1 at mid
+ * Combined: scale = lerp(min, max, prox × env)
+ * Opacity always 1. Coefficient 1.0 = 3-5 cards visible at centre at once.
  */
 (function () {
   'use strict';
@@ -50,25 +52,29 @@
     if (!vw) return;
     lastProg = prog;
 
+    /* sine envelope: 0 at section start, 1 at mid-scroll, 0 at end */
+    var env = Math.sin(Math.PI * prog);
+
     for (var i = 0; i < cards.length; i++) {
       var d = cards[i];
 
       var centerX = vw * 0.5 + (d.phase - prog) * d.speed * vw;
       var leftX   = centerX - d.w * 0.5;
 
-      /* focal proximity — coefficient 1.0 = wide zone, many cards visible */
-      var dist  = Math.abs(centerX - vw * 0.5) / vw;
-      var prox  = ss(Math.max(0, 1 - dist * 1.0));
+      /* focal proximity — coefficient 1.0 = wide zone, 3-5 cards at centre */
+      var dist     = Math.abs(centerX - vw * 0.5) / vw;
+      var prox     = ss(Math.max(0, 1 - dist * 1.0));
+      var proxEnv  = prox * env;  /* combined: horizontal focal × vertical envelope */
 
-      var scale  = lerp(d.minScale, d.maxScale, prox);
-      var rot    = d.rot * (1 - prox * 0.30);
-      var zIndex = d.baseZ + Math.round(prox * 6);
+      var scale  = lerp(d.minScale, d.maxScale, proxEnv);
+      var rot    = d.rot * (1 - proxEnv * 0.30);
+      var zIndex = d.baseZ + Math.round(proxEnv * 6);
 
-      /* sombra paralela — directional, softens away from center */
-      var shX  = Math.round(lerp(1,  5, prox));
-      var shY  = Math.round(lerp(3, 20, prox));
-      var shB  = Math.round(lerp(6, 48, prox));
-      var shA  = lerp(0.04, 0.22, prox).toFixed(3);
+      /* sombra paralela — directional, peaks at focal centre + section midpoint */
+      var shX  = Math.round(lerp(1,  5, proxEnv));
+      var shY  = Math.round(lerp(3, 20, proxEnv));
+      var shB  = Math.round(lerp(6, 48, proxEnv));
+      var shA  = lerp(0.04, 0.22, proxEnv).toFixed(3);
 
       var el = d.el;
       el.style.transform  = 'translate3d(' + leftX.toFixed(1) + 'px,0,0) rotate(' + rot.toFixed(2) + 'deg) scale(' + scale.toFixed(4) + ')';
