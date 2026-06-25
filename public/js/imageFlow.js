@@ -1,11 +1,11 @@
-/* imageFlow.js — stream of photographs through a focal plane  v4
+/* imageFlow.js — focal-lens photo stream  v5
  *
- * Two-axis modulation:
- *   horizontal (prox)  — focal lens: card nearest viewport centre is largest
- *   vertical   (env)   — sine envelope over scroll: small→big→small
- *                        env = sin(π × progress)  → 0 at start/end, 1 at mid
- * Combined: scale = lerp(min, max, prox × env)
- * Opacity always 1. Coefficient 1.0 = 3-5 cards visible at centre at once.
+ * Centro = grande · lados = pequeñas · flujo continuo sin opacidad.
+ *
+ * La escala la controla únicamente la proximidad horizontal al centro
+ * del viewport (prox). Coeficiente 1.6 = contraste claro entre la carta
+ * central y las laterales, con 3-5 cartas visibles simultáneamente en
+ * distintos tamaños. scrub: 1.5 da el "Easy Ease" de inercia larga.
  */
 (function () {
   'use strict';
@@ -15,11 +15,11 @@
   if (!window.gsap || !window.ScrollTrigger) return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  /* ── layer config: speed (×vw), gentle scale range, z-base ── */
+  /* ── layer config: speed (×vw), scale range, z-base ── */
   var LAYER = {
-    1: { speed: 1.50, minScale: 0.42, maxScale: 0.62, baseZ: 1  },
-    2: { speed: 2.20, minScale: 0.55, maxScale: 0.82, baseZ: 7  },
-    3: { speed: 3.00, minScale: 0.62, maxScale: 0.92, baseZ: 13 },
+    1: { speed: 1.50, minScale: 0.28, maxScale: 0.72, baseZ: 1  },
+    2: { speed: 2.20, minScale: 0.32, maxScale: 0.90, baseZ: 7  },
+    3: { speed: 3.00, minScale: 0.36, maxScale: 1.08, baseZ: 13 },
   };
 
   var cards = Array.from(section.querySelectorAll('.image-flow__card'))
@@ -52,29 +52,25 @@
     if (!vw) return;
     lastProg = prog;
 
-    /* sine envelope: 0 at section start, 1 at mid-scroll, 0 at end */
-    var env = Math.sin(Math.PI * prog);
-
     for (var i = 0; i < cards.length; i++) {
       var d = cards[i];
 
       var centerX = vw * 0.5 + (d.phase - prog) * d.speed * vw;
       var leftX   = centerX - d.w * 0.5;
 
-      /* focal proximity — coefficient 1.0 = wide zone, 3-5 cards at centre */
-      var dist     = Math.abs(centerX - vw * 0.5) / vw;
-      var prox     = ss(Math.max(0, 1 - dist * 1.0));
-      var proxEnv  = prox * env;  /* combined: horizontal focal × vertical envelope */
+      /* coeficiente 1.6 — centro grande, lados pequeños, 3-5 a la vez */
+      var dist  = Math.abs(centerX - vw * 0.5) / vw;
+      var prox  = ss(Math.max(0, 1 - dist * 1.6));
 
-      var scale  = lerp(d.minScale, d.maxScale, proxEnv);
-      var rot    = d.rot * (1 - proxEnv * 0.30);
-      var zIndex = d.baseZ + Math.round(proxEnv * 6);
+      var scale  = lerp(d.minScale, d.maxScale, prox);
+      var rot    = d.rot * (1 - prox * 0.35);
+      var zIndex = d.baseZ + Math.round(prox * 6);
 
-      /* sombra paralela — directional, peaks at focal centre + section midpoint */
-      var shX  = Math.round(lerp(1,  5, proxEnv));
-      var shY  = Math.round(lerp(3, 20, proxEnv));
-      var shB  = Math.round(lerp(6, 48, proxEnv));
-      var shA  = lerp(0.04, 0.22, proxEnv).toFixed(3);
+      /* sombra paralela — offset direccional, fuerte en el focal center */
+      var shX  = Math.round(lerp(2, 12, prox));
+      var shY  = Math.round(lerp(4, 32, prox));
+      var shB  = Math.round(lerp(8, 64, prox));
+      var shA  = lerp(0.06, 0.36, prox).toFixed(3);
 
       var el = d.el;
       el.style.transform  = 'translate3d(' + leftX.toFixed(1) + 'px,0,0) rotate(' + rot.toFixed(2) + 'deg) scale(' + scale.toFixed(4) + ')';
@@ -86,11 +82,12 @@
 
   requestAnimationFrame(function () { tick(0); });
 
+  /* scrub: 1.5 = inercia larga, sensación Easy Ease */
   ScrollTrigger.create({
     trigger:  section,
     start:    'top top',
     end:      'bottom bottom',
-    scrub:    0.8,
+    scrub:    1.5,
     onUpdate: function (self) { tick(self.progress); },
     invalidateOnRefresh: true,
     onRefresh: function () { lastProg = -1; },
