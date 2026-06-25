@@ -19,8 +19,8 @@
   top: 0;
   border-radius: 24px;
   overflow: hidden;
-  will-change: transform, opacity;
-  opacity: 0;
+  will-change: transform;
+  opacity: 1;
   transform-origin: center center;
   cursor: default;
   box-shadow: 0 8px 24px rgba(0,0,0,0.06);

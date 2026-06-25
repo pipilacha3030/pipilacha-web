@@ -1,9 +1,9 @@
-/* imageFlow.js — cinematic focal-lens scroll stream  v2
+/* imageFlow.js — stream of photographs through a focal plane  v3
  *
- * Each card has a "phase" (0–1): the scroll progress at which its center
- * aligns with the viewport center. Proximity to that focal point drives
- * scale, opacity and shadow. Coefficient 2.4 creates a tight focal zone
- * so only 3–5 cards are prominent at once (the 072 look).
+ * Coefficient 1.0 = wide focal zone: at any scroll position 8-12 cards
+ * are simultaneously visible (3-5 "at center"), creating a continuous
+ * stream. Opacity is always 1 — no fade. Scale change is gentle (not
+ * dominant) so multiple cards coexist comfortably.
  */
 (function () {
   'use strict';
@@ -13,11 +13,11 @@
   if (!window.gsap || !window.ScrollTrigger) return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  /* ── layer config: speed (×vw), scale range, z-base ── */
+  /* ── layer config: speed (×vw), gentle scale range, z-base ── */
   var LAYER = {
-    1: { speed: 1.50, minScale: 0.15, maxScale: 0.72, baseZ: 1  },
-    2: { speed: 2.20, minScale: 0.22, maxScale: 1.00, baseZ: 7  },
-    3: { speed: 3.00, minScale: 0.28, maxScale: 1.32, baseZ: 13 },
+    1: { speed: 1.50, minScale: 0.42, maxScale: 0.62, baseZ: 1  },
+    2: { speed: 2.20, minScale: 0.55, maxScale: 0.82, baseZ: 7  },
+    3: { speed: 3.00, minScale: 0.62, maxScale: 0.92, baseZ: 13 },
   };
 
   var cards = Array.from(section.querySelectorAll('.image-flow__card'))
@@ -47,7 +47,7 @@
   function tick(prog) {
     if (Math.abs(prog - lastProg) < 0.00012) return;
     var vw = window.innerWidth || document.documentElement.clientWidth;
-    if (!vw) return;   // layout not ready; retry next call
+    if (!vw) return;
     lastProg = prog;
 
     for (var i = 0; i < cards.length; i++) {
@@ -56,24 +56,23 @@
       var centerX = vw * 0.5 + (d.phase - prog) * d.speed * vw;
       var leftX   = centerX - d.w * 0.5;
 
-      /* focal proximity — coefficient 2.4 = tight focal zone */
+      /* focal proximity — coefficient 1.0 = wide zone, many cards visible */
       var dist  = Math.abs(centerX - vw * 0.5) / vw;
-      var prox  = ss(Math.max(0, 1 - dist * 2.4));
+      var prox  = ss(Math.max(0, 1 - dist * 1.0));
 
-      var scale   = lerp(d.minScale, d.maxScale, prox);
-      var opacity = prox;
-      var rot     = d.rot * (1 - prox * 0.30);
-      var zIndex  = d.baseZ + Math.round(prox * 6);
+      var scale  = lerp(d.minScale, d.maxScale, prox);
+      var rot    = d.rot * (1 - prox * 0.30);
+      var zIndex = d.baseZ + Math.round(prox * 6);
 
-      /* sombra paralela — directional shadow strengthens at focal center */
-      var shX  = Math.round(lerp(1,  6, prox));
-      var shY  = Math.round(lerp(4, 28, prox));
-      var shB  = Math.round(lerp(8, 80, prox));
-      var shA  = lerp(0.03, 0.30, prox).toFixed(3);
+      /* sombra paralela — directional, softens away from center */
+      var shX  = Math.round(lerp(1,  5, prox));
+      var shY  = Math.round(lerp(3, 20, prox));
+      var shB  = Math.round(lerp(6, 48, prox));
+      var shA  = lerp(0.04, 0.22, prox).toFixed(3);
 
       var el = d.el;
       el.style.transform  = 'translate3d(' + leftX.toFixed(1) + 'px,0,0) rotate(' + rot.toFixed(2) + 'deg) scale(' + scale.toFixed(4) + ')';
-      el.style.opacity    = opacity.toFixed(3);
+      el.style.opacity    = '1';
       el.style.zIndex     = zIndex;
       el.style.boxShadow  = shX + 'px ' + shY + 'px ' + shB + 'px rgba(0,0,0,' + shA + ')';
     }
@@ -91,7 +90,6 @@
     onRefresh: function () { lastProg = -1; },
   });
 
-  /* hover: subtle inner zoom without conflicting with card transform */
   if (window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
     cards.forEach(function (d) {
       var img = d.el.querySelector('img');
