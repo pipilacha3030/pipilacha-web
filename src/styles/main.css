@@ -941,6 +941,61 @@ body.intro-open{overflow:hidden}
   .footer__cols{grid-template-columns:1fr;gap:2.4rem;text-align:center}
 }
 
+/* ============================================================
+   COLLAGE PARALLAX (estilo madewithgsap 072)
+   Sección pinneada (sticky) · 10 cards a distinta velocidad
+   ============================================================ */
+.collage-parallax{position:relative;height:250vh;background:var(--cream)}
+.collage-pin{position:sticky;top:0;height:100vh;overflow:hidden}
+.collage-canvas{position:relative;width:100%;height:100vh}
+
+.collage-card{
+  position:absolute;left:var(--l);top:var(--t);margin:0;
+  /* el parallax (yPercent) lo aplica GSAP sobre este elemento */
+}
+.collage-card--sm{width:210px}
+.collage-card--md{width:320px}
+.collage-card--lg{width:450px}
+
+.collage-card__inner{
+  position:relative;border-radius:3px;overflow:hidden;
+  /* sombra paralela pronunciada — da dimensión y profundidad */
+  box-shadow:0 30px 60px -15px rgba(13,13,13,.45), 0 18px 36px -18px rgba(13,13,13,.35);
+}
+.collage-card__inner img{display:block;width:100%;height:auto}
+
+/* will-change solo mientras la sección está activa, no permanente */
+.collage-pin.is-active .collage-card{will-change:transform}
+
+/* ── móvil: 6 cards, más respirables, sombras suaves ── */
+@media (max-width:768px){
+  .collage-parallax{height:180vh}
+  .collage-card{left:var(--lm);top:var(--tm)}
+  .collage-card--desk{display:none}      /* oculta 4 cards en móvil */
+  .collage-card--sm{width:140px}
+  .collage-card--md{width:165px}
+  .collage-card--lg{width:190px}
+  .collage-card__inner{
+    box-shadow:0 15px 30px -15px rgba(13,13,13,.25), 0 9px 18px -18px rgba(13,13,13,.25);
+  }
+}
+
+/* ── reduce motion / sin GSAP: grid simple, sin parallax ── */
+@media (prefers-reduced-motion:reduce){
+  .collage-parallax{height:auto;background:var(--cream)}
+  .collage-pin{position:static;height:auto;overflow:visible;padding:4rem 0}
+  .collage-canvas{
+    position:static;height:auto;display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:1.4rem;max-width:1180px;margin:0 auto;padding:0 5vw;
+  }
+  .collage-card,.collage-card--desk{
+    position:static;left:auto;top:auto;width:auto!important;
+    transform:none!important;opacity:1!important;display:block
+  }
+  .collage-card__inner{transform:none!important}
+}
+
 /* ---------- accesibilidad: reduce motion ---------- */
 @media (prefers-reduced-motion:reduce){
   .reveal,.hero__title .reveal-mask,.reveal-line>*{opacity:1!important;transform:none!important}

@@ -1,6 +1,22 @@
 ---
 import Base from '../layouts/Base.astro';
-import ImageFlow from '../components/ImageFlow.astro';
+
+/* COLLAGE PARALLAX (estilo madewithgsap 072) · 10 cards, posiciones absolutas.
+   l/t = posición desktop (%) · lm/tm = posición móvil (%) · speed 0.3–1.8
+   rot -8..8 (grados) · scale 0.65–1.15 · mobile=false → oculta ≤768px.
+   El conjunto cuenta algo: platos con flor, manos en la cocina, la sala. */
+const collage = [
+  { src:'/assets/img/g13.jpg',          alt:'Postre de clavel y crema con pétalos rosados — Pipilacha',                 size:'lg', l:7,  t:30, lm:6,  tm:62, speed:1.5, rot:-5, scale:1.10, mobile:true  },
+  { src:'/assets/img/df-vieira.jpg',    alt:'Vieira con flor de higo en dos cuencos de cerámica — Pipilacha',          size:'md', l:60, t:11, lm:50, tm:11, speed:0.9, rot: 4, scale:0.95, mobile:true  },
+  { src:'/assets/img/df-mandarina.jpg', alt:'Torrija de mandarina coronada con caléndula y capuchina — Pipilacha',     size:'md', l:69, t:57, lm:52, tm:43, speed:1.2, rot:-6, scale:1.00, mobile:true  },
+  { src:'/assets/img/g3.jpg',           alt:'Guisante lágrima con saúco y flores en cuenco de mármol — Pipilacha',     size:'lg', l:32, t:49, lm:8,  tm:33, speed:1.7, rot: 3, scale:1.15, mobile:true  },
+  { src:'/assets/img/chef-1.jpg',       alt:'Arán, chef de Pipilacha, entre flores amarillas — Pipilacha',            size:'md', l:21, t:5,  lm:4,  tm:4,  speed:0.4, rot:-7, scale:0.80, mobile:true  },
+  { src:'/assets/img/g6.jpg',           alt:'Manos de los chefs emplatando espárragos sobre pizarras — Pipilacha',    size:'md', l:80, t:30, lm:50, tm:70, speed:0.7, rot:-4, scale:0.85, mobile:true  },
+  { src:'/assets/img/g11.jpg',          alt:'Helado cítrico con pétalos de clavel sostenido en la mano — Pipilacha',  size:'sm', l:2,  t:4,  lm:0,  tm:0,  speed:0.5, rot: 6, scale:0.75, mobile:false },
+  { src:'/assets/img/g16.jpg',          alt:'Arán y Noé cocinando juntos en la barra — Pipilacha',                    size:'sm', l:52, t:69, lm:0,  tm:0,  speed:1.4, rot: 5, scale:0.90, mobile:false },
+  { src:'/assets/img/barra.jpg',        alt:'La barra de iroko vestida para el servicio con un centro floral — Pipilacha', size:'sm', l:88, t:70, lm:0, tm:0, speed:1.0, rot:-3, scale:0.80, mobile:false },
+  { src:'/assets/img/dish-2.jpg',       alt:'Espárragos a la brasa con romesco y pétalos de caléndula — Pipilacha',   size:'sm', l:44, t:2,  lm:0,  tm:0,  speed:0.6, rot: 7, scale:0.72, mobile:false },
+];
 ---
 
 <Base
@@ -51,7 +67,26 @@ import ImageFlow from '../components/ImageFlow.astro';
     </div>
   </section>
 
-  <ImageFlow />
+  <!-- COLLAGE PARALLAX · sección pinneada (sticky) con 10 cards a distinta velocidad -->
+  <section class="collage-parallax" id="collage" aria-label="Mosaico de Pipilacha">
+    <div class="collage-pin">
+      <div class="collage-canvas">
+        {collage.map(c => (
+          <figure
+            class:list={['collage-card', `collage-card--${c.size}`, !c.mobile && 'collage-card--desk']}
+            data-speed={c.speed}
+            data-rotate={c.rot}
+            data-scale={c.scale}
+            style={`--l:${c.l}%;--t:${c.t}%;--lm:${c.lm}%;--tm:${c.tm}%`}
+          >
+            <div class="collage-card__inner">
+              <img src={c.src} alt={c.alt} loading="lazy" decoding="async" />
+            </div>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
 
   <!-- DESPERTAR DE LAS FLORES (4 imágenes en bucle: Timeline + clip-path) -->
   <section class="showcase-wrap" id="despertar">

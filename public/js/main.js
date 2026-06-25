@@ -335,11 +335,82 @@ if (window.gsap) {
             scrollTrigger: { trigger: row, start: 'top 88%' } });
       });
     }
+    initCollageParallax();
   } else {
     gsap.set('.reveal', { opacity: 1, y: 0 });
+    initCollageReducedFade();
   }
 
   ScrollTrigger.refresh();
+}
+
+/* ============================================================
+   COLLAGE PARALLAX (estilo madewithgsap 072)
+   10 cards en posiciones absolutas · cada una a distinta velocidad.
+   Estructura: .collage-card (parallax yPercent) > .collage-card__inner
+   (rotación + escala base + entrada). Separar capas evita que el
+   parallax pise la animación de entrada (ambas usan yPercent).
+   ============================================================ */
+function initCollageParallax() {
+  const section = document.querySelector('.collage-parallax');
+  if (!section || !window.gsap) return;
+  const pin = section.querySelector('.collage-pin');
+  const cards = gsap.utils.toArray(section.querySelectorAll('.collage-card'));
+  if (!cards.length) return;
+
+  const isMobile = window.matchMedia('(max-width:768px)').matches;
+  const speedFactor = isMobile ? 0.6 : 1;  // móvil: movimiento más contenido
+  const rotFactor   = isMobile ? 0.5 : 1;  // móvil: rotaciones al 50%
+  const inners = cards.map(c => c.querySelector('.collage-card__inner'));
+
+  cards.forEach((card, i) => {
+    const img = card.querySelector('img');
+    // si una imagen no carga, oculta su card sin romper el layout
+    if (img) img.addEventListener('error', () => { card.style.display = 'none'; ScrollTrigger.refresh(); });
+
+    const speed = parseFloat(card.dataset.speed)  || 1;
+    const rot   = (parseFloat(card.dataset.rotate) || 0) * rotFactor;
+    const scale = parseFloat(card.dataset.scale)  || 1;
+
+    // base: rotación + escala aparente (profundidad) sobre el inner
+    gsap.set(inners[i], { rotation: rot, scale: scale, transformOrigin: '50% 50%', force3D: true });
+
+    // PARALLAX: yPercent = progreso · speed · 100 · -1 — scrubbeado (lag 1s)
+    gsap.fromTo(card,
+      { yPercent: 0 },
+      {
+        yPercent: speed * 100 * speedFactor * -1, ease: 'none', force3D: true,
+        scrollTrigger: { trigger: section, start: 'top top', end: 'bottom bottom', scrub: 1 }
+      });
+  });
+
+  // ENTRADA en cascada: desde abajo (yPercent 80→0, opacity 0→1) en el primer ~15%
+  gsap.set(inners, { yPercent: 80, autoAlpha: 0 });
+  gsap.timeline({ scrollTrigger: { trigger: section, start: 'top top', once: true } })
+    .to(inners, { yPercent: 0, autoAlpha: 1, duration: 1.1, ease: 'power3.out', stagger: 0.08 });
+
+  // SALIDA: las cards se desvanecen suavemente al final del recorrido
+  gsap.to(cards, {
+    autoAlpha: 0, ease: 'none',
+    scrollTrigger: { trigger: section, start: 'bottom 65%', end: 'bottom top', scrub: 1 }
+  });
+
+  // will-change solo mientras la sección está en pantalla
+  ScrollTrigger.create({
+    trigger: section, start: 'top bottom', end: 'bottom top',
+    onToggle: self => pin && pin.classList.toggle('is-active', self.isActive)
+  });
+}
+
+/* reduce motion: sin parallax, solo fade-in al entrar en viewport */
+function initCollageReducedFade() {
+  const cards = document.querySelectorAll('.collage-card');
+  if (!cards.length || !('IntersectionObserver' in window)) return;
+  cards.forEach(c => { c.style.opacity = '0'; c.style.transition = 'opacity .9s ease'; });
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -10% 0px' });
+  cards.forEach(c => io.observe(c));
 }
 
 /* ============================================================
