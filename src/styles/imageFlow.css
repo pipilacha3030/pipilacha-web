@@ -2,7 +2,7 @@
 
 .image-flow {
   position: relative;
-  height: 600vh;
+  height: 700vh;
 }
 
 .image-flow__scene {
@@ -43,13 +43,13 @@
 
 /* Tablet: hide near layer (JS checks display:none to skip) */
 @media (max-width: 900px) {
-  .image-flow { height: 500vh; }
+  .image-flow { height: 560vh; }
   .image-flow__card[data-layer="3"] { display: none; }
 }
 
 /* Mobile: only mid layer */
 @media (max-width: 560px) {
-  .image-flow { height: 400vh; }
+  .image-flow { height: 460vh; }
   .image-flow__card[data-layer="1"],
   .image-flow__card[data-layer="3"] { display: none; }
 }
