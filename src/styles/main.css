@@ -958,7 +958,7 @@ body.intro-open{overflow:hidden}
   box-shadow:0 30px 60px -15px rgba(13,13,13,.45), 0 18px 36px -18px rgba(13,13,13,.35);
   will-change:transform,opacity;backface-visibility:hidden;
 }
-.gallery-img--break{margin-left:11vw}   /* salto entre grupos → caudal de densidad variable */
+.gallery-img--break{margin-left:16vw}   /* salto entre grupos → la densidad baja a ~2 y sube a ~5 */
 .gallery-img--sm{height:28vh}
 .gallery-img--lg{height:40vh}      /* al centro (×1.12) ≈ 45% del viewport */
 .gallery-img img{display:block;height:100%;width:auto;object-fit:cover}
@@ -968,7 +968,7 @@ body.intro-open{overflow:hidden}
   .gallery{height:220vh}
   .gallery-row{padding:0 3vw}
   .gallery-img{height:38vh;margin-left:3vw;box-shadow:0 16px 32px -15px rgba(13,13,13,.32), 0 10px 20px -18px rgba(13,13,13,.30)}
-  .gallery-img--break{margin-left:16vw}
+  .gallery-img--break{margin-left:22vw}
   .gallery-img--sm{height:30vh}
   .gallery-img--lg{height:44vh}
 }
