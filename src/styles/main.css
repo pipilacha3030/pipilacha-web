@@ -949,15 +949,16 @@ body.intro-open{overflow:hidden}
 .gallery{position:relative;height:350vh;background:var(--cream);overflow:hidden}
 .gallery-row{
   display:flex;flex-wrap:nowrap;align-items:center;
-  width:100%;height:100vh;gap:2vw;padding:0 1.4vw;
+  width:100%;height:100vh;padding:0 1.4vw;
   will-change:transform;backface-visibility:hidden;
 }
 .gallery-img{
-  flex:0 0 auto;height:34vh;margin:0;border-radius:3px;overflow:hidden;
+  flex:0 0 auto;height:34vh;margin:0 0 0 1.6vw;border-radius:3px;overflow:hidden;
   /* sombra paralela pronunciada — da dimensión y profundidad */
   box-shadow:0 30px 60px -15px rgba(13,13,13,.45), 0 18px 36px -18px rgba(13,13,13,.35);
   will-change:transform,opacity;backface-visibility:hidden;
 }
+.gallery-img--break{margin-left:11vw}   /* salto entre grupos → caudal de densidad variable */
 .gallery-img--sm{height:28vh}
 .gallery-img--lg{height:40vh}      /* al centro (×1.12) ≈ 45% del viewport */
 .gallery-img img{display:block;height:100%;width:auto;object-fit:cover}
@@ -965,8 +966,9 @@ body.intro-open{overflow:hidden}
 /* ── móvil: horizontal, menos imágenes a la vez, runway más corto ── */
 @media (max-width:768px){
   .gallery{height:220vh}
-  .gallery-row{gap:5vw;padding:0 3vw}
-  .gallery-img{height:38vh;box-shadow:0 16px 32px -15px rgba(13,13,13,.32), 0 10px 20px -18px rgba(13,13,13,.30)}
+  .gallery-row{padding:0 3vw}
+  .gallery-img{height:38vh;margin-left:3vw;box-shadow:0 16px 32px -15px rgba(13,13,13,.32), 0 10px 20px -18px rgba(13,13,13,.30)}
+  .gallery-img--break{margin-left:16vw}
   .gallery-img--sm{height:30vh}
   .gallery-img--lg{height:44vh}
 }
