@@ -5,6 +5,9 @@
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/* Config centralizada del GALLERY FLOW (ver initGalleryFlow más abajo) */
+const FLOW = { runwayVh: 350, scrub: 1, expandFrom: 0.7, expandTo: 1.2 };
+
 /* ---------- intro / portada disruptiva ---------- */
 const intro = document.getElementById('intro');
 const introAsk = document.getElementById('introAsk');
@@ -335,82 +338,91 @@ if (window.gsap) {
             scrollTrigger: { trigger: row, start: 'top 88%' } });
       });
     }
-    initCollageParallax();
+    initGalleryFlow();
   } else {
     gsap.set('.reveal', { opacity: 1, y: 0 });
-    initCollageReducedFade();
   }
 
   ScrollTrigger.refresh();
 }
 
 /* ============================================================
-   COLLAGE PARALLAX (estilo madewithgsap 072)
-   10 cards en posiciones absolutas · cada una a distinta velocidad.
-   Estructura: .collage-card (parallax yPercent) > .collage-card__inner
-   (rotación + escala base + entrada). Separar capas evita que el
-   parallax pise la animación de entrada (ambas usan yPercent).
+   GALLERY FLOW (runway alto + fila pinneada)
+   Una fila de altura completa viaja horizontal (R→L en la 1ª mitad,
+   L→R en la 2ª) mientras cada imagen se EXPANDE a lo largo de su
+   trayecto. Loop seamless: se duplica el set y gsap.utils.wrap cose
+   la posición x, así nunca se ve un borde vacío en ningún sentido.
    ============================================================ */
-function initCollageParallax() {
-  const section = document.querySelector('.collage-parallax');
-  if (!section || !window.gsap) return;
-  const pin = section.querySelector('.collage-pin');
-  const cards = gsap.utils.toArray(section.querySelectorAll('.collage-card'));
-  if (!cards.length) return;
+function initGalleryFlow() {
+  const gallery = document.querySelector('.gallery');
+  if (!gallery || !window.gsap) return;
+  const row = gallery.querySelector('.gallery-row');
+  if (!row) return;
+  if (reduceMotion) return; // reduce motion: scroll horizontal normal (vía CSS)
 
   const isMobile = window.matchMedia('(max-width:768px)').matches;
-  const speedFactor = isMobile ? 0.6 : 1;  // móvil: movimiento más contenido
-  const rotFactor   = isMobile ? 0.5 : 1;  // móvil: rotaciones al 50%
-  const inners = cards.map(c => c.querySelector('.collage-card__inner'));
+  const expandTo = isMobile ? 1.10 : FLOW.expandTo; // móvil: expansión más contenida
+  const travel   = isMobile ? 1.2  : 1.8;           // nº de anchos de set en el punto medio
+  gallery.style.height = (isMobile ? 220 : FLOW.runwayVh) + 'vh';
 
-  cards.forEach((card, i) => {
-    const img = card.querySelector('img');
-    // si una imagen no carga, oculta su card sin romper el layout
-    if (img) img.addEventListener('error', () => { card.style.display = 'none'; ScrollTrigger.refresh(); });
+  // duplicar el set para el loop seamless (clones decorativos, sin alt)
+  const originals = gsap.utils.toArray(row.querySelectorAll('.gallery-img'));
+  const n = originals.length;
+  originals.forEach(el => {
+    const clone = el.cloneNode(true);
+    clone.setAttribute('aria-hidden', 'true');
+    const img = clone.querySelector('img'); if (img) img.alt = '';
+    row.appendChild(clone);
+  });
+  const items = gsap.utils.toArray(row.querySelectorAll('.gallery-img'));
 
-    const speed = parseFloat(card.dataset.speed)  || 1;
-    const rot   = (parseFloat(card.dataset.rotate) || 0) * rotFactor;
-    const scale = parseFloat(card.dataset.scale)  || 1;
+  // setters GPU (translate3d/scale) — quickSetter('scale') no existe en GSAP 3,
+  // así que escalamos con scaleX+scaleY (sí soportados)
+  const setX = gsap.quickSetter(row, 'x', 'px');
+  const setScale = items.map(el => {
+    const sx = gsap.quickSetter(el, 'scaleX'), sy = gsap.quickSetter(el, 'scaleY');
+    return v => { sx(v); sy(v); };
+  });
+  gsap.set(row, { force3D: true });
+  gsap.set(items, { force3D: true, transformOrigin: '50% 50%' });
 
-    // base: rotación + escala aparente (profundidad) sobre el inner
-    gsap.set(inners[i], { rotation: rot, scale: scale, transformOrigin: '50% 50%', force3D: true });
+  // estado medido (se recalcula en cada refresh/resize)
+  let setW = 0, vw = 0, centers = [];
+  const measure = () => {
+    vw = window.innerWidth;
+    setW = items[n].offsetLeft - items[0].offsetLeft;     // periodo = distancia imagen→clon
+    centers = items.map(el => el.offsetLeft + el.offsetWidth / 2);
+  };
 
-    // PARALLAX: yPercent = progreso · speed · 100 · -1 — scrubbeado (lag 1s)
-    gsap.fromTo(card,
-      { yPercent: 0 },
-      {
-        yPercent: speed * 100 * speedFactor * -1, ease: 'none', force3D: true,
-        scrollTrigger: { trigger: section, start: 'top top', end: 'bottom bottom', scrub: 1 }
-      });
+  const span = expandTo - FLOW.expandFrom;
+  const render = (p) => {
+    const tri = 1 - Math.abs(2 * p - 1);     // onda triangular: 0→1→0
+    const d = tri * setW * travel;
+    const rowX = -gsap.utils.wrap(0, setW, d); // wrap → costura invisible en ambos sentidos
+    setX(rowX);
+    for (let i = 0; i < items.length; i++) {
+      let t = 1 - (centers[i] + rowX) / vw;  // derecha pequeña → izquierda grande
+      t = t < 0 ? 0 : t > 1 ? 1 : t;
+      t = t * t * (3 - 2 * t);               // smoothstep — expansión con curva suave
+      setScale[i](FLOW.expandFrom + t * span);
+    }
+  };
+
+  // tween-proxy con scrub: la suavidad (lag) la aporta scrub:1 sobre state.p
+  const state = { p: 0 };
+  gsap.to(state, {
+    p: 1, ease: 'none',
+    scrollTrigger: {
+      trigger: gallery, start: 'top top', end: 'bottom bottom',
+      pin: row, scrub: FLOW.scrub, invalidateOnRefresh: true,
+      onRefresh: () => { measure(); render(state.p); }
+    },
+    onUpdate: () => render(state.p)
   });
 
-  // ENTRADA en cascada: desde abajo (yPercent 80→0, opacity 0→1) en el primer ~15%
-  gsap.set(inners, { yPercent: 80, autoAlpha: 0 });
-  gsap.timeline({ scrollTrigger: { trigger: section, start: 'top top', once: true } })
-    .to(inners, { yPercent: 0, autoAlpha: 1, duration: 1.1, ease: 'power3.out', stagger: 0.08 });
-
-  // SALIDA: las cards se desvanecen suavemente al final del recorrido
-  gsap.to(cards, {
-    autoAlpha: 0, ease: 'none',
-    scrollTrigger: { trigger: section, start: 'bottom 65%', end: 'bottom top', scrub: 1 }
-  });
-
-  // will-change solo mientras la sección está en pantalla
-  ScrollTrigger.create({
-    trigger: section, start: 'top bottom', end: 'bottom top',
-    onToggle: self => pin && pin.classList.toggle('is-active', self.isActive)
-  });
-}
-
-/* reduce motion: sin parallax, solo fade-in al entrar en viewport */
-function initCollageReducedFade() {
-  const cards = document.querySelectorAll('.collage-card');
-  if (!cards.length || !('IntersectionObserver' in window)) return;
-  cards.forEach(c => { c.style.opacity = '0'; c.style.transition = 'opacity .9s ease'; });
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; io.unobserve(e.target); } });
-  }, { rootMargin: '0px 0px -10% 0px' });
-  cards.forEach(c => io.observe(c));
+  measure();
+  render(0);
+  ScrollTrigger.refresh();
 }
 
 /* ============================================================

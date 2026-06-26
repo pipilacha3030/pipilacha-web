@@ -942,58 +942,43 @@ body.intro-open{overflow:hidden}
 }
 
 /* ============================================================
-   COLLAGE PARALLAX (estilo madewithgsap 072)
-   Sección pinneada (sticky) · 10 cards a distinta velocidad
+   GALLERY FLOW · runway alto + fila pinneada que viaja horizontal
+   Una fila de altura completa; las imágenes se expanden al viajar.
+   El loop seamless + expansión los gobierna initGalleryFlow() en JS.
    ============================================================ */
-.collage-parallax{position:relative;height:250vh;background:var(--cream)}
-.collage-pin{position:sticky;top:0;height:100vh;overflow:hidden}
-.collage-canvas{position:relative;width:100%;height:100vh}
-
-.collage-card{
-  position:absolute;left:var(--l);top:var(--t);margin:0;
-  /* el parallax (yPercent) lo aplica GSAP sobre este elemento */
+.gallery{position:relative;height:350vh;background:var(--cream);overflow:hidden}
+.gallery-row{
+  display:flex;flex-wrap:nowrap;align-items:center;
+  width:100%;height:100vh;gap:2.6vw;padding:0 1.4vw;
+  will-change:transform;backface-visibility:hidden;
 }
-.collage-card--sm{width:210px}
-.collage-card--md{width:320px}
-.collage-card--lg{width:450px}
-
-.collage-card__inner{
-  position:relative;border-radius:3px;overflow:hidden;
+.gallery-img{
+  flex:0 0 auto;height:56vh;margin:0;border-radius:3px;overflow:hidden;
   /* sombra paralela pronunciada — da dimensión y profundidad */
   box-shadow:0 30px 60px -15px rgba(13,13,13,.45), 0 18px 36px -18px rgba(13,13,13,.35);
+  will-change:transform;backface-visibility:hidden;
 }
-.collage-card__inner img{display:block;width:100%;height:auto}
+.gallery-img--sm{height:42vh}
+.gallery-img--lg{height:70vh}
+.gallery-img img{display:block;height:100%;width:auto;object-fit:cover}
 
-/* will-change solo mientras la sección está activa, no permanente */
-.collage-pin.is-active .collage-card{will-change:transform}
-
-/* ── móvil: 6 cards, más respirables, sombras suaves ── */
+/* ── móvil: horizontal, menos imágenes a la vez, runway más corto ── */
 @media (max-width:768px){
-  .collage-parallax{height:180vh}
-  .collage-card{left:var(--lm);top:var(--tm)}
-  .collage-card--desk{display:none}      /* oculta 4 cards en móvil */
-  .collage-card--sm{width:140px}
-  .collage-card--md{width:165px}
-  .collage-card--lg{width:190px}
-  .collage-card__inner{
-    box-shadow:0 15px 30px -15px rgba(13,13,13,.25), 0 9px 18px -18px rgba(13,13,13,.25);
-  }
+  .gallery{height:220vh}
+  .gallery-row{gap:4.5vw;padding:0 3vw}
+  .gallery-img{height:48vh;box-shadow:0 16px 32px -15px rgba(13,13,13,.32), 0 10px 20px -18px rgba(13,13,13,.30)}
+  .gallery-img--sm{height:38vh}
+  .gallery-img--lg{height:60vh}
 }
 
-/* ── reduce motion / sin GSAP: grid simple, sin parallax ── */
+/* ── reduce motion: fila con scroll horizontal normal, sin pin/expansión/loop ── */
 @media (prefers-reduced-motion:reduce){
-  .collage-parallax{height:auto;background:var(--cream)}
-  .collage-pin{position:static;height:auto;overflow:visible;padding:4rem 0}
-  .collage-canvas{
-    position:static;height:auto;display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-    gap:1.4rem;max-width:1180px;margin:0 auto;padding:0 5vw;
+  .gallery{height:auto;overflow:visible}
+  .gallery-row{
+    width:auto;height:auto;flex-wrap:nowrap;overflow-x:auto;
+    padding:3rem 5vw;gap:1.4rem;-webkit-overflow-scrolling:touch;
   }
-  .collage-card,.collage-card--desk{
-    position:static;left:auto;top:auto;width:auto!important;
-    transform:none!important;opacity:1!important;display:block
-  }
-  .collage-card__inner{transform:none!important}
+  .gallery-img,.gallery-img--sm,.gallery-img--lg{height:42vh;transform:none!important}
 }
 
 /* ---------- accesibilidad: reduce motion ---------- */

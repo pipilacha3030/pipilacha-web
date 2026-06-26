@@ -1,6 +1,23 @@
 ---
 import Base from '../layouts/Base.astro';
-import ImageFlow from '../components/ImageFlow.astro';
+
+/* GALLERY FLOW · runway alto que pinnea UNA fila de altura completa.
+   12 imágenes únicas (platos, flor, cocina, retratos, sala) — se duplican
+   en JS para el loop seamless. size = altura base (sm/md/lg). */
+const gallery = [
+  { src:'/assets/img/df-vieira.jpg',    alt:'Vieira con flor de higo en dos cuencos de cerámica — Pipilacha',          size:'lg' },
+  { src:'/assets/img/df-mandarina.jpg', alt:'Torrija de mandarina coronada con caléndula y capuchina — Pipilacha',     size:'sm' },
+  { src:'/assets/img/g3.jpg',           alt:'Guisante lágrima con saúco y flores en cuenco de mármol — Pipilacha',     size:'md' },
+  { src:'/assets/img/dish-2.jpg',       alt:'Espárragos a la brasa con romesco y pétalos de caléndula — Pipilacha',    size:'sm' },
+  { src:'/assets/img/dish-3.jpg',       alt:'Clavel fucsia sobre crema, en primer plano — Pipilacha',                  size:'lg' },
+  { src:'/assets/img/g11.jpg',          alt:'Helado cítrico con pétalos de clavel sostenido en la mano — Pipilacha',   size:'md' },
+  { src:'/assets/img/g17.jpg',          alt:'Crema fría con hojas de capuchina, emplatada a mano — Pipilacha',         size:'sm' },
+  { src:'/assets/img/chef-1.jpg',       alt:'Arán, chef de Pipilacha, entre flores amarillas — Pipilacha',             size:'lg' },
+  { src:'/assets/img/noe-barra.jpg',    alt:'Noé, chef de Pipilacha, en la cocina — Pipilacha',                        size:'md' },
+  { src:'/assets/img/g16.jpg',          alt:'Arán y Noé cocinando juntos en la barra — Pipilacha',                     size:'md' },
+  { src:'/assets/img/g6.jpg',           alt:'Manos de los chefs emplatando espárragos sobre pizarras — Pipilacha',     size:'lg' },
+  { src:'/assets/img/barra.jpg',        alt:'La barra de iroko vestida para el servicio con un centro floral — Pipilacha', size:'md' },
+];
 ---
 
 <Base
@@ -51,8 +68,16 @@ import ImageFlow from '../components/ImageFlow.astro';
     </div>
   </section>
 
-  <!-- IMAGE FLOW · focal lens cinematic scroll experience (20 cards, 3 depth planes) -->
-  <ImageFlow />
+  <!-- GALLERY FLOW · runway alto que pinnea una fila que viaja horizontal y expande -->
+  <section class="gallery" id="gallery" aria-label="Las imágenes de Pipilacha en movimiento">
+    <div class="gallery-row">
+      {gallery.map(g => (
+        <figure class:list={['gallery-img', `gallery-img--${g.size}`]}>
+          <img src={g.src} alt={g.alt} loading="lazy" decoding="async" />
+        </figure>
+      ))}
+    </div>
+  </section>
 
   <!-- DESPERTAR DE LAS FLORES (4 imágenes en bucle: Timeline + clip-path) -->
   <section class="showcase-wrap" id="despertar">
