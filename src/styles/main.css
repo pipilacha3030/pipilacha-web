@@ -953,22 +953,22 @@ body.intro-open{overflow:hidden}
   will-change:transform;backface-visibility:hidden;
 }
 .gallery-img{
-  flex:0 0 auto;height:56vh;margin:0;border-radius:3px;overflow:hidden;
+  flex:0 0 auto;height:44vh;margin:0;border-radius:3px;overflow:hidden;
   /* sombra paralela pronunciada — da dimensión y profundidad */
   box-shadow:0 30px 60px -15px rgba(13,13,13,.45), 0 18px 36px -18px rgba(13,13,13,.35);
   will-change:transform;backface-visibility:hidden;
 }
-.gallery-img--sm{height:42vh}
-.gallery-img--lg{height:70vh}
+.gallery-img--sm{height:36vh}
+.gallery-img--lg{height:50vh}      /* la más alta ocupa ~50% del viewport */
 .gallery-img img{display:block;height:100%;width:auto;object-fit:cover}
 
 /* ── móvil: horizontal, menos imágenes a la vez, runway más corto ── */
 @media (max-width:768px){
   .gallery{height:220vh}
   .gallery-row{gap:4.5vw;padding:0 3vw}
-  .gallery-img{height:48vh;box-shadow:0 16px 32px -15px rgba(13,13,13,.32), 0 10px 20px -18px rgba(13,13,13,.30)}
-  .gallery-img--sm{height:38vh}
-  .gallery-img--lg{height:60vh}
+  .gallery-img{height:42vh;box-shadow:0 16px 32px -15px rgba(13,13,13,.32), 0 10px 20px -18px rgba(13,13,13,.30)}
+  .gallery-img--sm{height:34vh}
+  .gallery-img--lg{height:48vh}
 }
 
 /* ── reduce motion: fila con scroll horizontal normal, sin pin/expansión/loop ── */

@@ -362,7 +362,7 @@ function initGalleryFlow() {
 
   const isMobile = window.matchMedia('(max-width:768px)').matches;
   const expandTo = isMobile ? 1.10 : FLOW.expandTo; // móvil: expansión más contenida
-  const travel   = isMobile ? 1.2  : 1.8;           // nº de anchos de set en el punto medio
+  const loops    = isMobile ? 1.4  : 2.2;           // nº de anchos de set recorridos en todo el runway
   gallery.style.height = (isMobile ? 220 : FLOW.runwayVh) + 'vh';
 
   // duplicar el set para el loop seamless (clones decorativos, sin alt)
@@ -396,9 +396,8 @@ function initGalleryFlow() {
 
   const span = expandTo - FLOW.expandFrom;
   const render = (p) => {
-    const tri = 1 - Math.abs(2 * p - 1);     // onda triangular: 0→1→0
-    const d = tri * setW * travel;
-    const rowX = -gsap.utils.wrap(0, setW, d); // wrap → costura invisible en ambos sentidos
+    const d = p * setW * loops;              // recorrido lineal: SIEMPRE derecha→izquierda
+    const rowX = -gsap.utils.wrap(0, setW, d); // wrap → costura invisible (loop continuo)
     setX(rowX);
     for (let i = 0; i < items.length; i++) {
       let t = 1 - (centers[i] + rowX) / vw;  // derecha pequeña → izquierda grande
