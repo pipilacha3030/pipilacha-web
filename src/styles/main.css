@@ -953,22 +953,24 @@ body.intro-open{overflow:hidden}
   will-change:transform;backface-visibility:hidden;
 }
 .gallery-img{
-  position:relative;flex:0 0 auto;height:32vh;margin:0 0 0 -2vw;border-radius:3px;overflow:hidden;
+  position:relative;flex:0 0 auto;width:18vw;height:32vh;margin:0 0 0 0.6vw;
+  border-radius:3px;overflow:hidden;
   /* sombra paralela pronunciada — da dimensión y profundidad */
   box-shadow:0 30px 60px -15px rgba(13,13,13,.45), 0 18px 36px -18px rgba(13,13,13,.35);
   will-change:transform,opacity;backface-visibility:hidden;
 }
-.gallery-img--sm{height:24vh}       /* varias dimensiones: pequeña / media / grande */
-.gallery-img--lg{height:42vh}
-.gallery-img img{display:block;height:100%;width:auto;object-fit:cover}
+/* varias dimensiones (ancho+alto acotados, recorte centrado → ninguna domina) */
+.gallery-img--sm{width:13vw;height:24vh}
+.gallery-img--lg{width:24vw;height:42vh}
+.gallery-img img{display:block;width:100%;height:100%;object-fit:cover}
 
 /* ── móvil: horizontal, runway más corto ── */
 @media (max-width:768px){
   .gallery{height:220vh}
   .gallery-row{padding:0 3vw}
-  .gallery-img{height:32vh;margin-left:-1vw;box-shadow:0 16px 32px -15px rgba(13,13,13,.32), 0 10px 20px -18px rgba(13,13,13,.30)}
-  .gallery-img--sm{height:25vh}
-  .gallery-img--lg{height:42vh}
+  .gallery-img{width:42vw;height:32vh;margin-left:1vw;box-shadow:0 16px 32px -15px rgba(13,13,13,.32), 0 10px 20px -18px rgba(13,13,13,.30)}
+  .gallery-img--sm{width:34vw;height:25vh}
+  .gallery-img--lg{width:54vw;height:42vh}
 }
 
 /* ── reduce motion: fila con scroll horizontal normal, sin pin/expansión/loop ── */

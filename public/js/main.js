@@ -376,9 +376,9 @@ function initGalleryFlow() {
   });
   const items = gsap.utils.toArray(row.querySelectorAll('.gallery-img'));
 
-  // setters GPU (translate3d/scale/opacity) — quickSetter('scale') no existe en GSAP 3,
-  // así que escalamos con scaleX+scaleY (sí soportados)
-  const setX = gsap.quickSetter(row, 'x', 'px');
+  // setters GPU — cada imagen se posiciona individualmente (x/y/scale/rot);
+  // quickSetter('scale') no existe en GSAP 3 → escalamos con scaleX+scaleY
+  const setItemX = items.map(el => gsap.quickSetter(el, 'x', 'px'));
   const setScale = items.map(el => {
     const sx = gsap.quickSetter(el, 'scaleX'), sy = gsap.quickSetter(el, 'scaleY');
     return v => { sx(v); sy(v); };
@@ -386,13 +386,15 @@ function initGalleryFlow() {
   const setAlpha = items.map(el => gsap.quickSetter(el, 'opacity'));
   const setRot = items.map(el => gsap.quickSetter(el, 'rotation', 'deg'));
   const setY = items.map(el => gsap.quickSetter(el, 'y', 'px'));
-  gsap.set(row, { force3D: true });
+  gsap.set(row, { x: 0, force3D: true });
   gsap.set(items, { force3D: true, transformOrigin: '50% 50%' });
 
-  // dispersión vertical + fase de wobble por imagen → moodboard orgánico
+  // dispersión vertical + fase de wobble + capa (z) por imagen → moodboard orgánico
   // (el clon hereda el valor de su original vía i % n, así el loop casa)
   const oyVh     = [-16, 10, -7, 17, -3, 13, -15, 6, -10, 15, -5, 8];
   const wobPhase = [0, 1.7, 3.1, 0.6, 2.4, 4.2, 1.1, 5.0, 2.0, 3.7, 0.3, 4.8];
+  const zLayer   = [4, 8, 2, 9, 5, 1, 7, 3, 10, 6, 2, 8];   // capas entrelazadas (no siempre la grande delante)
+  items.forEach((el, i) => { el.style.zIndex = zLayer[i % n]; });
 
   // estado medido (se recalcula en cada refresh/resize)
   let setW = 0, vw = 0, vhPx = 0, centers = [];
@@ -404,30 +406,30 @@ function initGalleryFlow() {
   };
 
   const span = expandTo - FLOW.expandFrom;   // expandTo local (móvil 1.10)
+  const K_MIN = 0.5;                          // compresión horizontal en el centro (0.5 = mitad → apilado denso)
   const render = (p) => {
     const d = p * setW * loops;                 // recorrido lineal: SIEMPRE derecha→izquierda
     const rowX = -gsap.utils.wrap(0, setW, d);  // wrap → loop continuo sin costura
-    setX(rowX);
     const half = vw / 2;
     for (let i = 0; i < items.length; i++) {
-      const cx = centers[i] + rowX;             // centro de la imagen en el viewport
-      // ENVOLVENTE focal: pequeña al entrar (derecha) y salir (izquierda),
-      // grande al aglomerarse en el centro → da dimensión
-      let t = Math.abs(cx - half) / half;       // 0 en el centro, 1 en los bordes
+      const bx = centers[i] + rowX;             // posición lineal del centro en pantalla
+      let t = Math.abs(bx - half) / half;       // 0 en el centro, 1 en los bordes
       t = t < 0 ? 0 : t > 1 ? 1 : t;
       const e = t * t * (3 - 2 * t);            // smoothstep (curva suave, orgánica)
+      // COMPRESIÓN hacia el centro: las posiciones se aprietan al acercarse (apilado),
+      // se sueltan en los bordes → entran/salen de una o dos, se aglomeran al centro
+      const k = K_MIN + (1 - K_MIN) * t;
+      const screenX = half + (bx - half) * k;
+      setItemX[i](screenX - centers[i]);
+      // ENVOLVENTE focal: pequeñas al entrar/salir, grandes al centro → dimensión
       const scale = expandTo - span * e;
       setScale[i](scale);
-      // se aglomeran en el centro: se dispersan en vertical al acercarse y
-      // convergen a la línea (pequeñas, de una/dos) al entrar/salir por los lados
-      const centerness = 1 - t;                 // 1 en el centro, 0 en los bordes
-      setY[i](oyVh[i % n] * vhPx * centerness);
+      // dispersión vertical: convergen a la línea en los bordes, se abren al centro (2D)
+      setY[i](oyVh[i % n] * vhPx * (1 - t));
       // wobble orgánico (efecto 072): leve rotación oscilante por su recorrido
-      setRot[i](Math.sin(cx / vw * Math.PI * 1.6 + wobPhase[i % n]) * 3);
-      // los más grandes (centro) van delante → solape en capas (moodboard)
-      items[i].style.zIndex = (scale * 100) | 0;
+      setRot[i](Math.sin(bx / vw * Math.PI * 1.6 + wobPhase[i % n]) * 3);
       // emerge/disuelve suave en el borde mismo (sin pop)
-      let a = Math.min(cx, vw - cx) / (vw * 0.06);
+      let a = Math.min(screenX, vw - screenX) / (vw * 0.06);
       a = a < 0 ? 0 : a > 1 ? 1 : a;
       setAlpha[i](a);
     }
