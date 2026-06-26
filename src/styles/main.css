@@ -428,9 +428,8 @@ body.intro-open{overflow:hidden}
 @media(max-width:760px){.barra__grid{grid-template-columns:1fr;gap:2rem}.barra__media{aspect-ratio:4/3;order:-1}}
 @media(max-width:560px){.barra__facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}}
 
-/* ---------- despertar de las flores (foto que se expande con el scroll) ---------- */
-.showcase-wrap{position:relative}
-.showcase{display:block;position:relative;height:100svh;min-height:560px;text-decoration:none;color:inherit;overflow:hidden}
+/* ---------- despertar de las flores (finale del gallery flow: tarjeta → fullscreen) ---------- */
+.showcase{display:block;position:relative;width:100%;height:100%;text-decoration:none;color:inherit;overflow:hidden}
 /* isolation: encierra el z-index de las capas para que NO tapen el caption */
 .showcase__frame{position:absolute;inset:0;margin:0;overflow:hidden;isolation:isolate}
 /* cada capa ocupa todo el marco; el clip-path la revela de izquierda a derecha */
@@ -444,6 +443,7 @@ body.intro-open{overflow:hidden}
   position:absolute;left:0;right:0;bottom:clamp(2.5rem,8vh,5.5rem);z-index:2;
   display:flex;flex-direction:column;gap:.6rem;align-items:center;text-align:center;color:var(--cream);
   padding:0 var(--gutter);
+  opacity:0;  /* oculto mientras la tarjeta viaja; initGalleryFlow lo revela al expandir */
 }
 .showcase__cap .eyebrow{margin-bottom:0;color:var(--cream);opacity:.85}
 .showcase__title{font-family:var(--serif);font-size:clamp(2.2rem,6vw,5rem);color:#fff;line-height:1.05}
@@ -942,45 +942,58 @@ body.intro-open{overflow:hidden}
 }
 
 /* ============================================================
-   GALLERY FLOW · runway alto + fila pinneada que viaja horizontal
-   Una fila de altura completa; las imágenes se expanden al viajar.
-   El loop seamless + expansión los gobierna initGalleryFlow() en JS.
+   GALLERY FLOW · runway que pinnea el stage (efecto 072)
+   Una sola pasada finita R→L: las fotos entran de una/dos por la derecha,
+   se aglomeran solapadas en el centro y salen por la izquierda. La última
+   pieza (Despertar) se expande a pantalla completa. Todo lo mueve initGalleryFlow().
    ============================================================ */
-.gallery{position:relative;height:350vh;background:var(--cream);overflow:hidden}
+.gallery{position:relative;height:380vh;background:var(--cream)}
+.gallery-stage{position:relative;height:100vh;overflow:hidden}
 .gallery-row{
-  display:flex;flex-wrap:nowrap;align-items:center;
-  width:100%;height:100vh;padding:0 1.4vw;
-  will-change:transform;backface-visibility:hidden;
+  position:absolute;inset:0;display:flex;flex-wrap:nowrap;align-items:center;
+  width:max-content;padding:0 1.4vw;
 }
 .gallery-img{
-  position:relative;flex:0 0 auto;width:18vw;height:32vh;margin:0 0 0 0.6vw;
-  border-radius:3px;overflow:hidden;
-  /* sombra paralela pronunciada — da dimensión y profundidad */
-  box-shadow:0 30px 60px -15px rgba(13,13,13,.45), 0 18px 36px -18px rgba(13,13,13,.35);
+  position:relative;flex:0 0 auto;margin:0 0 0 0.6vw;border-radius:3px;overflow:hidden;
+  /* sombra paralela marcada y direccional → profundidad / capas */
+  box-shadow:0 42px 70px -24px rgba(13,13,13,.50), 0 14px 28px -14px rgba(13,13,13,.42);
   will-change:transform,opacity;backface-visibility:hidden;
 }
-/* varias dimensiones (ancho+alto acotados, recorte centrado → ninguna domina) */
-.gallery-img--sm{width:13vw;height:24vh}
-.gallery-img--lg{width:24vw;height:42vh}
+/* formatos: cuadrada / horizontal / vertical (alto+ancho en vh → forma estable) */
+.gallery-img--sq{width:27vh;height:27vh}
+.gallery-img--h {width:42vh;height:27vh}
+.gallery-img--v {width:26vh;height:38vh}
 .gallery-img img{display:block;width:100%;height:100%;object-fit:cover}
 
-/* ── móvil: horizontal, runway más corto ── */
-@media (max-width:768px){
-  .gallery{height:220vh}
-  .gallery-row{padding:0 3vw}
-  .gallery-img{width:42vw;height:32vh;margin-left:1vw;box-shadow:0 16px 32px -15px rgba(13,13,13,.32), 0 10px 20px -18px rgba(13,13,13,.30)}
-  .gallery-img--sm{width:34vw;height:25vh}
-  .gallery-img--lg{width:54vw;height:42vh}
+/* finale = Despertar de las flores · tarjeta que viaja y se expande a fullscreen */
+.gallery-finale{
+  position:absolute;top:0;left:0;width:40vh;height:30vh;
+  border-radius:3px;overflow:hidden;z-index:50;
+  box-shadow:0 42px 70px -24px rgba(13,13,13,.50), 0 14px 28px -14px rgba(13,13,13,.42);
+  will-change:transform,width,height;backface-visibility:hidden;
 }
 
-/* ── reduce motion: fila con scroll horizontal normal, sin pin/expansión/loop ── */
+/* ── móvil: formatos más pequeños, runway algo más corto ── */
+@media (max-width:768px){
+  .gallery{height:300vh}
+  .gallery-row{padding:0 3vw}
+  .gallery-img{box-shadow:0 22px 40px -18px rgba(13,13,13,.4), 0 10px 20px -14px rgba(13,13,13,.34)}
+  .gallery-img--sq{width:30vw;height:30vw}
+  .gallery-img--h {width:46vw;height:30vw}
+  .gallery-img--v {width:30vw;height:42vw}
+  .gallery-finale{width:62vw;height:40vh}
+}
+
+/* ── reduce motion: galería en grid simple + Despertar como bloque normal ── */
 @media (prefers-reduced-motion:reduce){
-  .gallery{height:auto;overflow:visible}
+  .gallery{height:auto}
+  .gallery-stage{height:auto;overflow:visible;display:flex;flex-direction:column;gap:1.4rem;padding:3rem 0}
   .gallery-row{
-    width:auto;height:auto;flex-wrap:nowrap;overflow-x:auto;
-    padding:3rem 5vw;gap:1.4rem;-webkit-overflow-scrolling:touch;
+    position:static;width:auto;height:auto;overflow-x:auto;
+    padding:0 5vw;gap:1.2rem;-webkit-overflow-scrolling:touch;
   }
-  .gallery-img,.gallery-img--sm,.gallery-img--lg{height:42vh;transform:none!important}
+  .gallery-img,.gallery-img--sq,.gallery-img--h,.gallery-img--v{transform:none!important}
+  .gallery-finale{position:relative;width:100%;height:80vh;transform:none!important}
 }
 
 /* ---------- accesibilidad: reduce motion ---------- */

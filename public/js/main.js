@@ -6,7 +6,8 @@
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* Config centralizada del GALLERY FLOW (ver initGalleryFlow más abajo) */
-const FLOW = { runwayVh: 350, scrub: 1, expandFrom: 0.45, expandTo: 1.2 };
+const FLOW = { runwayVh: 380, scrub: 1, expandFrom: 0.45, expandTo: 1.2 };
+let showcaseTl = null; // timeline del Despertar (clip-path); lo reproduce initGalleryFlow al expandir
 
 /* ---------- intro / portada disruptiva ---------- */
 const intro = document.getElementById('intro');
@@ -235,32 +236,27 @@ if (window.gsap) {
     }
 
     /* despertar de las flores: 4 imágenes superpuestas que se revelan en bucle
-       (Timeline + clip-path), de izquierda a derecha, con leve zoom-out */
+       (Timeline + clip-path). Se crea pausado; initGalleryFlow lo reproduce
+       cuando el finale se expande a pantalla completa. */
     const showcase = document.querySelector('.showcase');
     if (showcase) {
       const sLayers = gsap.utils.toArray(showcase.querySelectorAll('.showcase__layer'));
       if (sLayers.length) {
-        // base: todas reveladas; la primera capa arriba (la que se ve en reposo)
+        // base: todas reveladas; la primera capa arriba (df-esparrago, la que se ve en reposo)
         gsap.set(sLayers, { clipPath: 'inset(0 0% 0 0)', zIndex: i => sLayers.length - i });
-        const sTl = gsap.timeline({
-          repeat: -1, repeatDelay: 0.6, defaults: { ease: 'power2.inOut' },
+        showcaseTl = gsap.timeline({
+          repeat: -1, repeatDelay: 0.6, defaults: { ease: 'power2.inOut' }, paused: true,
           onRepeat: () => gsap.set(sLayers, { zIndex: 1, clipPath: 'inset(0 0% 0 0)' })
         });
         const isMobile = window.matchMedia('(max-width:768px)').matches;
         const scaleFrom = isMobile ? 1.06 : 1.12;
         sLayers.forEach((layer, i) => {
           const img = layer.querySelector('img');
-          sTl.set(layer, { zIndex: 10 + i }, i === 0 ? 0 : '+=0.8') // pausa breve entre etapas
+          showcaseTl.set(layer, { zIndex: 10 + i }, i === 0 ? 0 : '+=0.8')
             .fromTo(layer, { clipPath: 'inset(0 100% 0 0)' },
               { clipPath: 'inset(0 0% 0 0)', duration: 3, immediateRender: false }, '<')
             .fromTo(img, { scale: scaleFrom },
               { scale: 1, duration: 3.4, ease: 'power1.out', immediateRender: false }, '<');
-        });
-        // arranca pausada; corre solo cuando la sección está en pantalla
-        sTl.pause();
-        ScrollTrigger.create({
-          trigger: '.showcase-wrap', start: 'top 75%', end: 'bottom 25%',
-          onToggle: self => self.isActive ? sTl.play() : sTl.pause()
         });
       }
     }
@@ -347,91 +343,124 @@ if (window.gsap) {
 }
 
 /* ============================================================
-   GALLERY FLOW (runway alto + fila pinneada)
-   Una fila de altura completa viaja horizontal (R→L en la 1ª mitad,
-   L→R en la 2ª) mientras cada imagen se EXPANDE a lo largo de su
-   trayecto. Loop seamless: se duplica el set y gsap.utils.wrap cose
-   la posición x, así nunca se ve un borde vacío en ningún sentido.
+   GALLERY FLOW (efecto 072) · una sola pasada FINITA (sin duplicar, sin bucle)
+   12 fotos entran de una/dos por la derecha, se aglomeran solapadas en el centro
+   (compresión + dispersión vertical + wobble + capas z) y salen por la izquierda.
+   La última pieza —el "Despertar de las flores"— en vez de salir se expande a
+   pantalla completa como transición limpia. Se pinea el stage; nada se repite.
    ============================================================ */
 function initGalleryFlow() {
   const gallery = document.querySelector('.gallery');
   if (!gallery || !window.gsap) return;
-  const row = gallery.querySelector('.gallery-row');
-  if (!row) return;
-  if (reduceMotion) return; // reduce motion: scroll horizontal normal (vía CSS)
+  const stage  = gallery.querySelector('.gallery-stage');
+  const row    = gallery.querySelector('.gallery-row');
+  const finale = gallery.querySelector('.gallery-finale');
+  if (!stage || !row || !finale) return;
+  if (reduceMotion) return; // reduce motion: grid simple + Despertar como bloque (vía CSS)
 
   const isMobile = window.matchMedia('(max-width:768px)').matches;
-  const expandTo = isMobile ? 1.10 : FLOW.expandTo; // móvil: expansión más contenida
-  const loops    = isMobile ? 1.4  : 2.2;           // nº de anchos de set recorridos en todo el runway
-  gallery.style.height = (isMobile ? 220 : FLOW.runwayVh) + 'vh';
+  const expandTo = isMobile ? 1.06 : FLOW.expandTo;
+  gallery.style.height = (isMobile ? 300 : FLOW.runwayVh) + 'vh';
 
-  // duplicar el set para el loop seamless (clones decorativos, sin alt)
-  const originals = gsap.utils.toArray(row.querySelectorAll('.gallery-img'));
-  const n = originals.length;
-  originals.forEach(el => {
-    const clone = el.cloneNode(true);
-    clone.setAttribute('aria-hidden', 'true');
-    const img = clone.querySelector('img'); if (img) img.alt = '';
-    row.appendChild(clone);
-  });
-  const items = gsap.utils.toArray(row.querySelectorAll('.gallery-img'));
+  const photos = gsap.utils.toArray(row.querySelectorAll('.gallery-img'));
+  const m = photos.length;
 
-  // setters GPU — cada imagen se posiciona individualmente (x/y/scale/rot);
-  // quickSetter('scale') no existe en GSAP 3 → escalamos con scaleX+scaleY
-  const setItemX = items.map(el => gsap.quickSetter(el, 'x', 'px'));
-  const setScale = items.map(el => {
+  // setters GPU por foto (x/y/scale/rot/opacity)
+  const pX = photos.map(el => gsap.quickSetter(el, 'x', 'px'));
+  const pY = photos.map(el => gsap.quickSetter(el, 'y', 'px'));
+  const pScale = photos.map(el => {
     const sx = gsap.quickSetter(el, 'scaleX'), sy = gsap.quickSetter(el, 'scaleY');
     return v => { sx(v); sy(v); };
   });
-  const setAlpha = items.map(el => gsap.quickSetter(el, 'opacity'));
-  const setRot = items.map(el => gsap.quickSetter(el, 'rotation', 'deg'));
-  const setY = items.map(el => gsap.quickSetter(el, 'y', 'px'));
-  gsap.set(row, { x: 0, force3D: true });
-  gsap.set(items, { force3D: true, transformOrigin: '50% 50%' });
+  const pRot = photos.map(el => gsap.quickSetter(el, 'rotation', 'deg'));
+  const pAlpha = photos.map(el => gsap.quickSetter(el, 'opacity'));
+  const setFinRot = gsap.quickSetter(finale, 'rotation', 'deg');
+  gsap.set(photos, { force3D: true, transformOrigin: '50% 50%' });
+  gsap.set(finale, { force3D: true, transformOrigin: '50% 50%' });
 
-  // dispersión vertical + fase de wobble + capa (z) por imagen → moodboard orgánico
-  // (el clon hereda el valor de su original vía i % n, así el loop casa)
+  // dispersión vertical + fase de wobble + capa (z) por foto → moodboard orgánico
   const oyVh     = [-16, 10, -7, 17, -3, 13, -15, 6, -10, 15, -5, 8];
   const wobPhase = [0, 1.7, 3.1, 0.6, 2.4, 4.2, 1.1, 5.0, 2.0, 3.7, 0.3, 4.8];
-  const zLayer   = [4, 8, 2, 9, 5, 1, 7, 3, 10, 6, 2, 8];   // capas entrelazadas (no siempre la grande delante)
-  items.forEach((el, i) => { el.style.zIndex = zLayer[i % n]; });
+  const zLayer   = [4, 8, 2, 9, 5, 1, 7, 3, 10, 6, 2, 8];
+  photos.forEach((el, i) => { el.style.zIndex = zLayer[i % zLayer.length]; });
 
-  // estado medido (se recalcula en cada refresh/resize)
-  let setW = 0, vw = 0, vhPx = 0, centers = [];
-  const measure = () => {
-    vw = window.innerWidth;
-    vhPx = window.innerHeight / 100;
-    setW = items[n].offsetLeft - items[0].offsetLeft;     // periodo = distancia imagen→clon
-    centers = items.map(el => el.offsetLeft + el.offsetWidth / 2);
+  const cap = finale.querySelector('.showcase__cap');
+  const playShowcase = (on) => {
+    if (!showcaseTl) return;
+    if (on) { if (!showcaseTl.isActive()) showcaseTl.play(); }
+    else if (showcaseTl.isActive() || showcaseTl.time() > 0) showcaseTl.pause(0);
   };
 
-  const span = expandTo - FLOW.expandFrom;   // expandTo local (móvil 1.10)
-  const K_MIN = 0.5;                          // compresión horizontal en el centro (0.5 = mitad → apilado denso)
+  // estado medido (se recalcula en cada refresh/resize)
+  let vw = 0, vh = 0, vhPx = 0, centers = [], finaleCenter = 0, startOffset = 0, travel = 0, cardW = 0, cardH = 0;
+  const measure = () => {
+    vw = window.innerWidth; vh = window.innerHeight; vhPx = vh / 100;
+    centers = photos.map(el => el.offsetLeft + el.offsetWidth / 2);
+    // leer el tamaño BASE del CSS (limpiar el inline que pone render evita medir 0)
+    finale.style.width = ''; finale.style.height = '';
+    cardW = finale.offsetWidth; cardH = finale.offsetHeight;
+    const last = photos[m - 1];
+    finaleCenter = last.offsetLeft + last.offsetWidth + vw * 0.03 + cardW / 2; // tras la última foto
+    startOffset  = vw + photos[0].offsetWidth / 2 - centers[0] + vw * 0.06;    // 1ª foto justo fuera por la derecha
+    travel = finaleCenter + startOffset - vw / 2;                              // finale al centro al acabar el flujo
+  };
+
+  const span = expandTo - FLOW.expandFrom;
+  const K_MIN = 0.5;          // compresión horizontal en el centro (apilado denso)
+  const P_FLOW = 0.82;        // 0–82% del runway = flujo; 82–100% = expansión del finale
+
+  // posición/peso de un elemento según su centro lineal y el avance del flujo
+  const place = (center, off) => {
+    const h = vw / 2;
+    const bx = center - off + startOffset;
+    let t = Math.abs(bx - h) / h; t = t < 0 ? 0 : t > 1 ? 1 : t;
+    const k = K_MIN + (1 - K_MIN) * t;
+    return { screenX: h + (bx - h) * k, t, bx };
+  };
+
   const render = (p) => {
-    const d = p * setW * loops;                 // recorrido lineal: SIEMPRE derecha→izquierda
-    const rowX = -gsap.utils.wrap(0, setW, d);  // wrap → loop continuo sin costura
-    const half = vw / 2;
-    for (let i = 0; i < items.length; i++) {
-      const bx = centers[i] + rowX;             // posición lineal del centro en pantalla
-      let t = Math.abs(bx - half) / half;       // 0 en el centro, 1 en los bordes
-      t = t < 0 ? 0 : t > 1 ? 1 : t;
-      const e = t * t * (3 - 2 * t);            // smoothstep (curva suave, orgánica)
-      // COMPRESIÓN hacia el centro: las posiciones se aprietan al acercarse (apilado),
-      // se sueltan en los bordes → entran/salen de una o dos, se aglomeran al centro
-      const k = K_MIN + (1 - K_MIN) * t;
-      const screenX = half + (bx - half) * k;
-      setItemX[i](screenX - centers[i]);
-      // ENVOLVENTE focal: pequeñas al entrar/salir, grandes al centro → dimensión
-      const scale = expandTo - span * e;
-      setScale[i](scale);
-      // dispersión vertical: convergen a la línea en los bordes, se abren al centro (2D)
-      setY[i](oyVh[i % n] * vhPx * (1 - t));
-      // wobble orgánico (efecto 072): leve rotación oscilante por su recorrido
-      setRot[i](Math.sin(bx / vw * Math.PI * 1.6 + wobPhase[i % n]) * 3);
-      // emerge/disuelve suave en el borde mismo (sin pop)
-      let a = Math.min(screenX, vw - screenX) / (vw * 0.06);
-      a = a < 0 ? 0 : a > 1 ? 1 : a;
-      setAlpha[i](a);
+    const flowP   = p < P_FLOW ? p / P_FLOW : 1;
+    const expandP = p > P_FLOW ? (p - P_FLOW) / (1 - P_FLOW) : 0;
+    const off = flowP * travel;
+
+    // ── 12 fotos ──
+    for (let i = 0; i < m; i++) {
+      const { screenX, t, bx } = place(centers[i], off);
+      const e = t * t * (3 - 2 * t);
+      pX[i](screenX - centers[i]);
+      pScale[i](expandTo - span * e);
+      pY[i](oyVh[i % oyVh.length] * vhPx * (1 - t));
+      pRot[i](Math.sin(bx / vw * Math.PI * 1.6 + wobPhase[i % wobPhase.length]) * 3);
+      let a = Math.min(screenX, vw - screenX) / (vw * 0.06); a = a < 0 ? 0 : a > 1 ? 1 : a;
+      pAlpha[i](a * (1 - expandP));   // se desvanecen al expandir el finale
+    }
+
+    // ── finale (Despertar de las flores) ──
+    if (expandP <= 0.0001) {
+      // viaja como tarjeta de formato fijo, centrada en vertical
+      const { screenX, bx } = place(finaleCenter, off);
+      finale.style.width = cardW + 'px';
+      finale.style.height = cardH + 'px';
+      finale.style.left = (screenX - cardW / 2) + 'px';
+      finale.style.top = (vh / 2 - cardH / 2) + 'px';
+      finale.style.borderRadius = '3px';
+      finale.style.zIndex = '50';
+      setFinRot(Math.sin(bx / vw * Math.PI * 1.6 + 2.2) * 3 * (1 - flowP)); // se endereza al centrarse
+      if (cap) cap.style.opacity = '0';
+      playShowcase(false);
+    } else {
+      // EXPANSIÓN: de tarjeta centrada → pantalla completa (transición limpia)
+      const fe = expandP * expandP * (3 - 2 * expandP); // smoothstep
+      const cLeft = vw / 2 - cardW / 2, cTop = vh / 2 - cardH / 2;
+      setFinRot(0);
+      finale.style.left   = (cLeft * (1 - fe)) + 'px';
+      finale.style.top    = (cTop  * (1 - fe)) + 'px';
+      finale.style.width  = (cardW + (vw - cardW) * fe) + 'px';
+      finale.style.height = (cardH + (vh - cardH) * fe) + 'px';
+      finale.style.borderRadius = (3 * (1 - fe)) + 'px';
+      finale.style.zIndex = '100';
+      if (cap) cap.style.opacity = String(fe);
+      playShowcase(expandP > 0.45);
     }
   };
 
@@ -441,7 +470,7 @@ function initGalleryFlow() {
     p: 1, ease: 'none',
     scrollTrigger: {
       trigger: gallery, start: 'top top', end: 'bottom bottom',
-      pin: row, scrub: FLOW.scrub, invalidateOnRefresh: true,
+      pin: stage, scrub: FLOW.scrub, invalidateOnRefresh: true,
       onRefresh: () => { measure(); render(state.p); }
     },
     onUpdate: () => render(state.p)
