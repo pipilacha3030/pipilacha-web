@@ -6,7 +6,7 @@
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* Config centralizada del GALLERY FLOW (ver initGalleryFlow más abajo) */
-const FLOW = { runwayVh: 350, scrub: 1, expandFrom: 0.6, expandTo: 1.06 };
+const FLOW = { runwayVh: 350, scrub: 1, expandFrom: 0.45, expandTo: 1.2 };
 
 /* ---------- intro / portada disruptiva ---------- */
 const intro = document.getElementById('intro');
@@ -361,7 +361,7 @@ function initGalleryFlow() {
   if (reduceMotion) return; // reduce motion: scroll horizontal normal (vía CSS)
 
   const isMobile = window.matchMedia('(max-width:768px)').matches;
-  const expandTo = isMobile ? 1.04 : FLOW.expandTo; // móvil: expansión más contenida
+  const expandTo = isMobile ? 1.10 : FLOW.expandTo; // móvil: expansión más contenida
   const loops    = isMobile ? 1.4  : 2.2;           // nº de anchos de set recorridos en todo el runway
   gallery.style.height = (isMobile ? 220 : FLOW.runwayVh) + 'vh';
 
@@ -385,22 +385,22 @@ function initGalleryFlow() {
   });
   const setAlpha = items.map(el => gsap.quickSetter(el, 'opacity'));
   const setRot = items.map(el => gsap.quickSetter(el, 'rotation', 'deg'));
+  const setY = items.map(el => gsap.quickSetter(el, 'y', 'px'));
   gsap.set(row, { force3D: true });
   gsap.set(items, { force3D: true, transformOrigin: '50% 50%' });
 
-  // leve desplazamiento vertical + fase de wobble por imagen → baseline orgánica
+  // dispersión vertical + fase de wobble por imagen → moodboard orgánico
   // (el clon hereda el valor de su original vía i % n, así el loop casa)
-  const oyVh     = [0, -3.5, 3, -2, 4, -3, 2.5, -4, 3, -1.5, 3.5, -2.5];
+  const oyVh     = [-16, 10, -7, 17, -3, 13, -15, 6, -10, 15, -5, 8];
   const wobPhase = [0, 1.7, 3.1, 0.6, 2.4, 4.2, 1.1, 5.0, 2.0, 3.7, 0.3, 4.8];
 
   // estado medido (se recalcula en cada refresh/resize)
-  let setW = 0, vw = 0, centers = [];
+  let setW = 0, vw = 0, vhPx = 0, centers = [];
   const measure = () => {
     vw = window.innerWidth;
-    const vhPx = window.innerHeight / 100;
+    vhPx = window.innerHeight / 100;
     setW = items[n].offsetLeft - items[0].offsetLeft;     // periodo = distancia imagen→clon
     centers = items.map(el => el.offsetLeft + el.offsetWidth / 2);
-    items.forEach((el, i) => gsap.set(el, { y: oyVh[i % n] * vhPx }));
   };
 
   const span = expandTo - FLOW.expandFrom;   // expandTo local (móvil 1.10)
@@ -416,11 +416,18 @@ function initGalleryFlow() {
       let t = Math.abs(cx - half) / half;       // 0 en el centro, 1 en los bordes
       t = t < 0 ? 0 : t > 1 ? 1 : t;
       const e = t * t * (3 - 2 * t);            // smoothstep (curva suave, orgánica)
-      setScale[i](expandTo - span * e);
-      // wobble orgánico: leve rotación oscilante a lo largo del recorrido (efecto 072)
-      setRot[i](Math.sin(cx / vw * Math.PI * 1.6 + wobPhase[i % n]) * 2.6);
-      // emerge/disuelve suave en el borde mismo (sin pop), refuerza la dimensión
-      let a = Math.min(cx, vw - cx) / (vw * 0.08);
+      const scale = expandTo - span * e;
+      setScale[i](scale);
+      // se aglomeran en el centro: se dispersan en vertical al acercarse y
+      // convergen a la línea (pequeñas, de una/dos) al entrar/salir por los lados
+      const centerness = 1 - t;                 // 1 en el centro, 0 en los bordes
+      setY[i](oyVh[i % n] * vhPx * centerness);
+      // wobble orgánico (efecto 072): leve rotación oscilante por su recorrido
+      setRot[i](Math.sin(cx / vw * Math.PI * 1.6 + wobPhase[i % n]) * 3);
+      // los más grandes (centro) van delante → solape en capas (moodboard)
+      items[i].style.zIndex = (scale * 100) | 0;
+      // emerge/disuelve suave en el borde mismo (sin pop)
+      let a = Math.min(cx, vw - cx) / (vw * 0.06);
       a = a < 0 ? 0 : a > 1 ? 1 : a;
       setAlpha[i](a);
     }
