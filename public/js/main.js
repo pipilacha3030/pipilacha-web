@@ -6,7 +6,7 @@
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* Config centralizada del GALLERY FLOW (ver initGalleryFlow más abajo) */
-const FLOW = { runwayVh: 350, scrub: 1, expandFrom: 0.7, expandTo: 1.2 };
+const FLOW = { runwayVh: 350, scrub: 1, expandFrom: 0.55, expandTo: 1.12 };
 
 /* ---------- intro / portada disruptiva ---------- */
 const intro = document.getElementById('intro');
@@ -376,34 +376,49 @@ function initGalleryFlow() {
   });
   const items = gsap.utils.toArray(row.querySelectorAll('.gallery-img'));
 
-  // setters GPU (translate3d/scale) — quickSetter('scale') no existe en GSAP 3,
+  // setters GPU (translate3d/scale/opacity) — quickSetter('scale') no existe en GSAP 3,
   // así que escalamos con scaleX+scaleY (sí soportados)
   const setX = gsap.quickSetter(row, 'x', 'px');
   const setScale = items.map(el => {
     const sx = gsap.quickSetter(el, 'scaleX'), sy = gsap.quickSetter(el, 'scaleY');
     return v => { sx(v); sy(v); };
   });
+  const setAlpha = items.map(el => gsap.quickSetter(el, 'opacity'));
   gsap.set(row, { force3D: true });
   gsap.set(items, { force3D: true, transformOrigin: '50% 50%' });
+
+  // leve desplazamiento vertical por imagen → baseline orgánica, no rígida
+  // (el clon hereda el offset de su original vía i % n, así el loop casa)
+  const oyVh = [0, -3.5, 3, -2, 4, -3, 2.5, -4, 3, -1.5, 3.5, -2.5];
 
   // estado medido (se recalcula en cada refresh/resize)
   let setW = 0, vw = 0, centers = [];
   const measure = () => {
     vw = window.innerWidth;
+    const vhPx = window.innerHeight / 100;
     setW = items[n].offsetLeft - items[0].offsetLeft;     // periodo = distancia imagen→clon
     centers = items.map(el => el.offsetLeft + el.offsetWidth / 2);
+    items.forEach((el, i) => gsap.set(el, { y: oyVh[i % n] * vhPx }));
   };
 
-  const span = expandTo - FLOW.expandFrom;
+  const span = expandTo - FLOW.expandFrom;   // expandTo local (móvil 1.10)
   const render = (p) => {
-    const d = p * setW * loops;              // recorrido lineal: SIEMPRE derecha→izquierda
-    const rowX = -gsap.utils.wrap(0, setW, d); // wrap → costura invisible (loop continuo)
+    const d = p * setW * loops;                 // recorrido lineal: SIEMPRE derecha→izquierda
+    const rowX = -gsap.utils.wrap(0, setW, d);  // wrap → loop continuo sin costura
     setX(rowX);
+    const half = vw / 2;
     for (let i = 0; i < items.length; i++) {
-      let t = 1 - (centers[i] + rowX) / vw;  // derecha pequeña → izquierda grande
+      const cx = centers[i] + rowX;             // centro de la imagen en el viewport
+      // ENVOLVENTE focal: pequeña al entrar (derecha) y salir (izquierda),
+      // grande al aglomerarse en el centro → da dimensión
+      let t = Math.abs(cx - half) / half;       // 0 en el centro, 1 en los bordes
       t = t < 0 ? 0 : t > 1 ? 1 : t;
-      t = t * t * (3 - 2 * t);               // smoothstep — expansión con curva suave
-      setScale[i](FLOW.expandFrom + t * span);
+      const e = t * t * (3 - 2 * t);            // smoothstep (curva suave, orgánica)
+      setScale[i](expandTo - span * e);
+      // emerge/disuelve suave en el borde mismo (sin pop), refuerza la dimensión
+      let a = Math.min(cx, vw - cx) / (vw * 0.10);
+      a = a < 0 ? 0 : a > 1 ? 1 : a;
+      setAlpha[i](a);
     }
   };
 
