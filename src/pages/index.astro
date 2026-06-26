@@ -1,16 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
 
-/* GALLERY FLOW · runway alto que pinnea UNA fila de altura completa.
-   12 imágenes únicas (platos, flor, cocina, retratos, sala) — se duplican
-   en JS para el loop seamless. size = altura base (sm/md/lg).
-   Las imágenes no pasan de una en una: van en GRUPOS (2,5,3,2) con poco
-   espacio dentro del grupo y mucho entre grupos → caudal de densidad variable. */
-const clusterSizes = [2, 5, 3, 2];
-const breaks = new Set();
-let _acc = 0;
-for (const s of clusterSizes) { breaks.add(_acc); _acc += s; }
-
+/* GALLERY FLOW · runway alto que pinnea UNA fila de altura completa (efecto 072).
+   12 imágenes únicas (platos, flor, cocina, retratos, sala) — se duplican en JS
+   para el loop seamless. size = altura base (sm/md/lg → varias dimensiones).
+   Flujo denso y continuo R→L: siempre se ven varias a la vez, expandiéndose al
+   pasar por el centro, con un leve wobble orgánico (ver initGalleryFlow). */
 const gallery = [
   { src:'/assets/img/df-vieira.jpg',    alt:'Vieira con flor de higo en dos cuencos de cerámica — Pipilacha',          size:'lg' },
   { src:'/assets/img/df-mandarina.jpg', alt:'Torrija de mandarina coronada con caléndula y capuchina — Pipilacha',     size:'sm' },
@@ -78,8 +73,8 @@ const gallery = [
   <!-- GALLERY FLOW · runway alto que pinnea una fila que viaja horizontal y expande -->
   <section class="gallery" id="gallery" aria-label="Las imágenes de Pipilacha en movimiento">
     <div class="gallery-row">
-      {gallery.map((g, i) => (
-        <figure class:list={['gallery-img', `gallery-img--${g.size}`, breaks.has(i) && 'gallery-img--break']}>
+      {gallery.map((g) => (
+        <figure class:list={['gallery-img', `gallery-img--${g.size}`]}>
           <img src={g.src} alt={g.alt} loading="lazy" decoding="async" />
         </figure>
       ))}
