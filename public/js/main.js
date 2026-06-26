@@ -374,9 +374,10 @@ function initGalleryFlow() {
   });
   const pRot = photos.map(el => gsap.quickSetter(el, 'rotation', 'deg'));
   const pAlpha = photos.map(el => gsap.quickSetter(el, 'opacity'));
-  const setFinRot = gsap.quickSetter(finale, 'rotation', 'deg');
+  const setFinRot   = gsap.quickSetter(finale, 'rotation', 'deg');
+  const setFinAlpha = gsap.quickSetter(finale, 'opacity');
   gsap.set(photos, { force3D: true, transformOrigin: '50% 50%' });
-  gsap.set(finale, { force3D: true, transformOrigin: '50% 50%' });
+  gsap.set(finale, { force3D: true, transformOrigin: '50% 50%', opacity: 0 });
 
   // dispersión vertical + fase de wobble + capa (z) por foto → moodboard orgánico
   const oyVh     = [-16, 10, -7, 17, -3, 13, -15, 6, -10, 15, -5, 8];
@@ -437,15 +438,18 @@ function initGalleryFlow() {
 
     // ── finale (Despertar de las flores) ──
     if (expandP <= 0.0001) {
-      // viaja como tarjeta de formato fijo, centrada en vertical
-      const { screenX, bx } = place(finaleCenter, off);
-      finale.style.width = cardW + 'px';
+      // entra por la derecha como la 13ª foto: oculta hasta flowP=0.5, luego desliza al centro
+      const fp = flowP < 0.5 ? 0 : (flowP - 0.5) / 0.5; // 0→1 en la segunda mitad del flujo
+      const fe = fp * fp * (3 - 2 * fp);                  // smoothstep
+      const finX = vw / 2 + (vw * 0.6 + cardW / 2) * (1 - fe); // derecha → centro
+      finale.style.width  = cardW + 'px';
       finale.style.height = cardH + 'px';
-      finale.style.left = (screenX - cardW / 2) + 'px';
-      finale.style.top = (vh / 2 - cardH / 2) + 'px';
+      finale.style.left   = (finX - cardW / 2) + 'px';
+      finale.style.top    = (vh / 2 - cardH / 2 - 6 * vhPx * (1 - fe)) + 'px'; // leve bajada al centrarse
       finale.style.borderRadius = '3px';
       finale.style.zIndex = '50';
-      setFinRot(Math.sin(bx / vw * Math.PI * 1.6 + 2.2) * 3 * (1 - flowP)); // se endereza al centrarse
+      setFinRot(Math.sin(fp * Math.PI * 1.6 + 2.2) * 3 * (1 - fe)); // se endereza al llegar
+      setFinAlpha(Math.min(fp / 0.12, 1)); // fade in rápido al entrar
       if (cap) cap.style.opacity = '0';
       playShowcase(false);
     } else {
@@ -453,6 +457,7 @@ function initGalleryFlow() {
       const fe = expandP * expandP * (3 - 2 * expandP); // smoothstep
       const cLeft = vw / 2 - cardW / 2, cTop = vh / 2 - cardH / 2;
       setFinRot(0);
+      setFinAlpha(1);
       finale.style.left   = (cLeft * (1 - fe)) + 'px';
       finale.style.top    = (cTop  * (1 - fe)) + 'px';
       finale.style.width  = (cardW + (vw - cardW) * fe) + 'px';
