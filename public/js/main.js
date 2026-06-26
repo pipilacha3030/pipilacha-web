@@ -6,7 +6,7 @@
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* Config centralizada del GALLERY FLOW (ver initGalleryFlow más abajo) */
-const FLOW = { runwayVh: 380, scrub: 1, expandFrom: 0.78, expandTo: 1.08 };
+const FLOW = { runwayVh: 380, scrub: 1, expandFrom: 0.48, expandTo: 1.20 };
 let showcaseTl = null; // timeline del Despertar (clip-path); lo reproduce initGalleryFlow al expandir
 
 /* ---------- intro / portada disruptiva ---------- */
@@ -407,7 +407,7 @@ function initGalleryFlow() {
   };
 
   const span = expandTo - FLOW.expandFrom;
-  const K_MIN = 0.76;         // compresión horizontal en el centro (mosaico 3-5 fotos)
+  const K_MIN = 0.56;         // compresión horizontal en el centro (aglomeración 3-4 fotos)
   const P_FLOW = 0.82;        // 0–82% del runway = flujo; 82–100% = expansión del finale
 
   // posición/peso de un elemento según su centro lineal y el avance del flujo
