@@ -6,7 +6,7 @@
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* Config centralizada del GALLERY FLOW (ver initGalleryFlow más abajo) */
-const FLOW = { runwayVh: 380, scrub: 0.4, expandFrom: 0.48, expandTo: 1.20 };
+const FLOW = { runwayVh: 280, scrub: 0.7, expandFrom: 0.48, expandTo: 1.20 };
 let showcaseTl = null; // timeline del Despertar (clip-path); lo reproduce initGalleryFlow al expandir
 
 /* ---------- intro / portada disruptiva ---------- */
@@ -365,7 +365,7 @@ function initGalleryFlow() {
 
   const isMobile = window.matchMedia('(max-width:768px)').matches;
   const expandTo = isMobile ? 1.06 : FLOW.expandTo;
-  gallery.style.height = (isMobile ? 300 : FLOW.runwayVh) + 'vh';
+  gallery.style.height = (isMobile ? 220 : FLOW.runwayVh) + 'vh';
 
   const photos = gsap.utils.toArray(row.querySelectorAll('.gallery-img'));
   const m = photos.length;
