@@ -246,7 +246,12 @@ if (window.gsap) {
         gsap.set(sLayers, { clipPath: 'inset(0 0% 0 0)', zIndex: i => sLayers.length - i });
         showcaseTl = gsap.timeline({
           repeat: -1, repeatDelay: 0.6, defaults: { ease: 'power2.inOut' }, paused: true,
-          onRepeat: () => gsap.set(sLayers, { zIndex: 1, clipPath: 'inset(0 0% 0 0)' })
+          onRepeat: () => {
+    /* pre-oculta todas las capas excepto la última (queda de fondo) para que
+       cuando la capa 0 suba de z-index no flash 1 frame con clipPath visible */
+    gsap.set(sLayers, { zIndex: 1, clipPath: 'inset(0 100% 0 0)' });
+    gsap.set(sLayers[sLayers.length - 1], { clipPath: 'inset(0 0% 0 0)' });
+  }
         });
         const isMobile = window.matchMedia('(max-width:768px)').matches;
         const scaleFrom = isMobile ? 1.06 : 1.12;
@@ -389,7 +394,7 @@ function initGalleryFlow() {
   const playShowcase = (on) => {
     if (!showcaseTl) return;
     if (on) { if (!showcaseTl.isActive()) showcaseTl.play(); }
-    else if (showcaseTl.isActive() || showcaseTl.time() > 0) showcaseTl.pause(0);
+    else if (showcaseTl.isActive() || showcaseTl.time() > 0) showcaseTl.pause();
   };
 
   // estado medido (se recalcula en cada refresh/resize)

@@ -947,7 +947,7 @@ body.intro-open{overflow:hidden}
    se aglomeran solapadas en el centro y salen por la izquierda. La última
    pieza (Despertar) se expande a pantalla completa. Todo lo mueve initGalleryFlow().
    ============================================================ */
-.gallery{position:relative;height:380vh;background:var(--cream)}
+.gallery{position:relative;height:380vh;background:var(--cream);margin-top:-20vh}
 .gallery-stage{position:relative;height:100vh;overflow:hidden}
 .gallery-row{
   position:absolute;inset:0;display:flex;flex-wrap:nowrap;align-items:center;
