@@ -425,12 +425,15 @@ function initGalleryFlow() {
     return { screenX: h + (bx - h) * k, t, bx };
   };
 
+  const LEAD = 0.42;          // arranque adelantado: en p=0 el flujo ya entró un 42%
+                              //   → no hay stage vacío; ~4 fotos ya en mosaico junto al botón.
+                              //   Además ralentiza el flujo (recorre 0.58·travel) → más suave.
   const render = (p) => {
     const flowP   = p < P_FLOW ? p / P_FLOW : 1;
     const expandP = p > P_FLOW ? Math.min((p - P_FLOW) / (P_HOLD - P_FLOW), 1) : 0;
-    const off = flowP * travel;
+    const off = (LEAD + flowP * (1 - LEAD)) * travel;
 
-    // ── 12 fotos ──
+    // ── fotos del flujo ──
     for (let i = 0; i < m; i++) {
       const { screenX, t, bx } = place(centers[i], off);
       const e = t * t * (3 - 2 * t);
