@@ -16,13 +16,18 @@ import Base from '../layouts/Base.astro';
   <!-- WIDGET THEFORK (reserva online, inline) -->
   <section class="reserva-widget" id="reservar-widget">
     <div class="reserva-widget__inner">
-      <iframe
-        src="https://widget.thefork.com/867dcee9-49b5-47ed-90c0-c6c87149b328"
-        allow="payment *"
-        title="Reservas Pipilacha"
-        loading="lazy"
-        style="width:100%; min-height:800px; border:none;">
-      </iframe>
+      <div class="reserva-widget__frame">
+        <p class="reserva-widget__loading">Cargando el calendario de reservas<span class="dots" aria-hidden="true"></span></p>
+        <iframe
+          src="https://widget.thefork.com/867dcee9-49b5-47ed-90c0-c6c87149b328"
+          allow="payment *"
+          title="Reservas Pipilacha"
+          loading="lazy"
+          onload="this.previousElementSibling.classList.add('is-loaded')"
+          style="width:100%; min-height:800px; border:none;">
+        </iframe>
+      </div>
+      <p class="reserva-widget__fallback">¿No carga? Reserva por <a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">Instagram</a> o llama al <a href="tel:+34919125998">919 12 59 98</a>.</p>
     </div>
   </section>
 

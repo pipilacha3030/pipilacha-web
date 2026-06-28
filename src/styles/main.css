@@ -12,7 +12,7 @@
   --cloud:     #FBFAF5;   /* casi blanco */
   --ink:       #2A2A22;   /* texto sobre claro */
   --text-muted:  #55554a; /* cuerpo de texto secundario */
-  --text-subtle: #7a7a6c; /* etiquetas y metadata */
+  --text-subtle: #6a6a5b; /* etiquetas y metadata (AA: ~4.8:1 sobre crema) */
   --border-subtle: rgba(49,51,31,.16); /* separadores de componentes */
 
   --serif: 'Marcellus', 'Times New Roman', serif;
@@ -124,99 +124,14 @@ html.lenis,html.lenis body{height:auto}
 }
 .reserva-bar.is-visible{transform:translateY(0)}
 .reserva-bar:active{background:var(--olive)}
-body.intro-open .reserva-bar{transform:translateY(100%)!important}
+body.scroll-lock .reserva-bar{transform:translateY(100%)!important}
 @media (min-width:901px){ .reserva-bar{display:none} }
 /* el pie deja sitio para que la barra no tape el © al final */
 @media (max-width:900px){ .footer{padding-bottom:calc(2.5rem + 64px + env(safe-area-inset-bottom))} }
 
-/* ---------- intro / portada disruptiva ---------- */
-body.intro-open{overflow:hidden}
-.intro{
-  position:fixed;inset:0;z-index:1000;color:var(--cream);
-  background:radial-gradient(125% 95% at 50% 18%, #3b3d25 0%, var(--moss) 52%, #20220f 100%);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:var(--gutter);text-align:center;overflow:hidden;
-  transition:opacity .9s var(--ease), visibility .9s;
-}
-/* luz cálida que respira detrás de las flores */
-.intro::before{
-  content:"";position:absolute;inset:-25%;z-index:0;pointer-events:none;
-  background:
-    radial-gradient(38% 48% at 28% 30%, rgba(100,93,59,.20), transparent 70%),
-    radial-gradient(42% 52% at 74% 72%, rgba(100,93,59,.26), transparent 72%);
-  filter:blur(26px);
-  animation:gardenBreathe 18s ease-in-out infinite;
-}
-@keyframes gardenBreathe{
-  0%,100%{transform:scale(1) translate(0,0);opacity:.75}
-  50%{transform:scale(1.14) translate(2%,-2%);opacity:1}
-}
-.intro.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
-.intro__mark{
-  position:absolute;top:clamp(1.6rem,6vh,3.4rem);left:50%;transform:translateX(-50%);
-  width:52px;height:auto;object-fit:contain;opacity:.92;z-index:2;
-}
-.intro__inner{position:relative;z-index:2;max-width:900px;width:100%}
+/* bloqueo de scroll (lightbox) */
+body.scroll-lock{overflow:hidden}
 
-/* jardín de pétalos a la deriva (con profundidad por blur) */
-.intro__garden{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
-.intro__petal{
-  position:absolute;height:auto;object-fit:contain;opacity:0;will-change:transform;
-  filter:drop-shadow(0 30px 40px rgba(0,0,0,.35));
-  animation:petalIn 1.8s var(--ease) forwards, petalDrift var(--dur,20s) ease-in-out infinite;
-}
-@keyframes petalIn{to{opacity:var(--op,.85)}}
-@keyframes petalDrift{
-  0%,100%{transform:translate(0,0) rotate(var(--rot,0deg))}
-  50%{transform:translate(var(--dx,20px),var(--dy,-26px)) rotate(calc(var(--rot,0deg) + 6deg))}
-}
-/* bokeh leve: un punto de desenfoque, más blur = más lejos */
-.intro__petal--1{width:clamp(140px,20vw,300px);left:-4%;bottom:-3%;--op:.9;--dur:17s;--dx:24px;--dy:-30px;--rot:8deg;filter:blur(.8px) drop-shadow(0 30px 40px rgba(0,0,0,.35))}
-.intro__petal--2{width:clamp(90px,12vw,180px);right:3%;top:13%;--op:.82;--dur:21s;--dx:-26px;--dy:24px;--rot:-14deg;filter:blur(1.2px) drop-shadow(0 24px 34px rgba(0,0,0,.32))}
-.intro__petal--3{width:clamp(60px,8vw,118px);left:9%;top:7%;--op:.55;--dur:25s;--dx:18px;--dy:30px;--rot:-6deg;filter:blur(2.5px) drop-shadow(0 20px 30px rgba(0,0,0,.3))}
-.intro__petal--4{width:clamp(70px,9vw,150px);right:-3%;bottom:5%;--op:.85;--dur:19s;--dx:-22px;--dy:-22px;--rot:18deg;filter:blur(1.4px) drop-shadow(0 22px 32px rgba(0,0,0,.32))}
-.intro__petal--5{width:clamp(50px,6vw,104px);left:40%;bottom:-5%;--op:.6;--dur:23s;--dx:14px;--dy:-28px;--rot:-10deg;filter:blur(2px) drop-shadow(0 16px 24px rgba(0,0,0,.3))}
-.intro__petal--6{width:clamp(44px,6vw,92px);right:26%;top:-2%;--op:.4;--dur:27s;--dx:-16px;--dy:26px;--rot:12deg;filter:blur(3px)}
-/* grano fino sobre el jardín: textura de película, muy sutil */
-.intro__garden::after{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size:160px 160px;opacity:.16;mix-blend-mode:overlay;
-}
-.intro__ask,.intro__reply{transition:opacity .5s var(--ease)}
-.intro .is-fading{opacity:0}
-.intro [hidden]{display:none}
-.intro__q{
-  font-family:var(--serif);font-weight:400;font-size:clamp(2.4rem,7vw,5.4rem);
-  line-height:1.06;letter-spacing:.01em;color:var(--cream);
-}
-.intro__choices{display:flex;gap:1.1rem;justify-content:center;margin-top:clamp(2.4rem,6vh,4rem)}
-.intro__choice{
-  font-family:var(--sans);font-weight:500;font-size:.92rem;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--cream);background:transparent;border:1px solid rgba(244,239,230,.45);
-  min-width:148px;padding:1.05em 2.6em;border-radius:var(--radius-btn);cursor:pointer;
-  transition:background .4s var(--ease), color .4s var(--ease), border-color .4s var(--ease);
-}
-.intro__choice:hover{background:var(--cream);color:var(--moss);border-color:var(--cream)}
-.intro__reply{max-width:640px;margin:0 auto}
-.intro__line{
-  font-family:var(--serif);font-weight:400;font-size:clamp(1.5rem,3.4vw,2.6rem);
-  line-height:1.25;color:var(--cream);
-}
-.intro__line em{color:var(--accent);font-style:italic}
-.intro__enter{
-  margin-top:clamp(2rem,5vh,3rem);font-family:var(--sans);font-weight:500;font-size:.88rem;
-  letter-spacing:.16em;text-transform:uppercase;color:var(--moss);background:var(--cream);
-  border:0;padding:1.05em 3em;border-radius:var(--radius-btn);cursor:pointer;
-  display:inline-flex;align-items:center;gap:.55em;
-  transition:transform .5s var(--ease), background .4s, color .4s;
-}
-.intro__enter:hover{background:var(--accent);color:var(--cream);transform:translateY(-3px)}
-.intro__choice:focus-visible,.intro__enter:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
-/* palabra que rota dentro de la pregunta */
-.intro__word{display:inline-block;color:var(--accent);font-style:italic}
-.intro__word.is-in{animation:wordin .22s var(--ease)}
-@keyframes wordin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 /* utilidad solo-lector-de-pantalla */
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
@@ -289,7 +204,8 @@ body.intro-open{overflow:hidden}
 .hero__content{position:relative;z-index:2;color:var(--cream);padding:0 var(--gutter) clamp(3rem,8vh,6rem);max-width:var(--maxw)}
 .hero__title{font-size:clamp(2.8rem,8.5vw,7.5rem);margin:.4rem 0 1.4rem;color:#fff}
 .hero__title .line{display:block;overflow:hidden}
-.hero__title .reveal-mask{display:inline-block;transform:translateY(110%)}
+.hero__title .reveal-mask{display:inline-block}
+.js .hero__title .reveal-mask{transform:translateY(110%)}
 .hero__sub{font-size:clamp(1rem,1.6vw,1.35rem);max-width:38ch;font-weight:300;margin-bottom:2rem;opacity:.92}
 .hero .eyebrow{color:var(--cream);opacity:.85}
 .hero__scroll{
@@ -443,8 +359,10 @@ body.intro-open{overflow:hidden}
   position:absolute;left:0;right:0;bottom:clamp(2.5rem,8vh,5.5rem);z-index:2;
   display:flex;flex-direction:column;gap:.6rem;align-items:center;text-align:center;color:var(--cream);
   padding:0 var(--gutter);
-  opacity:0;  /* oculto mientras la tarjeta viaja; initGalleryFlow lo revela al expandir */
 }
+/* con JS, oculto mientras la tarjeta viaja; initGalleryFlow lo revela al expandir.
+   sin JS o con reduce-motion la leyenda se ve (la galería es un grid/bloque normal). */
+.js .showcase__cap{opacity:0}
 .showcase__cap .eyebrow{margin-bottom:0;color:var(--cream);opacity:.85}
 .showcase__title{font-family:var(--serif);font-size:clamp(2.2rem,6vw,5rem);color:#fff;line-height:1.05}
 .showcase__more{font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;color:var(--cream);border-bottom:1px solid rgba(244,239,230,.5);padding-bottom:.35em;margin-top:.6rem;transition:color .4s,border-color .4s}
@@ -658,6 +576,18 @@ body.intro-open{overflow:hidden}
 .page-header p{max-width:58ch;margin-top:1.3rem;color:var(--text-muted);font-size:clamp(1rem,1.5vw,1.18rem)}
 
 
+/* ---------- 404 ---------- */
+.notfound{
+  position:relative;overflow:hidden;background:var(--cream);
+  min-height:84svh;display:flex;align-items:center;justify-content:center;
+  padding:clamp(7rem,16vh,10rem) var(--gutter) clamp(4rem,10vh,7rem);text-align:center;
+}
+.notfound__inner{position:relative;z-index:2;max-width:640px}
+.notfound .eyebrow{color:var(--accent)}
+.notfound__title{font-size:clamp(2.6rem,7vw,5rem);color:var(--moss);line-height:1.04;margin-bottom:1.3rem}
+.notfound__lead{max-width:46ch;margin:0 auto 2.4rem;color:var(--text-muted);font-size:clamp(1rem,1.5vw,1.18rem)}
+.notfound__actions{display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap}
+
 /* ---------- explorar (Inicio) — full-bleed, imágenes siempre visibles ---------- */
 .explore{
   display:grid;grid-template-columns:repeat(3,1fr);
@@ -710,7 +640,19 @@ body.intro-open{overflow:hidden}
 /* ---------- widget de reserva (iframe TheFork) ---------- */
 .reserva-widget{background:var(--cream);padding:clamp(2.5rem,7vh,6rem) var(--gutter)}
 .reserva-widget__inner{max-width:var(--maxw);margin:0 auto}
-.reserva-widget iframe{display:block;border-radius:var(--radius)}
+.reserva-widget__frame{position:relative;min-height:800px;border-radius:var(--radius);overflow:hidden;background:var(--cloud)}
+.reserva-widget__frame iframe{display:block;position:relative;z-index:1;border-radius:var(--radius)}
+/* esqueleto mientras carga el iframe de TheFork (en vez de 800px en blanco) */
+.reserva-widget__loading{
+  position:absolute;inset:0;z-index:0;display:flex;align-items:center;justify-content:center;
+  color:var(--text-subtle);font-size:.95rem;letter-spacing:.04em;
+  transition:opacity .5s var(--ease), visibility .5s var(--ease);
+}
+.reserva-widget__loading.is-loaded{opacity:0;visibility:hidden}
+.reserva-widget__loading .dots::after{content:"";animation:lblDots 1.4s steps(4,end) infinite}
+@keyframes lblDots{0%{content:""}25%{content:"·"}50%{content:"··"}75%{content:"···"}}
+.reserva-widget__fallback{margin-top:1.2rem;text-align:center;color:var(--text-subtle);font-size:.88rem}
+.reserva-widget__fallback a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
 
 /* ---------- marquee (banda en movimiento) ---------- */
 .marquee{
@@ -903,7 +845,9 @@ body.intro-open{overflow:hidden}
 @media (prefers-reduced-motion:reduce){.page-transition{display:none}}
 
 /* ---------- reveal base ---------- */
-.reveal{opacity:0;transform:translateY(32px)}
+/* solo se ocultan si hay JS (clase .js en <html>): sin JS o si GSAP no llega,
+   el contenido se ve igual (resiliencia + SEO). El reveal lo hace ScrollTrigger. */
+.js .reveal{opacity:0;transform:translateY(32px)}
 
 /* ============================================================
    RESPONSIVE
@@ -997,11 +941,11 @@ body.intro-open{overflow:hidden}
   }
   .gallery-img,.gallery-img--sq,.gallery-img--h,.gallery-img--v{transform:none!important}
   .gallery-finale{position:relative;width:100%;height:80vh;transform:none!important}
+  .js .showcase__cap{opacity:1}  /* reduce-motion: JSno anima el finale → mostrar la leyenda */
 }
 
 /* ---------- accesibilidad: reduce motion ---------- */
 @media (prefers-reduced-motion:reduce){
   .reveal,.hero__title .reveal-mask,.reveal-line>*{opacity:1!important;transform:none!important}
   *{animation:none!important}
-  .intro__petal{opacity:.7!important}
 }

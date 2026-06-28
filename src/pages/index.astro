@@ -25,7 +25,13 @@ const gallery = [
   <!-- HERO -->
   <section class="hero" id="hero">
     <div class="hero__media" data-parallax="0.25">
-      <img src="/assets/img/hero.jpg" alt="Cuenco de cerámica lleno de flores comestibles sostenido entre las manos" />
+      <img
+        src="/assets/img/hero.jpg"
+        srcset="/assets/img/hero-m.jpg 900w, /assets/img/hero.jpg 2400w"
+        sizes="100vw"
+        width="2400" height="1350"
+        fetchpriority="high" decoding="async"
+        alt="Cuenco de cerámica lleno de flores comestibles sostenido entre las manos" />
       <div class="hero__veil"></div>
     </div>
     <div class="hero__content">

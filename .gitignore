@@ -18,3 +18,8 @@ dist/
 
 # Local Netlify folder
 .netlify
+.vercel
+
+# tooling artifacts (capturas de verificación, snapshots de auditoría)
+.playwright-mcp/
+.impeccable/

@@ -7,7 +7,6 @@ const {
   description,
   ogImage = '/assets/img/hero.jpg',
   solidNav = true, // nav sólida sobre cream; en el Inicio va transparente sobre el hero
-  intro = false,   // la portada disruptiva solo se monta en el Inicio
   schema,          // JSON-LD opcional por página (string ya serializado)
 } = Astro.props;
 
@@ -21,6 +20,7 @@ const ogImageAbs = new URL(ogImage, Astro.site).href;
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <script is:inline>document.documentElement.classList.add('js')</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title}</title>
@@ -42,6 +42,12 @@ const ogImageAbs = new URL(ogImage, Astro.site).href;
   <meta name="twitter:image" content={ogImageAbs} />
 
   <link rel="icon" type="image/png" href="/assets/img/petal-fig.png" />
+
+  {here('/') && (
+    <link rel="preload" as="image" href="/assets/img/hero.jpg"
+      imagesrcset="/assets/img/hero-m.jpg 900w, /assets/img/hero.jpg 2400w"
+      imagesizes="100vw" fetchpriority="high" />
+  )}
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -84,36 +90,6 @@ const ogImageAbs = new URL(ogImage, Astro.site).href;
   </div>
   <noscript><style>.page-transition{display:none!important}</style></noscript>
 
-  {intro && (
-    <div class="intro" id="intro" role="dialog" aria-label="Bienvenida a Pipilacha">
-      <div class="intro__garden" aria-hidden="true">
-        <img src="/assets/img/petal-borraja.png" class="intro__petal intro__petal--1" alt="" loading="eager" />
-        <img src="/assets/img/petal-oxalis.png" class="intro__petal intro__petal--2" alt="" loading="eager" />
-        <img src="/assets/img/petal-fig.png" class="intro__petal intro__petal--3" alt="" loading="eager" />
-        <img src="/assets/img/petal-fig.png" class="intro__petal intro__petal--4" alt="" loading="eager" />
-        <img src="/assets/img/petal-roja.png" class="intro__petal intro__petal--5" alt="" loading="eager" />
-        <img src="/assets/img/petal-borraja.png" class="intro__petal intro__petal--6" alt="" loading="eager" />
-      </div>
-      <img src="/assets/img/iso-light.png" class="intro__mark" alt="" aria-hidden="true" />
-      <div class="intro__inner">
-        <div class="intro__ask" id="introAsk">
-          <p class="intro__q">
-            <span class="sr-only">¿Alguna vez has comido flores?</span>
-            <span aria-hidden="true">¿Alguna vez has comido<br><span class="intro__word" id="introWord">flores</span>?</span>
-          </p>
-          <div class="intro__choices">
-            <button type="button" class="intro__choice" data-answer="si">Sí</button>
-            <button type="button" class="intro__choice" data-answer="no">No</button>
-          </div>
-        </div>
-        <div class="intro__reply is-fading" id="introReply" hidden>
-          <p class="intro__line" id="introLine"></p>
-          <button type="button" class="intro__enter" id="introEnter">Pasa <span aria-hidden="true">→</span></button>
-        </div>
-      </div>
-    </div>
-  )}
-
   <!-- NAV -->
   <header class={`nav${solidNav ? ' nav--solid' : ''}`} id="nav">
     <a href="/" class="nav__logo" aria-label="Pipilacha inicio">
@@ -121,7 +97,7 @@ const ogImageAbs = new URL(ogImage, Astro.site).href;
       <img src="/assets/img/logo-dark.png" class="nav__logo-img nav__logo-img--dark" alt="" aria-hidden="true" width="560" height="216" />
       <img src="/assets/img/iso-light.png" class="nav__logo-iso" alt="Pipilacha" width="200" height="200" />
     </a>
-    <nav class="nav__links">
+    <nav class="nav__links" id="navLinks">
       <a href="/conocenos/" aria-current={here('/conocenos') ? 'page' : undefined}>Conócenos</a>
       <a href="/menu/" aria-current={here('/menu') ? 'page' : undefined}>Menú</a>
       <a href="/vinos/" aria-current={here('/vinos') ? 'page' : undefined}>Vinos</a>
@@ -130,7 +106,7 @@ const ogImageAbs = new URL(ogImage, Astro.site).href;
       <a href="/regala/" aria-current={here('/regala') ? 'page' : undefined}>Regalar</a>
       <a href="/reservas/" class="nav__cta">Reservar</a>
     </nav>
-    <button class="nav__burger" id="burger" aria-label="Abrir menú"><span></span><span></span></button>
+    <button class="nav__burger" id="burger" aria-label="Abrir menú" aria-controls="navLinks" aria-expanded="false"><span></span><span></span></button>
   </header>
 
   <main>
@@ -182,6 +158,6 @@ const ogImageAbs = new URL(ogImage, Astro.site).href;
   <script is:inline src="/js/vendor/gsap.min.js"></script>
   <script is:inline src="/js/vendor/ScrollTrigger.min.js"></script>
   <script is:inline src="/js/vendor/split-type.min.js"></script>
-  <script is:inline src="/js/main.js?v=66"></script>
+  <script is:inline src="/js/main.js?v=68"></script>
 </body>
 </html>

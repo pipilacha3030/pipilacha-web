@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Página no encontrada · Pipilacha"
+  description="Esta página no existe. Vuelve al inicio o reserva mesa en Pipilacha, el restaurante de flores de Madrid."
+>
+  <section class="notfound">
+    <img src="/assets/img/petal-oxalis.png" class="petal petal--2" alt="" aria-hidden="true" />
+    <img src="/assets/img/petal-borraja.png" class="petal petal--3" alt="" aria-hidden="true" />
+    <div class="notfound__inner">
+      <p class="eyebrow">Error 404</p>
+      <h1 class="notfound__title">Esta flor<br>no ha brotado</h1>
+      <p class="notfound__lead">La página que buscas no existe o cambió de sitio. Te devolvemos al jardín.</p>
+      <div class="notfound__actions">
+        <a href="/" class="btn btn--solid">Volver al inicio</a>
+        <a href="/menu/" class="btn btn--ghost">Ver el menú</a>
+      </div>
+    </div>
+  </section>
+</Base>

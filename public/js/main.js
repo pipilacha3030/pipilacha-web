@@ -5,40 +5,16 @@
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/* Resiliencia: el gate .js oculta los .reveal a la espera de GSAP. Si GSAP no cargó
+   (red, CDN, bloqueo), quitamos el gate para que el contenido no quede invisible. */
+if (!window.gsap) document.documentElement.classList.remove('js');
+
 /* Config centralizada del GALLERY FLOW (ver initGalleryFlow más abajo) */
 const FLOW = { runwayVh: 280, scrub: 0.7, expandFrom: 0.48, expandTo: 1.20 };
 let showcaseTl = null; // timeline del Despertar (clip-path); lo reproduce initGalleryFlow al expandir
 
-/* ---------- intro / portada disruptiva ---------- */
-const intro = document.getElementById('intro');
-const introAsk = document.getElementById('introAsk');
-const introReply = document.getElementById('introReply');
-const introLine = document.getElementById('introLine');
-const introEnter = document.getElementById('introEnter');
-const introWord = document.getElementById('introWord');
+/* ---------- hero: entrada cinematográfica (título tras máscara + zoom de cámara) ---------- */
 let heroPlayed = false;
-let introNeedsGate = false;
-
-const introReplies = {
-  si: 'Hay miles. Casi ninguna se ha cocinado en serio. Empezamos por ahí.',
-  no: 'Hay miles, y casi ninguna se ha cocinado en serio. Empezamos por ahí.'
-};
-
-// la última palabra de la pregunta rota entre flores y se detiene en "flores"
-const introFlowers = ['violetas', 'capuchina', 'claveles', 'saúco', 'tagete', 'borraja', 'caléndula', 'begonia', 'hibiscus', 'cosmo', 'flores'];
-function cycleIntroWord() {
-  if (!introWord) return;
-  if (reduceMotion) { introWord.textContent = 'flores'; return; }
-  let i = 0;
-  (function step() {
-    introWord.textContent = introFlowers[i];
-    introWord.classList.remove('is-in');
-    void introWord.offsetWidth;
-    introWord.classList.add('is-in');
-    i++;
-    if (i < introFlowers.length) setTimeout(step, 60 + i * 16); // rápido, frenando solo al final
-  })();
-}
 
 function playHero() {
   if (heroPlayed || !window.gsap || reduceMotion) return;
@@ -57,48 +33,25 @@ function playHero() {
   });
 }
 
-function enterSite() {
-  if (!intro) return;
-  intro.classList.add('is-hidden');
-  document.body.classList.remove('intro-open');
-  if (window.lenis) window.lenis.start();
-  playHero();
-  setTimeout(() => { intro.style.display = 'none'; }, 950);
-}
-
-if (intro) {
-  // la portada se muestra en cada carga del Inicio (no se recuerda entre visitas)
-  introNeedsGate = true;
-  document.body.classList.add('intro-open');
-  intro.querySelectorAll('.intro__choice').forEach(btn => {
-    btn.addEventListener('click', () => {
-      introLine.textContent = introReplies[btn.dataset.answer] || introReplies.si;
-      introAsk.classList.add('is-fading');
-      setTimeout(() => {
-        introAsk.hidden = true;
-        introReply.hidden = false;
-        void introReply.offsetWidth; // reflow para que transicione
-        introReply.classList.remove('is-fading');
-        introEnter.focus();
-      }, 380);
-    });
-  });
-  introEnter.addEventListener('click', enterSite);
-  cycleIntroWord();
-}
-
 /* ---------- nav: fondo al hacer scroll + menú móvil ---------- */
 const nav = document.getElementById('nav');
 const burger = document.getElementById('burger');
 const links = document.querySelector('.nav__links');
 
-burger.addEventListener('click', () => {
-  links.classList.toggle('open');
-  burger.classList.toggle('is-open');
+const setMenu = (open) => {
+  links.classList.toggle('open', open);
+  burger.classList.toggle('is-open', open);
+  burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  burger.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+  document.body.classList.toggle('scroll-lock', open);
+  if (window.lenis) open ? window.lenis.stop() : window.lenis.start();
+};
+burger.addEventListener('click', () => setMenu(!links.classList.contains('open')));
+links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+// Esc cierra el menú y devuelve el foco al botón (accesibilidad de teclado)
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && links.classList.contains('open')) { setMenu(false); burger.focus(); }
 });
-links.querySelectorAll('a').forEach(a =>
-  a.addEventListener('click', () => links.classList.remove('open'))
-);
 
 /* ---------- Lenis: scroll suave ---------- */
 let lenis;
@@ -107,7 +60,6 @@ if (!reduceMotion && window.Lenis) {
   window.lenis = lenis; // expuesto para depuración
   function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
   requestAnimationFrame(raf);
-  if (introNeedsGate) lenis.stop(); // bloquea el scroll tras la portada
 
   // anclas suaves
   document.querySelectorAll('a[href^="#"]').forEach(a => {
@@ -192,8 +144,8 @@ if (window.gsap) {
     }
   }
 
-  // si el visitante ya entró en esta sesión, no hay portada: anima el hero ya
-  if (!introNeedsGate) playHero();
+  // anima el hero en cuanto carga
+  playHero();
 
   if (!reduceMotion) {
     /* reveal genérico */
@@ -314,7 +266,7 @@ if (window.gsap) {
     }
     /* botones magnéticos: el botón se inclina hacia el cursor y vuelve elástico */
     if (window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
-      document.querySelectorAll('.btn, .nav__cta, .intro__enter, .intro__choice').forEach(btn => {
+      document.querySelectorAll('.btn, .nav__cta').forEach(btn => {
         btn.addEventListener('mousemove', e => {
           const r = btn.getBoundingClientRect();
           gsap.to(btn, {
@@ -639,14 +591,14 @@ if (lightbox) {
     show(i);
     lightbox.classList.add('is-open');
     lightbox.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('intro-open'); // reutiliza el bloqueo de scroll
+    document.body.classList.add('scroll-lock'); // bloqueo de scroll mientras el lightbox está abierto
     if (window.lenis) window.lenis.stop();
     lbClose.focus();
   };
   const closeLb = () => {
     lightbox.classList.remove('is-open');
     lightbox.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('intro-open');
+    document.body.classList.remove('scroll-lock');
     if (window.lenis) window.lenis.start();
     if (lastFocus) lastFocus.focus();
   };
