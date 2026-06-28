@@ -364,7 +364,7 @@ function initGalleryFlow() {
   if (reduceMotion) return; // reduce motion: grid simple + Despertar como bloque (vía CSS)
 
   const isMobile = window.matchMedia('(max-width:768px)').matches;
-  const expandTo = isMobile ? 1.06 : FLOW.expandTo;
+  const expandTo = isMobile ? 1.18 : FLOW.expandTo; // móvil: la foto central casi llena el viewport
   gallery.style.height = (isMobile ? 220 : FLOW.runwayVh) + 'vh';
 
   const photos = gsap.utils.toArray(row.querySelectorAll('.gallery-img'));
@@ -385,6 +385,8 @@ function initGalleryFlow() {
   gsap.set(finale, { force3D: true, transformOrigin: '50% 50%', opacity: 0 });
 
   // dispersión vertical + fase de wobble + capa (z) por foto → moodboard orgánico
+  // en móvil se reduce: las fotos son grandes y deben quedar centradas (llenar el viewport)
+  const oyScale  = isMobile ? 0.35 : 1;
   const oyVh     = [-16, 10, -7, 17, -3, 13, -15, 6, -10, 15, -5, 8];
   const wobPhase = [0, 1.7, 3.1, 0.6, 2.4, 4.2, 1.1, 5.0, 2.0, 3.7, 0.3, 4.8];
   const zLayer   = [4, 8, 2, 9, 5, 1, 7, 3, 10, 6, 2, 8];
@@ -425,9 +427,9 @@ function initGalleryFlow() {
     return { screenX: h + (bx - h) * k, t, bx };
   };
 
-  const LEAD = 0.42;          // arranque adelantado: en p=0 el flujo ya entró un 42%
-                              //   → no hay stage vacío; ~4 fotos ya en mosaico junto al botón.
-                              //   Además ralentiza el flujo (recorre 0.58·travel) → más suave.
+  // arranque del flujo: bajo para que se VEA la primera foto entrar desde la derecha
+  // justo al pasar el texto. Móvil aún más bajo (fotos grandes → una sola ya llena).
+  const LEAD = isMobile ? 0.06 : 0.16;
   const render = (p) => {
     const flowP   = p < P_FLOW ? p / P_FLOW : 1;
     const expandP = p > P_FLOW ? Math.min((p - P_FLOW) / (P_HOLD - P_FLOW), 1) : 0;
@@ -439,7 +441,7 @@ function initGalleryFlow() {
       const e = t * t * (3 - 2 * t);
       pX[i](screenX - centers[i]);
       pScale[i](expandTo - span * e);
-      pY[i](oyVh[i % oyVh.length] * vhPx * (1 - t));
+      pY[i](oyVh[i % oyVh.length] * vhPx * oyScale * (1 - t));
       pRot[i](Math.sin(bx / vw * Math.PI * 1.6 + wobPhase[i % wobPhase.length]) * 3);
       let a = Math.min(screenX, vw - screenX) / (vw * 0.06); a = a < 0 ? 0 : a > 1 ? 1 : a;
       pAlpha[i](a * (1 - expandP));   // se desvanecen al expandir el finale

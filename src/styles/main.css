@@ -926,8 +926,9 @@ body.intro-open{overflow:hidden}
   .showcooking__img{height:56vh;max-height:480px}
   .maridaje__cards{grid-template-columns:1fr}
   /* galería: el carrusel se hace a pantalla con swipe (todas iguales) */
-  .explore{grid-template-columns:1fr 1fr}
-  .explore a:last-child{grid-column:1/-1;min-height:clamp(240px,36vh,380px)}
+  /* móvil/tablet: una columna, los 3 enlaces del MISMO tamaño (full-bleed) */
+  .explore{grid-template-columns:1fr}
+  .explore a{min-height:clamp(300px,48vh,460px)}
   .slide__btn{width:min(82vw,420px);height:64vh}
   .slide__cap{opacity:1;transform:none}
   .carousel__arrows{display:none}
@@ -975,15 +976,15 @@ body.intro-open{overflow:hidden}
   will-change:transform,width,height;backface-visibility:hidden;
 }
 
-/* ── móvil: formatos más pequeños, runway algo más corto ── */
+/* ── móvil: fotos grandes que llenan el viewport (la altura real la pone JS) ── */
 @media (max-width:768px){
-  .gallery{height:300vh}
+  .gallery{height:220vh}
   .gallery-row{padding:0 3vw}
   .gallery-img{box-shadow:0 22px 40px -18px rgba(13,13,13,.4), 0 10px 20px -14px rgba(13,13,13,.34)}
-  .gallery-img--sq{width:30vw;height:30vw}
-  .gallery-img--h {width:46vw;height:30vw}
-  .gallery-img--v {width:30vw;height:42vw}
-  .gallery-finale{width:62vw;height:40vh}
+  .gallery-img--sq{width:84vw;height:58vh}
+  .gallery-img--h {width:90vw;height:56vh}
+  .gallery-img--v {width:80vw;height:72vh}
+  .gallery-finale{width:86vw;height:62vh}
 }
 
 /* ── reduce motion: galería en grid simple + Despertar como bloque normal ── */
