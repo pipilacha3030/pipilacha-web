@@ -49,7 +49,7 @@ const fotos = [
           style={`--gl:${f.left};--gt:${f.top};--gw:${f.w};--gh:${f.h}`}
           aria-label={`Ampliar: ${f.alt}`}
         >
-          <img src={f.src} alt={f.alt} loading={i < 4 ? 'eager' : 'lazy'} decoding="async" />
+          <img src={f.src} alt={f.alt} loading={i < 7 ? 'eager' : 'lazy'} fetchpriority={i < 3 ? 'high' : undefined} decoding="async" />
         </button>
       ))}
     </div>

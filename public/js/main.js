@@ -23,6 +23,11 @@ function playHero() {
   // acercamiento de cámara: la foto se asienta desde un leve zoom
   gsap.fromTo('.hero__media img',
     { scale: 1.12 }, { scale: 1, duration: 1.8, ease: 'power2.out' });
+  // vida ambiente: tras asentarse, el plano respira muy lento (cinematográfico, no Ken-Burns agresivo)
+  gsap.to('.hero__media img', {
+    scale: 1.05, yPercent: -1.5, duration: 16, ease: 'sine.inOut',
+    repeat: -1, yoyo: true, delay: 1.8
+  });
   // el título sube tras su máscara
   gsap.fromTo('.hero__title .reveal-mask',
     { yPercent: 110, y: 0 },
@@ -152,9 +157,20 @@ if (window.gsap) {
     gsap.utils.toArray('.reveal').forEach(el => {
       if (el.closest('.hero')) return; // el hero ya se anima arriba
       if (el.matches('.barra__media')) return; // tiene reveal editorial propio
+      if (el.closest('[data-reveal-stagger]')) return; // lo anima su grupo en cascada
       gsap.to(el, {
         opacity: 1, y: 0, duration: 1.1, ease: 'expo.out',
         scrollTrigger: { trigger: el, start: 'top 86%' }
+      });
+    });
+
+    /* reveal en cascada: grupos (tarjetas, pasos) entran escalonados como una unidad */
+    gsap.utils.toArray('[data-reveal-stagger]').forEach(group => {
+      const items = group.querySelectorAll('.reveal');
+      if (!items.length) return;
+      gsap.to(items, {
+        opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: 0.09,
+        scrollTrigger: { trigger: group, start: 'top 84%' }
       });
     });
 
@@ -291,6 +307,14 @@ if (window.gsap) {
             scrollTrigger: { trigger: row, start: 'top 88%' } });
       });
     }
+    /* ── VINOS: la flor de cada familia "florece" al llegar a su sección ── */
+    gsap.utils.toArray('.wine-cat__flor').forEach(flor => {
+      gsap.fromTo(flor,
+        { opacity: 0, scale: 0.6, rotation: -12 },
+        { opacity: 1, scale: 1, rotation: 0, duration: 1.1, ease: 'back.out(1.6)',
+          scrollTrigger: { trigger: flor.closest('.wine-cat'), start: 'top 78%' } });
+    });
+
     initGalleryFlow();
   } else {
     gsap.set('.reveal', { opacity: 1, y: 0 });
