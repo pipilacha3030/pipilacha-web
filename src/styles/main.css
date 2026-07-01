@@ -172,7 +172,13 @@ body.scroll-lock{overflow:hidden}
   transition:color .5s,opacity .3s;position:relative;
 }
 .nav.scrolled .nav__links a{color:var(--moss)}
-.nav__links a:not(.nav__cta):hover{opacity:.6}
+/* subrayado que se DIBUJA al pasar el cursor (de dentro afuera) */
+.nav__links a:not(.nav__cta)::after{
+  content:"";position:absolute;left:0;right:0;bottom:-6px;height:1px;
+  background:currentColor;transform:scaleX(0);transform-origin:right;
+  transition:transform .45s var(--ease);
+}
+.nav__links a:not(.nav__cta):hover::after{transform:scaleX(1);transform-origin:left}
 .nav__links a:focus-visible{outline:2px solid var(--accent-soft);outline-offset:3px;opacity:1}
 .nav__cta{
   border:1px solid currentColor;padding:.6em 1.4em;border-radius:var(--radius-btn);
@@ -199,11 +205,9 @@ body.scroll-lock{overflow:hidden}
 .nav__burger.is-open span:first-child{transform:translateY(4px) rotate(45deg)}
 .nav__burger.is-open span:last-child{transform:translateY(-4px) rotate(-45deg)}
 
-/* página activa: subrayado fino terracotta */
+/* página activa: subrayado fino en acento, siempre visible */
 .nav__links a[aria-current="page"]{color:var(--accent)}
-.nav__links a[aria-current="page"]::after{
-  content:"";position:absolute;left:0;right:0;bottom:-6px;height:1px;background:var(--accent);
-}
+.nav__links a[aria-current="page"]::after{background:var(--accent);transform:scaleX(1)}
 
 /* ---------- hero ---------- */
 .hero{position:relative;height:100svh;min-height:600px;overflow:hidden;display:flex;align-items:flex-end}
@@ -322,24 +326,6 @@ body.scroll-lock{overflow:hidden}
   .quienes__visual{height:56vh;min-height:380px}
 }
 
-/* ---------- manifiesto (reveal editorial: SplitType + blur + pétalos) ---------- */
-.manifesto{
-  position:relative;min-height:100svh;display:flex;align-items:center;justify-content:center;
-  padding:0 var(--gutter);text-align:center;overflow:hidden;
-}
-.manifesto__text{
-  position:relative;z-index:2;max-width:1100px;text-wrap:balance;
-  font-family:var(--serif);font-size:clamp(2.2rem,5.6vw,5rem);line-height:1.16;color:var(--moss);
-}
-.manifesto__text em{color:var(--accent);font-style:italic}
-/* SplitType: cada carácter, listo para el blur-reveal */
-.manifesto .char{display:inline-block;will-change:filter,opacity,transform;backface-visibility:hidden}
-/* pétalos SVG que emergen de las letras (decorativos; se eliminan al terminar) */
-.manifesto__petals{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
-.manifesto__petal{position:absolute;top:0;left:0;will-change:transform,opacity}
-.reveal-line{display:block;overflow:hidden}
-.reveal-line>*{display:inline-block}
-
 /* ---------- la barra (banda inmersiva) ---------- */
 .barra{position:relative;overflow:hidden;padding:clamp(3.5rem,10vh,8rem) var(--gutter);background:var(--cream)}
 .barra__grid{max-width:var(--maxw);margin:0 auto;display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(2rem,6vw,6rem);align-items:center}
@@ -372,9 +358,6 @@ body.scroll-lock{overflow:hidden}
   display:flex;flex-direction:column;gap:.6rem;align-items:center;text-align:center;color:var(--cream);
   padding:0 var(--gutter);
 }
-/* con JS, oculto mientras la tarjeta viaja; initGalleryFlow lo revela al expandir.
-   sin JS o con reduce-motion la leyenda se ve (la galería es un grid/bloque normal). */
-.js .showcase__cap{opacity:0}
 .showcase__cap .eyebrow{margin-bottom:0;color:var(--cream);opacity:.85}
 .showcase__title{font-family:var(--serif);font-size:clamp(2.2rem,6vw,5rem);color:#fff;line-height:1.05}
 .showcase__more{font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;color:var(--cream);border-bottom:1px solid rgba(244,239,230,.5);padding-bottom:.35em;margin-top:.6rem;transition:color .4s,border-color .4s}
@@ -416,7 +399,14 @@ body.scroll-lock{overflow:hidden}
 
 /* ---------- menú: lista de pases (fondo verde moss) ---------- */
 .menu{padding:clamp(4rem,10vh,9rem) 0;background:var(--moss);color:var(--cream);overflow:hidden}
-.pases{list-style:none;max-width:880px;margin:0 auto;padding:0 var(--gutter)}
+.menu__inner{position:relative;max-width:880px;margin:0 auto;padding:0 var(--gutter)}
+.pases{list-style:none;padding:0 0 0 clamp(1.3rem,3vw,2.4rem)}
+/* el "tallo": línea fina que se dibuja al scroll junto a los pases (la anima GSAP) */
+.pases__stem{
+  position:absolute;left:var(--gutter);top:.5rem;bottom:.5rem;width:1px;
+  background:linear-gradient(180deg,var(--accent-soft) 0%,rgba(176,167,127,.12) 100%);
+  transform:scaleY(0);transform-origin:top;
+}
 .pase{display:flex;align-items:baseline;gap:clamp(1rem,3vw,2.2rem);padding:clamp(1.1rem,2.6vh,1.7rem) 0;border-bottom:1px solid rgba(244,239,230,.16)}
 .pase:first-child{border-top:1px solid rgba(244,239,230,.16)}
 .pase__n{font-family:var(--serif);color:var(--accent-soft);font-size:1rem;letter-spacing:.18em;min-width:2.6em;flex:none}
@@ -853,7 +843,9 @@ body.scroll-lock{overflow:hidden}
 /* ---------- reveal base ---------- */
 /* solo se ocultan si hay JS (clase .js en <html>): sin JS o si GSAP no llega,
    el contenido se ve igual (resiliencia + SEO). El reveal lo hace ScrollTrigger. */
-.js .reveal{opacity:0;transform:translateY(32px)}
+.js .reveal{opacity:0;transform:translateY(20px)}
+/* titular: cortina clip-path oculta (la anima GSAP de abajo arriba); visible sin JS */
+.js .reveal-head{clip-path:inset(0 0 100% 0)}
 
 /* ============================================================
    RESPONSIVE
@@ -870,8 +862,6 @@ body.scroll-lock{overflow:hidden}
   .nav__burger{display:flex;z-index:101}
   .concepto{grid-template-columns:1fr;gap:2rem}
   .concepto__imgs{height:70vh;max-height:520px}
-  .course,.course--reverse{grid-template-columns:1fr;direction:ltr}
-  .course__media{height:56vh;max-height:440px;order:-1}
   .showcooking{grid-template-columns:1fr}
   .showcooking__img{height:56vh;max-height:480px}
   .maridaje__cards{grid-template-columns:1fr}
@@ -879,9 +869,6 @@ body.scroll-lock{overflow:hidden}
   /* móvil/tablet: una columna, los 3 enlaces del MISMO tamaño (full-bleed) */
   .explore{grid-template-columns:1fr}
   .explore a{min-height:clamp(300px,48vh,460px)}
-  .slide__btn{width:min(82vw,420px);height:64vh}
-  .slide__cap{opacity:1;transform:none}
-  .carousel__arrows{display:none}
 }
 @media (max-width:560px){
   :root{--gutter:1.25rem}
@@ -893,65 +880,25 @@ body.scroll-lock{overflow:hidden}
 }
 
 /* ============================================================
-   GALLERY FLOW · runway que pinnea el stage (efecto 072)
-   Una sola pasada finita R→L: las fotos entran de una/dos por la derecha,
-   se aglomeran solapadas en el centro y salen por la izquierda. La última
-   pieza (Despertar) se expande a pantalla completa. Todo lo mueve initGalleryFlow().
+   DESPERTAR DE LAS FLORES · tarjeta estática, en flujo normal de scroll.
+   La animación es solo el crossfade de las 4 capas (ver .showcase en main.js).
    ============================================================ */
-.gallery{position:relative;height:280vh;background:var(--cream);margin-top:-6vh}
-.gallery-stage{position:relative;height:100vh;overflow:hidden}
-.gallery-row{
-  position:absolute;inset:0;display:flex;flex-wrap:nowrap;align-items:center;
-  width:max-content;padding:0 1.4vw;
-}
-.gallery-img{
-  position:relative;flex:0 0 auto;margin:0 0 0 0.6vw;border-radius:3px;overflow:hidden;
-  /* sombra paralela marcada y direccional → profundidad / capas */
-  box-shadow:0 42px 70px -24px rgba(13,13,13,.50), 0 14px 28px -14px rgba(13,13,13,.42);
-  will-change:transform,opacity;backface-visibility:hidden;
-}
-/* formatos: cuadrada / horizontal / vertical (alto+ancho en vh → forma estable) */
-.gallery-img--sq{width:27vh;height:27vh}
-.gallery-img--h {width:42vh;height:27vh}
-.gallery-img--v {width:26vh;height:38vh}
-.gallery-img img{display:block;width:100%;height:100%;object-fit:cover}
-/* grupos de 4: la 5ª y 9ª foto arrancan con hueco mayor → 3 oleadas visibles */
-.gallery-img:nth-child(4){margin-left:5vw}
-
-/* finale = Despertar de las flores · tarjeta que viaja y se expande a fullscreen */
+.gallery{position:relative;padding:9vh var(--gutter);background:var(--cream)}
 .gallery-finale{
-  position:absolute;top:0;left:0;width:40vh;height:30vh;
-  border-radius:3px;overflow:hidden;z-index:50;
+  position:relative;width:min(900px,100%);height:min(72vh,640px);margin:0 auto;
+  border-radius:4px;overflow:hidden;
   box-shadow:0 42px 70px -24px rgba(13,13,13,.50), 0 14px 28px -14px rgba(13,13,13,.42);
-  will-change:transform,width,height;backface-visibility:hidden;
 }
 
-/* ── móvil: fotos grandes que llenan el viewport (la altura real la pone JS) ── */
 @media (max-width:768px){
-  .gallery{height:220vh}
-  .gallery-row{padding:0 3vw}
-  .gallery-img{box-shadow:0 22px 40px -18px rgba(13,13,13,.4), 0 10px 20px -14px rgba(13,13,13,.34)}
-  .gallery-img--sq{width:84vw;height:58vh}
-  .gallery-img--h {width:90vw;height:56vh}
-  .gallery-img--v {width:80vw;height:72vh}
-  .gallery-finale{width:86vw;height:62vh}
-}
-
-/* ── reduce motion: galería en grid simple + Despertar como bloque normal ── */
-@media (prefers-reduced-motion:reduce){
-  .gallery{height:auto}
-  .gallery-stage{height:auto;overflow:visible;display:flex;flex-direction:column;gap:1.4rem;padding:3rem 0}
-  .gallery-row{
-    position:static;width:auto;height:auto;overflow-x:auto;
-    padding:0 5vw;gap:1.2rem;-webkit-overflow-scrolling:touch;
-  }
-  .gallery-img,.gallery-img--sq,.gallery-img--h,.gallery-img--v{transform:none!important}
-  .gallery-finale{position:relative;width:100%;height:80vh;transform:none!important}
-  .js .showcase__cap{opacity:1}  /* reduce-motion: JSno anima el finale → mostrar la leyenda */
+  .gallery{padding:6vh var(--gutter)}
+  .gallery-finale{height:64vh}
 }
 
 /* ---------- accesibilidad: reduce motion ---------- */
 @media (prefers-reduced-motion:reduce){
-  .reveal,.hero__title .reveal-mask,.reveal-line>*{opacity:1!important;transform:none!important}
+  .reveal,.reveal-head,.hero__title .reveal-mask{opacity:1!important;transform:none!important;clip-path:none!important}
+  .hero__content{opacity:1!important;transform:none!important}
+  .pases__stem{display:none}
   *{animation:none!important}
 }

@@ -1,19 +1,5 @@
 ---
 import Base from '../layouts/Base.astro';
-
-/* GALLERY FLOW · runway que pinnea el stage (efecto 072), UNA sola pasada finita.
-   12 fotos (sin duplicar, sin bucle) que entran de una/dos por la derecha, se
-   aglomeran solapadas en el centro y salen por la izquierda. shape = formato:
-   'sq' cuadrada · 'h' horizontal · 'v' vertical. La última pieza del flujo es el
-   "Despertar de las flores", que en vez de salir se expande a pantalla completa. */
-const gallery = [
-  { src:'/assets/img/df-vieira.jpg', alt:'Vieira con flor de higo en dos cuencos de cerámica — Pipilacha',        shape:'h'  },
-  { src:'/assets/img/dish-3.jpg',    alt:'Clavel fucsia sobre crema, en primer plano — Pipilacha',                shape:'v'  },
-  { src:'/assets/img/g11.jpg',       alt:'Helado cítrico con pétalos de clavel sostenido en la mano — Pipilacha', shape:'sq' },
-  { src:'/assets/img/chef-1.jpg',    alt:'Arán, chef de Pipilacha, entre flores amarillas — Pipilacha',           shape:'v'  },
-  { src:'/assets/img/g16.jpg',       alt:'Arán y Noé cocinando juntos en la barra — Pipilacha',                   shape:'h'  },
-  { src:'/assets/img/barra.jpg',     alt:'La barra de iroko vestida para el servicio con un centro floral — Pipilacha', shape:'sq' },
-];
 ---
 
 <Base
@@ -58,7 +44,7 @@ const gallery = [
     </div>
     <div class="quienes__body">
       <div class="quienes__inner">
-        <h2 class="quienes__h2 reveal">Un restaurante para curiosos.</h2>
+        <h2 class="quienes__h2 reveal-head">Un restaurante para curiosos.</h2>
         <p class="quienes__text">
           Quince pases y en todos manda una flor distinta. No de adorno: como ingrediente principal,
           cocinada hasta donde llega su sabor. Esto no lo vas a encontrar en ningún otro restaurante
@@ -70,34 +56,22 @@ const gallery = [
     </div>
   </section>
 
-  <!-- GALLERY FLOW · runway que pinnea el stage; una sola pasada finita R→L y el
-       "Despertar de las flores" como última pieza que se expande a pantalla completa -->
-  <section class="gallery" id="gallery" aria-label="Las imágenes de Pipilacha en movimiento">
-    <div class="gallery-stage">
-      <div class="gallery-row">
-        {gallery.map((g) => (
-          <figure class:list={['gallery-img', `gallery-img--${g.shape}`]}>
-            <img src={g.src} alt={g.alt} loading="lazy" decoding="async" />
-          </figure>
-        ))}
+  <!-- DESPERTAR DE LAS FLORES · tarjeta con 4 fotos en crossfade, enlaza al menú -->
+  <section class="gallery" id="gallery" aria-label="Despertar de las flores">
+    <a class="gallery-finale showcase reveal" id="despertar" href="/menu/" aria-label="Ver el menú Despertar de las flores">
+      <div class="showcase__frame">
+        <figure class="showcase__layer" data-layer="0"><img src="/assets/img/df-esparrago.jpg" alt="Espárragos a la brasa con romesco de tagete" loading="lazy" decoding="async" /></figure>
+        <figure class="showcase__layer" data-layer="1"><img src="/assets/img/df-guisante.jpg" alt="Guisante coco-saúco" loading="lazy" decoding="async" /></figure>
+        <figure class="showcase__layer" data-layer="2"><img src="/assets/img/df-vieira.jpg" alt="Vieira con flor de higo" loading="lazy" decoding="async" /></figure>
+        <figure class="showcase__layer" data-layer="3"><img src="/assets/img/df-mandarina.jpg" alt="Torrija de mandarina" loading="lazy" decoding="async" /></figure>
+        <span class="showcase__veil" aria-hidden="true"></span>
       </div>
-
-      <!-- DESPERTAR DE LAS FLORES · última pieza del flujo; se expande a fullscreen -->
-      <a class="gallery-finale showcase" id="despertar" href="/menu/" aria-label="Ver el menú Despertar de las flores">
-        <div class="showcase__frame">
-          <figure class="showcase__layer" data-layer="0"><img src="/assets/img/df-esparrago.jpg" alt="Espárragos a la brasa con romesco de tagete" loading="lazy" decoding="async" /></figure>
-          <figure class="showcase__layer" data-layer="1"><img src="/assets/img/df-guisante.jpg" alt="Guisante coco-saúco" loading="lazy" decoding="async" /></figure>
-          <figure class="showcase__layer" data-layer="2"><img src="/assets/img/df-vieira.jpg" alt="Vieira con flor de higo" loading="lazy" decoding="async" /></figure>
-          <figure class="showcase__layer" data-layer="3"><img src="/assets/img/df-mandarina.jpg" alt="Torrija de mandarina" loading="lazy" decoding="async" /></figure>
-          <span class="showcase__veil" aria-hidden="true"></span>
-        </div>
-        <span class="showcase__cap">
-          <span class="eyebrow">El menú</span>
-          <span class="showcase__title">Despertar de las flores</span>
-          <span class="showcase__more">Ver los pases →</span>
-        </span>
-      </a>
-    </div>
+      <span class="showcase__cap">
+        <span class="eyebrow">El menú</span>
+        <span class="showcase__title">Despertar de las flores</span>
+        <span class="showcase__more">Ver los pases →</span>
+      </span>
+    </a>
   </section>
 
   <!-- CINTA (pequeña y clara, con flores; texto con keywords para SEO) -->
@@ -142,7 +116,7 @@ const gallery = [
       </figure>
       <div class="barra__content">
         <p class="eyebrow reveal">La barra</p>
-        <h2 class="barra__title reveal">Seis metros de iroko.<br>Los chefs al otro lado.</h2>
+        <h2 class="barra__title reveal-head">Seis metros de iroko.<br>Los chefs al otro lado.</h2>
         <p class="barra__lead reveal">Ocho asientos en primera línea. Arán y Noé cocinan delante de ti y cuentan cada flor según la sirven. Tu plato nace ahí, a un brazo de distancia.</p>
         <ul class="barra__facts reveal">
           <li><strong>8</strong><span>asientos en barra</span></li>

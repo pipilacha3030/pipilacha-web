@@ -48,12 +48,14 @@ const menuSchema = `<script type="application/ld+json">${JSON.stringify({
 
   <section class="page-header">
     <p class="eyebrow">Degustación · Primavera</p>
-    <h1>Despertar de las flores</h1>
+    <h1 class="reveal-head">Despertar de las flores</h1>
     <p>Quince pases. Sin carta, sin alternativa: se sirve completo. Cada uno con una pista; el resto te lo contamos en la mesa. El décimo te lo guardamos.</p>
   </section>
 
   <!-- LISTA DE PASES (nombre + pista) sobre fondo verde moss -->
   <section class="menu" id="menu">
+    <div class="menu__inner">
+    <span class="pases__stem" aria-hidden="true"></span>
     <ol class="pases">
       {pases.map((p, i) => (
         p.surprise ? (
@@ -75,6 +77,7 @@ const menuSchema = `<script type="application/ld+json">${JSON.stringify({
         )
       ))}
     </ol>
+    </div>
   </section>
 
   <!-- MARIDAJE -->
