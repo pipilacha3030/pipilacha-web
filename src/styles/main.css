@@ -184,8 +184,16 @@ body.scroll-lock{overflow:hidden}
   border:1px solid currentColor;padding:.6em 1.4em;border-radius:var(--radius-btn);
 }
 .nav.scrolled .nav__cta{background:var(--moss);color:var(--cream)!important;border-color:var(--moss)}
-.nav__burger{display:none;flex-direction:column;gap:6px;background:none;border:0;cursor:pointer}
-.nav__burger span{width:26px;height:2px;background:var(--cream);transform-origin:center;transition:transform .4s var(--ease), background .4s var(--ease)}
+/* burger enmarcado (cantos vivos, como el CTA): caja con borde + 2 líneas → X */
+.nav__burger{
+  display:none;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  width:48px;height:40px;background:none;border:1px solid var(--cream);border-radius:var(--radius-btn);
+  cursor:pointer;color:var(--cream);
+  transition:border-color .4s var(--ease), background .4s var(--ease), transform .25s var(--ease);
+}
+.nav__burger:active{transform:scale(.94)}
+.nav__burger span{width:18px;height:1.5px;background:currentColor;transform-origin:center;transition:transform .4s var(--ease), background .4s var(--ease)}
+.nav.scrolled .nav__burger{border-color:var(--moss);color:var(--moss)}
 .nav.scrolled .nav__burger span{background:var(--moss)}
 
 /* nav sólida (todas las páginas menos el Inicio): cream de fondo, texto moss */
@@ -197,13 +205,17 @@ body.scroll-lock{overflow:hidden}
 .nav--solid .nav__cta{background:var(--moss);color:var(--cream)!important;border-color:var(--moss)}
 .nav__cta{transition:background .4s var(--ease), color .4s var(--ease), border-color .4s var(--ease), transform .4s var(--ease)}
 .nav.scrolled .nav__cta:hover,.nav--solid .nav__cta:hover{background:var(--moss);border-color:var(--moss);opacity:1}
+.nav--solid .nav__burger{border-color:var(--moss);color:var(--moss)}
 .nav--solid .nav__burger span{background:var(--moss)}
 /* abierto: las dos líneas se cruzan en X, siempre cream sobre el cajón moss */
+.nav.scrolled .nav__burger.is-open,
+.nav--solid .nav__burger.is-open,
+.nav__burger.is-open{border-color:rgba(244,239,230,.55);color:var(--cream)}
 .nav.scrolled .nav__burger.is-open span,
 .nav--solid .nav__burger.is-open span,
 .nav__burger.is-open span{background:var(--cream)}
-.nav__burger.is-open span:first-child{transform:translateY(4px) rotate(45deg)}
-.nav__burger.is-open span:last-child{transform:translateY(-4px) rotate(-45deg)}
+.nav__burger.is-open span:first-child{transform:translateY(3.25px) rotate(45deg)}
+.nav__burger.is-open span:last-child{transform:translateY(-3.25px) rotate(-45deg)}
 
 /* página activa: subrayado fino en acento, siempre visible */
 .nav__links a[aria-current="page"]{color:var(--accent)}
@@ -872,6 +884,11 @@ body.scroll-lock{overflow:hidden}
   .cellar-index__name{font-size:.62rem}
   .wine-cat__head{align-items:center}
   .wine-cat__flor{width:clamp(52px,14vw,72px)}
+}
+/* móvil: la uva pasa debajo del nombre (a la derecha no le queda sitio) */
+@media (max-width:700px){
+  .wine-row{flex-direction:column;align-items:flex-start;gap:.3rem}
+  .wine-row__grape{max-width:100%;text-align:left}
 }
 
 /* ---------- transición entre páginas (fundido suave en crema) ---------- */

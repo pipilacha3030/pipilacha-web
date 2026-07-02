@@ -248,7 +248,8 @@ if (window.gsap) {
       }
     }
 
-    /* ── IMÁGENES: cortina editorial de abajo arriba + zoom suave (estilo Geranium) ── */
+    /* ── IMÁGENES: "bloom" — la foto se enfoca como una flor abriéndose
+       (fundido + zoom que se asienta + desenfoque que se aclara) ── */
     [
       { wrap: '.quienes__visual', img: '.quienes__media img' },
       { wrap: '.barra__media',    img: '.barra__media img'  },
@@ -256,14 +257,15 @@ if (window.gsap) {
       const wrap = document.querySelector(wSel);
       const img  = document.querySelector(iSel);
       if (!wrap) return;
-      gsap.set(wrap, { clipPath: 'inset(0 0 100% 0)', opacity: 1, y: 0 });
-      if (img) gsap.set(img, { scale: 1.12 });
+      gsap.set(wrap, { autoAlpha: 0, y: 0 });
+      if (img) gsap.set(img, { scale: 1.08, filter: 'blur(8px)' });
       gsap.timeline({
         scrollTrigger: { trigger: wrap, start: 'top 80%', once: true },
-        onComplete: () => gsap.set(wrap, { clearProps: 'clipPath' })
+        // sin blur residual: evita dejar una capa de composición viva tras la entrada
+        onComplete: () => { if (img) gsap.set(img, { clearProps: 'filter' }); }
       })
-      .to(wrap, { clipPath: 'inset(0 0 0% 0)', duration: 1.6, ease: 'expo.inOut' }, 0)
-      .to(img,  { scale: 1, duration: 2.0, ease: 'power2.out' }, 0);
+      .to(wrap, { autoAlpha: 1, duration: 1.1, ease: 'power2.out' }, 0)
+      .to(img,  { scale: 1, filter: 'blur(0px)', duration: 1.4, ease: 'expo.out' }, 0);
     });
 
 
