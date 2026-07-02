@@ -425,6 +425,7 @@ body.scroll-lock{overflow:hidden}
 .concepto{
   position:relative;display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,6vw,7rem);
   align-items:center;padding:clamp(3rem,8vh,7rem) var(--gutter);max-width:var(--maxw);margin:0 auto;
+  overflow-x:clip; /* el pétalo asoma por el borde a propósito; que no genere scroll lateral */
 }
 .concepto__imgs{position:relative;height:min(78vh,640px)}
 .concepto__img{position:absolute;overflow:hidden;border-radius:var(--radius);box-shadow:0 30px 60px -30px rgba(49,51,31,.5)}
@@ -822,6 +823,7 @@ body.scroll-lock{overflow:hidden}
 .regala-step__n{font-family:var(--serif);font-size:1.6rem;color:var(--accent-soft)}
 .regala-step h3{font-family:var(--serif);font-size:1.4rem;color:var(--moss);margin:.5rem 0 .6rem}
 .regala-step p{color:var(--text-muted);font-size:.98rem;line-height:1.7}
+@media(max-width:760px){.regala-steps__grid{grid-template-columns:1fr;gap:1.8rem}}
 
 /* ---------- vinos: la bodega · cada vino, su flor ---------- */
 /* HERO sereno (sin el "Vinos" gigante) */
@@ -838,7 +840,10 @@ body.scroll-lock{overflow:hidden}
 .cellar{display:grid;grid-template-columns:minmax(190px,250px) 1fr;gap:clamp(2rem,6vw,6rem);max-width:var(--maxw);margin:0 auto;padding:clamp(1rem,3vh,2.5rem) var(--gutter) clamp(3rem,9vh,7rem)}
 
 /* índice floral pegajoso (scrollspy): una flor por familia, se enciende en la activa */
-.cellar-index{position:sticky;top:clamp(6rem,12vh,8rem);align-self:start;height:max-content}
+/* min-width:0 en ambas celdas: sin él, los chips nowrap del índice imponen su
+   min-content al track del grid y la página entera se corta en móvil */
+.cellar-index{position:sticky;top:clamp(6rem,12vh,8rem);align-self:start;height:max-content;min-width:0}
+.cellar-body{min-width:0}
 .cellar-index__title{font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;color:var(--text-subtle);margin-bottom:1.4rem}
 .cellar-index__list{list-style:none;display:flex;flex-direction:column;gap:.35rem}
 .cellar-index__list a{display:flex;align-items:center;gap:.85rem;padding:.5rem 0;color:var(--text-subtle);transition:color .4s var(--ease)}
