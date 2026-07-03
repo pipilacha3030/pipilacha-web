@@ -5,7 +5,7 @@ import '../styles/main.css';
 const {
   title,
   description,
-  ogImage = '/assets/img/hero.jpg',
+  ogImage = '/assets/img/og.jpg', // imagen al compartir el enlace: los dos chefs en El Retiro
   solidNav = true, // nav sólida sobre cream; en el Inicio va transparente sobre el hero
   schema,          // JSON-LD opcional por página (string ya serializado)
 } = Astro.props;
@@ -41,7 +41,9 @@ const ogImageAbs = new URL(ogImage, Astro.site).href;
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={ogImageAbs} />
 
-  <link rel="icon" type="image/png" href="/assets/img/petal-fig.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/img/favicon.png" />
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
 
   {here('/') && (
     <link rel="preload" as="image" href="/assets/img/hero.jpg"
@@ -157,6 +159,6 @@ const ogImageAbs = new URL(ogImage, Astro.site).href;
   <script is:inline src="/js/vendor/lenis.min.js"></script>
   <script is:inline src="/js/vendor/gsap.min.js"></script>
   <script is:inline src="/js/vendor/ScrollTrigger.min.js"></script>
-  <script is:inline src="/js/main.js?v=77"></script>
+  <script is:inline src="/js/main.js?v=79"></script>
 </body>
 </html>
