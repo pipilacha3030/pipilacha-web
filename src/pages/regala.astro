@@ -34,10 +34,27 @@ const pasos = [
         <li><span>Maridaje</span><strong>+60 € / persona (opcional)</strong></li>
         <li><span>Validez</span><strong>12 meses</strong></li>
       </ul>
-      <a href="mailto:admin@pipilacha.es?subject=Tarjeta%20regalo%20Pipilacha" class="btn btn--solid btn--lg">Quiero regalarlo</a>
+      <a href="#comprar" class="btn btn--solid btn--lg">Quiero regalarlo</a>
       <p class="reserva__note">Te la enviamos en digital o impresa. ¿Dudas? Escríbenos a <a href="mailto:admin@pipilacha.es">admin@pipilacha.es</a> o llama al <a href="tel:+34919125998">919 12 59 98</a>.</p>
     </div>
   </section>
+
+  <!-- COMPRA · widget externo Bonkdo (provisional, hasta el sistema de regalo propio) -->
+  <section class="gift-shop" id="comprar">
+    <p class="eyebrow reveal">Comprar la tarjeta</p>
+    <h2 class="reveal">Regálalo ahora</h2>
+    <p class="gift-shop__lead reveal">Elige importe o menú y te llega la tarjeta con su código. El día se reserva luego por TheFork.</p>
+    <div class="gift-shop__frame reveal">
+      <iframe
+        id="giftFrame"
+        src="https://pipilacha.bonkdo.com?embed=true&hide_main_title_description=false&hide_footer=false&hide_whychooseus=false&hide_create_money_pot=false&hide_group_payment=false&hide_shared_gifts_header=false&hide_whole_shared_gifts=false&hide_giftcards=false&hide_vouchers=false"
+        title="Tarjetas regalo de Pipilacha"
+        loading="lazy"
+        style="width:100%;border:0"></iframe>
+    </div>
+  </section>
+  <script is:inline src="https://pipilacha.bonkdo.com/static/js/iframeResizer.min.js"></script>
+  <script is:inline>iFrameResize()</script>
 
   <!-- CÓMO FUNCIONA -->
   <section class="regala-steps">
@@ -57,7 +74,7 @@ const pasos = [
   <section class="cta-band">
     <h2 class="reveal">El mejor regalo se cuenta en mesa</h2>
     <p class="cta-band__lead reveal">Quince pases, las flores como ingrediente y dos chefs contándolos uno a uno. Regálalo y deja que elijan cuándo.</p>
-    <a href="mailto:admin@pipilacha.es?subject=Tarjeta%20regalo%20Pipilacha" class="btn btn--solid btn--lg reveal">Escríbenos para regalar</a>
+    <a href="#comprar" class="btn btn--solid btn--lg reveal">Regalar ahora</a>
   </section>
 
 </Base>

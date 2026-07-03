@@ -532,7 +532,7 @@ body.scroll-lock{overflow:hidden}
    Patrón de movimiento adaptado del "3D gradient carousel" (Codrops) a la marca:
    nuestras fotos, nuestra paleta. El motor vive en /js/main.js (objeto CFG). */
 .gal-stage{
-  position:relative;height:100svh;overflow:hidden;background:var(--cream);
+  position:relative;height:100svh;overflow:hidden;background:#FEFCF6;
   perspective:1800px;-webkit-user-select:none;user-select:none;
 }
 /* la página de galería es inmersiva: sin scroll de página ni footer/reserva-bar */
@@ -576,7 +576,9 @@ body:has(.gal-stage) .reserva-bar{display:none}
   transform-origin:90% center;backface-visibility:hidden;
   will-change:transform,filter;contain:layout paint;
 }
-.gal-stage.is-carousel .gal-card__btn{border-radius:15px}
+/* esquinas pro: redondeamos la propia imagen (el clip por overflow se dentaba bajo el transform 3D) */
+.gal-stage.is-carousel .gal-card__btn{border-radius:15px;overflow:visible}
+.gal-stage.is-carousel .gal-card__btn img{border-radius:15px}
 
 /* --- marco fijo (eyebrow, título, contador, enlaces) --- */
 .gal-frame{
@@ -636,6 +638,16 @@ body:has(.gal-stage) .reserva-bar{display:none}
 .petal--2{bottom:-4%;left:-3%;width:clamp(140px,18vw,300px);animation:float2 11s ease-in-out infinite}
 .petal--3{top:6%;right:4%;width:clamp(80px,9vw,150px);animation:float 8s ease-in-out infinite reverse}
 @keyframes float2{0%,100%{transform:translateY(0) rotate(-18deg)}50%{transform:translateY(-22px) rotate(-14deg)}}
+
+/* ---------- regala: widget de compra (Bonkdo) ---------- */
+.gift-shop{padding:clamp(3rem,7vh,6rem) var(--gutter);max-width:var(--maxw);margin:0 auto;text-align:center}
+.gift-shop h2{font-size:clamp(2rem,5vw,3.4rem);color:var(--moss);margin:.4rem 0 1rem}
+.gift-shop__lead{color:var(--text-muted);max-width:58ch;margin:0 auto 2.4rem}
+.gift-shop__frame{
+  background:var(--cloud);border-radius:var(--radius);
+  padding:clamp(.5rem,2vw,1.4rem);box-shadow:0 40px 90px -45px rgba(49,51,31,.45);
+}
+.gift-shop__frame iframe{display:block;width:100%;min-height:640px;border:0;border-radius:var(--radius-sm)}
 
 /* ---------- footer (estático) ---------- */
 .footer{background:var(--olive);color:var(--cream);padding:clamp(2.2rem,5vh,3.4rem) var(--gutter) 1.3rem}
@@ -891,7 +903,11 @@ body:has(.gal-stage) .reserva-bar{display:none}
 .wine-cat{padding:clamp(2rem,6vh,4.5rem) 0;scroll-margin-top:7rem}
 .wine-cat:first-child{padding-top:0}
 .wine-cat__head{display:flex;align-items:flex-start;gap:clamp(1rem,2.5vw,1.8rem);margin-bottom:clamp(1.6rem,4vh,2.6rem)}
-.wine-cat__flor{width:clamp(64px,9vw,104px);height:auto;flex:none;object-fit:contain;filter:drop-shadow(0 16px 26px rgba(49,51,31,.18))}
+/* flor de familia: gira despacio sobre su eje (sutil) + parallax en su envoltorio */
+.wine-cat__flor-wrap{flex:none;display:inline-block;line-height:0;filter:drop-shadow(0 16px 26px rgba(49,51,31,.18))}
+.wine-cat__flor{width:clamp(64px,9vw,104px);height:auto;object-fit:contain;animation:flor-spin 46s linear infinite}
+.wine-cat:nth-of-type(even) .wine-cat__flor{animation-duration:54s;animation-direction:reverse}
+@keyframes flor-spin{to{transform:rotate(360deg)}}
 .wine-cat__headtext{flex:1;min-width:0}
 .wine-cat__title{font-family:var(--serif);font-weight:400;font-size:clamp(1.9rem,4.4vw,3rem);color:var(--moss);line-height:1.04}
 .wine-cat__note{margin-top:.5rem;color:var(--text-muted);max-width:42ch;font-size:1.02rem;line-height:1.55}

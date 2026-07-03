@@ -426,7 +426,7 @@ if (window.gsap) {
   const ctx = canvas.getContext('2d');
   const idxEl = document.getElementById('galIdx');
   const N = cards.length;
-  const CREAM = [244, 239, 230]; // --cream
+  const BASE = [254, 252, 246]; // cloud white #FEFCF6 — el fondo se atenúa hacia aquí
 
   let unit = 0, trackW = 0, vwHalf = 0, cardW = 0;
   let pos = 0, vel = 0, centerIdx = -1, startT = 0;
@@ -476,11 +476,11 @@ if (window.gsap) {
   /* --- fondo: dos radiales que florecen con el color del plato centrado --- */
   const mix = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
   const rgba = (c, a) => `rgba(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])},${a})`;
-  let colA = CREAM.slice(), colB = CREAM.slice(), tgtA = CREAM.slice(), tgtB = CREAM.slice();
+  let colA = BASE.slice(), colB = BASE.slice(), tgtA = BASE.slice(), tgtB = BASE.slice();
   function setTarget(i) {
     const p = palettes[i];
-    if (!p) { tgtA = CREAM.slice(); tgtB = CREAM.slice(); return; }
-    tgtA = mix(p, CREAM, 0.42);           // bloom principal, atenuado hacia la crema
+    if (!p) { tgtA = BASE.slice(); tgtB = BASE.slice(); return; }
+    tgtA = mix(p, BASE, 0.42);           // bloom principal, atenuado hacia la crema
     tgtB = mix(p, [255, 253, 248], 0.60); // halo más claro
   }
   let bgTick = 0;
@@ -490,14 +490,14 @@ if (window.gsap) {
     colB = mix(colB, tgtB, CFG.colorLerp);
     const W = canvas.width, H = canvas.height;
     ctx.globalCompositeOperation = 'source-over';
-    ctx.fillStyle = rgba(CREAM, 1); ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = rgba(BASE, 1); ctx.fillRect(0, 0, W, H);
     const x1 = W * (0.5 + 0.18 * Math.sin(t * 0.00013)), y1 = H * (0.42 + 0.16 * Math.cos(t * 0.00017));
     let g = ctx.createRadialGradient(x1, y1, 0, x1, y1, H * 0.95);
-    g.addColorStop(0, rgba(colA, 0.9)); g.addColorStop(1, rgba(CREAM, 0));
+    g.addColorStop(0, rgba(colA, 0.9)); g.addColorStop(1, rgba(BASE, 0));
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     const x2 = W * (0.5 - 0.2 * Math.cos(t * 0.00011)), y2 = H * (0.6 + 0.2 * Math.sin(t * 0.00015));
     g = ctx.createRadialGradient(x2, y2, 0, x2, y2, H * 0.85);
-    g.addColorStop(0, rgba(colB, 0.72)); g.addColorStop(1, rgba(CREAM, 0));
+    g.addColorStop(0, rgba(colB, 0.72)); g.addColorStop(1, rgba(BASE, 0));
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   }
 
