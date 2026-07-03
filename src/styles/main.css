@@ -576,9 +576,8 @@ body:has(.gal-stage) .reserva-bar{display:none}
   transform-origin:90% center;backface-visibility:hidden;
   will-change:transform,filter;contain:layout paint;
 }
-/* esquinas pro: redondeamos la propia imagen (el clip por overflow se dentaba bajo el transform 3D) */
-.gal-stage.is-carousel .gal-card__btn{border-radius:15px;overflow:visible}
-.gal-stage.is-carousel .gal-card__btn img{border-radius:15px}
+/* esquinas rectas: la foto con sus esquinas normales (sin redondeo) */
+.gal-stage.is-carousel .gal-card__btn{border-radius:0;overflow:hidden}
 
 /* --- marco fijo (eyebrow, título, contador, enlaces) --- */
 .gal-frame{
@@ -672,6 +671,9 @@ body:has(.gal-stage) .reserva-bar{display:none}
 .page-header .eyebrow{margin-bottom:1rem}
 .page-header h1{font-size:clamp(2.4rem,6vw,5rem);color:var(--moss);line-height:1.05}
 .page-header p{max-width:58ch;margin-top:1.3rem;color:var(--text-muted);font-size:clamp(1rem,1.5vw,1.18rem)}
+/* reservas: flores en blur de fondo, como el hero de vinos */
+.page-header--blooms{position:relative;overflow:hidden}
+.page-header--blooms > :not(.menu-blooms){position:relative;z-index:1}
 
 
 /* ---------- 404 ---------- */

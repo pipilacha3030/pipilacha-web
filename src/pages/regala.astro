@@ -1,11 +1,5 @@
 ---
 import Base from '../layouts/Base.astro';
-
-const pasos = [
-  { n: '01', t: 'Nos escribes', d: 'A admin@pipilacha.es nos dices para cuántas personas y si quieres una dedicatoria.' },
-  { n: '02', t: 'Preparamos la tarjeta', d: 'Te la enviamos con un código, en digital para imprimir o en papel si la prefieres física.' },
-  { n: '03', t: 'Reserva cuando quiera', d: 'Quien la recibe elige día y turno por TheFork. Sin prisa: vale durante un año.' },
-];
 ---
 
 <Base
@@ -55,26 +49,5 @@ const pasos = [
   </section>
   <script is:inline src="https://pipilacha.bonkdo.com/static/js/iframeResizer.min.js"></script>
   <script is:inline>iFrameResize()</script>
-
-  <!-- CÓMO FUNCIONA -->
-  <section class="regala-steps">
-    <p class="eyebrow reveal">En tres pasos</p>
-    <h2 class="reveal">Cómo se regala</h2>
-    <ol class="regala-steps__grid" data-reveal-stagger>
-      {pasos.map((p) => (
-        <li class="regala-step reveal">
-          <span class="regala-step__n">{p.n}</span>
-          <h3>{p.t}</h3>
-          <p>{p.d}</p>
-        </li>
-      ))}
-    </ol>
-  </section>
-
-  <section class="cta-band">
-    <h2 class="reveal">El mejor regalo se cuenta en mesa</h2>
-    <p class="cta-band__lead reveal">Quince pases, las flores como ingrediente y dos chefs contándolos uno a uno. Regálalo y deja que elijan cuándo.</p>
-    <a href="#comprar" class="btn btn--solid btn--lg reveal">Regalar ahora</a>
-  </section>
 
 </Base>
