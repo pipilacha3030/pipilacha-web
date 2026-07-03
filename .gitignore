@@ -23,3 +23,10 @@ dist/
 # tooling artifacts (capturas de verificación, snapshots de auditoría)
 .playwright-mcp/
 .impeccable/
+
+# ajustes locales de Claude Code (acumulan comandos de deploy con credenciales — NUNCA commitear)
+.claude/settings.local.json
+
+# imágenes sueltas en la raíz (las de la web viven en public/assets/img/)
+/*.jpeg
+/*.jpg
