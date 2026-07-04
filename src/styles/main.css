@@ -58,6 +58,8 @@ html.lenis,html.lenis body{height:auto}
 .lenis.lenis-smooth{scroll-behavior:auto!important}
 
 /* ---------- helpers ---------- */
+/* visible solo en escritorio ("en web") — oculto en móvil */
+@media(max-width:900px){.desktop-only{display:none!important}}
 .eyebrow{
   font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;
   font-weight:500;color:var(--accent);margin-bottom:1.4rem;
@@ -736,8 +738,14 @@ body:has(.gal-stage) .reserva-bar{display:none}
 /* ---------- widget de reserva (iframe TheFork) ---------- */
 /* fondo claro a juego con el widget; el calendario va en una tarjeta alta,
    ya desplegada — sin scroll dentro del scroll */
-.reserva-widget{background:var(--cream);padding:clamp(3rem,8vh,6.5rem) var(--gutter)}
-.reserva-widget__inner{max-width:760px;margin:0 auto}
+.reserva-widget{background:var(--cream);padding:clamp(3rem,8vh,6.5rem) var(--gutter);position:relative;overflow:hidden}
+.reserva-widget__inner{max-width:760px;margin:0 auto;position:relative;z-index:1}
+/* flores en blur a los lados del widget (solo escritorio, misma temática que vinos) */
+.reserva-bloom{position:absolute;height:auto}
+.reserva-bloom--l1{top:7%;left:.5%;width:clamp(150px,15vw,280px);opacity:.5;animation:float 15s ease-in-out infinite}
+.reserva-bloom--l2{bottom:9%;left:3%;width:clamp(110px,11vw,210px);opacity:.42;animation:float2 18s ease-in-out infinite}
+.reserva-bloom--r1{top:11%;right:.5%;width:clamp(150px,15vw,280px);opacity:.5;animation:float2 16s ease-in-out infinite}
+.reserva-bloom--r2{bottom:7%;right:3%;width:clamp(110px,11vw,210px);opacity:.42;animation:float 19s ease-in-out infinite}
 .reserva-widget__frame{
   position:relative;min-height:1300px;border-radius:var(--radius);overflow:hidden;background:var(--cloud);
   box-shadow:0 44px 84px -42px rgba(13,13,13,.28);border:1px solid var(--border-subtle);

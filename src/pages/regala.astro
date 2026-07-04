@@ -29,7 +29,7 @@ import Base from '../layouts/Base.astro';
         <li><span>Validez</span><strong>12 meses</strong></li>
       </ul>
       <a href="#comprar" class="btn btn--solid btn--lg">Quiero regalarlo</a>
-      <p class="reserva__note">Te la enviamos en digital o impresa. ¿Dudas? Escríbenos a <a href="mailto:admin@pipilacha.es">admin@pipilacha.es</a> o llama al <a href="tel:+34919125998">919 12 59 98</a>.</p>
+      <p class="reserva__note">Te la enviamos en digital o impresa. ¿Dudas? Escríbenos a <a href="mailto:info@pipilacha.es">info@pipilacha.es</a> o llama al <a href="tel:+34919125998">919 12 59 98</a>.</p>
     </div>
   </section>
 
@@ -49,5 +49,12 @@ import Base from '../layouts/Base.astro';
   </section>
   <script is:inline src="https://pipilacha.bonkdo.com/static/js/iframeResizer.min.js"></script>
   <script is:inline>iFrameResize()</script>
+
+  <!-- CTA de cierre (solo en escritorio) -->
+  <section class="cta-band desktop-only">
+    <h2 class="reveal">El mejor regalo se cuenta en mesa</h2>
+    <p class="cta-band__lead reveal">Quince pases, las flores como ingrediente y dos chefs contándolos uno a uno. Regálalo y deja que elijan cuándo.</p>
+    <a href="#comprar" class="btn btn--solid btn--lg reveal">Regalar ahora</a>
+  </section>
 
 </Base>
