@@ -280,13 +280,15 @@ body.scroll-lock{overflow:hidden}
 /* ---------- hero ---------- */
 .hero{position:relative;height:100svh;min-height:600px;overflow:hidden;display:flex;align-items:flex-end}
 .hero__media{position:absolute;inset:-16% 0;z-index:0;will-change:transform}
-.hero__media img{filter:saturate(1.02)}
+/* zoom cerrado: la imagen se escala por encima del recuadro (`overflow:hidden`
+   del .hero recorta lo que sobra) para un encuadre más íntimo/apretado */
+.hero__media img{filter:saturate(1.02);transform:scale(1.18);transform-origin:50% 42%}
 .hero__veil{
   position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(20,20,12,.35) 0%,rgba(20,20,12,0) 28%,rgba(20,20,12,.15) 55%,rgba(20,20,12,.75) 100%);
 }
 .hero__content{position:relative;z-index:2;color:var(--cream);padding:0 var(--gutter) clamp(3rem,8vh,6rem);max-width:var(--maxw)}
-.hero__title{font-size:clamp(2.8rem,8.5vw,7.5rem);margin:.4rem 0 1.4rem;color:#fff}
+.hero__title{font-size:clamp(2.6rem,6vw,5rem);margin:.4rem 0 1.4rem;color:#fff}
 .hero__title .line{display:block;overflow:hidden}
 .hero__title .reveal-mask{display:inline-block}
 .js .hero__title .reveal-mask{transform:translateY(110%)}
@@ -651,8 +653,8 @@ body:has(.gal-stage) .reserva-bar{display:none}
 @keyframes float2{0%,100%{transform:translateY(0) rotate(-18deg)}50%{transform:translateY(-22px) rotate(-14deg)}}
 
 /* ---------- regala: widget de compra (Bonkdo) ---------- */
-.gift-shop{padding:clamp(3rem,7vh,6rem) var(--gutter);max-width:var(--maxw);margin:0 auto;text-align:center}
-.gift-shop h2{font-size:clamp(2rem,5vw,3.4rem);color:var(--moss);margin:.4rem 0 1rem}
+.gift-shop{padding:clamp(7rem,15vh,9.5rem) var(--gutter) clamp(3rem,7vh,6rem);max-width:var(--maxw);margin:0 auto;text-align:center}
+.gift-shop h1,.gift-shop h2{font-size:clamp(2.2rem,5.5vw,3.8rem);color:var(--moss);margin:.4rem 0 1rem;line-height:1.05}
 .gift-shop__lead{color:var(--text-muted);max-width:58ch;margin:0 auto 2.4rem}
 .gift-shop__frame{
   background:var(--cloud);border-radius:var(--radius);
@@ -748,14 +750,49 @@ body:has(.gal-stage) .reserva-bar{display:none}
 /* ---------- widget de reserva (iframe TheFork) ---------- */
 /* fondo claro a juego con el widget; el calendario va en una tarjeta alta,
    ya desplegada — sin scroll dentro del scroll */
-.reserva-widget{background:var(--cream);padding:clamp(3rem,8vh,6.5rem) var(--gutter);position:relative;overflow:hidden}
+/* ---------- reservas: una sola atmósfera de flores en blur para TODA la página ----------
+   La capa cubre el alto completo de la sección (cabecera + widget), así el efecto no
+   "muere" entre bloques. Cada flor: contenedor .rbloom (parallax de scroll vía GSAP,
+   data-parallax) + <img> con el float ambiente (los dos transforms viven en elementos
+   distintos y por eso no pelean). El degradado de borde se estira sobre toda la página
+   (fade solo en el 6% superior/inferior) para que no se note dónde empieza y acaba. */
+.reservas{position:relative;overflow:hidden;background:var(--cream)}
+.reservas > .page-header,.reservas > .reserva-widget{position:relative;z-index:1}
+.reservas__atmos{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 6%,#000 94%,transparent 100%);
+  mask-image:linear-gradient(180deg,transparent 0,#000 6%,#000 94%,transparent 100%);
+}
+.rbloom{position:absolute;will-change:transform}
+.rbloom img{display:block;width:100%;height:auto;will-change:transform}
+/* Composición: posición/tamaño en el CONTENEDOR (parallax de GSAP);
+   float + blur + opacidad en la IMG (transforms en elementos distintos, no pelean).
+   Estructura en diagonal descendente + 3 capas de profundidad, con el eje central
+   (columna del widget) despejado para que el contenido respire.
+   CAPA CERCA — grandes, poco blur, sangran por el borde, más parallax */
+.rbloom--1{top:-4%;left:-7%;width:clamp(250px,27vw,490px)}
+.rbloom--1 img{opacity:.5;filter:blur(10px) saturate(1.12);animation:float 17s ease-in-out infinite}
+.rbloom--2{top:81%;right:-8%;width:clamp(240px,26vw,470px)}
+.rbloom--2 img{opacity:.48;filter:blur(11px) saturate(1.12);animation:float2 20s ease-in-out infinite}
+/* CAPA MEDIA — medianas, blur medio, en los márgenes laterales */
+.rbloom--3{top:2%;right:1%;width:clamp(150px,17vw,320px)}
+.rbloom--3 img{opacity:.42;filter:blur(14px) saturate(1.13);animation:float2 16s ease-in-out infinite}
+.rbloom--4{top:45%;left:-3%;width:clamp(150px,16vw,300px)}
+.rbloom--4 img{opacity:.42;filter:blur(14px) saturate(1.13);animation:float 19s ease-in-out infinite}
+.rbloom--5{top:74%;left:1%;width:clamp(140px,15vw,275px)}
+.rbloom--5 img{opacity:.4;filter:blur(15px) saturate(1.13);animation:float 18s ease-in-out infinite}
+/* CAPA LEJOS — pequeñas, mucho blur, poca opacidad; profundidad de fondo */
+.rbloom--6{top:24%;left:5%;width:clamp(90px,10vw,175px)}
+.rbloom--6 img{opacity:.3;filter:blur(19px) saturate(1.1);animation:float2 21s ease-in-out infinite}
+.rbloom--7{top:38%;right:5%;width:clamp(100px,11vw,195px)}
+.rbloom--7 img{opacity:.32;filter:blur(18px) saturate(1.1);animation:float 22s ease-in-out infinite}
+.rbloom--8{top:63%;right:8%;width:clamp(85px,9vw,160px)}
+.rbloom--8 img{opacity:.28;filter:blur(20px) saturate(1.1);animation:float2 23s ease-in-out infinite}
+/* en móvil se retiran un poco de peso para no competir con el contenido */
+@media (max-width:760px){ .rbloom{opacity:.72} }
+
+.reserva-widget{padding:clamp(1rem,3vh,2rem) var(--gutter) clamp(3rem,8vh,6.5rem);position:relative;z-index:1}
 .reserva-widget__inner{max-width:760px;margin:0 auto;position:relative;z-index:1}
-/* flores en blur a los lados del widget (solo escritorio, misma temática que vinos) */
-.reserva-bloom{position:absolute;height:auto}
-.reserva-bloom--l1{top:7%;left:.5%;width:clamp(150px,15vw,280px);opacity:.5;animation:float 15s ease-in-out infinite}
-.reserva-bloom--l2{bottom:9%;left:3%;width:clamp(110px,11vw,210px);opacity:.42;animation:float2 18s ease-in-out infinite}
-.reserva-bloom--r1{top:11%;right:.5%;width:clamp(150px,15vw,280px);opacity:.5;animation:float2 16s ease-in-out infinite}
-.reserva-bloom--r2{bottom:7%;right:3%;width:clamp(110px,11vw,210px);opacity:.42;animation:float 19s ease-in-out infinite}
 .reserva-widget__frame{
   position:relative;min-height:1300px;border-radius:var(--radius);overflow:hidden;background:var(--cloud);
   box-shadow:0 44px 84px -42px rgba(13,13,13,.28);border:1px solid var(--border-subtle);
@@ -1022,20 +1059,26 @@ body:has(.gal-stage) .reserva-bar{display:none}
 }
 
 /* ============================================================
-   DESPERTAR DE LAS FLORES · tarjeta estática, en flujo normal de scroll.
-   La animación es solo el crossfade de las 4 capas (ver .showcase en main.js).
+   DESPERTAR DE LAS FLORES · el escenario se fija (pin) al hacer scroll y la
+   tarjeta crece de su tamaño de reposo a pantalla completa (ver initShowcase()).
+   El crossfade de las 4 capas sigue corriendo dentro (.showcase).
    ============================================================ */
-.gallery{position:relative;padding:9vh var(--gutter);background:var(--cream)}
+.gallery{position:relative;background:var(--cream)}
+/* el escenario ocupa el alto de la ventana y centra la tarjeta; es lo que se fija */
+.gallery__stage{min-height:100svh;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .gallery-finale{
-  position:relative;width:min(1240px,100%);height:min(84vh,780px);margin:0 auto;
-  border-radius:4px;overflow:hidden;
+  position:relative;flex:none;width:min(1240px,92vw);height:min(84vh,780px);
+  border-radius:4px;overflow:hidden;will-change:width,height;
   box-shadow:0 42px 70px -24px rgba(13,13,13,.50), 0 14px 28px -14px rgba(13,13,13,.42);
 }
 
 @media (max-width:768px){
-  .gallery{padding:6vh var(--gutter)}
-  .gallery-finale{width:100%;height:64vh}
+  .gallery-finale{width:92vw;height:64vh}
 }
+
+/* sin JS / reduce-motion: no hay pin ni crecimiento, deja aire alrededor de la tarjeta */
+.gallery__stage{padding:9vh var(--gutter)}
+@media (min-width:769px){ html.js .gallery__stage{padding:0} }
 
 /* ---------- accesibilidad: reduce motion ---------- */
 @media (prefers-reduced-motion:reduce){

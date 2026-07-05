@@ -16,13 +16,14 @@ export function initHero() {
   if (!heroPlayed && document.querySelector('.hero__media img')) {
     heroPlayed = true;
     inPageContext(() => {
-      // acercamiento de cámara: la foto se asienta desde un leve zoom
+      // acercamiento de cámara: la foto se asienta en un encuadre cerrado (mucho zoom)
       gsap.fromTo('.hero__media img',
-        { scale: 1.12 }, { scale: 1, duration: 1.8, ease: 'power2.out' });
+        { scale: 1.32, transformOrigin: '50% 42%' },
+        { scale: 1.18, transformOrigin: '50% 42%', duration: 1.8, ease: 'power2.out' });
       // vida ambiente: tras asentarse, el plano respira muy lento (cinematográfico)
       gsap.to('.hero__media img', {
-        scale: 1.05, yPercent: -1.5, duration: 16, ease: 'sine.inOut',
-        repeat: -1, yoyo: true, delay: 1.8
+        scale: 1.23, yPercent: -1.5, transformOrigin: '50% 42%',
+        duration: 16, ease: 'sine.inOut', repeat: -1, yoyo: true, delay: 1.8
       });
       // el título sube tras su máscara
       // y:0 limpia el translateY(110%) que GSAP interpreta como px; el reveal lo mueve solo por yPercent

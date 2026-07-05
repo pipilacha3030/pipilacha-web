@@ -7,37 +7,44 @@ import Base from '../layouts/Base.astro';
   description="Reserva en Pipilacha. 16 plazas por servicio, jueves a domingo, dos turnos. Menú degustación 85 € por persona."
 >
 
-  <section class="page-header page-header--blooms">
-    <div class="menu-blooms" aria-hidden="true">
-      <img class="menu-bloom menu-bloom--1" src="/assets/img/flor-amapola.png" alt="" />
-      <img class="menu-bloom menu-bloom--3" src="/assets/img/flor-cosmos.png" alt="" />
-      <img class="menu-bloom menu-bloom--5" src="/assets/img/flor-borraja.png" alt="" />
+  <!-- La página entera comparte una sola atmósfera de flores en blur:
+       cada flor va en un contenedor con parallax (GSAP mueve el contenedor)
+       y el float ambiente vive en la <img> — así los dos transforms no pelean. -->
+  <section class="reservas">
+    <div class="reservas__atmos" aria-hidden="true">
+      <!-- composición en 3 capas de profundidad; cada flor es distinta.
+           CERCA (grandes, poco blur, más parallax) · MEDIA · LEJOS (pequeñas, mucho blur) -->
+      <div class="rbloom rbloom--1" data-parallax="0.26"><img src="/assets/img/flor-dahlia-rosa.png" alt="" /></div>
+      <div class="rbloom rbloom--2" data-parallax="0.23"><img src="/assets/img/flor-amapola.png" alt="" /></div>
+      <div class="rbloom rbloom--3" data-parallax="0.16"><img src="/assets/img/flor-campanula.png" alt="" /></div>
+      <div class="rbloom rbloom--4" data-parallax="0.17"><img src="/assets/img/flor-calendula.png" alt="" /></div>
+      <div class="rbloom rbloom--5" data-parallax="0.15"><img src="/assets/img/flor-coreopsis.png" alt="" /></div>
+      <div class="rbloom rbloom--6" data-parallax="0.09"><img src="/assets/img/flor-aciano.png" alt="" /></div>
+      <div class="rbloom rbloom--7" data-parallax="0.11"><img src="/assets/img/flor-cosmos.png" alt="" /></div>
+      <div class="rbloom rbloom--8" data-parallax="0.08"><img src="/assets/img/flor-borraja.png" alt="" /></div>
     </div>
-    <p class="eyebrow">Reservas</p>
-    <h1 class="reveal-head">Reservar<br>en Pipilacha</h1>
-    <p>Elige día y turno abajo. Dieciséis plazas por servicio: ocho en la barra, frente a la cocina abierta, y ocho en mesa.</p>
-  </section>
 
-  <!-- WIDGET THEFORK (reserva online, inline) -->
-  <section class="reserva-widget" id="reservar-widget">
-    <div class="menu-blooms reserva-widget__blooms desktop-only" aria-hidden="true">
-      <img class="menu-bloom reserva-bloom reserva-bloom--l1" src="/assets/img/flor-dalia.png" alt="" />
-      <img class="menu-bloom reserva-bloom reserva-bloom--l2" src="/assets/img/flor-borraja.png" alt="" />
-      <img class="menu-bloom reserva-bloom reserva-bloom--r1" src="/assets/img/flor-calendula.png" alt="" />
-      <img class="menu-bloom reserva-bloom reserva-bloom--r2" src="/assets/img/flor-cosmos.png" alt="" />
+    <div class="page-header">
+      <p class="eyebrow">Reservas</p>
+      <h1 class="reveal-head">Reservar<br>en Pipilacha</h1>
+      <p>Elige día y turno abajo. Dieciséis plazas por servicio: ocho en la barra, frente a la cocina abierta, y ocho en mesa.</p>
     </div>
-    <div class="reserva-widget__inner">
-      <div class="reserva-widget__frame">
-        <p class="reserva-widget__loading">Cargando el calendario de reservas<span class="dots" aria-hidden="true"></span></p>
-        <iframe
-          src="https://widget.thefork.com/867dcee9-49b5-47ed-90c0-c6c87149b328"
-          allow="payment *"
-          title="Reservas Pipilacha"
-          loading="lazy"
-          onload="this.previousElementSibling.classList.add('is-loaded')">
-        </iframe>
+
+    <!-- WIDGET THEFORK (reserva online, inline) -->
+    <div class="reserva-widget" id="reservar-widget">
+      <div class="reserva-widget__inner">
+        <div class="reserva-widget__frame">
+          <p class="reserva-widget__loading">Cargando el calendario de reservas<span class="dots" aria-hidden="true"></span></p>
+          <iframe
+            src="https://widget.thefork.com/867dcee9-49b5-47ed-90c0-c6c87149b328"
+            allow="payment *"
+            title="Reservas Pipilacha"
+            loading="lazy"
+            onload="this.previousElementSibling.classList.add('is-loaded')">
+          </iframe>
+        </div>
+        <p class="reserva-widget__fallback">¿No carga? Reserva por <a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">Instagram</a> o llama al <a href="tel:+34919125998">919 12 59 98</a>.</p>
       </div>
-      <p class="reserva-widget__fallback">¿No carga? Reserva por <a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">Instagram</a> o llama al <a href="tel:+34919125998">919 12 59 98</a>.</p>
     </div>
   </section>
 

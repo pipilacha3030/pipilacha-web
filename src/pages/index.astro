@@ -56,9 +56,11 @@ import Base from '../layouts/Base.astro';
     </div>
   </section>
 
-  <!-- DESPERTAR DE LAS FLORES · tarjeta con 4 fotos en crossfade, enlaza al menú -->
+  <!-- DESPERTAR DE LAS FLORES · tarjeta con 4 fotos en crossfade; al hacer scroll
+       el escenario se fija (pin) y la tarjeta crece hasta pantalla completa -->
   <section class="gallery" id="gallery" aria-label="Despertar de las flores">
-    <a class="gallery-finale showcase reveal" id="despertar" href="/menu/" aria-label="Ver el menú Despertar de las flores">
+    <div class="gallery__stage">
+    <a class="gallery-finale showcase" id="despertar" href="/menu/" aria-label="Ver el menú Despertar de las flores">
       <div class="showcase__frame">
         <figure class="showcase__layer" data-layer="0"><img src="/assets/img/df-esparrago.jpg" alt="Espárragos a la brasa con romesco de tagete" loading="lazy" decoding="async" /></figure>
         <figure class="showcase__layer" data-layer="1"><img src="/assets/img/df-guisante.jpg" alt="Guisante coco-saúco" loading="lazy" decoding="async" /></figure>
@@ -72,6 +74,7 @@ import Base from '../layouts/Base.astro';
         <span class="showcase__more">Ver los pases →</span>
       </span>
     </a>
+    </div>
   </section>
 
   <!-- CINTA (pequeña y clara, con flores; texto con keywords para SEO) -->
