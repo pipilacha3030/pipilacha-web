@@ -51,9 +51,9 @@ const ogImageAbs = new URL(ogImage, Astro.site).href;
       imagesizes="100vw" fetchpriority="high" />
   )}
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hanken+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <!-- tipografías auto-alojadas (@font-face en main.css); preload de las dos críticas -->
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/marcellus-400-latin.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/hanken-grotesk-variable-latin.woff2" crossorigin />
 
   {here('/') && (
     <script type="application/ld+json" is:inline set:html={JSON.stringify({
