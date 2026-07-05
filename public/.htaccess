@@ -1,3 +1,14 @@
+# ---- WebP por negociación de contenido ----
+# Si el navegador acepta webp y existe el hermano .webp, se sirve con el MISMO URL.
+# Cubre <img>, srcset y fondos CSS sin tocar el markup. Si el módulo no está
+# o falta el .webp, se sirve el original: degradación limpia.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTP_ACCEPT} image/webp
+  RewriteCond %{DOCUMENT_ROOT}/$1.webp -f
+  RewriteRule ^(.+)\.(?:jpe?g|png)$ $1.webp [T=image/webp,L]
+</IfModule>
+
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType image/jpeg "access plus 1 year"
@@ -20,6 +31,10 @@
   # Resto de estáticos (imágenes, fuentes): un mes, revalidable
   <FilesMatch "\.(jpg|jpeg|png|webp|avif|svg|woff2)$">
     Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  # la respuesta jpg/png varía según Accept (negociación webp de arriba)
+  <FilesMatch "\.(jpg|jpeg|png)$">
+    Header append Vary Accept
   </FilesMatch>
 </IfModule>
 

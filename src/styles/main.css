@@ -981,9 +981,13 @@ body:has(.gal-stage) .reserva-bar{display:none}
 @media (max-width:900px){
   .nav__links{
     position:fixed;inset:0;background:var(--moss);flex-direction:column;justify-content:center;
-    gap:2.4rem;transform:translateX(100%);transition:transform .6s var(--ease);
+    gap:2.4rem;transform:translateX(100%);
+    /* cerrado: invisible PARA EL TECLADO también (fuera del orden de tabulación);
+       la visibility cambia al terminar de cerrarse, así la animación no varía */
+    visibility:hidden;
+    transition:transform .6s var(--ease), visibility 0s .6s;
   }
-  .nav__links.open{transform:translateX(0)}
+  .nav__links.open{transform:translateX(0);visibility:visible;transition:transform .6s var(--ease)}
   .nav__links a,.nav.scrolled .nav__links a,.nav--solid .nav__links a{color:var(--cream);font-size:1.4rem}
   .nav__links a[aria-current="page"]::after{display:none}
   .nav__cta{border-color:var(--cream)}

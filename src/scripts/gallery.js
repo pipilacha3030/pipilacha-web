@@ -59,6 +59,13 @@ export function initGallery() {
       if (e.key === 'Escape') closeLb();
       else if (e.key === 'ArrowLeft') lbShow(lb.cur - 1);
       else if (e.key === 'ArrowRight') lbShow(lb.cur + 1);
+      else if (e.key === 'Tab') {
+        // diálogo modal: el foco circula entre sus tres botones (WCAG 2.4.3)
+        const f = [lb.close, lb.prev, lb.next];
+        const i = f.indexOf(document.activeElement);
+        e.preventDefault();
+        f[e.shiftKey ? (i <= 0 ? f.length - 1 : i - 1) : (i === -1 || i === f.length - 1 ? 0 : i + 1)].focus();
+      }
     }, { signal });
   }
 
