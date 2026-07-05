@@ -32,4 +32,6 @@ http.createServer((req, res) => {
     // ruta sin barra final / sin extensión → prueba carpeta/index.html
     sendFile(res, path.join(ROOT, p, 'index.html'));
   });
-}).listen(4321, '0.0.0.0', () => console.log('preview on http://localhost:4321'));
+}).listen(process.env.PORT || 4321, '0.0.0.0', function () {
+  console.log('preview on http://localhost:' + this.address().port);
+});

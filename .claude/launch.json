@@ -5,7 +5,8 @@
       "name": "pipilacha-web",
       "runtimeExecutable": "node",
       "runtimeArgs": [".claude/preview-server.cjs"],
-      "port": 4321
+      "port": 4322,
+      "autoPort": true
     }
   ]
 }
