@@ -1,11 +1,36 @@
 ---
 import Base from '../layouts/Base.astro';
 
-// Schema.org: los dos chefs (coincide con el contenido visible de la página)
-const personSchema = `<script type="application/ld+json">${JSON.stringify([
-  { "@context": "https://schema.org", "@type": "Person", "name": "Arán Rodrigo", "jobTitle": "Chef y cofundador", "worksFor": { "@type": "Restaurant", "name": "Pipilacha", "url": "https://pipilacha.es" } },
-  { "@context": "https://schema.org", "@type": "Person", "name": "Noé David", "jobTitle": "Chef y cofundador", "worksFor": { "@type": "Restaurant", "name": "Pipilacha", "url": "https://pipilacha.es" } }
-])}</script>`;
+// Schema.org: los dos chefs, con el MISMO @id que en el grafo base (Base.astro):
+// las propiedades se fusionan y esta página aporta el detalle (EEAT: quiénes son,
+// qué saben hacer, dónde encontrarlos).
+const personSchema = `<script type="application/ld+json">${JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://pipilacha.es/#aran",
+      "name": "Arán Rodrigo",
+      "jobTitle": "Chef y cofundador",
+      "worksFor": { "@id": "https://pipilacha.es/#restaurant" },
+      "description": "Cofundador de Pipilacha. Trata las flores comestibles como ingrediente principal: sabor, técnica y origen en cada pase.",
+      "image": "https://pipilacha.es/assets/img/chef-1.jpg",
+      "mainEntityOfPage": "https://pipilacha.es/conocenos/",
+      "sameAs": ["https://instagram.com/restaurante.pipilacha"]
+    },
+    {
+      "@type": "Person",
+      "@id": "https://pipilacha.es/#noe",
+      "name": "Noé David",
+      "jobTitle": "Chef y cofundador",
+      "worksFor": { "@id": "https://pipilacha.es/#restaurant" },
+      "description": "Cofundador de Pipilacha. Investiga qué pasa cuando las flores se fermentan, se secan o se convierten en harina.",
+      "image": "https://pipilacha.es/assets/img/chef-2.jpg",
+      "mainEntityOfPage": "https://pipilacha.es/conocenos/",
+      "sameAs": ["https://instagram.com/restaurante.pipilacha"]
+    }
+  ]
+})}</script>`;
 ---
 
 <Base

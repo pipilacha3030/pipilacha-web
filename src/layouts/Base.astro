@@ -15,6 +15,89 @@ const here = (href) => path === href;
 // URLs absolutas (Astro.site = dominio final) para canonical, OG y schema
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImageAbs = new URL(ogImage, Astro.site).href;
+
+/* ---------- Grafo schema.org (todas las páginas) ----------
+   Entidades con @id estable para que buscadores y LLMs conecten
+   Pipilacha → restaurante → Madrid → flores comestibles → menú →
+   chefs. Las páginas pueden ampliar nodos vía la prop `schema`
+   (mismo @id = las propiedades se fusionan). */
+const SITE = Astro.site.href;
+const ID = { restaurant: `${SITE}#restaurant`, website: `${SITE}#website`, aran: `${SITE}#aran`, noe: `${SITE}#noe` };
+const breadcrumbNames = {
+  '/conocenos': 'Conócenos', '/menu': 'Menú', '/vinos': 'Vinos', '/galeria': 'Galería',
+  '/prensa': 'Prensa', '/regala': 'Regalar', '/reservas': 'Reservas',
+};
+const graph = [
+  {
+    "@type": "Restaurant",
+    "@id": ID.restaurant,
+    "name": "Pipilacha",
+    "description": "El único restaurante del mundo construido íntegramente sobre las flores. Menú de degustación de quince pases con flores comestibles como ingrediente principal, en Madrid.",
+    "url": SITE,
+    "image": new URL('/assets/img/hero.jpg', Astro.site).href,
+    "servesCuisine": "Cocina floral de autor",
+    "priceRange": "€€€",
+    "telephone": "+34919125998",
+    "email": "info@pipilacha.es",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "C. del Azulejo, 2",
+      "addressLocality": "Madrid",
+      "postalCode": "28028",
+      "addressCountry": "ES"
+    },
+    "geo": { "@type": "GeoCoordinates", "latitude": 40.4291, "longitude": -3.6669 },
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday","Friday","Saturday","Sunday"], "opens": "14:00", "closes": "16:30" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday","Friday","Saturday","Sunday"], "opens": "21:00", "closes": "23:30" }
+    ],
+    "acceptsReservations": "https://widget.thefork.com/867dcee9-49b5-47ed-90c0-c6c87149b328",
+    "hasMenu": [`${SITE}menu/`, `${SITE}vinos/`],
+    "founder": [{ "@id": ID.aran }, { "@id": ID.noe }],
+    "knowsAbout": [
+      "Flores comestibles",
+      "Cocina floral de autor",
+      "Menú de degustación",
+      "Investigación botánica aplicada a la gastronomía",
+      "Fermentación de flores"
+    ],
+    "sameAs": ["https://instagram.com/restaurante.pipilacha"]
+  },
+  {
+    "@type": "Person",
+    "@id": ID.aran,
+    "name": "Arán Rodrigo",
+    "jobTitle": "Chef y cofundador",
+    "worksFor": { "@id": ID.restaurant },
+    "knowsAbout": ["Flores comestibles", "Alta cocina", "Investigación botánica aplicada a la gastronomía"]
+  },
+  {
+    "@type": "Person",
+    "@id": ID.noe,
+    "name": "Noé David",
+    "jobTitle": "Chef y cofundador",
+    "worksFor": { "@id": ID.restaurant },
+    "knowsAbout": ["Flores comestibles", "Alta cocina", "Fermentación de flores"]
+  },
+  {
+    "@type": "WebSite",
+    "@id": ID.website,
+    "url": SITE,
+    "name": "Pipilacha",
+    "inLanguage": "es",
+    "publisher": { "@id": ID.restaurant }
+  },
+];
+if (path !== '/' && breadcrumbNames[path]) {
+  graph.push({
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Inicio", "item": SITE },
+      { "@type": "ListItem", "position": 2, "name": breadcrumbNames[path], "item": canonical }
+    ]
+  });
+}
+const graphJson = JSON.stringify({ "@context": "https://schema.org", "@graph": graph });
 ---
 
 <!DOCTYPE html>
@@ -34,7 +117,11 @@ const ogImageAbs = new URL(ogImage, Astro.site).href;
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:image" content={ogImageAbs} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Arán y Noé, los chefs de Pipilacha, entre flores" />
   <meta property="og:url" content={canonical} />
+  <meta name="theme-color" content="#F4EFE6" />
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={title} />
@@ -55,33 +142,7 @@ const ogImageAbs = new URL(ogImage, Astro.site).href;
   <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/marcellus-400-latin.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/hanken-grotesk-variable-latin.woff2" crossorigin />
 
-  {here('/') && (
-    <script type="application/ld+json" is:inline set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Restaurant",
-      "name": "Pipilacha",
-      "description": "El único restaurante del mundo construido íntegramente sobre las flores. Menú de degustación en Madrid.",
-      "servesCuisine": "Cocina floral de autor",
-      "priceRange": "€€€",
-      "image": new URL('/assets/img/hero.jpg', Astro.site).href,
-      "url": Astro.site.href,
-      "telephone": "+34919125998",
-      "acceptsReservations": "https://widget.thefork.com/867dcee9-49b5-47ed-90c0-c6c87149b328",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "C. del Azulejo, 2",
-        "addressLocality": "Madrid",
-        "postalCode": "28028",
-        "addressCountry": "ES"
-      },
-      "geo": { "@type": "GeoCoordinates", "latitude": 40.4291, "longitude": -3.6669 },
-      "openingHoursSpecification": [
-        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday","Friday","Saturday","Sunday"], "opens": "14:00", "closes": "16:30" },
-        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday","Friday","Saturday","Sunday"], "opens": "21:00", "closes": "23:30" }
-      ],
-      "sameAs": ["https://instagram.com/restaurante.pipilacha"]
-    })} />
-  )}
+  <script type="application/ld+json" is:inline set:html={graphJson} />
   {schema && <Fragment set:html={schema} />}
 </head>
 <body>

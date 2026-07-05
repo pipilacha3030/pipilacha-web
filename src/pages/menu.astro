@@ -22,10 +22,15 @@ const pases = [
   { name: 'Fresas con nata madrileña', hook: 'Fresón de Aranjuez rallado al momento.' },
 ];
 
-// Schema.org: el menú (coincide con los 15 pases listados en la página)
+// Schema.org: el menú (coincide con los 15 pases listados en la página).
+// El @id es la URL de la página: el Restaurant del grafo base (Base.astro)
+// apunta aquí vía hasMenu, y buscadores/LLMs cierran el círculo.
 const menuSchema = `<script type="application/ld+json">${JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Menu",
+  "@id": "https://pipilacha.es/menu/",
+  "url": "https://pipilacha.es/menu/",
+  "mainEntityOfPage": "https://pipilacha.es/menu/",
   "name": "Despertar de las flores",
   "inLanguage": "es",
   "description": "Menú de degustación de quince pases con flores comestibles como ingrediente. 85 € por persona.",
