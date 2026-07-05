@@ -1,6 +1,8 @@
 ---
 // Layout común a todas las páginas (nav + footer + scripts compartidos).
 import '../styles/main.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
 
 const {
   title,
@@ -153,24 +155,7 @@ const graphJson = JSON.stringify({ "@context": "https://schema.org", "@graph": g
   </div>
   <noscript><style>.page-transition{display:none!important}</style></noscript>
 
-  <!-- NAV -->
-  <header class={`nav${solidNav ? ' nav--solid' : ''}`} id="nav">
-    <a href="/" class="nav__logo" aria-label="Pipilacha inicio">
-      <img src="/assets/img/logo-light.png" class="nav__logo-img nav__logo-img--light" alt="Pipilacha" width="560" height="216" />
-      <img src="/assets/img/logo-dark.png" class="nav__logo-img nav__logo-img--dark" alt="" aria-hidden="true" width="560" height="216" />
-      <img src="/assets/img/iso-light.png" class="nav__logo-iso" alt="Pipilacha" width="200" height="200" />
-    </a>
-    <nav class="nav__links" id="navLinks">
-      <a href="/conocenos/" aria-current={here('/conocenos') ? 'page' : undefined}>Conócenos</a>
-      <a href="/menu/" aria-current={here('/menu') ? 'page' : undefined}>Menú</a>
-      <a href="/vinos/" aria-current={here('/vinos') ? 'page' : undefined}>Vinos</a>
-      <a href="/galeria/" aria-current={here('/galeria') ? 'page' : undefined}>Galería</a>
-      <a href="/prensa/" aria-current={here('/prensa') ? 'page' : undefined}>Prensa</a>
-      <a href="/regala/" aria-current={here('/regala') ? 'page' : undefined}>Regalar</a>
-      <a href="/reservas/" class="nav__cta">Reservar</a>
-    </nav>
-    <button class="nav__burger" id="burger" aria-label="Abrir menú" aria-controls="navLinks" aria-expanded="false"><span></span><span></span><span></span></button>
-  </header>
+  <Nav solidNav={solidNav} path={path} />
 
   <main>
     <slot />
@@ -180,41 +165,7 @@ const graphJson = JSON.stringify({ "@context": "https://schema.org", "@graph": g
     <a href="/reservas/" class="reserva-bar" id="reservaBar">Reservar</a>
   )}
 
-  <!-- FOOTER (estático, sin animación) -->
-  <footer class="footer" id="footer">
-    <div class="footer__brand">
-      <img src="/assets/img/logo-light.png" class="footer__logo" alt="Pipilacha" width="560" height="216" />
-      <p>El único restaurante del mundo construido íntegramente sobre las flores.</p>
-    </div>
-    <div class="footer__cols">
-      <div>
-        <h4>Horario</h4>
-        <p>Jueves a domingo<br>Comida 14:00 · Cena 21:00<br>16 plazas por servicio</p>
-      </div>
-      <div>
-        <h4>Ubicación</h4>
-        <p>C. del Azulejo, 2<br>28028 Madrid</p>
-        <a href="https://maps.google.com/?q=C.+del+Azulejo+2+28028+Madrid" target="_blank" rel="noopener">Cómo llegar →</a>
-      </div>
-      <div>
-        <h4>Contacto</h4>
-        <p><a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">@restaurante.pipilacha</a><br><a href="tel:+34919125998">+34 919 12 59 98</a><br><a href="mailto:info@pipilacha.es">info@pipilacha.es</a></p>
-      </div>
-    </div>
-    <nav class="footer__nav" aria-label="Páginas">
-      <a href="/conocenos/">Conócenos</a>
-      <a href="/menu/">Menú</a>
-      <a href="/vinos/">Vinos</a>
-      <a href="/galeria/">Galería</a>
-      <a href="/prensa/">Prensa</a>
-      <a href="/regala/">Regalar</a>
-      <a href="/reservas/">Reservar</a>
-    </nav>
-    <div class="footer__base">
-      <span>© 2026 Pipilacha</span>
-      <span>Madrid</span>
-    </div>
-  </footer>
+  <Footer />
 
   <!-- Interacción: Lenis + GSAP importados desde npm dentro del bundle de src/scripts/
        (Vite lo minifica y hashea el nombre → cache busting automático, sin ?v=N) -->

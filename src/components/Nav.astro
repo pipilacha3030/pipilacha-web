@@ -1,0 +1,24 @@
+---
+/* Navegación fija. `solidNav`: cream sobre fondo claro (todas las páginas
+   menos el Inicio, que va transparente sobre el hero). El estado scrolled,
+   el menú móvil y el vuelo de la libélula viven en src/scripts/nav.js. */
+const { solidNav = true, path = '/' } = Astro.props;
+const here = (href) => path === href;
+---
+<header class={`nav${solidNav ? ' nav--solid' : ''}`} id="nav">
+  <a href="/" class="nav__logo" aria-label="Pipilacha inicio">
+    <img src="/assets/img/logo-light.png" class="nav__logo-img nav__logo-img--light" alt="Pipilacha" width="560" height="216" />
+    <img src="/assets/img/logo-dark.png" class="nav__logo-img nav__logo-img--dark" alt="" aria-hidden="true" width="560" height="216" />
+    <img src="/assets/img/iso-light.png" class="nav__logo-iso" alt="Pipilacha" width="200" height="200" />
+  </a>
+  <nav class="nav__links" id="navLinks">
+    <a href="/conocenos/" aria-current={here('/conocenos') ? 'page' : undefined}>Conócenos</a>
+    <a href="/menu/" aria-current={here('/menu') ? 'page' : undefined}>Menú</a>
+    <a href="/vinos/" aria-current={here('/vinos') ? 'page' : undefined}>Vinos</a>
+    <a href="/galeria/" aria-current={here('/galeria') ? 'page' : undefined}>Galería</a>
+    <a href="/prensa/" aria-current={here('/prensa') ? 'page' : undefined}>Prensa</a>
+    <a href="/regala/" aria-current={here('/regala') ? 'page' : undefined}>Regalar</a>
+    <a href="/reservas/" class="nav__cta">Reservar</a>
+  </nav>
+  <button class="nav__burger" id="burger" aria-label="Abrir menú" aria-controls="navLinks" aria-expanded="false"><span></span><span></span><span></span></button>
+</header>
