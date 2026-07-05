@@ -33,6 +33,15 @@ import Base from '../layouts/Base.astro';
     <!-- WIDGET THEFORK (reserva online, inline) -->
     <div class="reserva-widget" id="reservar-widget">
       <div class="reserva-widget__inner">
+        <!-- flores asomando por los bordes del widget: van DETRÁS del marco (z-index<marco),
+             así parte queda tapada y parte asoma, como flotando por debajo y pasando lento -->
+        <div class="widget-blooms" aria-hidden="true">
+          <div class="wbloom wbloom--l1" data-parallax="0.06"><img src="/assets/img/flor-clavel.png" alt="" /></div>
+          <div class="wbloom wbloom--l2" data-parallax="0.09"><img src="/assets/img/flor-geranio.png" alt="" /></div>
+          <div class="wbloom wbloom--r1" data-parallax="0.08"><img src="/assets/img/flor-dahlia-roja.png" alt="" /></div>
+          <div class="wbloom wbloom--r2" data-parallax="0.05"><img src="/assets/img/flor-hibiscus.png" alt="" /></div>
+          <div class="wbloom wbloom--b1" data-parallax="0.07"><img src="/assets/img/flor-crisantemo.png" alt="" /></div>
+        </div>
         <div class="reserva-widget__frame">
           <p class="reserva-widget__loading">Cargando el calendario de reservas<span class="dots" aria-hidden="true"></span></p>
           <iframe
