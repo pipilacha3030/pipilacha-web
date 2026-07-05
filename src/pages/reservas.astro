@@ -7,55 +7,38 @@ import Base from '../layouts/Base.astro';
   description="Reserva en Pipilacha. 16 plazas por servicio, jueves a domingo, dos turnos. Menú degustación 85 € por persona."
 >
 
-  <div class="reservas">
-
-    <!-- Jardín flotante: flores llevadas por el viento, por detrás del widget.
-         Profundidad de campo real (PNGs desenfocados al fondo, nítidos delante),
-         deriva 100% CSS — sin JS, respeta prefers-reduced-motion. -->
-    <div class="reserva-garden" aria-hidden="true">
-      <div class="rg-field">
-        <!-- lejos: grande, muy tenue, lentísimo -->
-        <img class="rg rg--far rg--f1" src="/assets/img/flor-peonias-blur.png" alt="" loading="lazy" decoding="async" />
-        <img class="rg rg--far rg--f2" src="/assets/img/flor-hibiscus-blur.png" alt="" loading="lazy" decoding="async" />
-        <img class="rg rg--far rg--f3" src="/assets/img/flor-crisantemo-blur.png" alt="" loading="lazy" decoding="async" />
-        <!-- media -->
-        <img class="rg rg--mid rg--m1" src="/assets/img/flor-cosmos-blur.png" alt="" loading="lazy" decoding="async" />
-        <img class="rg rg--mid rg--m2" src="/assets/img/flor-calendula-blur.png" alt="" loading="lazy" decoding="async" />
-        <img class="rg rg--mid rg--m3" src="/assets/img/flor-dalia-blur.png" alt="" loading="lazy" decoding="async" />
-        <img class="rg rg--mid rg--m4" src="/assets/img/flor-campanula-blur.png" alt="" loading="lazy" decoding="async" />
-        <img class="rg rg--mid rg--m5" src="/assets/img/flor-coreopsis-blur.png" alt="" loading="lazy" decoding="async" />
-        <!-- cerca: nítidas, acentos con más movimiento -->
-        <img class="rg rg--near rg--n1" src="/assets/img/flor-clavel.png" alt="" loading="lazy" decoding="async" />
-        <img class="rg rg--near rg--n2" src="/assets/img/flor-geranio.png" alt="" loading="lazy" decoding="async" />
-        <img class="rg rg--near rg--n3" src="/assets/img/flor-cosmos.png" alt="" loading="lazy" decoding="async" />
-        <img class="rg rg--near rg--n4" src="/assets/img/flor-crisantemo.png" alt="" loading="lazy" decoding="async" />
-        <img class="rg rg--near rg--n5" src="/assets/img/flor-coreopsis.png" alt="" loading="lazy" decoding="async" />
-      </div>
+  <section class="page-header page-header--blooms">
+    <div class="menu-blooms" aria-hidden="true">
+      <img class="menu-bloom menu-bloom--1" src="/assets/img/flor-amapola.png" alt="" />
+      <img class="menu-bloom menu-bloom--3" src="/assets/img/flor-cosmos.png" alt="" />
+      <img class="menu-bloom menu-bloom--5" src="/assets/img/flor-borraja.png" alt="" />
     </div>
+    <p class="eyebrow">Reservas</p>
+    <h1 class="reveal-head">Reservar<br>en Pipilacha</h1>
+    <p>Elige día y turno abajo. Dieciséis plazas por servicio: ocho en la barra, frente a la cocina abierta, y ocho en mesa.</p>
+  </section>
 
-    <section class="page-header">
-      <p class="eyebrow">Reservas</p>
-      <h1 class="reveal-head">Reservar<br>en Pipilacha</h1>
-      <p>Elige día y turno abajo. Dieciséis plazas por servicio: ocho en la barra, frente a la cocina abierta, y ocho en mesa.</p>
-    </section>
-
-    <!-- WIDGET THEFORK (reserva online, inline) -->
-    <section class="reserva-widget" id="reservar-widget">
-      <div class="reserva-widget__inner">
-        <div class="reserva-widget__frame">
-          <p class="reserva-widget__loading">Cargando el calendario de reservas<span class="dots" aria-hidden="true"></span></p>
-          <iframe
-            src="https://widget.thefork.com/867dcee9-49b5-47ed-90c0-c6c87149b328"
-            allow="payment *"
-            title="Reservas Pipilacha"
-            loading="lazy"
-            onload="this.previousElementSibling.classList.add('is-loaded')">
-          </iframe>
-        </div>
-        <p class="reserva-widget__fallback">¿No carga? Reserva por <a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">Instagram</a> o llama al <a href="tel:+34919125998">919 12 59 98</a>.</p>
+  <!-- WIDGET THEFORK (reserva online, inline) -->
+  <section class="reserva-widget" id="reservar-widget">
+    <div class="menu-blooms reserva-widget__blooms desktop-only" aria-hidden="true">
+      <img class="menu-bloom reserva-bloom reserva-bloom--l1" src="/assets/img/flor-dalia.png" alt="" />
+      <img class="menu-bloom reserva-bloom reserva-bloom--l2" src="/assets/img/flor-borraja.png" alt="" />
+      <img class="menu-bloom reserva-bloom reserva-bloom--r1" src="/assets/img/flor-calendula.png" alt="" />
+      <img class="menu-bloom reserva-bloom reserva-bloom--r2" src="/assets/img/flor-cosmos.png" alt="" />
+    </div>
+    <div class="reserva-widget__inner">
+      <div class="reserva-widget__frame">
+        <p class="reserva-widget__loading">Cargando el calendario de reservas<span class="dots" aria-hidden="true"></span></p>
+        <iframe
+          src="https://widget.thefork.com/867dcee9-49b5-47ed-90c0-c6c87149b328"
+          allow="payment *"
+          title="Reservas Pipilacha"
+          loading="lazy"
+          onload="this.previousElementSibling.classList.add('is-loaded')">
+        </iframe>
       </div>
-    </section>
-
-  </div>
+      <p class="reserva-widget__fallback">¿No carga? Reserva por <a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">Instagram</a> o llama al <a href="tel:+34919125998">919 12 59 98</a>.</p>
+    </div>
+  </section>
 
 </Base>

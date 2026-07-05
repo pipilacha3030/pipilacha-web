@@ -11,6 +11,37 @@ if (!window.gsap) document.documentElement.classList.remove('js');
 
 let showcaseTl = null; // timeline del Despertar (clip-path), en bucle mientras la tarjeta está en pantalla
 
+/* ---------- ciclo de vida por página (transición asíncrona) ----------
+   Todo lo que vive dentro de <main> se monta en initPage() y se desmonta en
+   destroyPage(): los listeners de documento/ventana se atan a pageCtl.signal
+   y los motores con rAF/observers registran su parada en pageCleanups. */
+let pageCtl = new AbortController();
+const pageCleanups = [];
+
+function destroyPage() {
+  pageCtl.abort();
+  pageCtl = new AbortController();
+  pageCleanups.forEach(fn => { try { fn(); } catch (_) {} });
+  pageCleanups.length = 0;
+  if (window.gsap) {
+    if (showcaseTl) { showcaseTl.kill(); showcaseTl = null; }
+    ScrollTrigger.getAll().forEach(st => st.kill());
+    gsap.killTweensOf('.hero__media img'); // tween ambiente infinito del hero
+  }
+  heroPlayed = false;
+  document.body.classList.remove('scroll-lock');
+  if (window.lenis) window.lenis.start(); // la galería lo deja parado
+}
+
+function initPage() {
+  playHero();
+  initPageAnimations();
+  initGallery();
+  initCellar();
+  bindPageAnchors();
+  if (window.ScrollTrigger) ScrollTrigger.refresh();
+}
+
 /* ---------- hero: entrada cinematográfica (título tras máscara + zoom de cámara) ---------- */
 let heroPlayed = false;
 
@@ -84,9 +115,12 @@ if (!reduceMotion && window.Lenis) {
   window.lenis = lenis; // expuesto para depuración
   function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
   requestAnimationFrame(raf);
+}
 
-  // anclas suaves
-  document.querySelectorAll('a[href^="#"]').forEach(a => {
+/* anclas suaves del contenido (por página: los enlaces se renuevan en cada swap) */
+function bindPageAnchors() {
+  if (!lenis) return;
+  document.querySelectorAll('main a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
       const id = a.getAttribute('href');
       if (id.length > 1) { e.preventDefault(); lenis.scrollTo(id, { offset: 0 }); }
@@ -94,13 +128,12 @@ if (!reduceMotion && window.Lenis) {
   });
 }
 
-/* barra fija de reserva: aparece tras el primer scroll (solo móvil, vía CSS) */
-const reservaBar = document.getElementById('reservaBar');
-
-/* nav background toggle (umbral pequeño si la nav ya es sólida) */
+/* nav background toggle (umbral pequeño si la nav ya es sólida)
+   la barra de reserva se busca en vivo: cambia de página en página */
 const onScroll = y => {
   const threshold = nav.classList.contains('nav--solid') ? 10 : window.innerHeight * 0.6;
   nav.classList.toggle('scrolled', y > threshold);
+  const reservaBar = document.getElementById('reservaBar');
   if (reservaBar) reservaBar.classList.toggle('is-visible', y > window.innerHeight * 0.5);
 };
 if (lenis) lenis.on('scroll', e => onScroll(e.scroll));
@@ -119,13 +152,20 @@ if (window.gsap) {
     gsap.ticker.lagSmoothing(0);
   }
 
-  /* ── transición entre páginas: cortina de marca (cols + libélula) ── */
+  /* ══════════════════════════════════════════════════════════
+     TRANSICIÓN ASÍNCRONA ENTRE PÁGINAS (fetch + swap, sin recarga)
+     El enlace se intercepta, el HTML llega en paralelo a la cortina
+     (o ya está aquí por el prefetch al posar el puntero), <main> se
+     cambia bajo cubierta y la cortina sigue su camino hacia arriba:
+     un solo gesto. La libélula cruza la pantalla como firma.
+     ══════════════════════════════════════════════════════════ */
   const pt = document.getElementById('pageTransition');
   if (pt) {
     const ptMark = pt.querySelector('.page-transition__mark');
+    pt.style.animation = 'none'; // JS vivo: desactiva el salvavidas CSS (ptSafety)
     const hidePT = () => { pt.style.visibility = 'hidden'; pt.style.opacity = '0'; pt.style.pointerEvents = 'none'; };
 
-    // ENTRADA: la cortina olive se retira hacia arriba (wipe con clip-path); la libélula se desvanece
+    // ENTRADA (carga completa o bfcache): la cortina se retira hacia arriba
     const revealPage = () => {
       if (reduceMotion) { hidePT(); return; }
       pt.style.visibility = 'visible';
@@ -137,42 +177,168 @@ if (window.gsap) {
         .to(pt, { clipPath: 'inset(0 0 100% 0)', duration: 0.6, ease: 'expo.inOut' }, 0.05);
     };
 
-    // SALIDA: la cortina olive sube a cubrir (wipe limpio, sin rebote); la libélula aparece y navega
-    const coverPage = (href) => {
-      pt.style.visibility = 'visible';
-      pt.style.pointerEvents = 'auto';
-      gsap.set(pt, { clipPath: 'inset(100% 0 0 0)', autoAlpha: 1 });
-      gsap.set(ptMark, { xPercent: -50, yPercent: -50, autoAlpha: 0 });
-      gsap.timeline({ onComplete: () => { window.location.href = href; } })
-        .to(pt, { clipPath: 'inset(0 0 0 0)', duration: 0.5, ease: 'expo.inOut' }, 0)
-        .to(ptMark, { autoAlpha: 1, duration: 0.35, ease: 'power2.out' }, 0.14);
-    };
-
     revealPage();
-    // volver con "atrás" (bfcache) restaura la cortina cubierta → revelar
     window.addEventListener('pageshow', e => { if (e.persisted) revealPage(); });
 
-    // interceptar enlaces internos para encadenar salida → entrada
-    if (!reduceMotion) {
+    if (!reduceMotion && window.fetch && 'DOMParser' in window) {
+      history.scrollRestoration = 'manual'; // el scroll lo gobierna la transición
+      let isTransitioning = false;
+      let currentPath = location.pathname;
+      const pageCache = new Map(); // pathname → HTML (lo llena el prefetch)
+
+      const fetchPage = async (url) => {
+        if (pageCache.has(url.pathname)) return pageCache.get(url.pathname);
+        const res = await fetch(url.href);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const text = await res.text();
+        pageCache.set(url.pathname, text);
+        if (pageCache.size > 10) pageCache.delete(pageCache.keys().next().value);
+        return text;
+      };
+
+      // URL interna navegable de un <a>, o null si no procede interceptar
+      const internalUrl = (a) => {
+        const href = a.getAttribute('href');
+        if (!href || a.target === '_blank' || a.hasAttribute('download')) return null;
+        if (!href.startsWith('/') || href.startsWith('//')) return null;
+        const url = new URL(href, location.href);
+        if (url.pathname === location.pathname) return null;
+        return url;
+      };
+
+      // SALIDA: la cortina cubre mientras el contenido se hunde con leve parallax
+      const coverAsync = () => new Promise(done => {
+        const mainEl = document.querySelector('main');
+        pt.style.visibility = 'visible';
+        pt.style.pointerEvents = 'auto';
+        gsap.set(pt, { clipPath: 'inset(100% 0 0 0)', autoAlpha: 1 });
+        gsap.set(ptMark, { xPercent: -50, yPercent: -50, autoAlpha: 0 });
+        gsap.timeline({ onComplete: done })
+          .to(mainEl, { y: -44, autoAlpha: 0.55, duration: 0.55, ease: 'power2.in' }, 0)
+          .to(pt, { clipPath: 'inset(0 0 0 0)', duration: 0.55, ease: 'expo.inOut' }, 0)
+          .fromTo(ptMark, { y: 18, rotation: -5 },
+            { autoAlpha: 1, y: 0, rotation: 0, duration: 0.4, ease: 'power2.out' }, 0.16);
+      });
+
+      // REVELADO: la cortina sigue hacia arriba y la página nueva se asienta
+      const revealAsync = () => new Promise(done => {
+        const mainEl = document.querySelector('main');
+        gsap.set(mainEl, { y: 26, autoAlpha: 0 });
+        gsap.timeline({
+          onComplete: () => {
+            hidePT();
+            gsap.set(mainEl, { clearProps: 'transform,opacity,visibility' });
+            done();
+          }
+        })
+          .to(ptMark, { autoAlpha: 0, y: -30, duration: 0.3, ease: 'power2.in' }, 0.08)
+          .to(pt, { clipPath: 'inset(0 0 100% 0)', duration: 0.62, ease: 'expo.inOut' }, 0.1)
+          .to(mainEl, { y: 0, autoAlpha: 1, duration: 0.85, ease: 'expo.out' }, 0.22);
+      });
+
+      // aplica el documento nuevo: <main>, título, meta, nav y barra de reserva
+      const swapDoc = (text, url, push) => {
+        const doc = new DOMParser().parseFromString(text, 'text/html');
+        const mainEl = document.querySelector('main');
+        const newMain = doc.querySelector('main');
+        destroyPage(); // mata triggers/tweens/motores con el DOM viejo aún vivo
+        mainEl.innerHTML = newMain ? newMain.innerHTML : '';
+
+        document.title = doc.title;
+        const desc = document.querySelector('meta[name="description"]');
+        const newDesc = doc.querySelector('meta[name="description"]');
+        if (desc && newDesc) desc.setAttribute('content', newDesc.getAttribute('content'));
+
+        // nav: variante sólida/transparente + enlace activo
+        const newNav = doc.getElementById('nav');
+        if (newNav) nav.classList.toggle('nav--solid', newNav.classList.contains('nav--solid'));
+        const newLinks = doc.querySelectorAll('.nav__links a');
+        document.querySelectorAll('.nav__links a').forEach((a, i) => {
+          const cur = newLinks[i] && newLinks[i].getAttribute('aria-current');
+          cur ? a.setAttribute('aria-current', cur) : a.removeAttribute('aria-current');
+        });
+
+        // barra fija de reserva (no existe en /reservas/)
+        const bar = document.getElementById('reservaBar');
+        const newBar = doc.getElementById('reservaBar');
+        if (bar && !newBar) bar.remove();
+        else if (!bar && newBar) mainEl.after(newBar);
+
+        // innerHTML no ejecuta <script> (p. ej. el iframeResizer de regala): recrearlos
+        mainEl.querySelectorAll('script').forEach(old => {
+          if (old.type && old.type !== 'text/javascript' && old.type !== 'module') return; // ld+json…
+          const s = document.createElement('script');
+          for (const at of old.attributes) s.setAttribute(at.name, at.value);
+          s.textContent = old.textContent;
+          old.replaceWith(s);
+        });
+
+        if (push) history.pushState({ pipilacha: true }, '', url.href);
+        currentPath = url.pathname;
+
+        // arriba del todo sin animación y estado de la nav recalculado
+        if (lenis) lenis.scrollTo(0, { immediate: true, force: true });
+        window.scrollTo(0, 0);
+        onScroll(0);
+
+        initPage();
+      };
+
+      const transition = async (url, push) => {
+        if (isTransitioning) return;
+        isTransitioning = true;
+        if (links.classList.contains('open')) setMenu(false);
+        if (lenis) lenis.stop();
+        try {
+          const [text] = await Promise.all([fetchPage(url), coverAsync()]);
+          swapDoc(text, url, push);
+          await revealAsync();
+          // la galería gobierna su propio scroll: no reactivar Lenis sobre ella
+          if (lenis && !document.getElementById('galStage')) lenis.start();
+          isTransitioning = false;
+        } catch (err) {
+          window.location.href = url.href; // red de seguridad: navegación clásica
+        }
+      };
+
+      // interceptar enlaces internos
       document.addEventListener('click', e => {
         const a = e.target.closest('a');
         if (!a) return;
-        const href = a.getAttribute('href');
-        if (!href || a.target === '_blank' || a.hasAttribute('download')) return;
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-        if (!href.startsWith('/') || href.startsWith('//') || href.startsWith('#')) return;
-        const url = new URL(href, location.href);
-        if (url.pathname === location.pathname) return; // misma página: no cubrir
+        const href = a.getAttribute('href');
+        if (href && href.startsWith('#')) return;
+        const url = internalUrl(a);
+        if (!url) return;
         e.preventDefault();
-        if (lenis) lenis.stop();
-        coverPage(url.href);
+        transition(url, true);
+      });
+
+      // prefetch al posar el puntero: cuando llega el clic, la página ya está aquí
+      document.addEventListener('pointerover', e => {
+        const a = e.target.closest('a');
+        if (!a) return;
+        const url = internalUrl(a);
+        if (url && !pageCache.has(url.pathname)) fetchPage(url).catch(() => {});
+      });
+
+      // atrás/adelante del navegador (los cambios de #ancla no cuentan)
+      window.addEventListener('popstate', () => {
+        if (location.pathname === currentPath) return;
+        if (isTransitioning) { location.reload(); return; }
+        transition(new URL(location.href), false);
       });
     }
   }
 
-  // anima el hero en cuanto carga
-  playHero();
+}
 
+/* ============================================================
+   Animaciones del contenido — se desmontan y re-montan en cada
+   transición (initPage/destroyPage); los selectores viven en <main>
+   ============================================================ */
+function initPageAnimations() {
+  if (!window.gsap) return;
   if (!reduceMotion) {
     /* reveal genérico */
     gsap.utils.toArray('.reveal').forEach(el => {
@@ -302,6 +468,7 @@ if (window.gsap) {
 
     /* botones magnéticos: el botón se inclina hacia el cursor y vuelve suave (sin muelle) */
     if (window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+      /* signal: el CTA de la nav persiste entre páginas — sin él acumularía listeners */
       document.querySelectorAll('.btn, .nav__cta').forEach(btn => {
         btn.addEventListener('mousemove', e => {
           const r = btn.getBoundingClientRect();
@@ -310,10 +477,10 @@ if (window.gsap) {
             y: (e.clientY - r.top - r.height / 2) * 0.38,
             duration: 0.4, ease: 'power3.out'
           });
-        });
+        }, { signal: pageCtl.signal });
         btn.addEventListener('mouseleave', () => {
           gsap.to(btn, { x: 0, y: 0, duration: 0.6, ease: 'power3.out' });
-        });
+        }, { signal: pageCtl.signal });
       });
     }
 
@@ -338,16 +505,16 @@ if (window.gsap) {
   } else {
     gsap.set('.reveal', { opacity: 1, y: 0 });
   }
-
-  ScrollTrigger.refresh();
 }
 
 /* ============================================================
    GALERÍA: escenario 3D inmersivo (coverflow + fondo floral reactivo)
    Patrón de movimiento adaptado del "3D gradient carousel" (Codrops):
    nuestras fotos y nuestra paleta. Ajusta el "feel" desde el objeto CFG.
+   Es función (no IIFE): se monta por página y su rAF/listeners se
+   desmontan en destroyPage vía pageCleanups + pageCtl.signal.
    ============================================================ */
-(() => {
+function initGallery() {
   const stage = document.getElementById('galStage');
   if (!stage) return;
 
@@ -394,7 +561,7 @@ if (window.gsap) {
       if (e.key === 'Escape') closeLb();
       else if (e.key === 'ArrowLeft') lbShow(lb.cur - 1);
       else if (e.key === 'ArrowRight') lbShow(lb.cur + 1);
-    });
+    }, { signal: pageCtl.signal });
   }
 
   /* ---- sin motor (reduced-motion): tira desplazable + clic abre lightbox ---- */
@@ -539,11 +706,13 @@ if (window.gsap) {
     }
   }
 
+  let rafId;
   function frame(t) {
     if (!galPaused) { layout(t); renderBg(t); }
-    requestAnimationFrame(frame);
+    rafId = requestAnimationFrame(frame);
   }
-  requestAnimationFrame(frame);
+  rafId = requestAnimationFrame(frame);
+  pageCleanups.push(() => cancelAnimationFrame(rafId)); // el motor muere con la página
 
   /* --- interacción: rueda + arrastre (ratón/táctil) + teclado --- */
   if (window.lenis) window.lenis.stop();  // esta página no hace scroll vertical
@@ -593,14 +762,16 @@ if (window.gsap) {
   });
 
   let rz;
-  window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(measure, 150); });
-})();
+  window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(measure, 150); }, { signal: pageCtl.signal });
+}
 
 /* ============================================================
    VINOS: índice pegajoso (scrollspy) + scroll suave por sección
+   (por página: el observer se desconecta en destroyPage)
    ============================================================ */
-const cellar = document.querySelector('.cellar');
-if (cellar) {
+function initCellar() {
+  const cellar = document.querySelector('.cellar');
+  if (!cellar) return;
   const links = Array.from(cellar.querySelectorAll('.cellar-index a'));
   const sections = links.map(a => document.getElementById(a.dataset.spy)).filter(Boolean);
   const setActive = id => links.forEach(a => a.classList.toggle('is-active', a.dataset.spy === id));
@@ -611,6 +782,7 @@ if (cellar) {
       entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id); });
     }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
     sections.forEach(s => io.observe(s));
+    pageCleanups.push(() => io.disconnect());
   }
 
   // clic en el índice: lleva a la sección con el scroll suave de Lenis
@@ -625,3 +797,9 @@ if (cellar) {
 
   if (sections[0]) setActive(sections[0].id);
 }
+
+/* ============================================================
+   ARRANQUE — monta la página actual (las siguientes las monta
+   el router de transiciones tras cada swap)
+   ============================================================ */
+initPage();

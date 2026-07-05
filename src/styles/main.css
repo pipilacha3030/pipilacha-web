@@ -738,7 +738,7 @@ body:has(.gal-stage) .reserva-bar{display:none}
 /* ---------- widget de reserva (iframe TheFork) ---------- */
 /* fondo claro a juego con el widget; el calendario va en una tarjeta alta,
    ya desplegada — sin scroll dentro del scroll */
-.reserva-widget{background:transparent;padding:clamp(3rem,8vh,6.5rem) var(--gutter);position:relative;z-index:1}
+.reserva-widget{background:var(--cream);padding:clamp(3rem,8vh,6.5rem) var(--gutter);position:relative;overflow:hidden}
 .reserva-widget__inner{max-width:760px;margin:0 auto;position:relative;z-index:1}
 /* flores en blur a los lados del widget (solo escritorio, misma temática que vinos) */
 .reserva-bloom{position:absolute;height:auto}
@@ -764,100 +764,6 @@ body:has(.gal-stage) .reserva-bar{display:none}
 @keyframes lblDots{0%{content:""}25%{content:"·"}50%{content:"··"}75%{content:"···"}}
 .reserva-widget__fallback{margin-top:1.4rem;text-align:center;color:var(--text-muted);font-size:.88rem}
 .reserva-widget__fallback a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
-
-/* ============================================================
-   Jardín flotante de /reservas/ — flores llevadas por el viento
-   por detrás del widget de TheFork. Capa fija a viewport (viento
-   ambiente que sigue derivando al hacer scroll), profundidad de
-   campo real (PNGs pre-desenfocados al fondo, nítidos delante).
-   Deriva 100% CSS; reduced-motion la anula (regla global).
-   ============================================================ */
-.reservas .page-header{position:relative;z-index:1}
-.reserva-garden{
-  position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
-  animation:rgFade 1.8s var(--ease) both;
-}
-@keyframes rgFade{from{opacity:0}to{opacity:1}}
-/* viñeta de atmósfera hacia los bordes */
-.reserva-garden::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(130% 105% at 50% 38%, transparent 52%, rgba(49,51,31,.055) 100%);
-}
-/* grano filmico */
-.reserva-garden::after{
-  content:'';position:absolute;inset:0;opacity:.13;mix-blend-mode:soft-light;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-/* el campo se atenúa hacia el centro para no competir con el widget/texto */
-.rg-field{
-  position:absolute;inset:0;
-  -webkit-mask-image:radial-gradient(118% 82% at 50% 46%, transparent 26%, rgba(0,0,0,.55) 52%, #000 80%);
-  mask-image:radial-gradient(118% 82% at 50% 46%, transparent 26%, rgba(0,0,0,.55) 52%, #000 80%);
-}
-.rg{position:absolute;height:auto;will-change:transform;transform:translateZ(0)}
-
-/* --- lejos: grande, tenue, lentísimo --- */
-.rg--far{filter:saturate(1.04)}
-.rg--f1{top:-8%;left:-6%;width:clamp(300px,34vw,560px);opacity:.30;animation:rgDriftFar 62s ease-in-out infinite;animation-delay:-8s}
-.rg--f2{bottom:-10%;right:-7%;width:clamp(320px,36vw,600px);opacity:.26;animation:rgDriftFar 70s ease-in-out infinite reverse;animation-delay:-26s}
-.rg--f3{top:28%;left:-9%;width:clamp(240px,26vw,440px);opacity:.24;animation:rgDriftFar 56s ease-in-out infinite;animation-delay:-40s}
-
-/* --- media --- */
-.rg--m1{top:5%;right:1%;width:clamp(160px,18vw,300px);opacity:.5;animation:rgDriftA 44s ease-in-out infinite;animation-delay:-6s}
-.rg--m2{bottom:9%;left:2%;width:clamp(150px,16vw,280px);opacity:.46;animation:rgDriftB 48s ease-in-out infinite;animation-delay:-19s}
-.rg--m3{top:43%;right:-4%;width:clamp(180px,20vw,340px);opacity:.4;animation:rgDriftA 52s ease-in-out infinite reverse;animation-delay:-30s}
-.rg--m4{bottom:4%;right:20%;width:clamp(120px,13vw,220px);opacity:.42;animation:rgDriftB 40s ease-in-out infinite;animation-delay:-12s}
-.rg--m5{top:9%;left:5%;width:clamp(130px,14vw,240px);opacity:.44;animation:rgDriftA 46s ease-in-out infinite;animation-delay:-24s}
-
-/* --- cerca: nítida, más recorrido (viento en primer plano) --- */
-.rg--near{filter:drop-shadow(0 18px 30px rgba(49,51,31,.16))}
-.rg--n1{top:15%;left:11%;width:clamp(70px,8vw,120px);opacity:.62;animation:rgDriftNearA 34s ease-in-out infinite;animation-delay:-4s}
-.rg--n2{bottom:15%;right:9%;width:clamp(74px,9vw,132px);opacity:.6;animation:rgDriftNearB 38s ease-in-out infinite;animation-delay:-15s}
-.rg--n3{top:58%;left:1%;width:clamp(64px,7vw,110px);opacity:.56;animation:rgDriftNearA 30s ease-in-out infinite reverse;animation-delay:-9s}
-.rg--n4{bottom:20%;left:28%;width:clamp(56px,6vw,96px);opacity:.5;animation:rgDriftNearB 42s ease-in-out infinite;animation-delay:-22s}
-.rg--n5{top:4%;right:15%;width:clamp(60px,7vw,104px);opacity:.56;animation:rgDriftNearA 36s ease-in-out infinite;animation-delay:-13s}
-
-/* trayectorias de viento: bucle continuo (0% y 100% iguales) */
-@keyframes rgDriftFar{
-  0%,100%{transform:translate3d(0,0,0) rotate(0deg)}
-  25%{transform:translate3d(18px,-10px,0) rotate(1.6deg)}
-  50%{transform:translate3d(10px,14px,0) rotate(-1deg)}
-  75%{transform:translate3d(-14px,5px,0) rotate(1deg)}
-}
-@keyframes rgDriftA{
-  0%,100%{transform:translate3d(0,0,0) rotate(0deg)}
-  25%{transform:translate3d(30px,-14px,0) rotate(2.6deg)}
-  50%{transform:translate3d(16px,18px,0) rotate(-1.6deg)}
-  75%{transform:translate3d(-24px,7px,0) rotate(1.6deg)}
-}
-@keyframes rgDriftB{
-  0%,100%{transform:translate3d(0,0,0) rotate(0deg)}
-  25%{transform:translate3d(-28px,-12px,0) rotate(-2.4deg)}
-  50%{transform:translate3d(-14px,16px,0) rotate(1.4deg)}
-  75%{transform:translate3d(22px,6px,0) rotate(-1.4deg)}
-}
-@keyframes rgDriftNearA{
-  0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
-  25%{transform:translate3d(42px,-20px,0) rotate(3.4deg) scale(1.03)}
-  50%{transform:translate3d(22px,24px,0) rotate(-2deg) scale(1)}
-  75%{transform:translate3d(-34px,10px,0) rotate(2deg) scale(1.02)}
-}
-@keyframes rgDriftNearB{
-  0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
-  25%{transform:translate3d(-40px,-18px,0) rotate(-3.2deg) scale(1.02)}
-  50%{transform:translate3d(-20px,22px,0) rotate(1.8deg) scale(1)}
-  75%{transform:translate3d(32px,9px,0) rotate(-1.8deg) scale(1.03)}
-}
-
-/* móvil: menos flores y máscara más alta (el widget ocupa el ancho) */
-@media(max-width:900px){
-  .rg--f3,.rg--m3,.rg--m4,.rg--n3,.rg--n4,.rg--n5{display:none}
-  .rg-field{
-    -webkit-mask-image:radial-gradient(150% 66% at 50% 26%, transparent 30%, #000 82%);
-    mask-image:radial-gradient(150% 66% at 50% 26%, transparent 30%, #000 82%);
-  }
-  .reserva-garden::before{background:radial-gradient(150% 100% at 50% 22%, transparent 55%, rgba(49,51,31,.05) 100%)}
-}
 
 /* ---------- marquee (banda en movimiento) ---------- */
 .marquee{
