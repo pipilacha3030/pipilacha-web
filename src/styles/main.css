@@ -67,6 +67,13 @@
 /* ---------- reset ---------- */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
+/* Escala base para escritorios anchos/Retina: casi todo el sitio se dimensiona en
+   rem con topes fijos, así que en monitores grandes el texto se quedaba pequeño.
+   Subir el font-size raíz agranda TODO a la vez (nav, cuerpo, botones y los topes
+   de los clamp) manteniendo las proporciones. Sin efecto por debajo de 1440px. */
+@media (min-width:1440px){ html{font-size:17px} }
+@media (min-width:1728px){ html{font-size:18px} }
+@media (min-width:2100px){ html{font-size:19.5px} }
 body{
   font-family:var(--sans);
   background:var(--cream);
@@ -189,9 +196,9 @@ body.scroll-lock{overflow:hidden}
 /* al hacer scroll: fondo crema + sombra suave difusa (nunca una raya de 1px sobre crema) */
 .nav.scrolled{background:var(--cream);padding:1rem var(--gutter);box-shadow:0 16px 34px -26px rgba(49,51,31,.34)}
 .nav__logo{position:relative;display:block;line-height:0}
-.nav__logo-img{height:42px;width:auto;object-fit:contain;display:block;transition:opacity .5s var(--ease), height .5s var(--ease)}
+.nav__logo-img{height:58px;width:auto;object-fit:contain;display:block;transition:opacity .5s var(--ease), height .5s var(--ease)}
 .nav__logo-img--dark{position:absolute;top:0;left:0;opacity:0}
-.nav.scrolled .nav__logo-img{height:34px}
+.nav.scrolled .nav__logo-img{height:46px}
 .nav.scrolled .nav__logo-img--light{opacity:0}
 .nav.scrolled .nav__logo-img--dark{opacity:1}
 /* en móvil el logo es solo el isotipo de la libélula */
@@ -215,7 +222,7 @@ body.scroll-lock{overflow:hidden}
 /* laptops estrechas: menos hueco para que quepan los 6 enlaces + el botón */
 @media (min-width:901px) and (max-width:1180px){.nav__links{gap:1.5rem}}
 .nav__links a{
-  font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cream);
+  font-size:1.02rem;letter-spacing:.09em;text-transform:uppercase;color:var(--cream);
   transition:color .5s,opacity .3s;position:relative;
 }
 .nav.scrolled .nav__links a{color:var(--moss)}
@@ -367,8 +374,10 @@ body.scroll-lock{overflow:hidden}
 .barra__label{color:var(--accent-soft)}
 .barra__meta{color:rgba(244,239,230,.62);letter-spacing:.18em}
 .barra__grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2.5rem,6vw,6.5rem);align-items:start}
-.barra__media{margin:0;overflow:hidden}
-.barra__media img{aspect-ratio:4/5;height:auto;object-fit:cover;object-position:50% 32%}
+.barra__media{margin:0;overflow:hidden;background:var(--moss)}
+/* la imagen se sangra 1px por lado y `overflow:hidden` recorta ese borde: así el
+   canto antialiaseado (subpíxel) nunca queda visible como línea clara sobre el moss */
+.barra__media img{aspect-ratio:4/5;height:auto;width:calc(100% + 2px);margin-left:-1px;object-fit:cover;object-position:50% 32%}
 .barra__media figcaption{
   display:flex;align-items:center;gap:.9rem;margin-top:1rem;
   font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(244,239,230,.62);
@@ -1018,14 +1027,14 @@ body:has(.gal-stage) .reserva-bar{display:none}
    ============================================================ */
 .gallery{position:relative;padding:9vh var(--gutter);background:var(--cream)}
 .gallery-finale{
-  position:relative;width:min(900px,100%);height:min(72vh,640px);margin:0 auto;
+  position:relative;width:min(1240px,100%);height:min(84vh,780px);margin:0 auto;
   border-radius:4px;overflow:hidden;
   box-shadow:0 42px 70px -24px rgba(13,13,13,.50), 0 14px 28px -14px rgba(13,13,13,.42);
 }
 
 @media (max-width:768px){
   .gallery{padding:6vh var(--gutter)}
-  .gallery-finale{height:64vh}
+  .gallery-finale{width:100%;height:64vh}
 }
 
 /* ---------- accesibilidad: reduce motion ---------- */
