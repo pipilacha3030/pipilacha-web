@@ -155,10 +155,10 @@ const ogImageAbs = new URL(ogImage, Astro.site).href;
     </div>
   </footer>
 
-  <!-- Lenis (scroll suave) + GSAP (animaciones) — auto-alojados (npm), sin CDN -->
-  <script is:inline src="/js/vendor/lenis.min.js"></script>
-  <script is:inline src="/js/vendor/gsap.min.js"></script>
-  <script is:inline src="/js/vendor/ScrollTrigger.min.js"></script>
-  <script is:inline src="/js/main.js?v=81"></script>
+  <!-- Interacción: Lenis + GSAP importados desde npm dentro del bundle de src/scripts/
+       (Vite lo minifica y hashea el nombre → cache busting automático, sin ?v=N) -->
+  <script>
+    import '../scripts/main.js';
+  </script>
 </body>
 </html>
