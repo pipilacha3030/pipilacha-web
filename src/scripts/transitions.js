@@ -109,10 +109,12 @@ export function initTransitions({ initPage, destroyPage }) {
     // nav: variante sólida/transparente + enlace activo
     const newNav = doc.getElementById('nav');
     if (newNav) nav.classList.toggle('nav--solid', newNav.classList.contains('nav--solid'));
-    const newLinks = doc.querySelectorAll('.nav__links a');
-    document.querySelectorAll('.nav__links a').forEach((a, i) => {
-      const cur = newLinks[i] && newLinks[i].getAttribute('aria-current');
-      cur ? a.setAttribute('aria-current', cur) : a.removeAttribute('aria-current');
+    ['.nav__links a', '.nav-overlay__list a'].forEach((sel) => {
+      const fresh = doc.querySelectorAll(sel);
+      document.querySelectorAll(sel).forEach((a, i) => {
+        const cur = fresh[i] && fresh[i].getAttribute('aria-current');
+        cur ? a.setAttribute('aria-current', cur) : a.removeAttribute('aria-current');
+      });
     });
 
     // barra fija de reserva (no existe en /reservas/)

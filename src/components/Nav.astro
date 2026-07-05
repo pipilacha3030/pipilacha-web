@@ -1,9 +1,17 @@
 ---
 /* Navegación fija. `solidNav`: cream sobre fondo claro (todas las páginas
    menos el Inicio, que va transparente sobre el hero). El estado scrolled,
-   el menú móvil y el vuelo de la libélula viven en src/scripts/nav.js. */
+   el overlay de menú y el vuelo de la libélula viven en src/scripts/nav.js. */
 const { solidNav = true, path = '/' } = Astro.props;
 const here = (href) => path === href;
+const menu = [
+  { href: '/conocenos/', label: 'Conócenos', key: '/conocenos' },
+  { href: '/menu/', label: 'Menú', key: '/menu' },
+  { href: '/vinos/', label: 'Vinos', key: '/vinos' },
+  { href: '/galeria/', label: 'Galería', key: '/galeria' },
+  { href: '/prensa/', label: 'Prensa', key: '/prensa' },
+  { href: '/regala/', label: 'Regalar', key: '/regala' },
+];
 ---
 <header class={`nav${solidNav ? ' nav--solid' : ''}`} id="nav">
   <a href="/" class="nav__logo" aria-label="Pipilacha inicio">
@@ -11,14 +19,28 @@ const here = (href) => path === href;
     <img src="/assets/img/logo-dark.png" class="nav__logo-img nav__logo-img--dark" alt="" aria-hidden="true" width="560" height="216" />
     <img src="/assets/img/iso-light.png" class="nav__logo-iso" alt="Pipilacha" width="200" height="200" />
   </a>
-  <nav class="nav__links" id="navLinks">
-    <a href="/conocenos/" aria-current={here('/conocenos') ? 'page' : undefined}>Conócenos</a>
-    <a href="/menu/" aria-current={here('/menu') ? 'page' : undefined}>Menú</a>
-    <a href="/vinos/" aria-current={here('/vinos') ? 'page' : undefined}>Vinos</a>
-    <a href="/galeria/" aria-current={here('/galeria') ? 'page' : undefined}>Galería</a>
-    <a href="/prensa/" aria-current={here('/prensa') ? 'page' : undefined}>Prensa</a>
-    <a href="/regala/" aria-current={here('/regala') ? 'page' : undefined}>Regalar</a>
-    <a href="/reservas/" class="nav__cta">Reservar</a>
-  </nav>
-  <button class="nav__burger" id="burger" aria-label="Abrir menú" aria-controls="navLinks" aria-expanded="false"><span></span><span></span><span></span></button>
+  <div class="nav__right">
+    <nav class="nav__links" id="navLinks">
+      {menu.map((m) => (
+        <a href={m.href} aria-current={here(m.key) ? 'page' : undefined}>{m.label}</a>
+      ))}
+      <a href="/reservas/" class="nav__cta">Reservar</a>
+    </nav>
+    <button class="nav__burger" id="burger" aria-label="Abrir menú" aria-controls="navOverlay" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
 </header>
+
+<!-- Overlay de menú a pantalla completa (estilo Osmo): lo abre el burger en
+     cualquier tamaño; los enlaces suben tras una máscara en cascada. -->
+<div class="nav-overlay" id="navOverlay" aria-hidden="true">
+  <nav class="nav-overlay__list" aria-label="Menú principal">
+    {menu.map((m) => (
+      <a href={m.href} aria-current={here(m.key) ? 'page' : undefined}><span>{m.label}</span></a>
+    ))}
+    <a href="/reservas/" class="nav-overlay__cta"><span>Reservar</span></a>
+  </nav>
+  <div class="nav-overlay__foot">
+    <a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">@restaurante.pipilacha</a>
+    <a href="tel:+34919125998">919 12 59 98</a>
+  </div>
+</div>

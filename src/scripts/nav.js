@@ -8,15 +8,16 @@ import { lenis } from './scroll/lenis.js';
 
 const nav = document.getElementById('nav');
 const burger = document.getElementById('burger');
-const links = document.querySelector('.nav__links');
+const overlay = document.getElementById('navOverlay');
 
-export const isMenuOpen = () => links.classList.contains('open');
+export const isMenuOpen = () => document.body.classList.contains('menu-open');
 
 export const setMenu = (open) => {
-  links.classList.toggle('open', open);
+  document.body.classList.toggle('menu-open', open); // dispara el overlay + ajustes de la nav (CSS)
   burger.classList.toggle('is-open', open);
   burger.setAttribute('aria-expanded', open ? 'true' : 'false');
   burger.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+  if (overlay) overlay.setAttribute('aria-hidden', open ? 'false' : 'true');
   document.body.classList.toggle('scroll-lock', open);
   if (lenis) open ? lenis.stop() : lenis.start();
 };
@@ -35,7 +36,8 @@ export const onScroll = (y) => {
 
 export function initNav() {
   burger.addEventListener('click', () => setMenu(!isMenuOpen()));
-  links.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+  // al pulsar un enlace del overlay se cierra (la navegación la hace el router)
+  if (overlay) overlay.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
   // Esc cierra el menú y devuelve el foco al botón (accesibilidad de teclado)
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && isMenuOpen()) { setMenu(false); burger.focus(); }

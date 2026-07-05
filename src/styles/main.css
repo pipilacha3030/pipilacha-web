@@ -218,6 +218,7 @@ body.scroll-lock{overflow:hidden}
   45%{transform:translateY(-2.5px) scale(1.012)}
   100%{transform:translateY(0) scale(1)}
 }
+.nav__right{display:flex;align-items:center;gap:clamp(1.1rem,2.4vw,2rem)}
 .nav__links{display:flex;align-items:center;gap:2.4rem}
 /* laptops estrechas: menos hueco para que quepan los 6 enlaces + el botón */
 @media (min-width:901px) and (max-width:1180px){.nav__links{gap:1.5rem}}
@@ -240,7 +241,7 @@ body.scroll-lock{overflow:hidden}
 .nav.scrolled .nav__cta{background:var(--moss);color:var(--cream)!important;border-color:var(--moss)}
 /* burger de tres líneas: al abrir, el icono gira y las líneas se cruzan en X (estilo transición) */
 .nav__burger{
-  display:none;position:relative;width:44px;height:44px;
+  display:flex;position:relative;width:44px;height:44px;flex:none;
   background:none;border:0;cursor:pointer;color:var(--cream);
   transition:color .4s var(--ease), transform .6s var(--ease);
 }
@@ -276,6 +277,65 @@ body.scroll-lock{overflow:hidden}
 /* página activa: subrayado fino en acento, siempre visible */
 .nav__links a[aria-current="page"]{color:var(--accent)}
 .nav__links a[aria-current="page"]::after{background:var(--accent);transform:scaleX(1)}
+
+/* ============================================================
+   NAV OVERLAY (menú a pantalla completa, estilo Osmo) — lo abre el burger.
+   Cerrado: recogido por clip-path desde arriba, sin foco ni puntero. Al abrir,
+   se despliega (cortina) y los enlaces suben tras una máscara en cascada.
+   z-index < nav (100): la barra (logo + burger→×) queda por encima para cerrar.
+   ============================================================ */
+.nav-overlay{
+  position:fixed;inset:0;z-index:99;background:var(--moss);color:var(--cream);
+  display:flex;flex-direction:column;justify-content:center;gap:clamp(2rem,6vh,4rem);
+  padding:clamp(6rem,15vh,9rem) var(--gutter) clamp(2.5rem,7vh,4.5rem);
+  overflow:auto;
+  clip-path:inset(0 0 100% 0);visibility:hidden;pointer-events:none;
+  transition:clip-path .85s cubic-bezier(.76,0,.24,1), visibility 0s .85s;
+}
+body.menu-open .nav-overlay{
+  clip-path:inset(0 0 0 0);visibility:visible;pointer-events:auto;
+  transition:clip-path .9s cubic-bezier(.76,0,.24,1);
+}
+.nav-overlay__list{display:flex;flex-direction:column;max-width:var(--maxw);margin:0 auto;width:100%}
+.nav-overlay__list a{display:block;overflow:hidden;padding:.06em 0;width:fit-content}
+.nav-overlay__list a > span{
+  display:block;font-family:var(--serif);font-size:clamp(2.3rem,7.5vw,5.6rem);line-height:1.08;
+  color:var(--cream);transform:translateY(115%);
+  transition:transform .8s cubic-bezier(.76,0,.24,1), color .4s var(--ease);
+}
+body.menu-open .nav-overlay__list a > span{transform:translateY(0)}
+.nav-overlay__list a:hover > span{color:var(--accent-soft)}
+.nav-overlay__list a[aria-current="page"] > span{color:var(--accent-soft)}
+.nav-overlay__cta > span{font-style:italic}
+.nav-overlay__list a:focus-visible{outline:2px solid var(--accent-soft);outline-offset:6px}
+/* cascada: solo al ABRIR (el delay va en el estado open → al cerrar recogen juntos) */
+body.menu-open .nav-overlay__list a:nth-child(1) > span{transition-delay:.14s}
+body.menu-open .nav-overlay__list a:nth-child(2) > span{transition-delay:.20s}
+body.menu-open .nav-overlay__list a:nth-child(3) > span{transition-delay:.26s}
+body.menu-open .nav-overlay__list a:nth-child(4) > span{transition-delay:.32s}
+body.menu-open .nav-overlay__list a:nth-child(5) > span{transition-delay:.38s}
+body.menu-open .nav-overlay__list a:nth-child(6) > span{transition-delay:.44s}
+body.menu-open .nav-overlay__list a:nth-child(7) > span{transition-delay:.52s}
+.nav-overlay__foot{
+  display:flex;flex-wrap:wrap;gap:1rem 2.4rem;max-width:var(--maxw);margin:0 auto;width:100%;
+  font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,239,230,.6);
+  opacity:0;transform:translateY(12px);transition:opacity .5s .1s var(--ease), transform .5s .1s var(--ease);
+}
+body.menu-open .nav-overlay__foot{opacity:1;transform:none;transition:opacity .6s .55s var(--ease), transform .6s .55s var(--ease)}
+.nav-overlay__foot a{color:inherit;transition:color .3s var(--ease)}
+.nav-overlay__foot a:hover{color:var(--cream)}
+
+/* con el overlay abierto: barra transparente, logo claro, enlaces inline ocultos */
+body.menu-open .nav{background:transparent!important;box-shadow:none!important}
+body.menu-open .nav__links{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s var(--ease)}
+body.menu-open .nav__logo-img--light{opacity:1}
+body.menu-open .nav__logo-img--dark{opacity:0}
+body.menu-open .nav__logo-iso{filter:none!important}
+body.menu-open .nav__burger{color:var(--cream)}
+@media (prefers-reduced-motion:reduce){
+  .nav-overlay,body.menu-open .nav-overlay{transition:visibility 0s}
+  .nav-overlay__list a > span,.nav-overlay__foot{transition:none}
+}
 
 /* ---------- hero ---------- */
 .hero{position:relative;height:100svh;min-height:600px;overflow:hidden;display:flex;align-items:flex-end}
@@ -1069,19 +1129,8 @@ body:has(.gal-stage) .reserva-bar{display:none}
    RESPONSIVE
    ============================================================ */
 @media (max-width:900px){
-  .nav__links{
-    position:fixed;inset:0;background:var(--moss);flex-direction:column;justify-content:center;
-    gap:2.4rem;transform:translateX(100%);
-    /* cerrado: invisible PARA EL TECLADO también (fuera del orden de tabulación);
-       la visibility cambia al terminar de cerrarse, así la animación no varía */
-    visibility:hidden;
-    transition:transform .6s var(--ease), visibility 0s .6s;
-  }
-  .nav__links.open{transform:translateX(0);visibility:visible;transition:transform .6s var(--ease)}
-  .nav__links a,.nav.scrolled .nav__links a,.nav--solid .nav__links a{color:var(--cream);font-size:1.4rem}
-  .nav__links a[aria-current="page"]::after{display:none}
-  .nav__cta{border-color:var(--cream)}
-  .nav__burger{display:flex;z-index:101}
+  /* móvil: se ocultan los enlaces inline; el menú es el overlay a pantalla completa */
+  .nav__links{display:none}
   .concepto{grid-template-columns:1fr;gap:2rem}
   .concepto__imgs{height:70vh;max-height:520px}
   .showcooking{grid-template-columns:1fr}
