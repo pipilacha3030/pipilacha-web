@@ -500,6 +500,28 @@ body.scroll-lock{overflow:hidden}
 .pase--secret .pase__hook{color:rgba(244,239,230,.5);font-style:italic}
 .pase--secret .pase__n{color:var(--cream);opacity:.7}
 
+/* ============================================================
+   PROGRESSIVE BLUR (solo /menu/) — desenfoque en degradado, no de golpe.
+   En vez de WebGL: capas apiladas de backdrop-filter con blur creciente,
+   cada una recortada por una ventana de máscara que se solapa con la
+   siguiente → el desenfoque sube de forma continua hacia el borde. El
+   contenido se disuelve al deslizarse bajo el nav (arriba) y al salir por
+   abajo; la zona central de lectura queda nítida. Fijo al viewport, por
+   debajo del nav (z-index<100). Puntero desactivado. */
+.pblur{position:fixed;left:0;right:0;z-index:95;pointer-events:none}
+/* banda superior corta: vive en la franja del nav, no llega al título de la cabecera */
+.pblur--top{top:0;height:clamp(92px,11vh,124px)}
+/* banda inferior generosa: el pase se disuelve al salir por abajo (nada sensible ahí) */
+.pblur--bottom{bottom:0;height:clamp(140px,20vh,210px);transform:scaleY(-1)}
+.pblur > span{position:absolute;inset:0;display:block}
+/* rampa: blur máximo arriba (0%) → nítido abajo (100%); ventanas solapadas */
+.pblur > span:nth-child(1){backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 16%,transparent 34%);mask-image:linear-gradient(to bottom,#000 0%,#000 16%,transparent 34%)}
+.pblur > span:nth-child(2){backdrop-filter:blur(11px);-webkit-backdrop-filter:blur(11px);-webkit-mask-image:linear-gradient(to bottom,transparent 8%,#000 24%,#000 40%,transparent 56%);mask-image:linear-gradient(to bottom,transparent 8%,#000 24%,#000 40%,transparent 56%)}
+.pblur > span:nth-child(3){backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);-webkit-mask-image:linear-gradient(to bottom,transparent 24%,#000 40%,#000 56%,transparent 72%);mask-image:linear-gradient(to bottom,transparent 24%,#000 40%,#000 56%,transparent 72%)}
+.pblur > span:nth-child(4){backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);-webkit-mask-image:linear-gradient(to bottom,transparent 40%,#000 56%,#000 72%,transparent 88%);mask-image:linear-gradient(to bottom,transparent 40%,#000 56%,#000 72%,transparent 88%)}
+.pblur > span:nth-child(5){backdrop-filter:blur(1.5px);-webkit-backdrop-filter:blur(1.5px);-webkit-mask-image:linear-gradient(to bottom,transparent 56%,#000 74%,#000 100%);mask-image:linear-gradient(to bottom,transparent 56%,#000 74%,#000 100%)}
+@media (prefers-reduced-motion:reduce){ .pblur{display:none} }
+
 /* flores en blur flotando por detrás (se reutilizan como ambiente en la galería) */
 .menu-blooms{
   position:absolute;inset:0;z-index:0;pointer-events:none;

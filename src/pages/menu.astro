@@ -31,6 +31,10 @@ const menuSchema = `<script type="application/ld+json">${JSON.stringify({
   schema={menuSchema}
 >
 
+  <!-- progressive blur: el contenido se disuelve en degradado en los bordes del viewport -->
+  <div class="pblur pblur--top" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+  <div class="pblur pblur--bottom" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+
   <section class="page-header">
     <p class="eyebrow">Degustación · Primavera</p>
     <h1 class="reveal-head">Despertar de las flores</h1>
