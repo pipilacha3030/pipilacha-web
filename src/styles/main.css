@@ -356,8 +356,19 @@ body.menu-open .nav__burger{color:var(--cream)}
 .hero .eyebrow{color:var(--cream);opacity:.85}
 
 /* ---------- quiénes somos (full-bleed editorial + cascada tipográfica) ---------- */
+/* transición hero→quiénes: la foto se revela a través de una máscara de FLOR que
+   florece al hacer scroll (inspirado en el SVG-mask reveal de Codrops, en clave de
+   marca). --bloom = tamaño de la máscara: 360% = flor enorme = foto completa (estado
+   por defecto sin JS/reduced-motion); la anima GSAP de ~12% (capullo) a 360%. */
+@property --bloom{syntax:'<percentage>';inherits:false;initial-value:360%}
 .quienes__visual{
   position:relative;height:80vh;min-height:540px;overflow:hidden;
+  --bloom:360%;
+  --flower:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Cg%20fill='black'%3E%3Cg%20transform='rotate(0%2050%2050)'%3E%3Cellipse%20cx='50'%20cy='29'%20rx='13.5'%20ry='25'/%3E%3C/g%3E%3Cg%20transform='rotate(45%2050%2050)'%3E%3Cellipse%20cx='50'%20cy='29'%20rx='13.5'%20ry='25'/%3E%3C/g%3E%3Cg%20transform='rotate(90%2050%2050)'%3E%3Cellipse%20cx='50'%20cy='29'%20rx='13.5'%20ry='25'/%3E%3C/g%3E%3Cg%20transform='rotate(135%2050%2050)'%3E%3Cellipse%20cx='50'%20cy='29'%20rx='13.5'%20ry='25'/%3E%3C/g%3E%3Cg%20transform='rotate(180%2050%2050)'%3E%3Cellipse%20cx='50'%20cy='29'%20rx='13.5'%20ry='25'/%3E%3C/g%3E%3Cg%20transform='rotate(225%2050%2050)'%3E%3Cellipse%20cx='50'%20cy='29'%20rx='13.5'%20ry='25'/%3E%3C/g%3E%3Cg%20transform='rotate(270%2050%2050)'%3E%3Cellipse%20cx='50'%20cy='29'%20rx='13.5'%20ry='25'/%3E%3C/g%3E%3Cg%20transform='rotate(315%2050%2050)'%3E%3Cellipse%20cx='50'%20cy='29'%20rx='13.5'%20ry='25'/%3E%3C/g%3E%3Ccircle%20cx='50'%20cy='50'%20r='18'/%3E%3C/g%3E%3C/svg%3E");
+  -webkit-mask-image:var(--flower);mask-image:var(--flower);
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-position:center 42%;mask-position:center 42%;
+  -webkit-mask-size:var(--bloom) auto;mask-size:var(--bloom) auto;
 }
 .quienes__media{
   position:absolute;inset:-12% 0;margin:0;will-change:transform;

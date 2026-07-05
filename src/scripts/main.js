@@ -17,6 +17,7 @@ import { initMediaBlooms } from './animations/media.js';
 import { initMenuStem } from './animations/menu.js';
 import { initParallax } from './animations/parallax.js';
 import { initShowcase } from './animations/showcase.js';
+import { initBloomReveal } from './animations/bloomReveal.js';
 import { initMagnetic } from './interactions/magnetic.js';
 import { initCellar } from './cellar.js';
 
@@ -34,6 +35,7 @@ function initPage() {
   initMenuStem();
   initParallax();
   initShowcase();
+  initBloomReveal();
   initMagnetic();
 
   /* galería: el motor 3D solo se descarga en páginas que lo usan.
