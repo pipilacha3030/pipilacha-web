@@ -16,15 +16,13 @@ export function initHero() {
   if (!heroPlayed && document.querySelector('.hero__media img')) {
     heroPlayed = true;
     inPageContext(() => {
-      // acercamiento de cámara: la foto se asienta en un encuadre cerrado (mucho zoom)
+      // acercamiento de cámara: la foto se asienta UNA vez en un encuadre cerrado y
+      // se queda quieta. Se retiró el "respiro" infinito: escalar en bucle una foto
+      // muy detallada resampleaba el raster cada frame → titileo/aliasing en el borde.
+      // force3D mantiene la entrada en su propia capa GPU (compone, no repinta).
       gsap.fromTo('.hero__media img',
-        { scale: 1.32, transformOrigin: '50% 42%' },
-        { scale: 1.18, transformOrigin: '50% 42%', duration: 1.8, ease: 'power2.out' });
-      // vida ambiente: tras asentarse, el plano respira muy lento (cinematográfico)
-      gsap.to('.hero__media img', {
-        scale: 1.23, yPercent: -1.5, transformOrigin: '50% 42%',
-        duration: 16, ease: 'sine.inOut', repeat: -1, yoyo: true, delay: 1.8
-      });
+        { scale: 1.30, transformOrigin: '50% 42%' },
+        { scale: 1.18, transformOrigin: '50% 42%', duration: 1.8, ease: 'power2.out', force3D: true });
       // el título sube tras su máscara
       // y:0 limpia el translateY(110%) que GSAP interpreta como px; el reveal lo mueve solo por yPercent
       gsap.fromTo('.hero__title .reveal-mask',

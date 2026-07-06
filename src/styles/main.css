@@ -342,7 +342,10 @@ body.menu-open .nav__burger{color:var(--cream)}
 .hero__media{position:absolute;inset:-16% 0;z-index:0;will-change:transform}
 /* zoom cerrado: la imagen se escala por encima del recuadro (`overflow:hidden`
    del .hero recorta lo que sobra) para un encuadre más íntimo/apretado */
-.hero__media img{filter:saturate(1.02);transform:scale(1.18);transform-origin:50% 42%}
+/* la imagen vive en su propia capa GPU (backface-visibility + will-change): la
+   animación continua de "respiro" se compone sin repintar el raster grande cada
+   frame → sin titileo en el borde superior */
+.hero__media img{filter:saturate(1.02);transform:scale(1.18);transform-origin:50% 42%;will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .hero__veil{
   position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(20,20,12,.35) 0%,rgba(20,20,12,0) 28%,rgba(20,20,12,.15) 55%,rgba(20,20,12,.75) 100%);
