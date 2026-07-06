@@ -9,6 +9,7 @@ import { lenis } from './scroll/lenis.js';
 const nav = document.getElementById('nav');
 const burger = document.getElementById('burger');
 const overlay = document.getElementById('navOverlay');
+const tilesLayer = overlay && overlay.querySelector('.nav-overlay__tiles');
 
 export const isMenuOpen = () => document.body.classList.contains('menu-open');
 
@@ -18,6 +19,7 @@ export const setMenu = (open) => {
   burger.setAttribute('aria-expanded', open ? 'true' : 'false');
   burger.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
   if (overlay) overlay.setAttribute('aria-hidden', open ? 'false' : 'true');
+  if (!open && tilesLayer) tilesLayer.classList.remove('is-active'); // al cerrar, oculta las tiles
   document.body.classList.toggle('scroll-lock', open);
   if (lenis) open ? lenis.stop() : lenis.start();
 };
@@ -38,6 +40,22 @@ export function initNav() {
   burger.addEventListener('click', () => setMenu(!isMenuOpen()));
   // al pulsar un enlace del overlay se cierra (la navegación la hace el router)
   if (overlay) overlay.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+
+  /* image-tiles: al hover de una opción del overlay, su flor aparece repartida en
+     3 tiles (solo con puntero fino). Reutiliza 3 <img>: se les cambia el src. */
+  if (tilesLayer && window.matchMedia('(hover:hover)').matches) {
+    const tileImgs = Array.from(tilesLayer.querySelectorAll('.nav-tile img'));
+    const list = overlay.querySelector('.nav-overlay__list');
+    overlay.querySelectorAll('.nav-overlay__list a[data-flower]').forEach((a) => {
+      a.addEventListener('mouseenter', () => {
+        const src = a.dataset.flower;
+        if (!src) return;
+        tileImgs.forEach((im) => { if (im.getAttribute('src') !== src) im.setAttribute('src', src); });
+        tilesLayer.classList.add('is-active');
+      });
+    });
+    if (list) list.addEventListener('mouseleave', () => tilesLayer.classList.remove('is-active'));
+  }
   // Esc cierra el menú y devuelve el foco al botón (accesibilidad de teclado)
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && isMenuOpen()) { setMenu(false); burger.focus(); }

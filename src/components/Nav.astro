@@ -4,13 +4,14 @@
    el overlay de menú y el vuelo de la libélula viven en src/scripts/nav.js. */
 const { solidNav = true, path = '/' } = Astro.props;
 const here = (href) => path === href;
+// `flower`: PNG que aparece en tiles al hover del enlace en el overlay (una flor por opción)
 const menu = [
-  { href: '/conocenos/', label: 'Conócenos', key: '/conocenos' },
-  { href: '/menu/', label: 'Menú', key: '/menu' },
-  { href: '/vinos/', label: 'Vinos', key: '/vinos' },
-  { href: '/galeria/', label: 'Galería', key: '/galeria' },
-  { href: '/prensa/', label: 'Prensa', key: '/prensa' },
-  { href: '/regala/', label: 'Regalar', key: '/regala' },
+  { href: '/conocenos/', label: 'Conócenos', key: '/conocenos', flower: '/assets/img/flor-dahlia-rosa.png' },
+  { href: '/menu/', label: 'Menú', key: '/menu', flower: '/assets/img/flor-hibiscus.png' },
+  { href: '/vinos/', label: 'Vinos', key: '/vinos', flower: '/assets/img/flor-dahlia-roja.png' },
+  { href: '/galeria/', label: 'Galería', key: '/galeria', flower: '/assets/img/flor-cosmos.png' },
+  { href: '/prensa/', label: 'Prensa', key: '/prensa', flower: '/assets/img/flor-aciano.png' },
+  { href: '/regala/', label: 'Regalar', key: '/regala', flower: '/assets/img/flor-amapola.png' },
 ];
 ---
 <header class={`nav${solidNav ? ' nav--solid' : ''}`} id="nav">
@@ -33,11 +34,17 @@ const menu = [
 <!-- Overlay de menú a pantalla completa (estilo Osmo): lo abre el burger en
      cualquier tamaño; los enlaces suben tras una máscara en cascada. -->
 <div class="nav-overlay" id="navOverlay" aria-hidden="true">
+  <!-- tiles de imagen: al hover de una opción, su flor aparece repartida a la derecha -->
+  <div class="nav-overlay__tiles" aria-hidden="true">
+    <span class="nav-tile nav-tile--a"><img alt="" decoding="async" /></span>
+    <span class="nav-tile nav-tile--b"><img alt="" decoding="async" /></span>
+    <span class="nav-tile nav-tile--c"><img alt="" decoding="async" /></span>
+  </div>
   <nav class="nav-overlay__list" aria-label="Menú principal">
     {menu.map((m) => (
-      <a href={m.href} aria-current={here(m.key) ? 'page' : undefined}><span>{m.label}</span></a>
+      <a href={m.href} data-flower={m.flower} aria-current={here(m.key) ? 'page' : undefined}><span>{m.label}</span></a>
     ))}
-    <a href="/reservas/" class="nav-overlay__cta"><span>Reservar</span></a>
+    <a href="/reservas/" class="nav-overlay__cta" data-flower="/assets/img/flor-calendula.png"><span>Reservar</span></a>
   </nav>
   <div class="nav-overlay__foot">
     <a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">@restaurante.pipilacha</a>

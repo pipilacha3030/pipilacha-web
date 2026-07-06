@@ -296,7 +296,22 @@ body.menu-open .nav-overlay{
   clip-path:inset(0 0 0 0);visibility:visible;pointer-events:auto;
   transition:clip-path .9s cubic-bezier(.76,0,.24,1);
 }
-.nav-overlay__list{display:flex;flex-direction:column;max-width:var(--maxw);margin:0 auto;width:100%}
+/* image-tiles: al hover de una opción, su flor aparece repartida a la DERECHA
+   (los enlaces van alineados a la izquierda → ese hueco queda libre). Capa tras
+   los enlaces (z-index 0 < lista z-index 1); solo con hover real. */
+.nav-overlay__tiles{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.nav-tile{position:absolute;opacity:0;transform:scale(.78) translateY(16px);will-change:transform,opacity;
+  transition:opacity .5s var(--ease), transform .6s cubic-bezier(.22,1,.36,1)}
+.nav-tile img{display:block;width:100%;height:auto;filter:drop-shadow(0 26px 46px rgba(0,0,0,.42))}
+.nav-tile--a{top:12%;right:12%;width:clamp(110px,12vw,215px)}
+.nav-tile--b{top:39%;right:5%;width:clamp(150px,17vw,300px)}
+.nav-tile--c{bottom:14%;right:19%;width:clamp(85px,9vw,165px)}
+.nav-overlay__tiles.is-active .nav-tile{opacity:1;transform:none}
+.nav-overlay__tiles.is-active .nav-tile--b{transition-delay:.06s}
+.nav-overlay__tiles.is-active .nav-tile--c{transition-delay:.12s}
+@media (hover:none){ .nav-overlay__tiles{display:none} }
+
+.nav-overlay__list{position:relative;z-index:1;display:flex;flex-direction:column;max-width:var(--maxw);margin:0 auto;width:100%}
 .nav-overlay__list a{display:block;overflow:hidden;padding:.06em 0;width:fit-content}
 .nav-overlay__list a > span{
   display:block;font-family:var(--serif);font-size:clamp(2.3rem,7.5vw,5.6rem);line-height:1.08;
@@ -317,6 +332,7 @@ body.menu-open .nav-overlay__list a:nth-child(5) > span{transition-delay:.38s}
 body.menu-open .nav-overlay__list a:nth-child(6) > span{transition-delay:.44s}
 body.menu-open .nav-overlay__list a:nth-child(7) > span{transition-delay:.52s}
 .nav-overlay__foot{
+  position:relative;z-index:1;
   display:flex;flex-wrap:wrap;gap:1rem 2.4rem;max-width:var(--maxw);margin:0 auto;width:100%;
   font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,239,230,.6);
   opacity:0;transform:translateY(12px);transition:opacity .5s .1s var(--ease), transform .5s .1s var(--ease);
