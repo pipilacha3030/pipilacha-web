@@ -51,9 +51,9 @@
   --text-subtle: #6a6a5b; /* etiquetas y metadata (AA: ~4.8:1 sobre crema) */
   --border-subtle: rgba(49,51,31,.16); /* separadores de componentes */
 
-  --obsidian:    #0D0D0D; /* CTA del dock (máxima jerarquía) */
-  --oat:         #D5CDBC; /* beige cálido: bordes y derivados del dock */
-  --cloud-white: #FEFCF6; /* superficie del dock flotante */
+  --obsidian:    #0D0D0D; /* base del vidrio del dock (se usa en rgba, ver .nav__dock) */
+  --oat:         #D5CDBC; /* beige cálido (libre: el dock de vidrio ya no lo usa) */
+  --cloud-white: #FEFCF6; /* texto del CTA del dock */
 
   --serif: 'Marcellus', 'Times New Roman', serif;
   --sans:  'Hanken Grotesk', system-ui, -apple-system, sans-serif;
@@ -191,36 +191,68 @@ body.scroll-lock{overflow:hidden}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
 /* ---------- nav: dock flotante ----------
-   Píldora CLARA (cloud white al 88% + blur) separada del top, igual en toda
-   página. Grid 1fr auto 1fr: [burger] [logo centrado] [CTA]. La sombra va en
-   dos capas cálidas (moss corta = elevación física, olive larga = profundidad
-   ambiental). La versión intensificada vive pintada en ::after y solo se anima
-   su opacity (--dock-elev, mapeada al scroll en nav.js): animar box-shadow
-   repinta cada frame; animar opacity se compone en GPU — cero titileo. */
+   Vidrio líquido OSCURO (obsidiana translúcida + blur profundo) separado del
+   top, igual en toda página. Grid 1fr auto 1fr: [burger] [logo centrado] [CTA].
+   Capas del cristal (de atrás hacia delante):
+     fondo translúcido → ::before (micro-ruido) → .nav__sheen (haz de luz)
+     → contenido (burger/logo/CTA, z-index:1).
+   La sombra intensificada vive pintada en ::after y solo se anima su opacity
+   (--dock-elev, mapeada al scroll en nav.js): animar box-shadow repinta cada
+   frame; animar opacity se compone en GPU — cero titileo. */
 .nav{position:fixed;top:24px;left:0;width:100%;z-index:100;display:flex;justify-content:center;padding:0 var(--gutter)}
 .nav__dock{
   position:relative;
   display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1rem;
   width:100%;max-width:680px;padding:.7rem .8rem .7rem 1.1rem;border-radius:50px;
-  /* vidrio (glassmorphism estilo iOS/Instagram): fondo muy translúcido + blur
-     alto con saturate — el contenido de detrás se ve difuminado y más vivo, que
-     es lo que da la sensación de cristal. El brillo del canto superior lo pone
-     el inset del box-shadow (la "luz" refractada en el borde del vidrio). */
-  background:rgba(254,252,246,.55);
-  backdrop-filter:blur(20px) saturate(1.7);-webkit-backdrop-filter:blur(20px) saturate(1.7);
-  border:1px solid rgba(255,255,255,.5);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),
-    0 1px 2px rgba(49,51,31,.08), 0 3px 8px -2px rgba(49,51,31,.10), 0 28px 56px -20px rgba(100,93,59,.14);
+  /* vidrio denso estilo Instagram: obsidiana + blur 24 con saturate — los
+     colores de las flores que pasan por detrás se ven difuminados y más vivos.
+     El 55% es el mínimo que mantiene el burger/logo crema a ≥3:1 sobre las
+     páginas que arrancan en fondo crema (menu, conocenos…) — no bajarlo.
+     El "grosor" del cristal lo dan el borde crema ultrafino (bisel) y el
+     inset del box-shadow (la luz refractada en el canto superior). */
+  background:rgba(13,13,13,.55);
+  backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);
+  border:1px solid rgba(244,239,230,.12);
+  box-shadow:inset 0 1px 0 rgba(244,239,230,.18),
+    0 1px 2px rgba(0,0,0,.14), 0 4px 10px -2px rgba(0,0,0,.16), 0 28px 56px -20px rgba(13,13,13,.35);
   transition:padding .4s var(--ease);
 }
 /* sin soporte de backdrop-filter: fondo casi opaco para no perder legibilidad */
 @supports not (backdrop-filter:blur(1px)){
-  .nav__dock{background:rgba(254,252,246,.92)}
+  .nav__dock{background:rgba(13,13,13,.88)}
+}
+/* micro-textura: ruido SVG (feTurbulence) casi imperceptible que rompe la
+   perfección digital del degradado — el cristal parece material físico */
+.nav__dock::before{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:.02;
 }
 .nav__dock::after{
   content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;z-index:-1;
-  box-shadow:0 2px 4px rgba(49,51,31,.11), 0 6px 14px -4px rgba(49,51,31,.14), 0 36px 64px -18px rgba(100,93,59,.22);
+  box-shadow:0 2px 4px rgba(0,0,0,.18), 0 8px 18px -4px rgba(0,0,0,.2), 0 36px 64px -16px rgba(13,13,13,.45);
   opacity:var(--dock-elev, 0);
+}
+/* el contenido del dock viaja POR ENCIMA de las capas del cristal (ruido/sheen) */
+.nav__burger,.nav__logo,.nav__cta{position:relative;z-index:1}
+
+/* ---- sheen: el haz de luz que cruza el cristal ----
+   Contenedor que recorta (overflow + radius heredado) y ::before como haz:
+   degradado crema estrecho, inclinado con skewX. Solo se anima transform
+   (translateX) — compuesto en GPU, cero repintado. El ciclo dura 9s pero el
+   destello solo ocupa el primer tercio: cruza suave y el cristal descansa. */
+.nav__sheen{
+  position:absolute;inset:0;border-radius:inherit;overflow:hidden;pointer-events:none;
+}
+.nav__sheen::before{
+  content:"";position:absolute;top:-40%;bottom:-40%;left:-45%;width:45%;
+  background:linear-gradient(90deg,transparent,rgba(244,239,230,.18) 50%,transparent);
+  transform:translateX(0) skewX(-18deg);
+  animation:dockSheen 9s cubic-bezier(.45,.05,.25,1) 1.4s infinite;
+}
+@keyframes dockSheen{
+  0%{transform:translateX(0) skewX(-18deg)}
+  34%,100%{transform:translateX(340%) skewX(-18deg)}
 }
 /* contracción al bajar (ver nav.js onScroll): dos estados por posición, sin scrub */
 .nav__dock.is-compact{padding-top:.45rem;padding-bottom:.45rem}
@@ -228,8 +260,8 @@ body.scroll-lock{overflow:hidden}
 .nav__logo{position:relative;display:block;line-height:0;justify-self:center;will-change:transform}
 .nav__logo-img{height:40px;width:auto;object-fit:contain;display:block;transition:transform .4s var(--ease)}
 .nav__dock.is-compact .nav__logo-img{transform:scale(.85)}
-/* en móvil el logo es solo el isotipo de la libélula, oscurecido sobre el dock claro */
-.nav__logo-iso{display:none;height:32px;width:auto;object-fit:contain;transition:transform .4s var(--ease);filter:brightness(0) saturate(0)}
+/* en móvil el logo es solo el isotipo de la libélula, claro sobre el vidrio oscuro */
+.nav__logo-iso{display:none;height:32px;width:auto;object-fit:contain;transition:transform .4s var(--ease)}
 @media (max-width:560px){
   .nav__logo-img{display:none}
   .nav__logo-iso{display:block}
@@ -255,13 +287,14 @@ body.scroll-lock{overflow:hidden}
   transition:background .3s var(--ease);
   will-change:transform; /* lo mueve el efecto magnético (interactions/magnetic.js) */
 }
-.nav__cta:hover{background:var(--moss);color:var(--cloud-white)}
+/* hover: se invierte a crema — moss desaparecería contra el vidrio oscuro */
+.nav__cta:hover{background:var(--cream);color:var(--moss)}
 
-/* burger: 3 líneas moss; el morphing a X lo dirige GSAP (nav.js), aquí solo
-   la base. Bajo reduced-motion el estado abierto lo pinta el CSS (más abajo). */
+/* burger: 3 líneas crema sobre el vidrio; el morphing a X lo dirige GSAP (nav.js),
+   aquí solo la base. Bajo reduced-motion el estado abierto lo pinta el CSS (más abajo). */
 .nav__burger{
   justify-self:start;display:flex;position:relative;width:44px;height:44px;flex:none;
-  background:none;border:0;cursor:pointer;color:var(--moss);border-radius:50%;
+  background:none;border:0;cursor:pointer;color:var(--cream);border-radius:50%;
 }
 .nav__burger span{
   position:absolute;left:50%;top:50%;width:22px;height:2px;margin:-1px 0 0 -11px;
@@ -270,9 +303,10 @@ body.scroll-lock{overflow:hidden}
 .nav__burger span:nth-child(1){transform:translateY(-6px)}
 .nav__burger span:nth-child(3){transform:translateY(6px)}
 
-/* foco visible con teclado en los 3 elementos del dock */
+/* foco visible con teclado en los 3 elementos del dock (crema: es el único
+   tono con ≥3:1 sobre el vidrio oscuro; olive y accent-soft se funden) */
 .nav__burger:focus-visible,.nav__logo:focus-visible,.nav__cta:focus-visible{
-  outline:2px solid var(--olive);outline-offset:3px;
+  outline:2px solid var(--cream);outline-offset:3px;
 }
 
 /* ============================================================
@@ -338,6 +372,7 @@ body.scroll-lock{overflow:hidden}
    lanza timelines) — los estados los pinta el CSS al instante */
 @media (prefers-reduced-motion:reduce){
   .nav__dock,.nav__logo-img,.nav__logo-iso,.nav-overlay__list a > span,.nav-overlay__bloom{transition:none}
+  .nav__sheen::before{animation:none}
   .nav__burger.is-open span:nth-child(1){transform:translateY(0) rotate(45deg)}
   .nav__burger.is-open span:nth-child(2){transform:scaleX(0);opacity:0}
   .nav__burger.is-open span:nth-child(3){transform:translateY(0) rotate(-45deg)}

@@ -1,5 +1,5 @@
 ---
-/* Dock flotante claro: [burger] — [logo centrado] — [CTA Reservar].
+/* Dock flotante de vidrio líquido oscuro (obsidiana): [burger] — [logo centrado] — [CTA Reservar].
    Todas las páginas viven en el drawer lateral (35% desktop / completo móvil).
    El morphing del burger, el drawer con stagger, la sombra progresiva al
    scroll y el vuelo de la libélula viven en src/scripts/nav.js. */
@@ -18,10 +18,14 @@ const menu = [
 ---
 <header class="nav" id="nav">
   <div class="nav__dock" id="navDock">
+    <!-- haz de luz que cruza el cristal (sheen); recorta su propio brillo con
+         overflow para no ensuciar la sombra exterior del dock -->
+    <span class="nav__sheen" aria-hidden="true"></span>
+
     <button class="nav__burger" id="burger" aria-label="Abrir menú" aria-controls="navOverlay" aria-expanded="false"><span></span><span></span><span></span></button>
 
     <a href="/" class="nav__logo" aria-label="Pipilacha inicio">
-      <img src="/assets/img/logo-dark.png" class="nav__logo-img" alt="Pipilacha" width="560" height="216" />
+      <img src="/assets/img/logo-light.png" class="nav__logo-img" alt="Pipilacha" width="560" height="216" />
       <img src="/assets/img/iso-light.png" class="nav__logo-iso" alt="Pipilacha" width="200" height="200" />
     </a>
 
