@@ -1,10 +1,11 @@
 ---
-/* Navegación fija. `solidNav`: cream sobre fondo claro (todas las páginas
-   menos el Inicio, que va transparente sobre el hero). El estado scrolled,
-   el overlay de menú y el vuelo de la libélula viven en src/scripts/nav.js. */
-const { solidNav = true, path = '/' } = Astro.props;
+/* Dock flotante claro: [burger] — [logo centrado] — [CTA Reservar].
+   Todas las páginas viven en el drawer lateral (35% desktop / completo móvil).
+   El morphing del burger, el drawer con stagger, la sombra progresiva al
+   scroll y el vuelo de la libélula viven en src/scripts/nav.js. */
+const { path = '/' } = Astro.props;
 const here = (href) => path === href;
-// `flower`: PNG que aparece en tiles al hover del enlace en el overlay (una flor por opción)
+// `flower`: PNG que asoma en el drawer al hover de cada opción (una flor por página)
 const menu = [
   { href: '/conocenos/', label: 'Conócenos', key: '/conocenos', flower: '/assets/img/flor-dahlia-rosa.png' },
   { href: '/menu/', label: 'Menú', key: '/menu', flower: '/assets/img/flor-hibiscus.png' },
@@ -12,40 +13,35 @@ const menu = [
   { href: '/galeria/', label: 'Galería', key: '/galeria', flower: '/assets/img/flor-cosmos.png' },
   { href: '/prensa/', label: 'Prensa', key: '/prensa', flower: '/assets/img/flor-aciano.png' },
   { href: '/regala/', label: 'Regalar', key: '/regala', flower: '/assets/img/flor-amapola.png' },
+  { href: '/reservas/', label: 'Reservas', key: '/reservas', flower: '/assets/img/flor-calendula.png' },
 ];
 ---
-<header class={`nav${solidNav ? ' nav--solid' : ''}`} id="nav">
-  <a href="/" class="nav__logo" aria-label="Pipilacha inicio">
-    <img src="/assets/img/logo-light.png" class="nav__logo-img nav__logo-img--light" alt="Pipilacha" width="560" height="216" />
-    <img src="/assets/img/logo-dark.png" class="nav__logo-img nav__logo-img--dark" alt="" aria-hidden="true" width="560" height="216" />
-    <img src="/assets/img/iso-light.png" class="nav__logo-iso" alt="Pipilacha" width="200" height="200" />
-  </a>
-  <div class="nav__right">
-    <nav class="nav__links" id="navLinks">
-      {menu.map((m) => (
-        <a href={m.href} aria-current={here(m.key) ? 'page' : undefined}>{m.label}</a>
-      ))}
-      <a href="/reservas/" class="nav__cta">Reservar</a>
-    </nav>
+<header class="nav" id="nav">
+  <div class="nav__dock" id="navDock">
     <button class="nav__burger" id="burger" aria-label="Abrir menú" aria-controls="navOverlay" aria-expanded="false"><span></span><span></span><span></span></button>
+
+    <a href="/" class="nav__logo" aria-label="Pipilacha inicio">
+      <img src="/assets/img/logo-dark.png" class="nav__logo-img" alt="Pipilacha" width="560" height="216" />
+      <img src="/assets/img/iso-light.png" class="nav__logo-iso" alt="Pipilacha" width="200" height="200" />
+    </a>
+
+    <a href="/reservas/" class="nav__cta">Reservar</a>
   </div>
 </header>
 
-<!-- Overlay de menú a pantalla completa (estilo Osmo): lo abre el burger en
-     cualquier tamaño; los enlaces suben tras una máscara en cascada. -->
+<!-- velo sobre el resto de la página cuando el drawer está abierto (clic = cerrar) -->
+<div class="nav-scrim" id="navScrim" aria-hidden="true"></div>
+
+<!-- Drawer de navegación: panel lateral (35% en desktop, completo en móvil).
+     Los enlaces entran en cascada (stagger de GSAP, ver nav.js). -->
 <div class="nav-overlay" id="navOverlay" aria-hidden="true">
-  <!-- tiles de imagen: al hover de una opción, su flor aparece repartida a la derecha -->
-  <div class="nav-overlay__tiles" aria-hidden="true">
-    <span class="nav-tile nav-tile--a"><img alt="" decoding="async" /></span>
-    <span class="nav-tile nav-tile--b"><img alt="" decoding="async" /></span>
-    <span class="nav-tile nav-tile--c"><img alt="" decoding="async" /></span>
-  </div>
   <nav class="nav-overlay__list" aria-label="Menú principal">
     {menu.map((m) => (
       <a href={m.href} data-flower={m.flower} aria-current={here(m.key) ? 'page' : undefined}><span>{m.label}</span></a>
     ))}
-    <a href="/reservas/" class="nav-overlay__cta" data-flower="/assets/img/flor-calendula.png"><span>Reservar</span></a>
   </nav>
+  <!-- la flor de la opción bajo el cursor asoma aquí (solo puntero fino) -->
+  <figure class="nav-overlay__bloom" aria-hidden="true"><img alt="" decoding="async" /></figure>
   <div class="nav-overlay__foot">
     <a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">@restaurante.pipilacha</a>
     <a href="tel:+34919125998">919 12 59 98</a>

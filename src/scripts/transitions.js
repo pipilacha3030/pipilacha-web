@@ -16,7 +16,6 @@ export function initTransitions({ initPage, destroyPage }) {
   const pt = document.getElementById('pageTransition');
   if (!pt) return;
 
-  const nav = document.getElementById('nav');
   const ptMark = pt.querySelector('.page-transition__mark');
   pt.style.animation = 'none'; // JS vivo: desactiva el salvavidas CSS (ptSafety)
   const hidePT = () => { pt.style.visibility = 'hidden'; pt.style.opacity = '0'; pt.style.pointerEvents = 'none'; };
@@ -106,10 +105,8 @@ export function initTransitions({ initPage, destroyPage }) {
     const newDesc = doc.querySelector('meta[name="description"]');
     if (desc && newDesc) desc.setAttribute('content', newDesc.getAttribute('content'));
 
-    // nav: variante sólida/transparente + enlace activo
-    const newNav = doc.getElementById('nav');
-    if (newNav) nav.classList.toggle('nav--solid', newNav.classList.contains('nav--solid'));
-    ['.nav__links a', '.nav-overlay__list a'].forEach((sel) => {
+    // nav: sincroniza el enlace activo del drawer con la página nueva
+    ['.nav-overlay__list a'].forEach((sel) => {
       const fresh = doc.querySelectorAll(sel);
       document.querySelectorAll(sel).forEach((a, i) => {
         const cur = fresh[i] && fresh[i].getAttribute('aria-current');

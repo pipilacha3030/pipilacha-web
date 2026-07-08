@@ -51,6 +51,10 @@
   --text-subtle: #6a6a5b; /* etiquetas y metadata (AA: ~4.8:1 sobre crema) */
   --border-subtle: rgba(49,51,31,.16); /* separadores de componentes */
 
+  --obsidian:    #0D0D0D; /* CTA del dock (máxima jerarquía) */
+  --oat:         #D5CDBC; /* beige cálido: bordes y derivados del dock */
+  --cloud-white: #FEFCF6; /* superficie del dock flotante */
+
   --serif: 'Marcellus', 'Times New Roman', serif;
   --sans:  'Hanken Grotesk', system-ui, -apple-system, sans-serif;
 
@@ -186,171 +190,150 @@ body.scroll-lock{overflow:hidden}
 /* utilidad solo-lector-de-pantalla */
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
-/* ---------- nav ---------- */
-.nav{
-  position:fixed;top:0;left:0;width:100%;z-index:100;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:1.5rem var(--gutter);
-  transition:background .5s var(--ease), padding .5s var(--ease), box-shadow .5s;
+/* ---------- nav: dock flotante ----------
+   Píldora CLARA (cloud white al 88% + blur) separada del top, igual en toda
+   página. Grid 1fr auto 1fr: [burger] [logo centrado] [CTA]. La sombra va en
+   dos capas cálidas (moss corta = elevación física, olive larga = profundidad
+   ambiental). La versión intensificada vive pintada en ::after y solo se anima
+   su opacity (--dock-elev, mapeada al scroll en nav.js): animar box-shadow
+   repinta cada frame; animar opacity se compone en GPU — cero titileo. */
+.nav{position:fixed;top:24px;left:0;width:100%;z-index:100;display:flex;justify-content:center;padding:0 var(--gutter)}
+.nav__dock{
+  position:relative;
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1rem;
+  width:100%;max-width:680px;padding:.7rem .8rem .7rem 1.1rem;border-radius:50px;
+  background:rgba(254,252,246,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(100,93,59,.16);
+  box-shadow:0 1px 2px rgba(49,51,31,.08), 0 3px 8px -2px rgba(49,51,31,.10), 0 28px 56px -20px rgba(100,93,59,.14);
+  transition:padding .4s var(--ease);
 }
-/* al hacer scroll: fondo crema + sombra suave difusa (nunca una raya de 1px sobre crema) */
-.nav.scrolled{background:var(--cream);padding:1rem var(--gutter);box-shadow:0 16px 34px -26px rgba(49,51,31,.34)}
-.nav__logo{position:relative;display:block;line-height:0}
-.nav__logo-img{height:58px;width:auto;object-fit:contain;display:block;transition:opacity .5s var(--ease), height .5s var(--ease)}
-.nav__logo-img--dark{position:absolute;top:0;left:0;opacity:0}
-.nav.scrolled .nav__logo-img{height:46px}
-.nav.scrolled .nav__logo-img--light{opacity:0}
-.nav.scrolled .nav__logo-img--dark{opacity:1}
-/* en móvil el logo es solo el isotipo de la libélula */
-.nav__logo-iso{display:none;height:40px;width:auto;object-fit:contain;transition:height .5s var(--ease), filter .5s var(--ease)}
+.nav__dock::after{
+  content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;z-index:-1;
+  box-shadow:0 2px 4px rgba(49,51,31,.11), 0 6px 14px -4px rgba(49,51,31,.14), 0 36px 64px -18px rgba(100,93,59,.22);
+  opacity:var(--dock-elev, 0);
+}
+/* contracción al bajar (ver nav.js onScroll): dos estados por posición, sin scrub */
+.nav__dock.is-compact{padding-top:.45rem;padding-bottom:.45rem}
+
+.nav__logo{position:relative;display:block;line-height:0;justify-self:center;will-change:transform}
+.nav__logo-img{height:40px;width:auto;object-fit:contain;display:block;transition:transform .4s var(--ease)}
+.nav__dock.is-compact .nav__logo-img{transform:scale(.85)}
+/* en móvil el logo es solo el isotipo de la libélula, oscurecido sobre el dock claro */
+.nav__logo-iso{display:none;height:32px;width:auto;object-fit:contain;transition:transform .4s var(--ease);filter:brightness(0) saturate(0)}
 @media (max-width:560px){
   .nav__logo-img{display:none}
   .nav__logo-iso{display:block}
-  .nav.scrolled .nav__logo-iso{height:34px}
-  /* sobre fondo claro (nav sólida o con scroll) la libélula se oscurece para verse */
-  .nav--solid .nav__logo-iso,.nav.scrolled .nav__logo-iso{filter:brightness(0) saturate(0)}
+  .nav__dock.is-compact .nav__logo-iso{transform:scale(.85)}
 }
 /* la libélula "levanta el vuelo" al pulsarla: leve elevación + aleteo (feedback de marca) */
-.nav__logo{will-change:transform}
 .nav__logo.is-flying{animation:logoTakeoff .8s var(--ease)}
 @keyframes logoTakeoff{
   0%{transform:translateY(0) scale(1)}
   45%{transform:translateY(-2.5px) scale(1.012)}
   100%{transform:translateY(0) scale(1)}
 }
-.nav__right{display:flex;align-items:center;gap:clamp(1.1rem,2.4vw,2rem)}
-.nav__links{display:flex;align-items:center;gap:2.4rem}
-/* laptops estrechas: menos hueco para que quepan los 6 enlaces + el botón */
-@media (min-width:901px) and (max-width:1180px){.nav__links{gap:1.5rem}}
-.nav__links a{
-  font-size:1.02rem;letter-spacing:.09em;text-transform:uppercase;color:var(--cream);
-  transition:color .5s,opacity .3s;position:relative;
-}
-.nav.scrolled .nav__links a{color:var(--moss)}
-/* subrayado que se DIBUJA al pasar el cursor (de dentro afuera) */
-.nav__links a:not(.nav__cta)::after{
-  content:"";position:absolute;left:0;right:0;bottom:-6px;height:1px;
-  background:currentColor;transform:scaleX(0);transform-origin:right;
-  transition:transform .45s var(--ease);
-}
-.nav__links a:not(.nav__cta):hover::after{transform:scaleX(1);transform-origin:left}
-.nav__links a:focus-visible{outline:2px solid var(--accent-soft);outline-offset:3px;opacity:1}
+
+/* CTA Reservar: el único negro de la barra = máximo peso visual. Radio
+   concéntrico (radio del dock 50px − padding ≈ 38px) para curvas paralelas
+   — desviación deliberada de --radius-btn:0 dentro de la píldora. Sombra
+   propia más marcada que la del dock: flota un nivel por encima. */
 .nav__cta{
-  border:1px solid currentColor;padding:.6em 1.4em;border-radius:var(--radius-btn);
+  justify-self:end;display:inline-block;
+  font-size:.8rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;
+  background:var(--obsidian);color:var(--cloud-white);
+  padding:.8em 1.7em;border-radius:38px;
+  box-shadow:0 3px 8px -2px rgba(13,13,13,.28), 0 14px 28px -10px rgba(49,51,31,.32);
+  transition:background .3s var(--ease);
+  will-change:transform; /* lo mueve el efecto magnético (interactions/magnetic.js) */
 }
-.nav.scrolled .nav__cta{background:var(--moss);color:var(--cream)!important;border-color:var(--moss)}
-/* burger de tres líneas: al abrir, el icono gira y las líneas se cruzan en X (estilo transición) */
+.nav__cta:hover{background:var(--olive);color:var(--cloud-white)}
+
+/* burger: 3 líneas moss; el morphing a X lo dirige GSAP (nav.js), aquí solo
+   la base. Bajo reduced-motion el estado abierto lo pinta el CSS (más abajo). */
 .nav__burger{
-  display:flex;position:relative;width:44px;height:44px;flex:none;
-  background:none;border:0;cursor:pointer;color:var(--cream);
-  transition:color .4s var(--ease), transform .6s var(--ease);
+  justify-self:start;display:flex;position:relative;width:44px;height:44px;flex:none;
+  background:none;border:0;cursor:pointer;color:var(--moss);border-radius:50%;
 }
 .nav__burger span{
-  position:absolute;left:50%;top:50%;width:24px;height:2px;margin:-1px 0 0 -12px;
+  position:absolute;left:50%;top:50%;width:22px;height:2px;margin:-1px 0 0 -11px;
   border-radius:2px;background:currentColor;
-  transition:transform .55s var(--ease), width .4s var(--ease), opacity .25s var(--ease);
 }
 .nav__burger span:nth-child(1){transform:translateY(-6px)}
 .nav__burger span:nth-child(3){transform:translateY(6px)}
-.nav.scrolled .nav__burger{color:var(--moss)}
 
-/* nav sólida (todas las páginas menos el Inicio): cream de fondo, texto moss */
-.nav--solid{background:var(--cream)}
-.nav--solid.scrolled{box-shadow:0 16px 34px -26px rgba(49,51,31,.34)}
-.nav--solid .nav__logo-img--light{opacity:0}
-.nav--solid .nav__logo-img--dark{opacity:1}
-.nav--solid .nav__links a{color:var(--moss)}
-.nav--solid .nav__cta{background:var(--moss);color:var(--cream)!important;border-color:var(--moss)}
-.nav__cta{transition:background .4s var(--ease), color .4s var(--ease), border-color .4s var(--ease), transform .4s var(--ease)}
-.nav.scrolled .nav__cta:hover,.nav--solid .nav__cta:hover{background:var(--moss);border-color:var(--moss);opacity:1}
-.nav--solid .nav__burger{color:var(--moss)}
-/* abierto: siempre cream sobre el cajón moss; los puntos se estiran y cruzan en X */
-.nav.scrolled .nav__burger.is-open,
-.nav--solid .nav__burger.is-open,
-.nav__burger.is-open{color:var(--cream)}
-/* el botón gira 90° mientras las líneas colapsan en una X (el "gesto" de la transición) */
-.nav__burger.is-open{transform:rotate(90deg)}
-.nav__burger.is-open span:nth-child(1){transform:translateY(0) rotate(45deg)}
-.nav__burger.is-open span:nth-child(2){transform:scaleX(0);opacity:0}
-.nav__burger.is-open span:nth-child(3){transform:translateY(0) rotate(-45deg)}
-
-/* página activa: subrayado fino en acento, siempre visible */
-.nav__links a[aria-current="page"]{color:var(--accent)}
-.nav__links a[aria-current="page"]::after{background:var(--accent);transform:scaleX(1)}
+/* foco visible con teclado en los 3 elementos del dock */
+.nav__burger:focus-visible,.nav__logo:focus-visible,.nav__cta:focus-visible{
+  outline:2px solid var(--olive);outline-offset:3px;
+}
 
 /* ============================================================
-   NAV OVERLAY (menú a pantalla completa, estilo Osmo) — lo abre el burger.
-   Cerrado: recogido por clip-path desde arriba, sin foco ni puntero. Al abrir,
-   se despliega (cortina) y los enlaces suben tras una máscara en cascada.
-   z-index < nav (100): la barra (logo + burger→×) queda por encima para cerrar.
+   NAV DRAWER (panel lateral) — lo abre el burger del dock.
+   Desktop: 35% del ancho desde la izquierda + scrim sobre el resto.
+   Móvil (≤900px): pantalla completa. La apertura, el cierre y el
+   stagger de los enlaces los dirige GSAP (nav.js); el CSS deja el
+   panel oculto (translateX) como estado base y como fallback.
+   z-index: scrim 98 < drawer 99 < dock 100 (el dock queda encima
+   para poder cerrar con el burger→×).
    ============================================================ */
+.nav-scrim{
+  position:fixed;inset:0;z-index:98;background:rgba(49,51,31,.4);
+  opacity:0;visibility:hidden;pointer-events:none;cursor:pointer;
+}
 .nav-overlay{
-  position:fixed;inset:0;z-index:99;background:var(--moss);color:var(--cream);
-  display:flex;flex-direction:column;justify-content:center;gap:clamp(2rem,6vh,4rem);
-  padding:clamp(6rem,15vh,9rem) var(--gutter) clamp(2.5rem,7vh,4.5rem);
+  position:fixed;top:0;left:0;bottom:0;z-index:99;
+  width:clamp(380px,35vw,540px);max-width:100%;
+  background:var(--moss);color:var(--cream);
+  display:flex;flex-direction:column;justify-content:center;gap:clamp(1.8rem,5vh,3rem);
+  padding:clamp(6rem,16vh,8.5rem) clamp(2rem,4vw,3.5rem) clamp(2.2rem,6vh,3.5rem);
   overflow:auto;
-  clip-path:inset(0 0 100% 0);visibility:hidden;pointer-events:none;
-  transition:clip-path .85s cubic-bezier(.76,0,.24,1), visibility 0s .85s;
+  /* estado cerrado: solo visibility — el transform es propiedad EXCLUSIVA de
+     GSAP (xPercent). Declararlo también aquí envenena la caché de GSAP: la
+     matriz computada no sabe de porcentajes y fosiliza el -102% en píxeles. */
+  visibility:hidden;
 }
-body.menu-open .nav-overlay{
-  clip-path:inset(0 0 0 0);visibility:visible;pointer-events:auto;
-  transition:clip-path .9s cubic-bezier(.76,0,.24,1);
-}
-/* image-tiles: al hover de una opción, su flor aparece repartida a la DERECHA
-   (los enlaces van alineados a la izquierda → ese hueco queda libre). Capa tras
-   los enlaces (z-index 0 < lista z-index 1); solo con hover real. */
-.nav-overlay__tiles{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.nav-tile{position:absolute;opacity:0;transform:scale(.78) translateY(16px);will-change:transform,opacity;
-  transition:opacity .5s var(--ease), transform .6s cubic-bezier(.22,1,.36,1)}
-.nav-tile img{display:block;width:100%;height:auto;filter:drop-shadow(0 26px 46px rgba(0,0,0,.42))}
-.nav-tile--a{top:12%;right:12%;width:clamp(110px,12vw,215px)}
-.nav-tile--b{top:39%;right:5%;width:clamp(150px,17vw,300px)}
-.nav-tile--c{bottom:14%;right:19%;width:clamp(85px,9vw,165px)}
-.nav-overlay__tiles.is-active .nav-tile{opacity:1;transform:none}
-.nav-overlay__tiles.is-active .nav-tile--b{transition-delay:.06s}
-.nav-overlay__tiles.is-active .nav-tile--c{transition-delay:.12s}
-@media (hover:none){ .nav-overlay__tiles{display:none} }
+@media (max-width:900px){ .nav-overlay{width:100%} }
 
-.nav-overlay__list{position:relative;z-index:1;display:flex;flex-direction:column;max-width:var(--maxw);margin:0 auto;width:100%}
-.nav-overlay__list a{display:block;overflow:hidden;padding:.06em 0;width:fit-content}
+.nav-overlay__list{position:relative;z-index:1;display:flex;flex-direction:column}
+.nav-overlay__list a{display:block;padding:.09em 0;width:fit-content}
 .nav-overlay__list a > span{
-  display:block;font-family:var(--serif);font-size:clamp(2.3rem,7.5vw,5.6rem);line-height:1.08;
-  color:var(--cream);transform:translateY(115%);
-  transition:transform .8s cubic-bezier(.76,0,.24,1), color .4s var(--ease);
+  display:block;font-family:var(--serif);font-size:clamp(1.9rem,2.6vw,2.6rem);line-height:1.18;
+  color:var(--cream);transition:color .35s var(--ease), transform .45s var(--ease);
 }
-body.menu-open .nav-overlay__list a > span{transform:translateY(0)}
-.nav-overlay__list a:hover > span{color:var(--accent-soft)}
+@media (max-width:900px){ .nav-overlay__list a > span{font-size:clamp(2.1rem,7vw,3.2rem)} }
+/* hover: leve avance lateral + acento (coherente con el hover del dock, sin subrayado) */
+.nav-overlay__list a:hover > span{color:var(--accent-soft);transform:translateX(6px)}
 .nav-overlay__list a[aria-current="page"] > span{color:var(--accent-soft)}
-.nav-overlay__cta > span{font-style:italic}
 .nav-overlay__list a:focus-visible{outline:2px solid var(--accent-soft);outline-offset:6px}
-/* cascada: solo al ABRIR (el delay va en el estado open → al cerrar recogen juntos) */
-body.menu-open .nav-overlay__list a:nth-child(1) > span{transition-delay:.14s}
-body.menu-open .nav-overlay__list a:nth-child(2) > span{transition-delay:.20s}
-body.menu-open .nav-overlay__list a:nth-child(3) > span{transition-delay:.26s}
-body.menu-open .nav-overlay__list a:nth-child(4) > span{transition-delay:.32s}
-body.menu-open .nav-overlay__list a:nth-child(5) > span{transition-delay:.38s}
-body.menu-open .nav-overlay__list a:nth-child(6) > span{transition-delay:.44s}
-body.menu-open .nav-overlay__list a:nth-child(7) > span{transition-delay:.52s}
+
+/* la flor de la opción bajo el cursor asoma a la derecha del panel, a la
+   altura de los últimos enlaces — separada del pie para no pisar su texto */
+.nav-overlay__bloom{
+  position:absolute;right:clamp(1.5rem,3vw,3rem);bottom:clamp(9rem,20vh,12rem);z-index:0;
+  width:clamp(110px,11vw,180px);margin:0;pointer-events:none;
+  opacity:0;transform:scale(.85) rotate(-6deg);
+  transition:opacity .45s var(--ease), transform .6s cubic-bezier(.22,1,.36,1);
+}
+.nav-overlay__bloom img{display:block;width:100%;height:auto;filter:drop-shadow(0 18px 30px rgba(0,0,0,.35))}
+.nav-overlay__bloom.is-active{opacity:1;transform:none}
+@media (hover:none){ .nav-overlay__bloom{display:none} }
+
 .nav-overlay__foot{
   position:relative;z-index:1;
-  display:flex;flex-wrap:wrap;gap:1rem 2.4rem;max-width:var(--maxw);margin:0 auto;width:100%;
-  font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,239,230,.6);
-  opacity:0;transform:translateY(12px);transition:opacity .5s .1s var(--ease), transform .5s .1s var(--ease);
+  display:flex;flex-wrap:wrap;gap:.8rem 2.2rem;
+  font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,239,230,.6);
 }
-body.menu-open .nav-overlay__foot{opacity:1;transform:none;transition:opacity .6s .55s var(--ease), transform .6s .55s var(--ease)}
 .nav-overlay__foot a{color:inherit;transition:color .3s var(--ease)}
 .nav-overlay__foot a:hover{color:var(--cream)}
 
-/* con el overlay abierto: barra transparente, logo claro, enlaces inline ocultos */
-body.menu-open .nav{background:transparent!important;box-shadow:none!important}
-body.menu-open .nav__links{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s var(--ease)}
-body.menu-open .nav__logo-img--light{opacity:1}
-body.menu-open .nav__logo-img--dark{opacity:0}
-body.menu-open .nav__logo-iso{filter:none!important}
-body.menu-open .nav__burger{color:var(--cream)}
+/* reduced-motion: sin morphing, sin drawer animado, sin magnético (nav.js no
+   lanza timelines) — los estados los pinta el CSS al instante */
 @media (prefers-reduced-motion:reduce){
-  .nav-overlay,body.menu-open .nav-overlay{transition:visibility 0s}
-  .nav-overlay__list a > span,.nav-overlay__foot{transition:none}
+  .nav__dock,.nav__logo-img,.nav__logo-iso,.nav-overlay__list a > span,.nav-overlay__bloom{transition:none}
+  .nav__burger.is-open span:nth-child(1){transform:translateY(0) rotate(45deg)}
+  .nav__burger.is-open span:nth-child(2){transform:scaleX(0);opacity:0}
+  .nav__burger.is-open span:nth-child(3){transform:translateY(0) rotate(-45deg)}
+  body.menu-open .nav-scrim{opacity:1;visibility:visible;pointer-events:auto}
+  body.menu-open .nav-overlay{visibility:visible}
 }
 
 /* ---------- hero ---------- */
@@ -1159,8 +1142,6 @@ body:has(.gal-stage) .reserva-bar{display:none}
    RESPONSIVE
    ============================================================ */
 @media (max-width:900px){
-  /* móvil: se ocultan los enlaces inline; el menú es el overlay a pantalla completa */
-  .nav__links{display:none}
   .concepto{grid-template-columns:1fr;gap:2rem}
   .concepto__imgs{height:70vh;max-height:520px}
   .showcooking{grid-template-columns:1fr}

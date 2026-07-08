@@ -8,7 +8,6 @@ const {
   title,
   description,
   ogImage = '/assets/img/og.jpg', // imagen al compartir el enlace: los dos chefs en El Retiro
-  solidNav = true, // nav sólida sobre cream; en el Inicio va transparente sobre el hero
   schema,          // JSON-LD opcional por página (string ya serializado)
 } = Astro.props;
 
@@ -155,7 +154,7 @@ const graphJson = JSON.stringify({ "@context": "https://schema.org", "@graph": g
   </div>
   <noscript><style>.page-transition{display:none!important}</style></noscript>
 
-  <Nav solidNav={solidNav} path={path} />
+  <Nav path={path} />
 
   <main>
     <slot />
