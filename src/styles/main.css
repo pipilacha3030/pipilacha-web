@@ -51,8 +51,7 @@
   --text-subtle: #6a6a5b; /* etiquetas y metadata (AA: ~4.8:1 sobre crema) */
   --border-subtle: rgba(49,51,31,.16); /* separadores de componentes */
 
-  --obsidian:    #0D0D0D; /* base del vidrio del dock (se usa en rgba, ver .nav__dock) */
-  --oat:         #D5CDBC; /* beige cálido (libre: el dock de vidrio ya no lo usa) */
+  /* la base del vidrio del dock es #0D0D0D, escrita en rgba() en .nav__dock */
   --cloud-white: #FEFCF6; /* texto del CTA del dock */
 
   --serif: 'Marcellus', 'Times New Roman', serif;

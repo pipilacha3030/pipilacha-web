@@ -104,7 +104,13 @@ const graphJson = JSON.stringify({ "@context": "https://schema.org", "@graph": g
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <script is:inline>document.documentElement.classList.add('js')</script>
+  <!-- La clase `js` activa los hide-states de las animaciones (.js .reveal{…}).
+       Si el bundle hasheado falla en descargar (red inestable), nadie animaría
+       los .reveal y el contenido quedaría oculto: el listener de error de
+       scripts la retira y la página vuelve al estado sin-JS, todo visible.
+       OJO: si cambias este script, recalcula su hash sha256 en la CSP de
+       public/.htaccess (script-src) o el navegador lo bloqueará. -->
+  <script is:inline>document.documentElement.classList.add('js');window.addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='SCRIPT'&&t.src)document.documentElement.classList.remove('js')},true)</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title}</title>

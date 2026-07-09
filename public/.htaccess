@@ -41,3 +41,22 @@
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/css application/javascript text/javascript image/svg+xml
 </IfModule>
+
+# ---- Cabeceras de seguridad ----
+# CSP: solo scripts propios + el iframeResizer de Bonkdo + los DOS inline
+# permitidos por hash (la clase `js` de Base.astro y el iFrameResize() de
+# regala). Si cambias cualquiera de esos <script is:inline>, recalcula:
+#   printf '%s' "<contenido exacto>" | openssl dgst -sha256 -binary | openssl base64
+# frame-src con comodín de vendor: los widgets (TheFork/Bonkdo) pueden navegar
+# su propio iframe a hosts hermanos; cerrarlo más rompería reservas/compras.
+# 'unsafe-inline' SOLO en estilos (Astro emite <style> y style= inline); en
+# scripts NO hay unsafe-inline: un XSS inyectado no ejecutaría.
+<IfModule mod_headers.c>
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://*.bonkdo.com 'sha256-98B9qXIvmuDpTxEU4CQI4PON9NbP1zKueDjwTB+7nPY=' 'sha256-52ptapa6zOH4jdYhAXJ3dkR28YXcon7MfaU19Af4VFk='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src https://*.thefork.com https://*.bonkdo.com https://checkout.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  # HSTS moderado (6 meses, sin preload): la beta ya sirve https
+  Header always set Strict-Transport-Security "max-age=15552000"
+</IfModule>
