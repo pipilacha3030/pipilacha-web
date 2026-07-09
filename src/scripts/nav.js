@@ -94,6 +94,14 @@ function buildMenuTl() {
       { autoAlpha: 1, y: 0, duration: 0.45, ease: 'power3.out', stagger: 0.06 }, '<0.15');
 }
 
+/* La transición B (el dock se traga la página, transitions.js) toma el control
+   del cristal a mitad de gesto: mata el timeline del menú SIN su limpieza —
+   los estilos inline que deja vivos son justo el punto de partida del morph
+   a pantalla completa. El router repone todo con clearProps al contraer. */
+export function seizeMenuTimeline() {
+  if (menuTl) { menuTl.kill(); menuTl = null; }
+}
+
 function openMenu() {
   dock.classList.add('is-morphing');
   if (!menuTl) menuTl = buildMenuTl();

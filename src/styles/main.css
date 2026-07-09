@@ -1248,11 +1248,26 @@ body:has(.gal-stage) .reserva-bar{display:none}
   .wine-row__grape{max-width:100%;text-align:left}
 }
 
-/* ---------- transición entre páginas (fundido suave en crema) ---------- */
+/* ---------- transición entre páginas A: velo de CRISTAL (material del dock).
+   La página saliente "pasa tras el vidrio": obsidiana translúcida + blur — el
+   movimiento se ve a través mientras cubre, y al 86% de base enmascara el
+   swap del DOM bajo cubierta completa. z-index 97 < dock (100): el dock
+   persiste flotando SOBRE el velo — un solo material en toda la marca.
+   Se usa en los enlaces de página; los del dock usan la transición B
+   (el cristal del propio dock se expande, ver transitions.js). ---------- */
 .page-transition{
-  position:fixed;inset:0;z-index:9999;pointer-events:none;background:var(--olive);
+  position:fixed;inset:0;z-index:97;pointer-events:none;
+  background:rgba(13,13,13,.86);
+  backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);
   animation:ptSafety 0s linear 1.6s forwards; /* salvavidas si el JS no llega */
 }
+@supports not (backdrop-filter:blur(1px)){
+  .page-transition{background:rgba(13,13,13,.97)}
+}
+/* transición B: el dock a pantalla completa se densifica (90%) para enmascarar
+   el swap; el selector doble gana a body.menu-open aunque conviva un frame */
+body.menu-open .nav__dock.is-page-morph,
+.nav__dock.is-page-morph{background:rgba(13,13,13,.9)}
 @keyframes ptSafety{to{visibility:hidden;opacity:0}}
 .page-transition__mark{
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);

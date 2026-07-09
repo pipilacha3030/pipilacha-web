@@ -10,7 +10,7 @@
 import { gsap } from './scroll/scrollTrigger.js';
 import { lenis } from './scroll/lenis.js';
 import { reduceMotion } from './utils/motion.js';
-import { setMenu, isMenuOpen, onScroll } from './nav.js';
+import { setMenu, isMenuOpen, onScroll, seizeMenuTimeline } from './nav.js';
 
 export function initTransitions({ initPage, destroyPage }) {
   const pt = document.getElementById('pageTransition');
@@ -74,6 +74,55 @@ export function initTransitions({ initPage, destroyPage }) {
       .to(pt, { clipPath: 'inset(0 0 0 0)', duration: 0.55, ease: 'expo.inOut' }, 0)
       .fromTo(ptMark, { y: 18, rotation: -5 },
         { autoAlpha: 1, y: 0, rotation: 0, duration: 0.4, ease: 'power2.out' }, 0.16);
+  });
+
+  /* ---- transición B: el dock se traga la página ----
+     Solo para clics nacidos DENTRO del dock (menú, CTA, logo): el propio
+     cristal se expande a pantalla completa (densificado al 90% por
+     .is-page-morph para enmascarar el swap), la página cambia tras él y
+     la cápsula se contrae ya en la página nueva. Si el menú estaba abierto,
+     seizeMenuTimeline() (nav.js) mata su timeline y este morph parte de los
+     estilos inline vivos del panel — sin saltos. */
+  const navEl = document.querySelector('.nav');
+  const dockEl = document.getElementById('navDock');
+  const menuEl = document.getElementById('navMenu');
+  const dockChrome = [document.getElementById('burger'), document.querySelector('.nav__logo'), document.querySelector('.nav__cta')].filter(Boolean);
+  let navPad = '0px'; // gutter capturado al cubrir, devuelto al contraer
+
+  const coverDockAsync = () => new Promise((done) => {
+    navPad = getComputedStyle(navEl).paddingLeft;
+    dockEl.classList.add('is-page-morph', 'is-morphing');
+    gsap.timeline({ onComplete: done, defaults: { overwrite: 'auto' } })
+      .to([menuEl, ...dockChrome], { autoAlpha: 0, duration: 0.22, ease: 'power2.in' }, 0)
+      .to(navEl, { top: 0, paddingLeft: 0, paddingRight: 0, duration: 0.7, ease: 'power4.inOut' }, 0)
+      .to(dockEl, {
+        maxWidth: '100vw', height: () => window.innerHeight, borderRadius: 0,
+        duration: 0.7, ease: 'power4.inOut'
+      }, 0);
+  });
+
+  const revealDockAsync = () => new Promise((done) => {
+    const mainEl = document.querySelector('main');
+    gsap.set(mainEl, { clearProps: 'transform,opacity,visibility' }); // la página nueva espera lista bajo el cristal
+    // FLIP: altura natural de la píldora en este viewport (el menú es absoluto, no suma)
+    const prevH = dockEl.style.height;
+    dockEl.style.height = 'auto';
+    const pillH = dockEl.offsetHeight;
+    dockEl.style.height = prevH;
+    gsap.timeline({
+      defaults: { overwrite: 'auto' },
+      onComplete: () => {
+        dockEl.classList.remove('is-page-morph', 'is-morphing');
+        gsap.set(dockEl, { clearProps: 'maxWidth,height,borderRadius' });
+        gsap.set(navEl, { clearProps: 'top,paddingLeft,paddingRight' });
+        gsap.set([menuEl, ...dockChrome], { clearProps: 'all' });
+        gsap.set(menuEl.querySelectorAll('.nav__menu-list a, .nav__menu-meta > div'), { clearProps: 'all' });
+        done();
+      }
+    })
+      .to(dockEl, { height: pillH, maxWidth: 680, borderRadius: 50, duration: 0.75, ease: 'power4.inOut' }, 0)
+      .to(navEl, { top: 24, paddingLeft: navPad, paddingRight: navPad, duration: 0.75, ease: 'power4.inOut' }, 0)
+      .to(dockChrome, { autoAlpha: 1, duration: 0.35, ease: 'power2.out' }, 0.45);
   });
 
   // REVELADO: la cortina sigue hacia arriba y la página nueva se asienta
@@ -140,24 +189,28 @@ export function initTransitions({ initPage, destroyPage }) {
     initPage();
   };
 
-  const transition = async (url, push) => {
+  const transition = async (url, push, viaDock = false) => {
     if (isTransitioning) return;
     isTransitioning = true;
     if (isMenuOpen()) setMenu(false);
+    // B: el clic en un enlace del menú ya disparó setMenu(false) (listener del
+    // propio <a> en nav.js) — se mata su timeline y el morph parte de ahí
+    if (viaDock) seizeMenuTimeline();
     if (lenis) lenis.stop();
     try {
-      const [text] = await Promise.all([fetchPage(url), coverAsync()]);
+      const [text] = await Promise.all([fetchPage(url), viaDock ? coverDockAsync() : coverAsync()]);
       swapDoc(text, url, push);
-      await revealAsync();
+      await (viaDock ? revealDockAsync() : revealAsync());
       // la galería gobierna su propio scroll: no reactivar Lenis sobre ella
       if (lenis && !document.getElementById('galStage')) lenis.start();
       isTransitioning = false;
     } catch (err) {
-      window.location.href = url.href; // red de seguridad: navegación clásica
+      console.warn('[transitions] red de seguridad → navegación clásica:', err);
+      window.location.href = url.href;
     }
   };
 
-  // interceptar enlaces internos
+  // interceptar enlaces internos; los nacidos en el dock usan la transición B
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a');
     if (!a) return;
@@ -167,7 +220,7 @@ export function initTransitions({ initPage, destroyPage }) {
     const url = internalUrl(a);
     if (!url) return;
     e.preventDefault();
-    transition(url, true);
+    transition(url, true, !!a.closest('#navDock'));
   });
 
   // prefetch al posar el puntero: cuando llega el clic, la página ya está aquí
