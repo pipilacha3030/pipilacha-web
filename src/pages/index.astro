@@ -19,6 +19,14 @@ import Base from '../layouts/Base.astro';
         alt="Cuenco de cerámica lleno de flores comestibles sostenido entre las manos" />
       <div class="hero__veil"></div>
     </div>
+    <!-- flores nítidas y saturadas en la banda superior: al hacer scroll cruzan
+         POR DETRÁS del dock fijo y el cristal las refracta (efecto Instagram).
+         Sin data-parallax: el transform de GSAP pelearía con el float CSS. -->
+    <div class="hero__blooms" aria-hidden="true">
+      <img src="/assets/img/flor-amapola.png" class="hero-bloom hero-bloom--1" alt="" decoding="async" />
+      <img src="/assets/img/flor-dahlia-rosa.png" class="hero-bloom hero-bloom--2" alt="" decoding="async" />
+      <img src="/assets/img/flor-coreopsis.png" class="hero-bloom hero-bloom--3" alt="" decoding="async" />
+    </div>
     <div class="hero__content">
       <p class="eyebrow reveal" data-delay="0.1">Restaurante de degustación · Madrid</p>
       <h1 class="hero__title">
