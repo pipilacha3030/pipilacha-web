@@ -86,6 +86,7 @@ export function initTransitions({ initPage, destroyPage }) {
   const navEl = document.querySelector('.nav');
   const dockEl = document.getElementById('navDock');
   const menuEl = document.getElementById('navMenu');
+  const scrimEl = document.getElementById('navScrim');
   const dockChrome = [document.getElementById('burger'), document.querySelector('.nav__logo'), document.querySelector('.nav__cta')].filter(Boolean);
   let navPad = '0px'; // gutter capturado al cubrir, devuelto al contraer
 
@@ -93,7 +94,9 @@ export function initTransitions({ initPage, destroyPage }) {
     navPad = getComputedStyle(navEl).paddingLeft;
     dockEl.classList.add('is-page-morph', 'is-morphing');
     gsap.timeline({ onComplete: done, defaults: { overwrite: 'auto' } })
-      .to([menuEl, ...dockChrome], { autoAlpha: 0, duration: 0.22, ease: 'power2.in' }, 0)
+      // el scrim viaja aquí: seizeMenuTimeline() lo deja congelado a media
+      // opacidad (mata el timeline del menú SIN limpieza) y nadie más lo apaga
+      .to([menuEl, scrimEl, ...dockChrome], { autoAlpha: 0, duration: 0.22, ease: 'power2.in' }, 0)
       .to(navEl, { top: 0, paddingLeft: 0, paddingRight: 0, duration: 0.7, ease: 'power4.inOut' }, 0)
       .to(dockEl, {
         maxWidth: '100vw', height: () => window.innerHeight, borderRadius: 0,
@@ -115,7 +118,7 @@ export function initTransitions({ initPage, destroyPage }) {
         dockEl.classList.remove('is-page-morph', 'is-morphing');
         gsap.set(dockEl, { clearProps: 'maxWidth,height,borderRadius' });
         gsap.set(navEl, { clearProps: 'top,paddingLeft,paddingRight' });
-        gsap.set([menuEl, ...dockChrome], { clearProps: 'all' });
+        gsap.set([menuEl, scrimEl, ...dockChrome], { clearProps: 'all' });
         gsap.set(menuEl.querySelectorAll('.nav__menu-list a, .nav__menu-meta > div'), { clearProps: 'all' });
         done();
       }

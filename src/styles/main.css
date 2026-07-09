@@ -215,26 +215,34 @@ body.scroll-lock{overflow:hidden}
      morphing estira el dock a panel, la barra no se descuelga al centro */
   align-content:start;
   width:100%;max-width:680px;padding:.7rem .8rem .7rem 1.1rem;border-radius:50px;
-  /* vidrio estilo Instagram: obsidiana + blur MODERADO (12) con saturate —
-     lo que pasa por detrás se ve moverse, suavizado y con los colores vivos.
-     El 64% asienta la lectura del burger/logo crema en reposo (el mínimo
-     absoluto de contraste es 55% — no bajar de ahí); DESPLEGADO sube a 82%
-     (regla body.menu-open más abajo) para que los enlaces del panel lean
+  /* vidrio estilo Instagram: obsidiana con cuerpo (52%) + blur MASIVO (28)
+     con inyección de saturate/contrast — las formas que pasan por detrás se
+     funden en manchas de color vivas, la distorsión orgánica de la app de IG.
+     El tinte al 52% solo lee gracias a ese blur profundo (homogeneiza el
+     fondo); si algún día se baja el blur, subir el tinte. DESPLEGADO sube a
+     82% (regla body.menu-open más abajo) para que los enlaces del panel lean
      sobre cualquier fondo. El "grosor" del cristal lo dan el borde crema
      ultrafino (bisel) y el inset del box-shadow (luz en el canto superior). */
-  background:rgba(13,13,13,.64);
-  backdrop-filter:blur(12px) saturate(170%);-webkit-backdrop-filter:blur(12px) saturate(170%);
+  background:rgba(13,13,13,.5);
+  backdrop-filter:blur(30px) saturate(190%) contrast(90%);-webkit-backdrop-filter:blur(30px) saturate(190%) contrast(90%);
   border:1px solid rgba(244,239,230,.12);
-  box-shadow:inset 0 1px 0 rgba(244,239,230,.18),
-    0 1px 2px rgba(0,0,0,.14), 0 4px 10px -2px rgba(0,0,0,.16), 0 28px 56px -20px rgba(13,13,13,.35);
+  /* refracción de lente en los cantos: halo interior difuso + luz doblada
+     arriba (blanca) y sombra doblada abajo (negra) — el cristal "multiplica"
+     la luz en los extremos como una lupa; la última capa es la sombra externa */
+  box-shadow:inset 0 0 12px rgba(255,255,255,.08),
+    inset 0 2px 4px rgba(255,255,255,.2),
+    inset 0 -2px 4px rgba(0,0,0,.4),
+    0 12px 40px rgba(0,0,0,.3);
   transition:padding .4s var(--ease), background .5s var(--ease);
-  /* estabilidad de compositing: capa GPU propia y fija (translateZ+will-change)
-     y aislamiento del árbol de apilamiento — evita tiles duplicados/ghosting
-     del backdrop-filter en scroll rápido. OJO: contain:paint aquí recortaría
-     la sombra del ::after y NO ponerlos en .nav (el wrapper): se volvería
-     "backdrop root" y el cristal dejaría de ver la página tras él. */
-  transform:translateZ(0);
-  will-change:transform;
+  /* estabilidad de compositing SIN transform fijo: un translateZ(0) permanente
+     rompe el render del backdrop-filter en algunos navegadores móviles. La
+     capa GPU la insinúan los will-change (hints, no transforms): transform
+     para la geometría y backdrop-filter para que el re-filtrado del fondo en
+     scroll se componga en GPU. El aislamiento del árbol de apilamiento lo da
+     isolation. OJO: contain:paint aquí recortaría la sombra del ::after y NO
+     ponerlos en .nav (el wrapper): se volvería "backdrop root" y el cristal
+     dejaría de ver la página tras él. */
+  will-change:transform,backdrop-filter;
   isolation:isolate;
   contain:layout;
 }
@@ -244,7 +252,7 @@ body.scroll-lock{overflow:hidden}
    Solo donde backdrop-filter acepta url() (Chromium); Safari/Firefox caen
    al blur+saturate de arriba sin perder nada esencial. */
 @supports (backdrop-filter:url(#f)){
-  .nav__dock{backdrop-filter:url(#glass-distortion) blur(12px) saturate(170%)}
+  .nav__dock{backdrop-filter:url(#glass-distortion) blur(30px) saturate(190%) contrast(90%)}
 }
 /* DESPLEGADO como panel: el cristal se oscurece (82%) — los enlaces crema
    necesitan asiento sobre cualquier fondo; la transición de background la
