@@ -217,25 +217,39 @@ body.scroll-lock{overflow:hidden}
   width:100%;max-width:680px;padding:.7rem .8rem .7rem 1.1rem;border-radius:50px;
   /* vidrio estilo Instagram: obsidiana + blur MODERADO (12) con saturate —
      lo que pasa por detrás se ve moverse, suavizado y con los colores vivos.
-     El 55% es el mínimo que mantiene el burger/logo crema a ≥3:1 sobre las
-     páginas que arrancan en fondo crema (menu, conocenos…) — no bajarlo.
-     El "grosor" del cristal lo dan el borde crema ultrafino (bisel) y el
-     inset del box-shadow (la luz refractada en el canto superior). */
-  background:rgba(13,13,13,.55);
+     El 64% asienta la lectura del burger/logo crema en reposo (el mínimo
+     absoluto de contraste es 55% — no bajar de ahí); DESPLEGADO sube a 82%
+     (regla body.menu-open más abajo) para que los enlaces del panel lean
+     sobre cualquier fondo. El "grosor" del cristal lo dan el borde crema
+     ultrafino (bisel) y el inset del box-shadow (luz en el canto superior). */
+  background:rgba(13,13,13,.64);
   backdrop-filter:blur(12px) saturate(170%);-webkit-backdrop-filter:blur(12px) saturate(170%);
   border:1px solid rgba(244,239,230,.12);
   box-shadow:inset 0 1px 0 rgba(244,239,230,.18),
     0 1px 2px rgba(0,0,0,.14), 0 4px 10px -2px rgba(0,0,0,.16), 0 28px 56px -20px rgba(13,13,13,.35);
-  transition:padding .4s var(--ease);
+  transition:padding .4s var(--ease), background .5s var(--ease);
+  /* estabilidad de compositing: capa GPU propia y fija (translateZ+will-change)
+     y aislamiento del árbol de apilamiento — evita tiles duplicados/ghosting
+     del backdrop-filter en scroll rápido. OJO: contain:paint aquí recortaría
+     la sombra del ::after y NO ponerlos en .nav (el wrapper): se volvería
+     "backdrop root" y el cristal dejaría de ver la página tras él. */
+  transform:translateZ(0);
+  will-change:transform;
+  isolation:isolate;
+  contain:layout;
 }
-/* REFRACCIÓN líquida (dock de Instagram): el filtro SVG #glass-distortion
-   (definido inline en Nav.astro) ondula el fondo ANTES del blur — al hacer
-   scroll se ve el contenido a través del cristal, pero distorsionado.
+/* LUPA PLANA (ver el SVG #glass-distortion en Nav.astro): el fondo se ve a
+   través del cristal ligeramente AUMENTADO — desplazamiento lineal, sin domo.
+   Al hacer scroll el contenido cruza el dock con ese zoom de lupa.
    Solo donde backdrop-filter acepta url() (Chromium); Safari/Firefox caen
    al blur+saturate de arriba sin perder nada esencial. */
 @supports (backdrop-filter:url(#f)){
   .nav__dock{backdrop-filter:url(#glass-distortion) blur(12px) saturate(170%)}
 }
+/* DESPLEGADO como panel: el cristal se oscurece (82%) — los enlaces crema
+   necesitan asiento sobre cualquier fondo; la transición de background la
+   lleva el CSS en paralelo al morphing de geometría de GSAP */
+body.menu-open .nav__dock{background:rgba(13,13,13,.82)}
 /* sin soporte de backdrop-filter: fondo casi opaco para no perder legibilidad */
 @supports not (backdrop-filter:blur(1px)){
   .nav__dock{background:rgba(13,13,13,.88)}
@@ -361,6 +375,9 @@ body.scroll-lock{overflow:hidden}
   /* hereda el radio VIVO del cristal y recorta el contenido en pleno morph;
      overflow-y desplaza el interior si el panel no cabe (pantallas bajas) */
   border-radius:inherit;overflow:hidden auto;
+  /* contenedor de scroll interno: contención de layout+paint e isolation —
+     su repintado no invalida los tiles del cristal (scroll estable) */
+  contain:layout paint;isolation:isolate;
   display:flex;flex-direction:column;gap:clamp(1.6rem,4.5vh,2.8rem);
   /* justify-content:center puro deja inalcanzable el contenido que desborda
      por el lado de inicio (el navegador reparte el sobrante simétricamente y
