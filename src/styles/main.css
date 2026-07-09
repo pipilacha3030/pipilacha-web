@@ -199,10 +199,18 @@ body.scroll-lock{overflow:hidden}
    La sombra intensificada vive pintada en ::after y solo se anima su opacity
    (--dock-elev, mapeada al scroll en nav.js): animar box-shadow repinta cada
    frame; animar opacity se compone en GPU — cero titileo. */
-.nav{position:fixed;top:24px;left:0;width:100%;z-index:100;display:flex;justify-content:center;padding:0 var(--gutter)}
+/* pointer-events:none en el wrapper: es flex sin altura propia, así que al
+   expandirse el panel (.nav__dock a 80vh) esta caja transparente CRECE con
+   él y su ancho ya es 100% — sin esto, tapa las franjas a los lados del
+   panel y se come el clic que debería llegar al scrim para cerrar. El dock
+   (hijo, position:relative) reactiva los eventos para sus propios botones. */
+.nav{position:fixed;top:24px;left:0;width:100%;z-index:100;display:flex;justify-content:center;padding:0 var(--gutter);pointer-events:none}
 .nav__dock{
-  position:relative;
+  position:relative;pointer-events:auto;
   display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1rem;
+  /* align-content:start ancla la fila [burger·logo·CTA] arriba: cuando el
+     morphing estira el dock a panel, la barra no se descuelga al centro */
+  align-content:start;
   width:100%;max-width:680px;padding:.7rem .8rem .7rem 1.1rem;border-radius:50px;
   /* vidrio denso estilo Instagram: obsidiana + blur 24 con saturate — los
      colores de las flores que pasan por detrás se ven difuminados y más vivos.
@@ -226,6 +234,7 @@ body.scroll-lock{overflow:hidden}
 .nav__dock::before{
   content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat:repeat; /* tesela de 120px: cubre el panel expandido sin estirarse */
   opacity:.02;
 }
 .nav__dock::after{
@@ -233,8 +242,19 @@ body.scroll-lock{overflow:hidden}
   box-shadow:0 2px 4px rgba(0,0,0,.18), 0 8px 18px -4px rgba(0,0,0,.2), 0 36px 64px -16px rgba(13,13,13,.45);
   opacity:var(--dock-elev, 0);
 }
-/* el contenido del dock viaja POR ENCIMA de las capas del cristal (ruido/sheen) */
-.nav__burger,.nav__logo,.nav__cta{position:relative;z-index:1}
+/* el contenido del dock viaja POR ENCIMA de las capas del cristal (ruido/sheen,
+   z:0) y del panel de menú (z:1) — el burger mutado a ✕ debe seguir clicable
+   sobre el panel expandido */
+.nav__burger,.nav__logo,.nav__cta{position:relative;z-index:2}
+
+/* durante el morphing (clase puesta por nav.js mientras corre el timeline):
+   - will-change avisa a la GPU de que la geometría del cristal va a mutar,
+     mitigando el coste de re-filtrar el backdrop en cada frame;
+   - el sheen se apaga: un barrido a mitad de cambio de tamaño se deformaría.
+     Al quitar la clase, la animación re-arranca de cero (delay 1.4s) y el
+     destello cruza limpio la geometría ya asentada. */
+.nav__dock.is-morphing{will-change:width,height,border-radius,transform}
+.nav__dock.is-morphing .nav__sheen::before{animation:none}
 
 /* ---- sheen: el haz de luz que cruza el cristal ----
    Contenedor que recorta (overflow + radius heredado) y ::before como haz:
@@ -310,74 +330,86 @@ body.scroll-lock{overflow:hidden}
 }
 
 /* ============================================================
-   NAV DRAWER (panel lateral) — lo abre el burger del dock.
-   Desktop: 35% del ancho desde la izquierda + scrim sobre el resto.
-   Móvil (≤900px): pantalla completa. La apertura, el cierre y el
-   stagger de los enlaces los dirige GSAP (nav.js); el CSS deja el
-   panel oculto (translateX) como estado base y como fallback.
-   z-index: scrim 98 < drawer 99 < dock 100 (el dock queda encima
-   para poder cerrar con el burger→×).
+   NAV · PANEL DE MENÚ — vive DENTRO del dock de vidrio.
+   El burger dispara el MORPHING: GSAP interpola max-width/height/
+   border-radius del propio cristal (nav.js, un timeline que se
+   reproduce al abrir y se REVIERTE al cerrar) y este panel absoluto
+   se revela dentro. El bisel (border + inset shadow) y el blur se
+   recalculan de forma nativa con la geometría — no se animan aparte.
+   El CSS deja el panel oculto (visibility) como estado base.
+   z-index: scrim 98 < dock 100 (el panel ES el dock expandido; el
+   burger mutado a ✕ queda encima como cierre).
    ============================================================ */
 .nav-scrim{
   position:fixed;inset:0;z-index:98;background:rgba(49,51,31,.4);
   opacity:0;visibility:hidden;pointer-events:none;cursor:pointer;
 }
-.nav-overlay{
-  position:fixed;top:0;left:0;bottom:0;z-index:99;
-  width:clamp(380px,35vw,540px);max-width:100%;
-  background:var(--moss);color:var(--cream);
-  display:flex;flex-direction:column;justify-content:center;gap:clamp(1.8rem,5vh,3rem);
-  padding:clamp(6rem,16vh,8.5rem) clamp(2rem,4vw,3.5rem) clamp(2.2rem,6vh,3.5rem);
-  overflow:auto;
-  /* estado cerrado: solo visibility — el transform es propiedad EXCLUSIVA de
-     GSAP (xPercent). Declararlo también aquí envenena la caché de GSAP: la
-     matriz computada no sabe de porcentajes y fosiliza el -102% en píxeles. */
-  visibility:hidden;
+.nav__menu{
+  position:absolute;inset:0;z-index:1;
+  /* hereda el radio VIVO del cristal y recorta el contenido en pleno morph;
+     overflow-y desplaza el interior si el panel no cabe (pantallas bajas) */
+  border-radius:inherit;overflow:hidden auto;
+  display:flex;flex-direction:column;gap:clamp(1.6rem,4.5vh,2.8rem);
+  /* justify-content:center puro deja inalcanzable el contenido que desborda
+     por el lado de inicio (el navegador reparte el sobrante simétricamente y
+     scrollTop:0 no llega a compensarlo — bug clásico de flex centrado).
+     'safe center' evita ese recorte cuando no cabe; la línea previa es el
+     fallback para navegadores que aún no soportan la keyword 'safe'. */
+  justify-content:center;justify-content:safe center;
+  padding:clamp(4.5rem,10vh,6rem) clamp(2rem,4vw,3.5rem) clamp(2rem,5vh,3rem);
+  color:var(--cream);
+  /* estado cerrado: GSAP lo revela con autoAlpha (opacity + visibility) */
+  visibility:hidden;opacity:0;
 }
-@media (max-width:900px){ .nav-overlay{width:100%} }
 
-.nav-overlay__list{position:relative;z-index:1;display:flex;flex-direction:column}
-.nav-overlay__list a{display:block;padding:.09em 0;width:fit-content}
-.nav-overlay__list a > span{
+.nav__menu-list{display:flex;flex-direction:column}
+.nav__menu-list a{display:block;padding:.09em 0;width:fit-content}
+.nav__menu-list a > span{
   display:block;font-family:var(--serif);font-size:clamp(1.9rem,2.6vw,2.6rem);line-height:1.18;
   color:var(--cream);transition:color .35s var(--ease), transform .45s var(--ease);
 }
-@media (max-width:900px){ .nav-overlay__list a > span{font-size:clamp(2.1rem,7vw,3.2rem)} }
+@media (max-width:900px){ .nav__menu-list a > span{font-size:clamp(2rem,6.5vw,3rem)} }
 /* hover: leve avance lateral + acento (coherente con el hover del dock, sin subrayado) */
-.nav-overlay__list a:hover > span{color:var(--accent-soft);transform:translateX(6px)}
-.nav-overlay__list a[aria-current="page"] > span{color:var(--accent-soft)}
-.nav-overlay__list a:focus-visible{outline:2px solid var(--accent-soft);outline-offset:6px}
+.nav__menu-list a:hover > span{color:var(--accent-soft);transform:translateX(6px)}
+.nav__menu-list a[aria-current="page"] > span{color:var(--accent-soft)}
+.nav__menu-list a:focus-visible{outline:2px solid var(--cream);outline-offset:6px}
 
 /* la flor de la opción bajo el cursor asoma a la derecha del panel, a la
-   altura de los últimos enlaces — separada del pie para no pisar su texto */
-.nav-overlay__bloom{
-  position:absolute;right:clamp(1.5rem,3vw,3rem);bottom:clamp(9rem,20vh,12rem);z-index:0;
-  width:clamp(110px,11vw,180px);margin:0;pointer-events:none;
+   altura de los últimos enlaces — separada de los metadatos para no pisarlos */
+.nav__menu-bloom{
+  position:absolute;right:clamp(1.5rem,4vw,4rem);bottom:clamp(8rem,18vh,11rem);z-index:0;
+  width:clamp(110px,12vw,200px);margin:0;pointer-events:none;
   opacity:0;transform:scale(.85) rotate(-6deg);
   transition:opacity .45s var(--ease), transform .6s cubic-bezier(.22,1,.36,1);
 }
-.nav-overlay__bloom img{display:block;width:100%;height:auto;filter:drop-shadow(0 18px 30px rgba(0,0,0,.35))}
-.nav-overlay__bloom.is-active{opacity:1;transform:none}
-@media (hover:none){ .nav-overlay__bloom{display:none} }
+.nav__menu-bloom img{display:block;width:100%;height:auto;filter:drop-shadow(0 18px 30px rgba(0,0,0,.35))}
+.nav__menu-bloom.is-active{opacity:1;transform:none}
+@media (hover:none){ .nav__menu-bloom{display:none} }
 
-.nav-overlay__foot{
+/* metadatos del restaurante en la base del panel (sans, tono del antiguo pie) */
+.nav__menu-meta{
   position:relative;z-index:1;
-  display:flex;flex-wrap:wrap;gap:.8rem 2.2rem;
+  display:flex;flex-wrap:wrap;gap:1.2rem 2.6rem;
   font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,239,230,.6);
 }
-.nav-overlay__foot a{color:inherit;transition:color .3s var(--ease)}
-.nav-overlay__foot a:hover{color:var(--cream)}
+.nav__menu-meta > div{display:flex;flex-direction:column;gap:.4rem}
+.nav__menu-meta > div > span{font-size:.62rem;letter-spacing:.22em;color:rgba(244,239,230,.38)}
+.nav__menu-meta a{color:inherit;transition:color .3s var(--ease)}
+.nav__menu-meta a:hover{color:var(--cream)}
 
 /* reduced-motion: sin morphing, sin drawer animado, sin magnético (nav.js no
    lanza timelines) — los estados los pinta el CSS al instante */
 @media (prefers-reduced-motion:reduce){
-  .nav__dock,.nav__logo-img,.nav__logo-iso,.nav-overlay__list a > span,.nav-overlay__bloom{transition:none}
+  .nav__dock,.nav__logo-img,.nav__logo-iso,.nav__menu-list a > span,.nav__menu-bloom{transition:none}
   .nav__sheen::before{animation:none}
   .nav__burger.is-open span:nth-child(1){transform:translateY(0) rotate(45deg)}
   .nav__burger.is-open span:nth-child(2){transform:scaleX(0);opacity:0}
   .nav__burger.is-open span:nth-child(3){transform:translateY(0) rotate(-45deg)}
   body.menu-open .nav-scrim{opacity:1;visibility:visible;pointer-events:auto}
-  body.menu-open .nav-overlay{visibility:visible}
+  /* morphing instantáneo: el CSS pinta el estado final del cristal expandido */
+  body.menu-open .nav__dock{max-width:92vw;height:80vh;border-radius:var(--radius)}
+  body.menu-open .nav__menu{visibility:visible;opacity:1}
+  body.menu-open .nav__logo,body.menu-open .nav__cta{visibility:hidden}
 }
 
 /* ---------- hero ---------- */

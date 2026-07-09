@@ -105,8 +105,8 @@ export function initTransitions({ initPage, destroyPage }) {
     const newDesc = doc.querySelector('meta[name="description"]');
     if (desc && newDesc) desc.setAttribute('content', newDesc.getAttribute('content'));
 
-    // nav: sincroniza el enlace activo del drawer con la página nueva
-    ['.nav-overlay__list a'].forEach((sel) => {
+    // nav: sincroniza el enlace activo del panel de menú con la página nueva
+    ['.nav__menu-list a'].forEach((sel) => {
       const fresh = doc.querySelectorAll(sel);
       document.querySelectorAll(sel).forEach((a, i) => {
         const cur = fresh[i] && fresh[i].getAttribute('aria-current');

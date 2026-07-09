@@ -1,9 +1,9 @@
 /* ============================================================
    Dock de navegación (persiste entre páginas): morphing del
-   burger, drawer lateral con stagger, sombra progresiva al
-   scroll, contracción, vuelo de la libélula y barra de reserva.
-   Se inicializa UNA vez por carga real; sus listeners viven
-   toda la sesión (no dependen del ciclo de vida por página).
+   burger, MORPHING del dock → panel de menú, sombra progresiva
+   al scroll, contracción, vuelo de la libélula y barra de
+   reserva. Se inicializa UNA vez por carga real; sus listeners
+   viven toda la sesión (no dependen del ciclo de vida por página).
    ============================================================ */
 import { lenis } from './scroll/lenis.js';
 import { gsap } from './scroll/scrollTrigger.js';
@@ -11,11 +11,13 @@ import { reduceMotion } from './utils/motion.js';
 
 const dock = document.getElementById('navDock');
 const burger = document.getElementById('burger');
-const overlay = document.getElementById('navOverlay');
+const menu = document.getElementById('navMenu');
 const scrim = document.getElementById('navScrim');
-const bloom = overlay && overlay.querySelector('.nav-overlay__bloom');
-const drawerLinks = overlay ? overlay.querySelectorAll('.nav-overlay__list a') : [];
-const drawerFoot = overlay && overlay.querySelector('.nav-overlay__foot');
+const dockLogo = document.querySelector('.nav__logo');
+const dockCta = document.querySelector('.nav__cta');
+const bloom = menu && menu.querySelector('.nav__menu-bloom');
+const menuLinks = menu ? menu.querySelectorAll('.nav__menu-list a') : [];
+const metaBlocks = menu ? menu.querySelectorAll('.nav__menu-meta > div') : [];
 
 export const isMenuOpen = () => document.body.classList.contains('menu-open');
 
@@ -49,32 +51,58 @@ function morphBurger(open) {
   }
 }
 
-/* ---- drawer lateral ----
-   Panel con power3.out + scrim en fade; los enlaces entran en cascada real
-   (stagger de GSAP: opacity + translateY con ~50ms entre cada uno).
-   Un único timeline vivo: si llega un toggle con el anterior a medias se mata
-   — si no, el set(visibility:hidden) final del cierre podría dispararse tras
-   una reapertura rápida y dejar el panel invisible con el menú "abierto". */
-let drawerTl = null;
+/* ---- morphing del dock → panel de menú ----
+   Un ÚNICO timeline que se reproduce al abrir y se REVIERTE al cerrar:
+   play()/reverse() dan reversibilidad total incluso con toggles a mitad de
+   gesto (el reverse arranca del progreso actual, sin saltos). Coreografía:
+   t0 el logo y el CTA ceden el sitio (el burger se queda: mutado a ✕ es el
+   cierre), el cristal interpola SOLO su geometría (max-width/height/radius
+   — el blur, el bisel y el ruido se recalculan solos) con power4.inOut
+   cinematográfico, y el panel aparece cuando la expansión aún está
+   terminando (offset >-0.45) con los enlaces y metadatos en cascada.
+   Mientras corre, .is-morphing activa will-change y congela el sheen
+   (ver main.css). Al completar el cierre, clearProps borra todo estilo
+   inline y devuelve el control al CSS; el timeline se desecha para que
+   la próxima apertura re-capture la geometría real (viewport cambiante). */
+let menuTl = null;
 
-function openDrawer() {
-  if (drawerTl) drawerTl.kill();
-  drawerTl = gsap.timeline({ defaults: { overwrite: 'auto' } })
-    .set(overlay, { visibility: 'visible' })
+function buildMenuTl() {
+  return gsap.timeline({
+    paused: true,
+    defaults: { overwrite: 'auto' },
+    onComplete: () => dock.classList.remove('is-morphing'), // el sheen re-arranca: un barrido limpio sobre el panel ya asentado
+    onReverseComplete: () => {
+      dock.classList.remove('is-morphing');
+      // clearProps 'all' en dock borraría --dock-elev (custom property que
+      // onScroll escribe fuera de este timeline) y la sombra se apagaría
+      // hasta el próximo cambio de scroll: se acota a las 3 props del morph
+      gsap.set(dock, { clearProps: 'maxWidth,height,borderRadius' });
+      gsap.set([dockLogo, dockCta, menu], { clearProps: 'all' });
+      gsap.set(menuLinks, { clearProps: 'all' });
+      gsap.set(metaBlocks, { clearProps: 'all' });
+      menuTl = null;
+    },
+  })
+    .to([dockLogo, dockCta], { autoAlpha: 0, scale: 0.9, duration: 0.2, ease: 'power2.in' }, 0)
     .to(scrim, { autoAlpha: 1, duration: 0.5, ease: 'power2.out' }, 0)
-    .to(overlay, { xPercent: 0, duration: 0.6, ease: 'power3.out' }, 0)
-    .fromTo(drawerLinks, { autoAlpha: 0, y: 24 },
-      { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.05 }, 0.18)
-    .fromTo(drawerFoot, { autoAlpha: 0, y: 12 },
-      { autoAlpha: 1, y: 0, duration: 0.45, ease: 'power3.out' }, 0.5);
+    .to(dock, { maxWidth: '92vw', height: '80vh', borderRadius: 22, duration: 0.85, ease: 'power4.inOut' }, 0)
+    .to(menu, { autoAlpha: 1, duration: 0.4, ease: 'power2.out' }, '>-0.45')
+    .fromTo(menuLinks, { autoAlpha: 0, y: 25 },
+      { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.06 }, '<')
+    .fromTo(metaBlocks, { autoAlpha: 0, y: 25 },
+      { autoAlpha: 1, y: 0, duration: 0.45, ease: 'power3.out', stagger: 0.06 }, '<0.15');
 }
 
-function closeDrawer() {
-  if (drawerTl) drawerTl.kill();
-  drawerTl = gsap.timeline({ defaults: { overwrite: 'auto' } })
-    .to(overlay, { xPercent: -102, duration: 0.45, ease: 'power2.in' }, 0)
-    .to(scrim, { autoAlpha: 0, duration: 0.35, ease: 'power2.out' }, 0)
-    .set(overlay, { visibility: 'hidden' });
+function openMenu() {
+  dock.classList.add('is-morphing');
+  if (!menuTl) menuTl = buildMenuTl();
+  menuTl.play();
+}
+
+function closeMenu() {
+  if (!menuTl) return;
+  dock.classList.add('is-morphing');
+  menuTl.reverse();
 }
 
 export const setMenu = (open) => {
@@ -82,13 +110,13 @@ export const setMenu = (open) => {
   burger.classList.toggle('is-open', open);
   burger.setAttribute('aria-expanded', open ? 'true' : 'false');
   burger.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
-  if (overlay) overlay.setAttribute('aria-hidden', open ? 'false' : 'true');
+  if (menu) menu.setAttribute('aria-hidden', open ? 'false' : 'true');
   if (scrim) scrim.style.pointerEvents = open ? 'auto' : 'none';
   if (!open && bloom) bloom.classList.remove('is-active');
   document.body.classList.toggle('scroll-lock', open);
   if (lenis) open ? lenis.stop() : lenis.start();
   morphBurger(open);
-  if (!reduceMotion && overlay && scrim) open ? openDrawer() : closeDrawer();
+  if (!reduceMotion && menu && scrim) open ? openMenu() : closeMenu();
 };
 
 /* ---- scroll: contracción + sombra progresiva ----
@@ -126,20 +154,19 @@ export function initNav() {
       gsap.set(lines[0], { y: -6 });
       gsap.set(lines[2], { y: 6 });
     }
-    if (overlay) gsap.set(overlay, { xPercent: -102 });
     if (scrim) gsap.set(scrim, { autoAlpha: 0 });
   }
 
   burger.addEventListener('click', () => setMenu(!isMenuOpen()));
   if (scrim) scrim.addEventListener('click', () => setMenu(false));
-  // al pulsar un enlace del drawer se cierra (la navegación la hace el router)
-  if (overlay) overlay.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+  // al pulsar un enlace del panel se cierra (la navegación la hace el router)
+  if (menu) menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
 
   /* la flor de cada opción asoma en el panel al hover (solo puntero fino).
      Se reutiliza un único <img>: se le cambia el src por opción. */
   if (bloom && window.matchMedia('(hover:hover)').matches) {
     const img = bloom.querySelector('img');
-    overlay.querySelectorAll('.nav-overlay__list a[data-flower]').forEach((a) => {
+    menu.querySelectorAll('.nav__menu-list a[data-flower]').forEach((a) => {
       a.addEventListener('mouseenter', () => {
         const src = a.dataset.flower;
         if (!src) return;
@@ -147,7 +174,7 @@ export function initNav() {
         bloom.classList.add('is-active');
       });
     });
-    const list = overlay.querySelector('.nav-overlay__list');
+    const list = menu.querySelector('.nav__menu-list');
     if (list) list.addEventListener('mouseleave', () => bloom.classList.remove('is-active'));
   }
 
