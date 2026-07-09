@@ -491,23 +491,6 @@ body.menu-open .nav__dock{background:rgba(13,13,13,.82)}
   position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(20,20,12,.35) 0%,rgba(20,20,12,0) 28%,rgba(20,20,12,.15) 55%,rgba(20,20,12,.75) 100%);
 }
-/* ---- flores del hero: el escaparate del cristal ----
-   Viven SOBRE la foto (z:1) y BAJO el texto (z:2). Están en la banda superior
-   para que un scroll corto las lleve tras el dock fijo, donde la lupa las
-   refracta. Solo float CSS (sin parallax): drop-shadow para asentarlas sobre
-   la foto sin recortarlas. --1 arranca casi pegada al dock: cruza enseguida. */
-.hero__blooms{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
-.hero-bloom{position:absolute;height:auto;will-change:transform;filter:drop-shadow(0 16px 26px rgba(20,20,12,.32))}
-.hero-bloom--1{top:7%;left:49%;width:clamp(150px,17vw,290px);opacity:.95;animation:float 12s ease-in-out infinite}
-.hero-bloom--2{top:23%;left:9%;width:clamp(120px,14vw,240px);opacity:.9;animation:float2 15s ease-in-out infinite}
-.hero-bloom--3{top:40%;right:11%;width:clamp(100px,11vw,200px);opacity:.88;animation:float 13s ease-in-out infinite reverse}
-@media (max-width:560px){
-  /* en móvil el dock se ensancha y el título sube: reduzco y aparto las flores
-     para que no compitan con el texto, pero --1 sigue cruzando el dock */
-  .hero-bloom--1{top:6%;left:44%;width:clamp(120px,34vw,180px)}
-  .hero-bloom--2{top:20%;left:2%;width:clamp(96px,28vw,150px)}
-  .hero-bloom--3{display:none}
-}
 .hero__content{position:relative;z-index:2;color:var(--cream);padding:0 var(--gutter) clamp(3rem,8vh,6rem);max-width:var(--maxw)}
 .hero__title{font-size:clamp(2.6rem,6vw,5rem);margin:.4rem 0 1.4rem;color:#fff}
 .hero__title .line{display:block;overflow:hidden}

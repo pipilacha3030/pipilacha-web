@@ -16,7 +16,7 @@ export const grupos = [
     ],
   },
   {
-    id: 'naranja', titulo: 'Naranja', flor: '/assets/img/flor-calendula.png',
+    id: 'naranja', titulo: 'Naranja', flor: '/assets/img/flor-coreopsis.png',
     nota: 'Maceración con pieles. Textura y un punto salvaje.',
     vinos: [
       { nombre: 'Puiggròs «Impresionant»', uva: 'Vino naranja' },
