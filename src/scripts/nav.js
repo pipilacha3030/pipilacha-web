@@ -15,7 +15,8 @@ const menu = document.getElementById('navMenu');
 const scrim = document.getElementById('navScrim');
 const dockLogo = document.querySelector('.nav__logo');
 const dockCta = document.querySelector('.nav__cta');
-const bloom = menu && menu.querySelector('.nav__menu-bloom');
+// la flor vive FUERA del dock (hermana previa): detrás del cristal, no en el panel
+const bloom = document.querySelector('.nav__menu-bloom');
 const menuLinks = menu ? menu.querySelectorAll('.nav__menu-list a') : [];
 const metaBlocks = menu ? menu.querySelectorAll('.nav__menu-meta > div') : [];
 

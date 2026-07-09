@@ -20,6 +20,12 @@ const menu = [
 ];
 ---
 <header class="nav" id="nav">
+  <!-- la flor de la opción bajo el cursor: vive FUERA del dock (hermana previa)
+       para quedar DETRÁS del cristal — el backdrop-filter del dock la difumina
+       de verdad, como un pétalo apoyado tras el vidrio. Grande, a la izquierda,
+       con deriva flotante (solo puntero fino; ver .nav__menu-bloom). -->
+  <figure class="nav__menu-bloom" aria-hidden="true"><img alt="" decoding="async" /></figure>
+
   <div class="nav__dock" id="navDock">
     <!-- haz de luz que cruza el cristal (sheen); recorta su propio brillo con
          overflow para no ensuciar la sombra exterior del dock -->
@@ -46,8 +52,6 @@ const menu = [
           <a href={m.href} data-flower={m.flower} aria-current={here(m.key) ? 'page' : undefined}><span>{m.label}</span></a>
         ))}
       </nav>
-      <!-- la flor de la opción bajo el cursor asoma aquí (solo puntero fino) -->
-      <figure class="nav__menu-bloom" aria-hidden="true"><img alt="" decoding="async" /></figure>
       <div class="nav__menu-meta">
         <div><span>Horario</span>Jueves a domingo · 14:00 y 21:00</div>
         <div><span>Dirección</span>C. del Azulejo · Madrid</div>

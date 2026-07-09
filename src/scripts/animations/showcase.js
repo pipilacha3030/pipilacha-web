@@ -43,9 +43,11 @@ export function initShowcase() {
 
     /* crecimiento a pantalla completa: el escenario se fija (pin) y la tarjeta se
        expande de su tamaño de reposo al de la ventana, ligado al scroll.
-       Anchos/altos en función → se recalculan en cada refresh/resize. */
+       Anchos/altos en función → se recalculan en cada refresh/resize.
+       Solo desktop: en móvil el pin + growth alarga el scroll sin aportar
+       (la tarjeta ya ocupa casi todo el ancho) — la tarjeta queda estática. */
     const stage = document.querySelector('.gallery__stage');
-    if (stage) {
+    if (stage && !isMobile) {
       gsap.to(showcase, {
         width: () => window.innerWidth,
         height: () => window.innerHeight,
