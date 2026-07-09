@@ -215,18 +215,26 @@ body.scroll-lock{overflow:hidden}
      morphing estira el dock a panel, la barra no se descuelga al centro */
   align-content:start;
   width:100%;max-width:680px;padding:.7rem .8rem .7rem 1.1rem;border-radius:50px;
-  /* vidrio denso estilo Instagram: obsidiana + blur 24 con saturate — los
-     colores de las flores que pasan por detrás se ven difuminados y más vivos.
+  /* vidrio estilo Instagram: obsidiana + blur MODERADO (12) con saturate —
+     lo que pasa por detrás se ve moverse, suavizado y con los colores vivos.
      El 55% es el mínimo que mantiene el burger/logo crema a ≥3:1 sobre las
      páginas que arrancan en fondo crema (menu, conocenos…) — no bajarlo.
      El "grosor" del cristal lo dan el borde crema ultrafino (bisel) y el
      inset del box-shadow (la luz refractada en el canto superior). */
   background:rgba(13,13,13,.55);
-  backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);
+  backdrop-filter:blur(12px) saturate(170%);-webkit-backdrop-filter:blur(12px) saturate(170%);
   border:1px solid rgba(244,239,230,.12);
   box-shadow:inset 0 1px 0 rgba(244,239,230,.18),
     0 1px 2px rgba(0,0,0,.14), 0 4px 10px -2px rgba(0,0,0,.16), 0 28px 56px -20px rgba(13,13,13,.35);
   transition:padding .4s var(--ease);
+}
+/* REFRACCIÓN líquida (dock de Instagram): el filtro SVG #glass-distortion
+   (definido inline en Nav.astro) ondula el fondo ANTES del blur — al hacer
+   scroll se ve el contenido a través del cristal, pero distorsionado.
+   Solo donde backdrop-filter acepta url() (Chromium); Safari/Firefox caen
+   al blur+saturate de arriba sin perder nada esencial. */
+@supports (backdrop-filter:url(#f)){
+  .nav__dock{backdrop-filter:url(#glass-distortion) blur(12px) saturate(170%)}
 }
 /* sin soporte de backdrop-filter: fondo casi opaco para no perder legibilidad */
 @supports not (backdrop-filter:blur(1px)){
@@ -268,14 +276,15 @@ body.scroll-lock{overflow:hidden}
   position:absolute;inset:0;border-radius:inherit;overflow:hidden;pointer-events:none;
 }
 .nav__sheen::before{
-  content:"";position:absolute;top:-40%;bottom:-40%;left:-45%;width:45%;
-  background:linear-gradient(90deg,transparent,rgba(244,239,230,.18) 50%,transparent);
+  content:"";position:absolute;top:-40%;bottom:-40%;left:-45%;width:55%;
+  /* leve de verdad: pico al 7% y hombros suaves — se intuye, no deslumbra */
+  background:linear-gradient(90deg,transparent,rgba(244,239,230,.04) 30%,rgba(244,239,230,.07) 50%,rgba(244,239,230,.04) 70%,transparent);
   transform:translateX(0) skewX(-18deg);
-  animation:dockSheen 9s cubic-bezier(.45,.05,.25,1) 1.4s infinite;
+  animation:dockSheen 13s cubic-bezier(.45,.05,.25,1) 1.4s infinite;
 }
 @keyframes dockSheen{
   0%{transform:translateX(0) skewX(-18deg)}
-  34%,100%{transform:translateX(340%) skewX(-18deg)}
+  30%,100%{transform:translateX(300%) skewX(-18deg)}
 }
 /* contracción al bajar (ver nav.js onScroll): dos estados por posición, sin scrub */
 .nav__dock.is-compact{padding-top:.45rem;padding-bottom:.45rem}
@@ -379,34 +388,37 @@ body.scroll-lock{overflow:hidden}
 
 /* la flor de la opción bajo el cursor: hermana PREVIA del dock dentro de .nav
    (que crece con el panel), así queda en la pintura por DEBAJO del cristal y el
-   backdrop-filter del dock la difumina de verdad — pétalo tras el vidrio.
-   Grande y a la izquierda del panel expandido; brightness/saturate compensan
-   la obsidiana al 55% para que sus colores respiren a través del cristal.
+   backdrop-filter del dock la suaviza de verdad — pétalo tras el vidrio.
+   Grande y a la DERECHA del panel expandido (los enlaces viven a la izquierda:
+   la flor tiene aire propio); brightness/saturate compensan la obsidiana al
+   55% para que sus colores respiren a través del cristal.
    El contenedor lleva la revelación (transition); el <img> lleva la deriva
    flotante (keyframes) — transform separados, no se pisan (patrón pétalos). */
 .nav__menu-bloom{
-  position:absolute;left:clamp(1rem,5vw,6rem);top:50%;margin:0;pointer-events:none;
+  position:absolute;right:clamp(1.5rem,6vw,7rem);top:50%;margin:0;pointer-events:none;
   /* el tope en vh evita que en ventanas anchas y BAJAS la flor sobresalga del
      panel (80vh) por arriba/abajo y se vea nítida fuera del cristal */
-  width:min(clamp(300px,30vw,540px),58vh);
-  opacity:0;transform:translateY(-46%) scale(.85) rotate(-8deg);
+  width:min(clamp(340px,34vw,620px),62vh);
+  opacity:0;transform:translateY(-46%) scale(.88) rotate(6deg);
   /* salida RÁPIDA (.3s): al cerrar el menú el cristal encoge en .85s y dejaría
      la flor al descubierto sin difuminar — debe apagarse antes de que eso pase */
   transition:opacity .3s var(--ease), transform .5s var(--ease);
 }
 /* entrada lujosa: la transición del estado destino es la que aplica */
 .nav__menu-bloom.is-active{
-  transition:opacity .6s var(--ease), transform .9s cubic-bezier(.22,1,.36,1);
+  transition:opacity .7s var(--ease), transform 1.1s cubic-bezier(.22,1,.36,1);
 }
 .nav__menu-bloom img{
   display:block;width:100%;height:auto;
-  filter:saturate(1.2) brightness(1.25);
-  animation:bloom-drift 7s ease-in-out infinite;
+  filter:saturate(1.18) brightness(1.15);
+  animation:bloom-drift 9s ease-in-out infinite;
 }
 .nav__menu-bloom.is-active{opacity:1;transform:translateY(-50%) scale(1) rotate(0deg)}
+/* deriva con dos ejes y micro-giro: flota, no rebota */
 @keyframes bloom-drift{
-  0%,100%{transform:translateY(0) rotate(-2deg)}
-  50%{transform:translateY(-20px) rotate(3deg)}
+  0%,100%{transform:translate(0,0) rotate(-1.5deg)}
+  33%{transform:translate(-8px,-16px) rotate(1deg)}
+  66%{transform:translate(6px,-26px) rotate(2.5deg)}
 }
 @media (hover:none){ .nav__menu-bloom{display:none} }
 

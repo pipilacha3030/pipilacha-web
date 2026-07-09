@@ -20,9 +20,22 @@ const menu = [
 ];
 ---
 <header class="nav" id="nav">
+  <!-- Filtro de REFRACCIÓN del vidrio (estilo dock de Instagram): feTurbulence
+       genera ondas suaves y feDisplacementMap desplaza con ellas los píxeles
+       del fondo — lo que pasa por detrás se ve, pero ondulado como a través
+       de cristal líquido. Se aplica en backdrop-filter:url(#glass-distortion)
+       (main.css, solo navegadores que lo soporten; el resto queda en blur). -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <filter id="glass-distortion" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.008 0.016" numOctaves="2" seed="7" result="noise"/>
+      <feGaussianBlur in="noise" stdDeviation="2.5" result="soft"/>
+      <feDisplacementMap in="SourceGraphic" in2="soft" scale="34" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </svg>
+
   <!-- la flor de la opción bajo el cursor: vive FUERA del dock (hermana previa)
        para quedar DETRÁS del cristal — el backdrop-filter del dock la difumina
-       de verdad, como un pétalo apoyado tras el vidrio. Grande, a la izquierda,
+       de verdad, como un pétalo apoyado tras el vidrio. Grande, a la derecha,
        con deriva flotante (solo puntero fino; ver .nav__menu-bloom). -->
   <figure class="nav__menu-bloom" aria-hidden="true"><img alt="" decoding="async" /></figure>
 
