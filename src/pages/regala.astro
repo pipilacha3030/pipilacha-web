@@ -21,7 +21,34 @@ import Base from '../layouts/Base.astro';
         style="width:100%;border:0"></iframe>
     </div>
   </section>
-  <script is:inline src="https://pipilacha.bonkdo.com/static/js/iframeResizer.min.js"></script>
-  <script is:inline>iFrameResize()</script>
+  <!-- iframe-resizer: el hijo de Bonkdo (v3) publica su altura y el iframe crece
+       para mostrar TODO el contenido — sin scroll dentro del scroll, se desplaza
+       solo la página (como el widget de reservas). El contenido de la tienda
+       cambia de alto según el ancho, por eso un min-height fijo no vale: el
+       resizer se adapta a cada tamaño.
+       OJO router SPA (transitions.js): al entrar por un clic del menú, swapDoc
+       re-ejecuta este inline. El `iFrameResize()` naïve corría ANTES de que el
+       <script src> externo recargara (carrera) → el iframe se quedaba en 640px.
+       Este arranque carga la librería UNA vez (en <head>, que el router no
+       reemplaza) y engancha cuando esté lista, en cada visita. -->
+  <script is:inline>
+    (function () {
+      var SRC = 'https://pipilacha.bonkdo.com/static/js/iframeResizer.min.js';
+      function attach() {
+        var f = document.getElementById('giftFrame');
+        if (f && window.iFrameResize && !f.iFrameResizer) window.iFrameResize({}, '#giftFrame');
+      }
+      if (window.iFrameResize) { attach(); return; }
+      var existing = document.querySelector('script[data-ifr]');
+      if (!existing) {
+        var s = document.createElement('script');
+        s.src = SRC; s.setAttribute('data-ifr', ''); s.onload = attach;
+        document.head.appendChild(s);
+      } else {
+        var t = setInterval(function () { if (window.iFrameResize) { clearInterval(t); attach(); } }, 60);
+        setTimeout(function () { clearInterval(t); }, 6000);
+      }
+    })();
+  </script>
 
 </Base>
