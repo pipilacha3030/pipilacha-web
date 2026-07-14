@@ -92,24 +92,57 @@ import { scenes, reserva } from '../data/primeraFila.js';
   }
   .pf__practical li { font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--text-subtle); }
 
-  /* ====== escritorio con JS: escenas superpuestas que se funden (pin) ====== */
-  @media (min-width: 769px) {
-    :global(html.js) .pf__pin { height: 100vh; overflow: hidden; }
-    :global(html.js) .pf__scene {
-      position: absolute; inset: 0; display: block;
-      padding: 0; max-width: none; margin: 0; opacity: 0; will-change: opacity;
-    }
-    :global(html.js) .pf__scene--1 { opacity: 1; }
+  /* ====== con JS: escenas superpuestas que se funden (pin — móvil y escritorio) ====== */
+  :global(html.js) .pf__pin { height: 100vh; height: 100svh; overflow: hidden; }
+  :global(html.js) .pf__scene {
+    position: absolute; inset: 0; display: block;
+    padding: 0; max-width: none; margin: 0; opacity: 0; will-change: opacity;
+  }
+  :global(html.js) .pf__scene--1 { opacity: 1; }
+  :global(html.js) .pf__img img { will-change: transform; }
 
-    /* imagen vertical dominante, a la derecha */
+  /* — móvil con JS: imagen a sangre + texto sobre degradado (abajo) — */
+  @media (max-width: 768px) {
+    :global(html.js) .pf__img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      border-radius: 0; aspect-ratio: auto; box-shadow: none;
+    }
+    :global(html.js) .pf__scene::after {
+      content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background: linear-gradient(180deg, rgba(20,20,12,.30) 0%, rgba(20,20,12,0) 24%,
+        rgba(20,20,12,.48) 60%, rgba(20,20,12,.84) 100%);
+    }
+    :global(html.js) .pf__panel {
+      position: absolute; inset: auto 0 0 0; z-index: 2; height: auto; max-width: none;
+      display: block; padding: 0 var(--gutter) clamp(2.4rem, 8vh, 4rem);
+    }
+    :global(html.js) .pf__marker { color: var(--accent-soft); }
+    :global(html.js) .pf__title { color: #fff; font-size: clamp(2.1rem, 8vw, 3rem); margin-bottom: .9rem; }
+    :global(html.js) .pf__lead { color: rgba(244,239,230,.9); max-width: 42ch; }
+    /* escena 3 (reserva) sobre foto: degradado más denso + texto claro y compacto */
+    :global(html.js) .pf__scene--3::after {
+      background: linear-gradient(180deg, rgba(20,20,12,.35) 0%, rgba(20,20,12,.14) 28%,
+        rgba(20,20,12,.6) 54%, rgba(20,20,12,.9) 100%);
+    }
+    :global(html.js) .pf__scene--3 .pf__title { font-size: clamp(1.9rem, 7vw, 2.6rem); margin-bottom: .7rem; }
+    :global(html.js) .pf__scene--3 .pf__lead { font-size: .95rem; line-height: 1.55; }
+    :global(html.js) .pf__reserva { margin-top: 1.4rem; gap: 1.1rem; }
+    :global(html.js) .pf__offer-ey { color: rgba(244,239,230,.72); }
+    :global(html.js) .pf__price { color: #fff; }
+    :global(html.js) .pf__price span { color: rgba(244,239,230,.85); }
+    :global(html.js) .pf__offer-lines p { color: rgba(244,239,230,.85); }
+    :global(html.js) .pf__cta { margin-top: 1rem; }
+    :global(html.js) .pf__practical { padding-top: 1.1rem; border-top-color: rgba(244,239,230,.28); }
+    :global(html.js) .pf__practical li { color: rgba(244,239,230,.75); }
+  }
+
+  /* — escritorio con JS: marco vertical dominante + texto en el espacio negativo — */
+  @media (min-width: 769px) {
     :global(html.js) .pf__img {
       position: absolute; top: 11vh; right: 6vw; aspect-ratio: auto;
       height: 78vh; width: min(40vw, 62.4vh);
       box-shadow: 0 55px 100px -55px rgba(49, 51, 31, .55);
     }
-    :global(html.js) .pf__img img { will-change: transform; }
-
-    /* texto en el espacio negativo de la izquierda, centrado vertical */
     :global(html.js) .pf__panel {
       position: absolute; top: 0; left: 0; height: 100%; max-width: none;
       width: min(46vw, 42rem);
