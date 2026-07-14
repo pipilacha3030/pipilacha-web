@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import PrimeraFila from '../components/PrimeraFila.astro';
 import { aggregate, reviewsEs as reviews } from '../data/reviews.js';
 
 // salvaguarda: solo reseñas reales (descarta cualquier `draft`). Y repite lo justo
@@ -124,31 +125,6 @@ const groupReviews = Array.from({ length: reps }).flatMap(() => real);
     </a>
   </nav>
 
-  <!-- SHOWCOOKING (banda moss, retícula editorial de cantos vivos) -->
-  <section class="barra" id="showcooking">
-    <div class="barra__inner">
-      <header class="barra__head reveal">
-        <p class="barra__label">Showcooking</p>
-        <p class="barra__meta">Quince pases en directo</p>
-      </header>
-      <div class="barra__grid">
-        <figure class="barra__media reveal">
-          <img src="/assets/img/barra.jpg" alt="La barra puesta para el servicio, frente a la cocina" width="1280" height="1600" loading="lazy" decoding="async" />
-          <figcaption>La barra, antes del servicio</figcaption>
-        </figure>
-        <div class="barra__content">
-          <h2 class="barra__title reveal-head">Se cocina<br>delante de ti.</h2>
-          <p class="barra__lead reveal">La cocina está abierta y a un metro. Desde la barra ves terminar cada uno de los quince pases y quien lo cocina te cuenta qué flor lleva y de dónde salió la idea. Se turnan: uno cocina, el otro cuenta.</p>
-          <ul class="barra__facts" data-reveal-stagger>
-            <li class="reveal"><strong>8</strong><span>asientos en barra</span></li>
-            <li class="reveal"><strong>2</strong><span>chefs enfrente</span></li>
-            <li class="reveal"><strong>1</strong><span>metro hasta tu plato</span></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- PRUEBA SOCIAL: valoración agregada (Google) + carrusel de reseñas en bucle -->
   <section class="proof" aria-labelledby="proof-h">
     <div class="proof__blooms" aria-hidden="true">
@@ -207,30 +183,7 @@ const groupReviews = Array.from({ length: reps }).flatMap(() => real);
     </div>
   </section>
 
-  <!-- RESERVAR (cierre editorial: intro + ficha de datos con filetes) -->
-  <section class="book" id="reserva">
-    <span class="home-petal home-petal--ba" aria-hidden="true"><img src="/assets/img/flor-amapola.png" alt="" /></span>
-    <div class="book__inner">
-      <header class="book__head reveal">
-        <p class="book__label">Reservar</p>
-        <p class="book__meta">Madrid · Fuente del Berro</p>
-      </header>
-      <div class="book__grid">
-        <div class="book__intro">
-          <h2 class="book__title reveal-head">Dieciséis plazas<br>por servicio.</h2>
-          <p class="book__lead reveal">Jueves a domingo, dos veces al día. Ocho asientos en la barra, frente a la cocina; ocho en mesa. Elige día y turno.</p>
-          <a href="/reservas/" class="btn btn--solid btn--lg book__cta reveal">Reservar</a>
-          <p class="book__note reveal">¿Dudas? Escríbenos por <a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">Instagram</a> o llama al <a href="tel:+34919125998">919 12 59 98</a>.</p>
-        </div>
-        <dl class="book__facts" data-reveal-stagger>
-          <div class="reveal"><dt>Días</dt><dd>Jueves a domingo</dd></div>
-          <div class="reveal"><dt>Servicios</dt><dd>14:00 y 21:00</dd></div>
-          <div class="reveal"><dt>Menú degustación</dt><dd>85 € / persona</dd></div>
-          <div class="reveal"><dt>Maridaje</dt><dd>+60 € / persona</dd></div>
-          <div class="reveal"><dt>Duración</dt><dd>2 horas</dd></div>
-        </dl>
-      </div>
-    </div>
-  </section>
+  <!-- PRIMERA FILA — capítulo inmersivo: OBSERVAR → ESCUCHAR → DESCUBRIR → reserva -->
+  <PrimeraFila />
 
 </Base>

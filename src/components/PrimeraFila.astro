@@ -1,0 +1,127 @@
+---
+/* PRIMERA FILA — capítulo inmersivo (OBSERVAR → ESCUCHAR → DESCUBRIR → reserva).
+   Sustituye a Showcooking + Reserva. Contenido en src/data/primeraFila.js,
+   animación (pin + timeline) en src/scripts/animations/primeraFila.js.
+   Layout: apilado y editorial en móvil / sin JS; escenas superpuestas que se
+   funden con el scroll (pin) en escritorio con JS. */
+import { scenes, reserva } from '../data/primeraFila.js';
+---
+
+<section class="pf" id="reserva" aria-label="Primera fila — vivir el menú desde la barra">
+  <div class="pf__pin">
+    {scenes.map((s, i) => (
+      <div class={`pf__scene pf__scene--${i + 1}`}>
+        <figure class="pf__img">
+          <img src={s.img} alt={s.alt} width="1120" height="1400" loading="lazy" decoding="async" />
+        </figure>
+        <div class="pf__panel">
+          <p class="pf__marker"><span class="pf__num">{s.n}</span><span class="pf__step">{s.step}</span></p>
+          <h2 class="pf__title">{s.title}</h2>
+          <p class="pf__lead">{s.lead}</p>
+
+          {i === 2 && (
+            <div class="pf__reserva">
+              <div class="pf__offer">
+                <p class="pf__offer-ey">{reserva.eyebrow}</p>
+                <p class="pf__price"><strong>{reserva.price}</strong><span>{reserva.priceNote}</span></p>
+                <div class="pf__offer-lines">
+                  {reserva.lines.map((l) => <p>{l}</p>)}
+                </div>
+                <a href={reserva.cta.href} class="pf__cta">{reserva.cta.label}</a>
+              </div>
+              <ul class="pf__practical">
+                {reserva.practical.map((p) => <li>{p}</li>)}
+              </ul>
+            </div>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  /* ====== base: apilado y editorial (móvil + fallback sin JS) ====== */
+  .pf { position: relative; background: var(--cream); }
+  .pf__pin { position: relative; }
+
+  .pf__scene {
+    position: relative;
+    display: flex; flex-direction: column; gap: 1.8rem;
+    max-width: var(--maxw); margin-inline: auto;
+    padding: clamp(3rem, 9vh, 6rem) var(--gutter);
+  }
+  .pf__img {
+    position: relative; margin: 0; overflow: hidden;
+    border-radius: var(--radius); aspect-ratio: 4 / 5;
+    box-shadow: 0 40px 80px -50px rgba(49, 51, 31, .5);
+  }
+  .pf__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .pf__panel { max-width: 36rem; }
+  .pf__marker { display: flex; align-items: baseline; gap: .8rem; margin: 0 0 1.2rem; color: var(--accent); }
+  .pf__num { font-family: var(--serif); font-size: 1.35rem; line-height: 1; }
+  .pf__step { font-size: .7rem; letter-spacing: .28em; text-transform: uppercase; }
+  .pf__title {
+    font-family: var(--serif); font-size: clamp(2.1rem, 6vw, 3.4rem); line-height: 1.04;
+    color: var(--moss); letter-spacing: -.01em; margin: 0 0 1.2rem; text-wrap: balance;
+  }
+  .pf__lead {
+    font-family: var(--sans); font-weight: 300; font-size: clamp(1rem, 1.35vw, 1.16rem);
+    line-height: 1.7; color: var(--text-muted); margin: 0; max-width: 34ch;
+  }
+
+  /* — bloque reserva (escena 3): editorial, no tabla — */
+  .pf__reserva { margin-top: 2.6rem; display: flex; flex-direction: column; gap: 1.9rem; }
+  .pf__offer { display: flex; flex-direction: column; }
+  .pf__offer-ey { font-size: .7rem; letter-spacing: .24em; text-transform: uppercase; color: var(--text-subtle); margin: 0 0 .5rem; }
+  .pf__price { font-family: var(--serif); color: var(--moss); margin: 0 0 .7rem; display: flex; align-items: baseline; gap: .55rem; }
+  .pf__price strong { font-weight: 400; font-size: clamp(2.4rem, 5vw, 3.1rem); line-height: 1; }
+  .pf__price span { font-family: var(--sans); font-size: .92rem; color: var(--text-muted); }
+  .pf__offer-lines p { margin: .16rem 0; font-size: .9rem; color: var(--text-muted); }
+  .pf__cta {
+    align-self: flex-start; margin-top: 1.3rem; display: inline-block;
+    font-family: var(--sans); font-size: .76rem; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--cream); background: var(--moss); padding: 1rem 2.6rem; border-radius: 100px;
+    transition: background .4s var(--ease), transform .4s var(--ease);
+  }
+  .pf__cta:hover { background: var(--olive); transform: translateY(-2px); }
+  .pf__practical {
+    list-style: none; margin: 0; padding: 1.5rem 0 0; border-top: 1px solid var(--border-subtle);
+    display: flex; flex-wrap: wrap; gap: .5rem 1.8rem;
+  }
+  .pf__practical li { font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--text-subtle); }
+
+  /* ====== escritorio con JS: escenas superpuestas que se funden (pin) ====== */
+  @media (min-width: 769px) {
+    :global(html.js) .pf__pin { height: 100vh; overflow: hidden; }
+    :global(html.js) .pf__scene {
+      position: absolute; inset: 0; display: block;
+      padding: 0; max-width: none; margin: 0; opacity: 0; will-change: opacity;
+    }
+    :global(html.js) .pf__scene--1 { opacity: 1; }
+
+    /* imagen vertical dominante, a la derecha */
+    :global(html.js) .pf__img {
+      position: absolute; top: 11vh; right: 6vw; aspect-ratio: auto;
+      height: 78vh; width: min(40vw, 62.4vh);
+      box-shadow: 0 55px 100px -55px rgba(49, 51, 31, .55);
+    }
+    :global(html.js) .pf__img img { will-change: transform; }
+
+    /* texto en el espacio negativo de la izquierda, centrado vertical */
+    :global(html.js) .pf__panel {
+      position: absolute; top: 0; left: 0; height: 100%; max-width: none;
+      width: min(46vw, 42rem);
+      padding: 8vh clamp(2rem, 6vw, 6rem) 8vh clamp(3rem, 7vw, 7rem);
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    :global(html.js) .pf__title { font-size: clamp(2.4rem, 4.2vw, 3.9rem); }
+    :global(html.js) .pf__lead { max-width: 33ch; }
+    :global(html.js) .pf__reserva { margin-top: 2rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pf__img img { transform: none !important; }
+  }
+</style>
