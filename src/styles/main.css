@@ -62,9 +62,10 @@
   --ease: cubic-bezier(.22,1,.36,1);
 
   /* radios suaves (bordes redondeados de marca) */
-  --radius: 22px;        /* fotos y tarjetas grandes */
-  --radius-sm: 14px;     /* elementos pequeños */
+  --radius: 10px;        /* fotos y tarjetas grandes — poco redondeado */
+  --radius-sm: 8px;      /* elementos pequeños */
   --radius-btn: 999px;   /* botones: píldora, como el CTA del dock */
+  --shadow-photo: 0 2px 12px rgba(0,0,0,.42), 0 1px 3px rgba(0,0,0,.46);  /* texto blanco sobre foto */
 }
 
 /* ---------- reset ---------- */
@@ -549,7 +550,7 @@ body.menu-open .nav__lang,.nav__dock.is-page-morph .nav__lang{opacity:0;pointer-
 .hero__title .line{display:block;overflow:hidden}
 .hero__title .reveal-mask{display:inline-block}
 .js .hero__title .reveal-mask{transform:translateY(110%)}
-.hero__sub{font-size:clamp(1rem,1.6vw,1.35rem);max-width:38ch;font-weight:300;margin-bottom:2rem;opacity:.92}
+.hero__sub{font-size:clamp(1rem,1.6vw,1.35rem);max-width:38ch;font-weight:300;margin-bottom:2rem;opacity:.92;text-shadow:var(--shadow-photo)}
 .hero .eyebrow{color:var(--cream);opacity:.85}
 /* indicador de scroll: pista vertical con una gota que cae en bucle. Anclado a la
    izquierda, en línea con el tallo. Se desvanece al empezar a bajar. */
@@ -702,7 +703,7 @@ body.menu-open .spine{opacity:0}
 .showcase__cap{
   position:absolute;left:0;right:0;bottom:clamp(2.5rem,8vh,5.5rem);z-index:2;
   display:flex;flex-direction:column;gap:.6rem;align-items:center;text-align:center;color:var(--cream);
-  padding:0 var(--gutter);
+  padding:0 var(--gutter);text-shadow:var(--shadow-photo);
 }
 .showcase__cap .eyebrow{margin-bottom:0;color:var(--cream);opacity:.85}
 .showcase__title{font-family:var(--serif);font-size:clamp(2.2rem,6vw,5rem);color:#fff;line-height:1.05}
@@ -900,7 +901,7 @@ body:has(.gal-stage) .reserva-bar{display:none}
 .gal-frame__links a{font-size:.82rem;letter-spacing:.04em;color:var(--text-muted);transition:color .3s var(--ease)}
 .gal-frame__links a:hover{color:var(--moss)}
 .gal-frame__cta{
-  padding:.6rem 1.3rem;background:var(--moss);color:var(--cream)!important;
+  padding:.6rem 1.3rem;background:var(--moss);color:var(--cream)!important;border-radius:var(--radius-btn);
   letter-spacing:.08em;text-transform:uppercase;font-size:.72rem!important;
   transition:background .3s var(--ease)!important;
 }
@@ -1136,7 +1137,7 @@ body:has(.cc-banner.is-visible) .reserva-bar{transform:translateY(100%)}
     rgba(20,20,12,.08) 100%
   );
 }
-.explore__label{position:relative;z-index:2;display:block;line-height:1.05;transition:letter-spacing .55s var(--ease)}
+.explore__label{position:relative;z-index:2;display:block;line-height:1.05;text-shadow:var(--shadow-photo);transition:letter-spacing .55s var(--ease)}
 .explore a:focus-visible{outline:2px solid var(--cream);outline-offset:-8px}
 @media (hover:hover) and (pointer:fine){
   .explore a:hover::before{transform:scale(1)}
