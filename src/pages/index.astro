@@ -1,65 +1,73 @@
 ---
 import Base from '../layouts/Base.astro';
+import { aggregate, reviewsEs as reviews } from '../data/reviews.js';
 ---
 
 <Base
   title="Pipilacha · El único restaurante construido sobre las flores"
-  description="Pipilacha es un restaurante de degustación en Madrid donde las flores no son adorno: son el concepto. 16 plazas por servicio. Jueves a domingo."
+  description="Pipilacha es un restaurante de degustación en Madrid donde las flores no son adorno: son el ingrediente principal. 16 plazas por servicio. Jueves a domingo."
 >
+
+  <!-- TALLO: columna vertebral que cose todas las secciones de la home -->
+  <div class="spine" aria-hidden="true"><span class="spine__line"></span><span class="spine__marker"></span></div>
 
   <!-- HERO -->
   <section class="hero" id="hero">
-    <div class="hero__media" data-parallax="0.25">
+    <div class="hero__media" data-parallax="0.15">
       <img
         src="/assets/img/hero.jpg"
-        srcset="/assets/img/hero-m.jpg 900w, /assets/img/hero.jpg 2400w"
+        srcset="/assets/img/hero-m.jpg 1200w, /assets/img/hero.jpg 3840w"
         sizes="100vw"
-        width="2400" height="1350"
+        width="3840" height="2160"
         fetchpriority="high" decoding="async"
         alt="Cuenco de cerámica lleno de flores comestibles sostenido entre las manos" />
+      <!-- lienzo WebGL: mejora progresiva sobre la foto. Si no hay WebGL, es
+           reduced-motion o pantalla táctil, queda invisible y se ve el <img>. -->
+      <canvas class="hero__gl" id="heroGL" aria-hidden="true"></canvas>
       <div class="hero__veil"></div>
     </div>
     <div class="hero__content">
-      <p class="eyebrow reveal" data-delay="0.1">Restaurante de degustación · Madrid</p>
       <h1 class="hero__title">
         <span class="line"><span class="reveal-mask">Un menú entero</span></span>
         <span class="line"><span class="reveal-mask">hecho de flores.</span></span>
       </h1>
-      <p class="hero__sub reveal" data-delay="0.5">El único restaurante del mundo construido íntegramente sobre las flores.</p>
+      <p class="hero__sub reveal" data-delay="0.5">Durante siglos las flores se contemplaron. Ahora también se degustan.</p>
       <div class="hero__actions">
         <a href="/reservas/" class="btn btn--solid reveal" data-delay="0.65">Reservar</a>
         <a href="/regala/" class="btn btn--ghost reveal" data-delay="0.75">Regalar</a>
       </div>
     </div>
+    <a href="#quienes" class="hero__scroll" aria-label="Bajar"><span class="hero__scroll-track"><span class="hero__scroll-dot"></span></span></a>
   </section>
 
-  <!-- QUIÉNES SOMOS: identidad editorial, full-bleed, cascada tipográfica -->
+  <!-- QUIÉNES SOMOS: split editorial — foto enmarcada (revelado con clip-path)
+       + texto al lado. Reemplaza el full-bleed con la máscara de flor. -->
   <section class="quienes" id="quienes">
-    <div class="quienes__visual">
-      <figure class="quienes__media" data-parallax="0.2">
-        <img src="/assets/img/chef-3.jpg" width="1152" height="2048" alt="Arán Rodrigo y Noé David en la cocina de Pipilacha" loading="lazy" decoding="async" />
+    <span class="home-petal home-petal--qa" aria-hidden="true"><img src="/assets/img/flor-cosmos.png" alt="" /></span>
+    <div class="quienes__inner">
+      <figure class="quienes__figure">
+        <div class="quienes__frame">
+          <img src="/assets/img/chef-3.jpg" width="1152" height="2048" alt="Arán Rodrigo y Noé David en la cocina de Pipilacha" loading="lazy" decoding="async" />
+        </div>
       </figure>
-      <div class="quienes__veil" aria-hidden="true"></div>
-    </div>
-    <div class="quienes__body">
-      <div class="quienes__inner">
+      <div class="quienes__body">
         <h2 class="quienes__h2 reveal-head">Un restaurante para curiosos.</h2>
-        <p class="quienes__text">
+        <p class="quienes__text reveal">
           Quince pases y en todos manda una flor distinta. No de adorno: como ingrediente principal,
           cocinada hasta donde llega su sabor. Esto no lo vas a encontrar en ningún otro restaurante
           de Madrid, porque casi nadie lo ha intentado. Te sientas en la barra, lo ves hacerse a un
           metro, y sales habiendo probado cosas que no existen en ningún otro sitio.
         </p>
-<a href="/conocenos/" class="quienes__link reveal">Quiénes están detrás →</a>
+        <a href="/conocenos/" class="quienes__link reveal">Quiénes están detrás →</a>
       </div>
     </div>
   </section>
 
   <!-- DESPERTAR DE LAS FLORES · tarjeta con 4 fotos en crossfade; al hacer scroll
        el escenario se fija (pin) y la tarjeta crece hasta pantalla completa -->
-  <section class="gallery" id="gallery" aria-label="Despertar de las flores">
+  <section class="gallery" id="gallery" aria-label="Solsticio floral">
     <div class="gallery__stage">
-    <a class="gallery-finale showcase" id="despertar" href="/menu/" aria-label="Ver el menú Despertar de las flores">
+    <a class="gallery-finale showcase" id="despertar" href="/menu/" aria-label="Ver el menú Solsticio floral">
       <div class="showcase__frame">
         <figure class="showcase__layer" data-layer="0"><img src="/assets/img/df-esparrago.jpg" alt="Espárragos a la brasa con romesco de tagete" loading="lazy" decoding="async" /></figure>
         <figure class="showcase__layer" data-layer="1"><img src="/assets/img/df-guisante.jpg" alt="Guisante coco-saúco" loading="lazy" decoding="async" /></figure>
@@ -68,30 +76,31 @@ import Base from '../layouts/Base.astro';
         <span class="showcase__veil" aria-hidden="true"></span>
       </div>
       <span class="showcase__cap">
-        <span class="eyebrow">El menú</span>
-        <span class="showcase__title">Despertar de las flores</span>
+        <span class="eyebrow">El menú de verano</span>
+        <span class="showcase__title">Solsticio floral</span>
         <span class="showcase__more">Ver los pases →</span>
       </span>
     </a>
     </div>
   </section>
 
-  <!-- CINTA (pequeña y clara, con flores; texto con keywords para SEO) -->
+  <!-- CINTA: tipografía editorial que corre y reacciona a la velocidad del scroll
+       (skew + aceleración vía GSAP, ver scripts/animations/marquee.js) -->
   <div class="marquee" aria-hidden="true">
     <div class="marquee__track">
       <div class="marquee__group">
-        <span>Restaurante de flores en Madrid</span><span class="marquee__sep">✿</span>
-        <span>Menú de degustación · 15 pases</span><span class="marquee__sep">✿</span>
-        <span>Cocina floral de autor</span><span class="marquee__sep">✿</span>
-        <span>Flores comestibles como ingrediente</span><span class="marquee__sep">✿</span>
-        <span>Fuente del Berro · Jueves a domingo</span><span class="marquee__sep">✿</span>
+        <span>35 flores comestibles</span><span class="marquee__sep">✿</span>
+        <span>15 pases</span><span class="marquee__sep">✿</span>
+        <span>una única temporada</span><span class="marquee__sep">✿</span>
+        <span>Madrid</span><span class="marquee__sep">✿</span>
+        <span>16 plazas</span><span class="marquee__sep">✿</span>
       </div>
       <div class="marquee__group">
-        <span>Restaurante de flores en Madrid</span><span class="marquee__sep">✿</span>
-        <span>Menú de degustación · 15 pases</span><span class="marquee__sep">✿</span>
-        <span>Cocina floral de autor</span><span class="marquee__sep">✿</span>
-        <span>Flores comestibles como ingrediente</span><span class="marquee__sep">✿</span>
-        <span>Fuente del Berro · Jueves a domingo</span><span class="marquee__sep">✿</span>
+        <span>35 flores comestibles</span><span class="marquee__sep">✿</span>
+        <span>15 pases</span><span class="marquee__sep">✿</span>
+        <span>una única temporada</span><span class="marquee__sep">✿</span>
+        <span>Madrid</span><span class="marquee__sep">✿</span>
+        <span>16 plazas</span><span class="marquee__sep">✿</span>
       </div>
     </div>
   </div>
@@ -134,8 +143,67 @@ import Base from '../layouts/Base.astro';
     </div>
   </section>
 
+  <!-- PRUEBA SOCIAL: valoración agregada (Google) + carrusel de reseñas en bucle -->
+  <section class="proof" aria-labelledby="proof-h">
+    <div class="proof__blooms" aria-hidden="true">
+      <span class="proof__bloom proof__bloom--1"><img src="/assets/img/flor-coreopsis.png" alt="" /></span>
+      <span class="proof__bloom proof__bloom--2"><img src="/assets/img/flor-cosmos.png" alt="" /></span>
+      <span class="proof__bloom proof__bloom--3"><img src="/assets/img/flor-amapola.png" alt="" /></span>
+      <span class="proof__bloom proof__bloom--4"><img src="/assets/img/flor-borraja.png" alt="" /></span>
+      <span class="proof__bloom proof__bloom--5"><img src="/assets/img/flor-aciano.png" alt="" /></span>
+      <span class="proof__bloom proof__bloom--6"><img src="/assets/img/flor-calendula.png" alt="" /></span>
+      <span class="proof__bloom proof__bloom--7"><img src="/assets/img/flor-dalia.png" alt="" /></span>
+      <span class="proof__bloom proof__bloom--8"><img src="/assets/img/flor-geranio.png" alt="" /></span>
+      <span class="proof__bloom proof__bloom--9"><img src="/assets/img/flor-clavel.png" alt="" /></span>
+    </div>
+    <div class="proof__inner">
+      <div class="proof__rating reveal">
+        <span class="proof__stars" aria-hidden="true">★★★★★</span>
+        <p class="proof__score"><strong>{aggregate.rating}</strong> / 5</p>
+        <p class="proof__meta">{aggregate.count} reseñas en Google</p>
+      </div>
+      <h2 class="proof__title reveal" id="proof-h">Lo que permanece después del último pase.</h2>
+    </div>
+
+    <!-- raíl full-bleed: dos grupos idénticos → bucle sin costura (reviews.js) -->
+    <div class="reviews reveal" data-reviews>
+      <div class="reviews__track">
+        {[false, true].map((dup) => (
+          <div class="reviews__group" aria-hidden={dup ? 'true' : undefined}>
+            {reviews.map((r) => (
+              <a
+                class="review-card"
+                href={aggregate.url}
+                target="_blank"
+                rel="noopener"
+                tabindex={dup ? -1 : undefined}
+                aria-label={dup ? undefined : `Reseña de ${r.author} en ${r.source} — ver en Google`}
+              >
+                <span class="review-card__head">
+                  <img class="review-card__photo" src={r.photo} width="96" height="96" alt="" loading="lazy" decoding="async" />
+                  <span class="review-card__who">
+                    <span class="review-card__author">{r.author}</span>
+                    <span class="review-card__src">{r.source}</span>
+                  </span>
+                  <span class="review-card__mark" aria-hidden="true">✿</span>
+                </span>
+                <span class="review-card__stars" aria-hidden="true">★★★★★</span>
+                <blockquote>{r.text}</blockquote>
+              </a>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="proof__inner">
+      <a class="proof__link reveal" href={aggregate.url} target="_blank" rel="noopener">Ver todas las reseñas en Google →</a>
+    </div>
+  </section>
+
   <!-- RESERVAR (cierre editorial: intro + ficha de datos con filetes) -->
   <section class="book" id="reserva">
+    <span class="home-petal home-petal--ba" aria-hidden="true"><img src="/assets/img/flor-amapola.png" alt="" /></span>
     <div class="book__inner">
       <header class="book__head reveal">
         <p class="book__label">Reservar</p>

@@ -12,14 +12,19 @@ import { initNav } from './nav.js';
 import { initTransitions } from './transitions.js';
 import { bindPageAnchors } from './scroll/anchors.js';
 import { initHero, resetHero } from './animations/hero.js';
+import { initHeroGL } from './animations/heroGL.js';
+import { initSpine } from './animations/spine.js';
 import { initReveals } from './animations/reveal.js';
 import { initMediaBlooms } from './animations/media.js';
 import { initMenuStem } from './animations/menu.js';
 import { initParallax } from './animations/parallax.js';
 import { initShowcase } from './animations/showcase.js';
-import { initBloomReveal } from './animations/bloomReveal.js';
+import { initQuienesReveal } from './animations/quienesReveal.js';
+import { initMarquee } from './animations/marquee.js';
+import { initReviews } from './animations/reviews.js';
 import { initMagnetic } from './interactions/magnetic.js';
 import { initCellar } from './cellar.js';
+import { initCookies, applyWidgetConsent } from './cookies.js';
 
 function destroyPage() {
   resetPage();   // aborta listeners, corre cleanups y revierte el gsap.context de la página
@@ -30,12 +35,16 @@ function destroyPage() {
 
 function initPage() {
   initHero();
+  initHeroGL();
+  initSpine();
   initReveals();
   initMediaBlooms();
   initMenuStem();
   initParallax();
   initShowcase();
-  initBloomReveal();
+  initQuienesReveal();
+  initMarquee();
+  initReviews();
   initMagnetic();
 
   /* galería: el motor 3D solo se descarga en páginas que lo usan.
@@ -49,10 +58,12 @@ function initPage() {
   }
 
   initCellar();
+  applyWidgetConsent(); // el <main> se intercambia: re-gatea el widget de TheFork según consentimiento
   bindPageAnchors();
   ScrollTrigger.refresh();
 }
 
 initNav();
+initCookies(); // una vez: banner/diálogo viven fuera de <main>, persisten entre transiciones
 initTransitions({ initPage, destroyPage });
 initPage();

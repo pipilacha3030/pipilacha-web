@@ -106,10 +106,18 @@ html.lenis,html.lenis body{height:auto}
 /* ---------- helpers ---------- */
 /* visible solo en escritorio ("en web") — oculto en móvil */
 @media(max-width:900px){.desktop-only{display:none!important}}
+/* eyebrow: etiqueta de sección con un filete corto delante — sistema común a
+   toda la web (coherencia entre secciones). inline-flex + gap para alinear el
+   filete con el texto sin romper el centrado donde lo haya. */
 .eyebrow{
+  display:inline-flex;align-items:center;gap:.75em;
   font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;
   font-weight:500;color:var(--accent);margin-bottom:1.4rem;
 }
+.eyebrow::before{content:"";flex:none;width:1.7em;height:1px;background:currentColor;opacity:.5}
+/* eyebrows centrados: filete a ambos lados para que queden simétricos */
+.faq .eyebrow,.cta-band .eyebrow,.gift-shop .eyebrow{justify-content:center}
+.faq .eyebrow::after,.cta-band .eyebrow::after,.gift-shop .eyebrow::after{content:"";flex:none;width:1.7em;height:1px;background:currentColor;opacity:.5}
 @media(max-width:560px){.eyebrow{letter-spacing:.14em;font-size:.66rem}}
 .btn{
   position:relative;display:inline-block;font-family:var(--sans);font-weight:500;
@@ -170,20 +178,30 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius
 /* fila de acciones del hero (Reservar + Regalar) */
 .hero__actions{display:flex;flex-wrap:wrap;gap:.9rem;align-items:center}
 
-/* ---------- barra fija de reserva en móvil (aparece tras el primer scroll) ---------- */
+/* ---------- barra de reserva en móvil: pegada al borde inferior, ancho completo,
+   solo las esquinas superiores redondeadas. Cristal obsidiana (mismo material que
+   el dock) con un borde de marca estático — sin el haz de luz que giraba. ---------- */
 .reserva-bar{
   position:fixed;left:0;right:0;bottom:0;z-index:90;
   display:flex;align-items:center;justify-content:center;min-height:56px;
   font-family:var(--sans);font-weight:500;font-size:.82rem;letter-spacing:.2em;text-transform:uppercase;
-  background:var(--moss);color:var(--cream);
+  color:var(--cream);
   padding:1.1em 1.5em;padding-bottom:max(1.1em, env(safe-area-inset-bottom));
-  box-shadow:0 -1px 0 rgba(244,239,230,.12), 0 -12px 30px -20px rgba(0,0,0,.5);
-  transform:translateY(100%);transition:transform .55s var(--ease), background .4s;
+  border-radius:20px 20px 0 0;
+  border:1px solid rgba(176,167,127,.4);border-bottom:0;
+  background:rgba(13,13,13,.62);
+  -webkit-backdrop-filter:blur(14px) saturate(1.6);backdrop-filter:blur(14px) saturate(1.6);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1), 0 -10px 30px -18px rgba(13,13,13,.6);
+  transform:translateY(100%);
+  transition:transform .55s var(--ease);
 }
 .reserva-bar.is-visible{transform:translateY(0)}
-.reserva-bar:active{background:var(--olive)}
+.reserva-bar:active{filter:brightness(1.15)}
 body.scroll-lock .reserva-bar{transform:translateY(100%)!important}
 @media (min-width:901px){ .reserva-bar{display:none} }
+@media (prefers-reduced-motion:reduce){
+  .reserva-bar{transition:transform .3s}
+}
 /* el pie deja sitio para que la barra no tape el © al final */
 @media (max-width:900px){ .footer{padding-bottom:calc(2.5rem + 64px + env(safe-area-inset-bottom))} }
 
@@ -283,7 +301,27 @@ body.menu-open .nav__dock{background:rgba(13,13,13,.82)}
 /* el contenido del dock viaja POR ENCIMA de las capas del cristal (ruido/sheen,
    z:0) y del panel de menú (z:1) — el burger mutado a ✕ debe seguir clicable
    sobre el panel expandido */
-.nav__burger,.nav__logo,.nav__cta{position:relative;z-index:2}
+.nav__burger,.nav__logo,.nav__cta,.nav__left{position:relative;z-index:2}
+
+/* columna izquierda del dock: burger + selector de idioma, alineados a la izq. */
+.nav__left{display:flex;align-items:center;gap:.55rem;justify-self:start}
+/* selector de idioma en el dock (siempre visible, para extranjeros):
+   pequeña píldora de cristal con globo + código del idioma destino */
+.nav__lang{
+  display:inline-flex;align-items:center;gap:.32rem;
+  padding:.34em .6em;border-radius:var(--radius-btn);
+  border:1px solid rgba(244,239,230,.28);color:var(--cream);
+  font-size:.68rem;letter-spacing:.14em;line-height:1;
+  transition:background .3s var(--ease),border-color .3s var(--ease),opacity .25s var(--ease);
+}
+.nav__lang:hover{background:rgba(244,239,230,.14);border-color:rgba(244,239,230,.55)}
+.nav__lang-globe{opacity:.85;flex:none}
+.nav__lang:focus-visible{outline:2px solid var(--cream);outline-offset:3px}
+/* se retira cuando el dock se abre como panel o se traga la página (el panel
+   tiene su propio selector dentro): no debe flotar sobre el menú expandido */
+body.menu-open .nav__lang,.nav__dock.is-page-morph .nav__lang{opacity:0;pointer-events:none}
+/* en pantallas muy estrechas el dock va justo: se deja solo el globo */
+@media (max-width:560px){ .nav__lang{padding:.34em .45em} .nav__lang span{display:none} }
 
 /* durante el morphing (clase puesta por nav.js mientras corre el timeline):
    - will-change avisa a la GPU de que la geometría del cristal va a mutar,
@@ -462,6 +500,14 @@ body.menu-open .nav__dock{background:rgba(13,13,13,.82)}
 .nav__menu-meta > div > span{font-size:.62rem;letter-spacing:.22em;color:rgba(244,239,230,.38)}
 .nav__menu-meta a{color:inherit;transition:color .3s var(--ease)}
 .nav__menu-meta a:hover{color:var(--cream)}
+/* selector de idioma: píldora con borde crema, coherente con el CTA del dock */
+.nav__menu-lang{justify-content:center}
+.nav__menu-lang a{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:.35em .9em;border:1px solid rgba(244,239,230,.3);border-radius:var(--radius-btn);
+  font-size:.7rem;letter-spacing:.18em;color:var(--cream);
+}
+.nav__menu-lang a:hover{background:rgba(244,239,230,.12);border-color:var(--cream)}
 
 /* reduced-motion: sin morphing, sin drawer animado, sin magnético (nav.js no
    lanza timelines) — los estados los pinta el CSS al instante */
@@ -480,101 +526,103 @@ body.menu-open .nav__dock{background:rgba(13,13,13,.82)}
 
 /* ---------- hero ---------- */
 .hero{position:relative;height:100svh;min-height:600px;overflow:hidden;display:flex;align-items:flex-end}
-.hero__media{position:absolute;inset:-16% 0;z-index:0;will-change:transform}
-/* zoom cerrado: la imagen se escala por encima del recuadro (`overflow:hidden`
-   del .hero recorta lo que sobra) para un encuadre más íntimo/apretado */
+/* inset -9% = margen justo para el parallax 0.15 (±7.5% del alto × 1.18 de caja ≈ 8.9%).
+   Antes: -16% + scale(1.18) — zoom combinado ~1.55 que recortaba y emborronaba la foto */
+.hero__media{position:absolute;inset:-9% 0;z-index:0;will-change:transform}
+/* casi a pantalla (scale 1.02, reposo de la entrada 1.10→1.02 en hero.js) */
 /* la imagen vive en su propia capa GPU (backface-visibility + will-change): la
    animación continua de "respiro" se compone sin repintar el raster grande cada
    frame → sin titileo en el borde superior */
-.hero__media img{filter:saturate(1.02);transform:scale(1.18);transform-origin:50% 42%;will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.hero__media img{filter:saturate(1.02);transform:scale(1.02);transform-origin:50% 42%;will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+/* lienzo WebGL sobre la foto (mejora progresiva; oculto por defecto, lo activa
+   heroGL.js solo en escritorio con WebGL). pointer-events:none → no bloquea el
+   contenido; el puntero se lee en .hero */
+.hero__gl{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;visibility:hidden;pointer-events:none}
 .hero__veil{
   position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(20,20,12,.35) 0%,rgba(20,20,12,0) 28%,rgba(20,20,12,.15) 55%,rgba(20,20,12,.75) 100%);
 }
-.hero__content{position:relative;z-index:2;color:var(--cream);padding:0 var(--gutter) clamp(3rem,8vh,6rem);max-width:var(--maxw)}
-.hero__title{font-size:clamp(2.6rem,6vw,5rem);margin:.4rem 0 1.4rem;color:#fff}
+.hero__content{position:relative;z-index:2;color:var(--cream);padding:0 var(--gutter) clamp(3.5rem,9vh,7rem);max-width:var(--maxw)}
+/* título de portada: contenido para que no choque con el cuenco; sombra suave que
+   le da cuerpo y lo despega de la foto (dimensión sin volverse duro) */
+.hero__title{font-size:clamp(2.5rem,6.6vw,5.2rem);line-height:1;letter-spacing:-.012em;margin:.4rem 0 1.5rem;color:#fff;text-shadow:0 2px 22px rgba(18,18,10,.42),0 1px 4px rgba(18,18,10,.4)}
 .hero__title .line{display:block;overflow:hidden}
 .hero__title .reveal-mask{display:inline-block}
 .js .hero__title .reveal-mask{transform:translateY(110%)}
 .hero__sub{font-size:clamp(1rem,1.6vw,1.35rem);max-width:38ch;font-weight:300;margin-bottom:2rem;opacity:.92}
 .hero .eyebrow{color:var(--cream);opacity:.85}
+/* indicador de scroll: pista vertical con una gota que cae en bucle. Anclado a la
+   izquierda, en línea con el tallo. Se desvanece al empezar a bajar. */
+.hero__scroll{position:absolute;left:clamp(.9rem,2.4vw,2rem);bottom:clamp(1.4rem,4vh,2.6rem);z-index:2;display:grid;place-items:center;width:16px;transform:translateX(-50%);transition:opacity .5s var(--ease)}
+.hero__scroll-track{position:relative;width:1px;height:46px;background:linear-gradient(180deg,rgba(244,239,230,.5),rgba(244,239,230,.05));overflow:hidden;border-radius:1px}
+.hero__scroll-dot{position:absolute;left:50%;top:0;width:3px;height:3px;border-radius:50%;background:var(--cream);transform:translateX(-50%);animation:scrollDrop 2.1s var(--ease) infinite}
+@keyframes scrollDrop{0%{top:-4px;opacity:0}20%{opacity:1}80%{opacity:1}100%{top:46px;opacity:0}}
+.nav-compact .hero__scroll{opacity:0;pointer-events:none}
 
-/* ---------- quiénes somos (full-bleed editorial + cascada tipográfica) ---------- */
-/* transición hero→quiénes: la foto se revela a través de una máscara de FLOR que
-   florece al hacer scroll (inspirado en el SVG-mask reveal de Codrops, en clave de
-   marca). --bloom = tamaño de la máscara: 360% = flor enorme = foto completa (estado
-   por defecto sin JS/reduced-motion); la anima GSAP de ~12% (capullo) a 360%. */
-@property --bloom{syntax:'<percentage>';inherits:false;initial-value:360%}
-.quienes__visual{
-  position:relative;height:80vh;min-height:540px;overflow:hidden;
-  --bloom:360%;
-  --flower:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Cg%20fill='black'%3E%3Cg%20transform='rotate(0%2050%2050)'%3E%3Cellipse%20cx='50'%20cy='29'%20rx='13.5'%20ry='25'/%3E%3C/g%3E%3Cg%20transform='rotate(45%2050%2050)'%3E%3Cellipse%20cx='50'%20cy='29'%20rx='13.5'%20ry='25'/%3E%3C/g%3E%3Cg%20transform='rotate(90%2050%2050)'%3E%3Cellipse%20cx='50'%20cy='29'%20rx='13.5'%20ry='25'/%3E%3C/g%3E%3Cg%20transform='rotate(135%2050%2050)'%3E%3Cellipse%20cx='50'%20cy='29'%20rx='13.5'%20ry='25'/%3E%3C/g%3E%3Cg%20transform='rotate(180%2050%2050)'%3E%3Cellipse%20cx='50'%20cy='29'%20rx='13.5'%20ry='25'/%3E%3C/g%3E%3Cg%20transform='rotate(225%2050%2050)'%3E%3Cellipse%20cx='50'%20cy='29'%20rx='13.5'%20ry='25'/%3E%3C/g%3E%3Cg%20transform='rotate(270%2050%2050)'%3E%3Cellipse%20cx='50'%20cy='29'%20rx='13.5'%20ry='25'/%3E%3C/g%3E%3Cg%20transform='rotate(315%2050%2050)'%3E%3Cellipse%20cx='50'%20cy='29'%20rx='13.5'%20ry='25'/%3E%3C/g%3E%3Ccircle%20cx='50'%20cy='50'%20r='18'/%3E%3C/g%3E%3C/svg%3E");
-  -webkit-mask-image:var(--flower);mask-image:var(--flower);
-  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
-  -webkit-mask-position:center 42%;mask-position:center 42%;
-  -webkit-mask-size:var(--bloom) auto;mask-size:var(--bloom) auto;
-}
-.quienes__media{
-  position:absolute;inset:-12% 0;margin:0;will-change:transform;
-}
-.quienes__media img{
-  width:100%;height:100%;object-fit:cover;object-position:center 30%;
-}
-.quienes__veil{
-  position:absolute;inset:0;
-  background:linear-gradient(
-    180deg,
-    rgba(20,20,12,.08) 0%,
-    rgba(20,20,12,0) 30%,
-    rgba(20,20,12,.38) 66%,
-    rgba(20,20,12,.80) 100%
-  );
-}
+/* ---------- TALLO: columna vertebral de la home (solo escritorio) ---------- */
+.spine{position:fixed;top:15vh;bottom:9vh;left:clamp(.9rem,2.4vw,2rem);width:16px;z-index:40;pointer-events:none;opacity:0;transition:opacity .9s var(--ease);display:none}
+.spine.is-on{opacity:1}
+.spine__line{position:absolute;top:0;bottom:0;left:50%;width:1px;transform:translateX(-50%);
+  background:linear-gradient(180deg,transparent,var(--accent-soft) 10%,var(--accent-soft) 90%,transparent);opacity:.5}
+.spine__marker{position:absolute;left:50%;top:0;width:9px;height:9px;border-radius:50%;background:var(--accent);
+  transform:translate(-50%,-50%);box-shadow:0 0 0 4px rgba(244,239,230,.4),0 0 12px rgba(49,51,31,.35);transition:top .1s linear}
+@media (min-width:1024px){ .spine{display:block} }
+body.menu-open .spine{opacity:0}
+@media (prefers-reduced-motion:reduce){ .spine,.hero__scroll{display:none} }
 
-.quienes__body{
-  background:var(--cream);
-  padding:clamp(4.5rem,11vh,10rem) var(--gutter);
+/* pétalos ambiente de la home: mismo motivo floral en blur que Reservas/Vinos,
+   en los márgenes de las secciones crema — cosen la home a la atmósfera del
+   resto del sitio y suavizan los cortes. Decorativos, tras el contenido. */
+.home-petal{position:absolute;z-index:0;pointer-events:none;will-change:transform}
+.home-petal img{display:block;width:100%;height:auto;filter:blur(9px) saturate(1.12)}
+.home-petal--qa{top:-4%;right:-3%;width:clamp(150px,17vw,300px);opacity:.34}
+.home-petal--qa img{animation:float 19s ease-in-out infinite}
+.home-petal--ba{bottom:-6%;left:-4%;width:clamp(150px,16vw,290px);opacity:.32}
+.home-petal--ba img{animation:float2 22s ease-in-out infinite}
+@media (max-width:760px){ .home-petal{opacity:.6} }
+@media (prefers-reduced-motion:reduce){ .home-petal img{animation:none} }
+
+/* ---------- quiénes somos: split editorial (imagen enmarcada + texto) ---------- */
+.quienes{background:var(--cream);position:relative;overflow:hidden}
+.quienes__inner,.book__inner{position:relative;z-index:1}
+.book{position:relative;overflow:hidden}
+.quienes__inner{
+  max-width:var(--maxw);margin:0 auto;
+  padding:clamp(4rem,10vh,9rem) var(--gutter);
+  display:grid;gap:clamp(2.5rem,5vw,4rem);align-items:center;
 }
-.quienes__inner{max-width:var(--maxw);margin:0 auto}
-.quienes__inner>.eyebrow{color:var(--accent);display:block}
-/* desktop: h2 a la izquierda, texto + enlace a la derecha */
 @media(min-width:901px){
-  .quienes__inner{
-    display:grid;
-    grid-template-columns:1fr 1.15fr;
-    column-gap:clamp(4rem,7vw,8rem);
-    row-gap:1.4rem;
-    align-items:start;
-  }
-  .quienes__h2{grid-area:1/1/3/2;align-self:start;margin-top:0;max-width:none}
-  .quienes__text{grid-area:1/2/2/3;margin-top:0}
-  .quienes__link{grid-area:2/2/3/3}
+  .quienes__inner{grid-template-columns:.92fr 1.08fr;gap:clamp(3rem,6vw,7rem)}
 }
+.quienes__figure{margin:0;min-width:0}
+/* marco: el recorte (clip-path) y la escala de la foto los anima quienesReveal.js
+   al entrar — revelado de imagen limpio, sin la antigua máscara de flor.
+   inset(0) es el estado final (visible por defecto sin JS/reduced-motion). */
+.quienes__frame{
+  position:relative;overflow:hidden;border-radius:var(--radius);
+  aspect-ratio:4/5;clip-path:inset(0 0 0 0);
+  box-shadow:0 40px 90px -45px rgba(49,51,31,.55);
+}
+.quienes__frame img{width:100%;height:100%;object-fit:cover;object-position:center 26%;will-change:transform}
+@media(max-width:900px){
+  .quienes__frame{aspect-ratio:3/4;max-height:70vh;width:100%;margin-inline:auto}
+}
+.quienes__body{min-width:0}
 .quienes__h2{
-  font-family:var(--serif);font-size:clamp(1.8rem,3.2vw,2.8rem);
-  line-height:1.12;letter-spacing:-.01em;color:var(--moss);
-  margin-top:.6rem;max-width:18ch;
+  font-family:var(--serif);font-size:clamp(2rem,4vw,3.3rem);
+  line-height:1.1;letter-spacing:-.015em;color:var(--moss);max-width:15ch;
 }
 .quienes__text{
-  max-width:52ch;
-  font-size:clamp(1.06rem,1.55vw,1.24rem);
-  line-height:1.75;color:var(--ink);
-  margin-top:.5rem;
+  max-width:46ch;font-size:clamp(1.05rem,1.45vw,1.22rem);
+  line-height:1.75;color:var(--ink);margin-top:clamp(1.3rem,2.6vh,2rem);text-wrap:pretty;
 }
 .quienes__link{
-  display:inline-block;margin-top:clamp(2.2rem,5vh,3.4rem);
+  display:inline-block;margin-top:clamp(1.8rem,4vh,3rem);
   font-family:var(--sans);font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;
   color:var(--moss);border-bottom:1px solid rgba(49,51,31,.38);padding-bottom:.22rem;
   transition:color .4s var(--ease),border-color .4s var(--ease);
 }
 .quienes__link:hover{color:var(--accent);border-color:var(--accent)}
-
-@media(max-width:900px){
-  .quienes__visual{height:66vh}
-}
-@media(max-width:560px){
-  .quienes__visual{height:56vh;min-height:380px}
-}
 
 /* ---------- showcooking (banda moss, cantos vivos) ---------- */
 .barra{background:var(--moss);padding:clamp(4rem,12vh,9rem) var(--gutter)}
@@ -590,6 +638,9 @@ body.menu-open .nav__dock{background:rgba(13,13,13,.82)}
 }
 .barra__label{color:var(--accent-soft)}
 .barra__meta{color:rgba(244,239,230,.62);letter-spacing:.18em}
+/* mismo filete que .eyebrow → todas las etiquetas de sección, un solo sistema */
+.barra__label,.book__label{display:inline-flex;align-items:center;gap:.75em}
+.barra__label::before,.book__label::before{content:"";flex:none;width:1.7em;height:1px;background:currentColor;opacity:.5}
 .barra__grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2.5rem,6vw,6.5rem);align-items:start}
 .barra__media{margin:0;overflow:hidden;background:var(--moss)}
 /* la imagen se sangra 1px por lado y `overflow:hidden` recorta ese borde: así el
@@ -734,7 +785,10 @@ body.menu-open .nav__dock{background:rgba(13,13,13,.82)}
 .pblur > span:nth-child(2){backdrop-filter:blur(11px);-webkit-backdrop-filter:blur(11px);-webkit-mask-image:linear-gradient(to bottom,transparent 8%,#000 24%,#000 40%,transparent 56%);mask-image:linear-gradient(to bottom,transparent 8%,#000 24%,#000 40%,transparent 56%)}
 .pblur > span:nth-child(3){backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);-webkit-mask-image:linear-gradient(to bottom,transparent 24%,#000 40%,#000 56%,transparent 72%);mask-image:linear-gradient(to bottom,transparent 24%,#000 40%,#000 56%,transparent 72%)}
 .pblur > span:nth-child(4){backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);-webkit-mask-image:linear-gradient(to bottom,transparent 40%,#000 56%,#000 72%,transparent 88%);mask-image:linear-gradient(to bottom,transparent 40%,#000 56%,#000 72%,transparent 88%)}
-.pblur > span:nth-child(5){backdrop-filter:blur(1.5px);-webkit-backdrop-filter:blur(1.5px);-webkit-mask-image:linear-gradient(to bottom,transparent 56%,#000 74%,#000 100%);mask-image:linear-gradient(to bottom,transparent 56%,#000 74%,#000 100%)}
+/* la última capa (la más sutil) TAMBIÉN se desvanece antes del borde interior (92→100%):
+   dejarla sólida hasta el 100% cortaba en seco de "algo de blur" a "cero" justo en el
+   límite del contenedor — esa discontinuidad se veía como una línea separando el desenfoque. */
+.pblur > span:nth-child(5){backdrop-filter:blur(1.5px);-webkit-backdrop-filter:blur(1.5px);-webkit-mask-image:linear-gradient(to bottom,transparent 56%,#000 74%,#000 92%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 56%,#000 74%,#000 92%,transparent 100%)}
 @media (prefers-reduced-motion:reduce){ .pblur{display:none} }
 
 /* flores en blur flotando por detrás (se reutilizan como ambiente en la galería) */
@@ -912,7 +966,14 @@ body:has(.gal-stage) .reserva-bar{display:none}
 .footer__nav{display:flex;flex-wrap:wrap;gap:.9rem 1.8rem;max-width:var(--maxw);margin:1.5rem auto 0;font-size:.78rem;letter-spacing:.06em}
 .footer__nav a{opacity:.82;transition:opacity .3s}
 .footer__nav a:hover{opacity:1}
-.footer__base{display:flex;justify-content:space-between;max-width:var(--maxw);margin:1.1rem auto 0;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;opacity:.6}
+.footer__legal{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1.4rem;max-width:var(--maxw);margin:1.4rem auto 0;font-size:.76rem;letter-spacing:.05em}
+.footer__legal a,.footer__legal-btn{opacity:.82;transition:opacity .3s;color:var(--cream)}
+.footer__legal a:hover,.footer__legal-btn:hover{opacity:1}
+.footer__legal-btn{background:none;border:0;padding:0;cursor:pointer;font:inherit;letter-spacing:inherit;text-decoration:underline;text-underline-offset:3px}
+.footer__base{display:flex;justify-content:space-between;align-items:center;max-width:var(--maxw);margin:1.1rem auto 0;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;opacity:.6}
+/* selector de idioma en el pie: enmarcado sutil, centrado entre © y Madrid */
+.footer__lang{padding:.3em .8em;border:1px solid currentColor;border-radius:var(--radius-btn);opacity:.85;transition:opacity .3s var(--ease)}
+.footer__lang:hover{opacity:1}
 
 /* ---------- cabecera de página (páginas internas) ---------- */
 .page-header{
@@ -925,6 +986,116 @@ body:has(.gal-stage) .reserva-bar{display:none}
 /* reservas: flores en blur de fondo, como el hero de vinos */
 .page-header--blooms{position:relative;overflow:hidden}
 .page-header--blooms > :not(.menu-blooms){position:relative;z-index:1}
+
+
+/* ---------- páginas legales (aviso legal · privacidad · cookies) ----------
+   Prosa larga y legible: una columna estrecha (65ch), tipografía de marca,
+   contraste alto para lectura. Sin adornos que distraigan de un texto legal. */
+.legal{max-width:var(--maxw);margin:0 auto;padding-bottom:clamp(3rem,8vh,6rem)}
+.legal .page-header{padding-bottom:clamp(1rem,3vh,2rem)}
+.legal__body{max-width:68ch;margin:0 auto;padding:0 var(--gutter);color:var(--ink)}
+.legal__body section{margin-top:clamp(2rem,5vh,3rem)}
+.legal__body h2{font-family:var(--serif);font-size:clamp(1.3rem,2.6vw,1.7rem);color:var(--moss);line-height:1.2;margin-bottom:.8rem}
+.legal__body h3{font-family:var(--sans);font-weight:600;font-size:.95rem;color:var(--moss);margin:1.6rem 0 .7rem;letter-spacing:.01em}
+.legal__body p{line-height:1.75;margin-bottom:.9rem;color:var(--text-muted);text-wrap:pretty}
+.legal__body a{color:var(--olive);text-decoration:underline;text-underline-offset:3px;transition:color .3s var(--ease)}
+.legal__body a:hover{color:var(--moss)}
+.legal__body strong{color:var(--ink);font-weight:600}
+/* ficha de datos del titular/responsable */
+.legal__data{list-style:none;display:grid;gap:.55rem;margin:1.2rem 0;padding:1.3rem 1.4rem;background:var(--cloud);border:1px solid var(--border-subtle);border-radius:var(--radius-sm)}
+.legal__data li{display:grid;grid-template-columns:9.5rem 1fr;gap:.4rem 1rem;font-size:.92rem;line-height:1.5;color:var(--ink)}
+.legal__data li span{font-family:var(--sans);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-subtle);padding-top:.15em}
+.legal__list{margin:.4rem 0 1rem;padding-left:1.2rem;line-height:1.75;color:var(--text-muted)}
+.legal__list li{margin-bottom:.5rem}
+.legal__list strong{color:var(--ink)}
+/* tablas de finalidades / cookies */
+.legal__table{width:100%;border-collapse:collapse;margin:.8rem 0 1.1rem;font-size:.86rem}
+.legal__table th,.legal__table td{text-align:left;vertical-align:top;padding:.7rem .8rem;border-bottom:1px solid var(--border-subtle);line-height:1.5}
+.legal__table th{font-family:var(--sans);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-subtle);font-weight:600}
+.legal__table td{color:var(--text-muted)}
+.legal__note{font-size:.84rem;color:var(--text-subtle);font-style:italic}
+.legal__updated{margin-top:clamp(2.5rem,6vh,3.5rem);font-size:.8rem;color:var(--text-subtle)}
+.legal__more{font-size:.86rem}
+.legal__link-btn{background:none;border:0;padding:0;margin:0;font:inherit;color:var(--olive);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.legal__link-btn:hover{color:var(--moss)}
+@media (max-width:560px){
+  .legal__data li{grid-template-columns:1fr;gap:.1rem}
+  .legal__table{display:block;overflow-x:auto;white-space:nowrap}
+}
+
+/* ---------- aviso de consentimiento del widget de reservas ----------
+   Sustituye al iframe de TheFork mientras no se acepten sus cookies. */
+.reserva-consent{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;text-align:center;padding:clamp(2.5rem,7vw,4rem) clamp(1.5rem,5vw,3rem);min-height:280px}
+/* el display:flex de arriba le ganaba al atributo hidden y el aviso se
+   renderizaba SIEMPRE bajo el iframe (+372px de vacío dentro del marco) */
+.reserva-consent[hidden]{display:none}
+.reserva-consent__title{font-family:var(--serif);font-size:1.35rem;color:var(--moss)}
+.reserva-consent__text{max-width:44ch;color:var(--text-muted);line-height:1.7;font-size:.95rem}
+
+/* ---------- consentimiento de cookies: banner + preferencias ----------
+   z-index por encima de nav (100) para que el aviso legal siempre lea. */
+.cc-banner{
+  position:fixed;left:clamp(1rem,4vw,1.6rem);bottom:clamp(1rem,4vw,1.6rem);z-index:120;
+  width:min(30rem,calc(100vw - 2rem));
+  display:none;flex-direction:column;gap:1rem;
+  padding:1.3rem 1.4rem 1.2rem;
+  background:var(--cloud);color:var(--ink);
+  border:1px solid var(--border-subtle);border-radius:var(--radius);
+  box-shadow:0 20px 50px -20px rgba(49,51,31,.5), 0 4px 14px -8px rgba(49,51,31,.35);
+  transform:translateY(12px);opacity:0;transition:transform .5s var(--ease),opacity .5s var(--ease);
+}
+.cc-banner.is-visible{display:flex;transform:translateY(0);opacity:1}
+.cc-banner__body{display:flex;gap:1rem;align-items:flex-start}
+.cc-banner__flor{width:52px;height:52px;flex:none;object-fit:contain;margin-top:-.2rem}
+.cc-banner__title{font-family:var(--serif);font-size:1.15rem;color:var(--moss);margin-bottom:.25rem}
+.cc-banner__lead{font-size:.86rem;line-height:1.6;color:var(--text-muted)}
+.cc-banner__lead a{color:var(--olive);text-decoration:underline;text-underline-offset:2px}
+.cc-banner__actions{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem}
+.cc-btn{padding:.7em 1.5em;font-size:.74rem}
+.cc-banner .cc-btn{flex:1 1 auto}
+.cc-link{background:none;border:0;cursor:pointer;font-family:var(--sans);font-weight:500;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-subtle);text-decoration:underline;text-underline-offset:3px;transition:color .3s var(--ease)}
+.cc-link:hover{color:var(--moss)}
+/* el ghost del banner es sobre fondo claro: forzar tinte oscuro (el base asume oscuro) */
+.cc-banner .btn--ghost{color:var(--moss);box-shadow:inset 0 0 0 1px var(--border-subtle)}
+.cc-banner .btn--ghost:hover{background:var(--moss);color:var(--cream);box-shadow:inset 0 0 0 1px var(--moss)}
+/* mientras el banner está abierto, la barra fija de reserva no compite abajo */
+body:has(.cc-banner.is-visible) .reserva-bar{transform:translateY(100%)}
+
+/* diálogo de preferencias (elemento nativo) */
+.cc-dialog{position:fixed;inset:0;margin:auto;height:max-content;max-height:calc(100dvh - 2rem);border:0;padding:0;background:transparent;width:min(34rem,calc(100vw - 2rem));color:var(--ink)}
+.cc-dialog::backdrop{background:rgba(20,20,14,.55);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.cc-dialog__inner{position:relative;background:var(--cloud);border:1px solid var(--border-subtle);border-radius:var(--radius);padding:clamp(1.6rem,4vw,2.2rem);box-shadow:0 30px 70px -25px rgba(20,20,14,.6)}
+.cc-dialog__close{position:absolute;top:.7rem;right:1rem;background:none;border:0;font-size:1.8rem;line-height:1;color:var(--text-subtle);cursor:pointer;transition:color .3s}
+.cc-dialog__close:hover{color:var(--moss)}
+.cc-dialog__title{font-family:var(--serif);font-size:clamp(1.5rem,4vw,2rem);color:var(--moss);line-height:1.1;margin:.2rem 0 .6rem}
+.cc-dialog__lead{font-size:.9rem;color:var(--text-muted);line-height:1.6;margin-bottom:1.4rem}
+.cc-cats{list-style:none;display:flex;flex-direction:column;gap:.8rem}
+.cc-cat{padding:1rem 1.1rem;background:var(--cream);border:1px solid var(--border-subtle);border-radius:var(--radius-sm)}
+.cc-cat__head{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.cc-cat__name{font-family:var(--sans);font-weight:600;font-size:.92rem;color:var(--moss)}
+.cc-cat__desc{margin-top:.4rem;font-size:.82rem;line-height:1.55;color:var(--text-muted)}
+/* switch accesible */
+.cc-switch{position:relative;flex:none;width:44px;height:26px;cursor:pointer}
+.cc-switch input{position:absolute;inset:0;margin:0;opacity:0;cursor:pointer}
+.cc-switch__track{position:absolute;inset:0;background:var(--border-subtle);border-radius:999px;transition:background .3s var(--ease)}
+.cc-switch__track::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;background:var(--cloud);border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .3s var(--ease)}
+.cc-switch input:checked + .cc-switch__track{background:var(--moss)}
+.cc-switch input:checked + .cc-switch__track::after{transform:translateX(18px)}
+.cc-switch input:focus-visible + .cc-switch__track{outline:2px solid var(--accent);outline-offset:2px}
+.cc-switch--locked{cursor:not-allowed}
+.cc-switch--locked input{cursor:not-allowed}
+.cc-switch--locked input:checked + .cc-switch__track{background:var(--accent-soft)}
+.cc-dialog__actions{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem;margin-top:1.5rem}
+.cc-dialog__actions .cc-btn{margin-left:auto}
+.cc-dialog__links{margin-top:1.2rem;font-size:.78rem;color:var(--text-subtle)}
+.cc-dialog__links a{color:var(--text-subtle);text-decoration:underline;text-underline-offset:2px}
+.cc-dialog__links a:hover{color:var(--moss)}
+@media (max-width:420px){
+  .cc-dialog__actions .cc-btn{margin-left:0;flex:1 1 100%;order:-1}
+}
+@media (prefers-reduced-motion:reduce){
+  .cc-banner{transition:opacity .3s}
+}
 
 
 /* ---------- 404 ---------- */
@@ -1052,12 +1223,21 @@ body:has(.gal-stage) .reserva-bar{display:none}
 @keyframes wdrift{0%,100%{transform:translate(0,10px) rotate(6deg)}50%{transform:translate(-9px,-26px) rotate(3deg)}}
 @keyframes wdrift2{0%,100%{transform:translate(0,-8px) rotate(-8deg)}50%{transform:translate(9px,26px) rotate(-4deg)}}
 
+/* Altura MEDIDA contra el widget real (TheFork no publica su altura por
+   postMessage: no hay auto-resize posible). Contenido por paso a ancho de
+   escritorio: ofertas ~1010px · calendario ~865px · hora ~484px · datos
+   ~852px → 1040px abraza el paso más alto sin scroll anidado y elimina el
+   vacío de ~300px que dejaba el 1300 fijo. En estrecho (<~490px de iframe)
+   las ofertas se apilan y el paso 1 crece a ~1320px → 1340px. */
 .reserva-widget__frame{
-  position:relative;min-height:1300px;border-radius:var(--radius);overflow:hidden;background:var(--cloud);
+  position:relative;min-height:1040px;border-radius:var(--radius);overflow:hidden;background:var(--cloud);
   box-shadow:0 44px 84px -42px rgba(13,13,13,.28);border:1px solid var(--border-subtle);
 }
 .reserva-widget__frame iframe{
-  display:block;position:relative;z-index:1;width:100%;min-height:1300px;border:0;border-radius:var(--radius);
+  display:block;position:relative;z-index:1;width:100%;min-height:1040px;border:0;border-radius:var(--radius);
+}
+@media (max-width:560px){
+  .reserva-widget__frame,.reserva-widget__frame iframe{min-height:1340px}
 }
 /* esqueleto mientras carga el iframe de TheFork (en vez del alto en blanco) */
 .reserva-widget__loading{
@@ -1071,23 +1251,131 @@ body:has(.gal-stage) .reserva-bar{display:none}
 .reserva-widget__fallback{margin-top:1.4rem;text-align:center;color:var(--text-muted);font-size:.88rem}
 .reserva-widget__fallback a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
 
-/* ---------- marquee (banda en movimiento) ---------- */
+/* ---------- prueba social (home): valoración agregada + carrusel de reseñas ---------- */
+.proof{position:relative;overflow:hidden;padding:clamp(4rem,9vh,7rem) 0;background:var(--cream);text-align:center}
+.proof__inner{max-width:var(--maxw);margin:0 auto;padding-inline:var(--gutter);position:relative;z-index:1}
+/* flores de marca flotando tras las reseñas (posición/tamaño en el span; blur+float
+   en la img — transforms en elementos distintos, no pelean) */
+.proof__blooms{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+/* flores pequeñas que CRUZAN el bloque como llevadas por el viento: viajan de
+   izquierda a derecha con vaivén y giro, poco blur, en bucle infinito. El
+   transform (viaje) va en el <span>; el blur/saturación en la <img>. Los
+   `--delay` negativos escalonan el vuelo para que ya haya varias en pantalla. */
+.proof__bloom{position:absolute;top:var(--top);left:0;width:var(--sz);will-change:transform,opacity;
+  transform:translate(-14vw,0);animation:windCross var(--dur) linear var(--delay,0s) infinite}
+.proof__bloom img{display:block;width:100%;height:auto;filter:blur(3px) saturate(1.12)}
+.proof__bloom--1{--top:14%;--sz:clamp(42px,5.5vw,82px);--op:.5;--dur:30s;--delay:-2s}
+.proof__bloom--2{--top:64%;--sz:clamp(50px,6.5vw,96px);--op:.42;--dur:38s;--delay:-14s}
+.proof__bloom--3{--top:34%;--sz:clamp(34px,4.5vw,64px);--op:.4;--dur:26s;--delay:-8s}
+.proof__bloom--4{--top:78%;--sz:clamp(38px,5vw,72px);--op:.38;--dur:34s;--delay:-21s}
+.proof__bloom--5{--top:6%;--sz:clamp(30px,4vw,58px);--op:.34;--dur:23s;--delay:-5s}
+.proof__bloom--6{--top:48%;--sz:clamp(46px,6vw,88px);--op:.44;--dur:42s;--delay:-30s}
+.proof__bloom--7{--top:22%;--sz:clamp(30px,3.8vw,54px);--op:.3;--dur:28s;--delay:-17s}
+.proof__bloom--8{--top:86%;--sz:clamp(34px,4.4vw,62px);--op:.32;--dur:31s;--delay:-11s}
+.proof__bloom--9{--top:56%;--sz:clamp(28px,3.4vw,50px);--op:.28;--dur:25s;--delay:-24s}
+/* mitad de ellas con vaivén invertido → dispersión más natural, no en fila */
+.proof__bloom--2,.proof__bloom--4,.proof__bloom--6,.proof__bloom--8{animation-name:windCross2}
+@keyframes windCross{
+  0%{transform:translate(-14vw,0) rotate(-10deg);opacity:0}
+  9%{opacity:var(--op,.4)}
+  35%{transform:translate(34vw,-3.2vh) rotate(6deg)}
+  65%{transform:translate(70vw,2.4vh) rotate(-4deg)}
+  91%{opacity:var(--op,.4)}
+  100%{transform:translate(118vw,-1vh) rotate(16deg);opacity:0}
+}
+@keyframes windCross2{
+  0%{transform:translate(-14vw,0) rotate(8deg);opacity:0}
+  9%{opacity:var(--op,.4)}
+  40%{transform:translate(40vw,3vh) rotate(-6deg)}
+  70%{transform:translate(76vw,-2.6vh) rotate(5deg)}
+  91%{opacity:var(--op,.4)}
+  100%{transform:translate(118vw,1.6vh) rotate(-14deg);opacity:0}
+}
+@media (max-width:760px){ .proof__blooms{opacity:.72} }
+
+.proof__rating{display:inline-flex;flex-direction:column;align-items:center;gap:.15rem;margin-bottom:1.4rem}
+.proof__stars{color:var(--accent);letter-spacing:.2em;font-size:1.05rem}
+.proof__score{font-family:var(--serif);font-size:2rem;color:var(--moss);line-height:1}
+.proof__score strong{font-weight:400}
+.proof__meta{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-subtle)}
+.proof__title{font-family:var(--serif);font-size:clamp(1.6rem,3.5vw,2.4rem);color:var(--moss);margin:0 auto 2.4rem;max-width:20ch;line-height:1.1}
+.proof__link{display:inline-block;margin-top:2.2rem;color:var(--accent);text-decoration:underline;text-underline-offset:4px;font-size:.9rem;letter-spacing:.03em}
+
+/* raíl horizontal en bucle: dos grupos idénticos que derivan y envuelven en -50% */
+.reviews{position:relative;z-index:1;overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
+.reviews__track{display:flex;width:max-content;will-change:transform}
+.reviews__group{display:flex;gap:clamp(.9rem,1.8vw,1.5rem);padding-right:clamp(.9rem,1.8vw,1.5rem)}
+.review-card{flex:0 0 clamp(16.5rem,25vw,19.5rem);display:flex;flex-direction:column;gap:1rem;
+  background:var(--cloud);border:1px solid var(--border-subtle);border-radius:var(--radius);
+  padding:1.4rem 1.5rem 1.6rem;text-align:left;color:var(--ink);text-decoration:none;
+  box-shadow:0 20px 45px -32px rgba(49,51,31,.5);
+  transition:transform .4s var(--ease),box-shadow .4s var(--ease),border-color .4s var(--ease)}
+.review-card:hover{transform:translateY(-6px);border-color:var(--accent-soft);box-shadow:0 30px 60px -30px rgba(49,51,31,.55)}
+.review-card:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.review-card__head{display:flex;align-items:center;gap:.8rem}
+.review-card__photo{width:2.9rem;height:2.9rem;border-radius:50%;object-fit:cover;flex:none;
+  box-shadow:0 4px 12px -5px rgba(49,51,31,.55)}
+.review-card__who{display:flex;flex-direction:column;gap:.1rem;min-width:0}
+.review-card__author{font-family:var(--serif);font-size:.98rem;color:var(--moss);line-height:1.15}
+.review-card__src{font-size:.66rem;letter-spacing:.13em;text-transform:uppercase;color:var(--text-subtle)}
+.review-card__mark{margin-left:auto;color:var(--accent-soft);font-size:.95rem;transform:translateY(-.1em)}
+.review-card__stars{color:var(--accent);letter-spacing:.14em;font-size:.82rem}
+.review-card blockquote{margin:0;font-family:var(--serif);font-size:1.02rem;line-height:1.5;color:var(--ink)}
+@media (max-width:560px){ .review-card{flex-basis:78vw} }
+/* sin JS o con reduced-motion el bucle no corre: raíl con scroll manual, sin recorte */
+html:not(.js) .reviews{overflow-x:auto;-webkit-mask-image:none;mask-image:none}
+@media (prefers-reduced-motion:reduce){
+  .reviews{overflow-x:auto;-webkit-mask-image:none;mask-image:none}
+  .proof__bloom{animation:none;display:none}
+}
+
+/* ---------- FAQ (bajo el widget de reservas) · acordeón nativo <details> ---------- */
+.faq{padding:clamp(2rem,5vh,4rem) var(--gutter) clamp(4rem,9vh,7rem);background:var(--cream);position:relative;z-index:1}
+.faq__inner{max-width:760px;margin:0 auto}
+.faq .eyebrow{text-align:center}
+.faq__title{font-family:var(--serif);font-size:clamp(1.8rem,4vw,2.8rem);color:var(--moss);text-align:center;margin:.4rem 0 2rem;line-height:1.1}
+.faq__list{display:flex;flex-direction:column}
+.faq__item{border-top:1px solid var(--border-subtle)}
+.faq__item:last-child{border-bottom:1px solid var(--border-subtle)}
+.faq__q{
+  list-style:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  padding:1.15rem 0;font-family:var(--serif);font-size:clamp(1.05rem,2vw,1.3rem);color:var(--ink);
+}
+.faq__q::-webkit-details-marker{display:none}
+.faq__q::after{content:"+";font-family:var(--sans);font-weight:300;font-size:1.5rem;line-height:1;color:var(--accent);transition:transform .3s var(--ease);flex:none}
+.faq__item[open] .faq__q::after{transform:rotate(45deg)}
+.faq__a p{margin:0;padding:0 0 1.3rem;max-width:62ch;color:var(--text-muted);line-height:1.7}
+@media (prefers-reduced-motion:no-preference){
+  .faq__item[open] .faq__a{animation:faqOpen .35s var(--ease)}
+}
+@keyframes faqOpen{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+/* ---------- cinta editorial (la controla GSAP: deriva + skew por velocidad) ---------- */
 .marquee{
   overflow:hidden;background:var(--cloud);
   border-block:1px solid var(--border-subtle);
-  padding:1rem 0;
+  padding:clamp(1.1rem,2.6vw,1.9rem) 0;
+  /* desvanecido en los extremos: el texto entra y sale sin corte duro */
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);
 }
-.marquee__track{display:flex;width:max-content;animation:marquee 34s linear infinite;will-change:transform}
-.marquee:hover .marquee__track{animation-play-state:paused}
-.marquee__group{display:flex;align-items:center;gap:2.4rem;padding-right:2.4rem}
+.marquee__track{display:flex;width:max-content;will-change:transform;transform-origin:center}
+.marquee__group{display:flex;align-items:center;gap:clamp(1.6rem,3.4vw,3.2rem);padding-right:clamp(1.6rem,3.4vw,3.2rem)}
 .marquee__group span{
-  font-family:var(--sans);font-size:.74rem;font-weight:500;
-  letter-spacing:.22em;text-transform:uppercase;color:var(--olive);white-space:nowrap;
+  font-family:var(--serif);font-size:clamp(1.35rem,3.4vw,2.6rem);font-weight:400;
+  letter-spacing:.005em;color:var(--moss);white-space:nowrap;line-height:1;
 }
-.marquee__sep{color:rgba(100,93,59,.45)}
+.marquee__sep{color:var(--accent-soft);font-size:.6em;transform:translateY(-.08em)}
+/* fallback sin JS: si el bundle no carga, una animación CSS mantiene la cinta viva */
 @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-/* la flor como separador en la cinta */
-.marquee__sep{color:var(--accent-soft)}
+html:not(.js) .marquee__track{animation:marquee 40s linear infinite}
+@media (prefers-reduced-motion:reduce){
+  .marquee__track{animation:none}
+  .marquee{-webkit-mask-image:none;mask-image:none}
+}
 
 /* ---------- prensa: menciones editoriales (disruptivo) ---------- */
 .press{max-width:var(--maxw);margin:0 auto;padding:clamp(1rem,4vh,3rem) var(--gutter) clamp(2rem,6vh,4rem)}
@@ -1243,15 +1531,36 @@ body:has(.gal-stage) .reserva-bar{display:none}
 @media (max-width:900px){
   .cellar{grid-template-columns:1fr;gap:0}
   /* el índice se vuelve una fila horizontal pegajosa de flores-chip */
-  .cellar-index{position:sticky;top:64px;z-index:40;height:auto;margin:0 calc(var(--gutter)*-1) clamp(1.5rem,4vh,2.5rem);padding:.7rem var(--gutter);background:rgba(244,239,230,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid rgba(49,51,31,.1)}
+  /* El índice se vuelve un DOCK SECUNDARIO: pastilla flotante centrada, hermana
+     del nav pero subordinada (cristal CLARO, no el obsidiana del principal → jerarquía).
+     Sticky (no fixed): solo existe mientras la bodega está en pantalla, no flota sobre
+     hero ni footer. Se descuelga bajo el dock principal y SUBE con él al contraerse
+     (html.nav-compact) — los dos cristales se mueven como una unidad. */
+  /* mismo cristal obsidiana que el nav → lee sobre cualquier fondo y ambos docks
+     se leen como un sistema. Subordinado por tamaño (más fino, solo chips), no por material. */
+  .cellar-index{
+    position:sticky;top:112px;z-index:40;justify-self:center;height:max-content;
+    width:max-content;max-width:calc(100vw - var(--gutter)*2);
+    margin:0 auto clamp(2rem,5vh,3rem);padding:.3rem;
+    background:rgba(13,13,13,.55);
+    -webkit-backdrop-filter:blur(12px) saturate(1.6);backdrop-filter:blur(12px) saturate(1.6);
+    border:1px solid rgba(244,239,230,.14);border-radius:999px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.14), 0 12px 30px -14px rgba(13,13,13,.5), 0 2px 6px -4px rgba(13,13,13,.4);
+    transition:transform .5s var(--ease);
+  }
+  /* el nav se acorta al contraerse (su borde inferior sube ~12px): el secundario
+     sube lo mismo para conservar un hueco CONSTANTE bajo él — se mueven como una unidad */
+  html.nav-compact .cellar-index{transform:translateY(-12px)}
   .cellar-index__title{display:none}
-  .cellar-index__list{flex-direction:row;gap:.5rem;overflow-x:auto;scrollbar-width:none}
+  /* fade en los extremos: insinúa que la tira se puede deslizar cuando desborda */
+  .cellar-index__list{flex-direction:row;gap:.1rem;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
   .cellar-index__list::-webkit-scrollbar{display:none}
-  .cellar-index__list a{flex-direction:row;align-items:center;gap:.4rem;padding:.35rem .8rem;white-space:nowrap;border:1px solid var(--border-subtle);border-radius:999px}
-  .cellar-index__flor{width:20px;height:20px}
-  .cellar-index__list a.is-active{background:var(--moss);color:var(--cream);border-color:var(--moss)}
-  .cellar-index__list a.is-active .cellar-index__flor{transform:scale(1);opacity:1}
-  .cellar-index__name{font-size:.62rem}
+  .cellar-index__list a{flex-direction:row;align-items:center;gap:.4rem;padding:.5rem .8rem;white-space:nowrap;border:0;border-radius:999px;color:var(--cream);opacity:.68;scroll-snap-align:center;transition:background .35s var(--ease),color .35s var(--ease),opacity .35s var(--ease)}
+  /* el tracking .2em en mayúsculas inflaba los chips (144px c/u): se recorta a .08em */
+  .cellar-index__flor{width:18px;height:18px;opacity:.85;filter:none;transform:scale(1)}
+  .cellar-index__list a.is-active{background:var(--accent-soft);color:var(--moss);opacity:1}
+  .cellar-index__list a.is-active .cellar-index__flor{transform:scale(1);opacity:1;filter:none}
+  .cellar-index__name{font-size:.6rem;letter-spacing:.08em}
   .wine-cat__head{align-items:center}
   .wine-cat__flor{width:clamp(52px,14vw,72px)}
 }
@@ -1281,6 +1590,18 @@ body:has(.gal-stage) .reserva-bar{display:none}
    el swap; el selector doble gana a body.menu-open aunque conviva un frame */
 body.menu-open .nav__dock.is-page-morph,
 .nav__dock.is-page-morph{background:rgba(13,13,13,.9)}
+/* durante el morph a pantalla completa:
+   - la transición de padding se apaga (el swap re-evalúa is-compact bajo el
+     cristal; si el padding siguiera transicionando, el FLIP de la contracción
+     mediría una altura a medias y el final daría un pequeño pop);
+   - se retira la refracción url() del backdrop (re-renderizar el filtro de
+     lupa a pantalla completa en cada frame de la animación cuesta caro y con
+     el vidrio al 90% no aporta nada visible). El blur sí se queda: al arrancar
+     el morph la píldora aún deja ver las flores y un salto de nitidez cantaría. */
+.nav__dock.is-page-morph{transition:background .5s var(--ease)}
+@supports (backdrop-filter:url(#f)){
+  .nav__dock.is-page-morph{backdrop-filter:blur(8px) saturate(190%) contrast(90%);-webkit-backdrop-filter:blur(8px) saturate(190%) contrast(90%)}
+}
 @keyframes ptSafety{to{visibility:hidden;opacity:0}}
 .page-transition__mark{
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
