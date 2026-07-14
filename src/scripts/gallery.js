@@ -15,6 +15,21 @@ export function initGallery() {
   const stage = document.getElementById('galStage');
   if (!stage) return;
 
+  // ORDEN ALEATORIO EN CADA VISITA: baraja (Fisher-Yates) las tarjetas del DOM
+  // antes de leerlas, así el reposo/lightbox/motor toman el nuevo orden. El HTML
+  // se sirve en orden fijo (SEO / sin JS); esto solo reordena para el visitante.
+  const galTrackEl = document.getElementById('galTrack');
+  if (galTrackEl) {
+    const items = Array.from(galTrackEl.children);
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+    const frag = document.createDocumentFragment();
+    items.forEach((el) => frag.appendChild(el));
+    galTrackEl.appendChild(frag);
+  }
+
   const signal = pageSignal();
   const cards = Array.from(stage.querySelectorAll('.gal-card'));
   const data = cards.map((c) => { const img = c.querySelector('img'); return { src: img.src, alt: img.alt }; });
