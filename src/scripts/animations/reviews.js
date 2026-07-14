@@ -17,7 +17,9 @@ export function initReviews() {
 
   const xSet = gsap.quickSetter(track, 'xPercent');
   const wrap = gsap.utils.wrap(-50, 0); // dos grupos: -50% = un grupo entero
-  const BASE = 0.02;                     // deriva base (% por frame a 60 fps) — calmada
+  // deriva base (% por frame a 60 fps) — más lenta en móvil para que no corran
+  const isNarrow = window.matchMedia('(max-width:560px)').matches;
+  const BASE = isNarrow ? 0.011 : 0.02;
   let x = 0, speed = 1, target = 1;
 
   const tick = (time, dtMs) => {

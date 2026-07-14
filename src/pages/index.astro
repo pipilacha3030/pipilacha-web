@@ -1,6 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
 import { aggregate, reviewsEs as reviews } from '../data/reviews.js';
+
+// salvaguarda: solo reseñas reales (descarta cualquier `draft`). Y repite lo justo
+// para llenar el raíl sin costura aunque haya pocas → el bucle nunca "termina".
+const real = reviews.filter((r) => !r.draft);
+const reps = Math.max(1, Math.ceil(9 / Math.max(1, real.length)));
+const groupReviews = Array.from({ length: reps }).flatMap(() => real);
 ---
 
 <Base
@@ -170,7 +176,7 @@ import { aggregate, reviewsEs as reviews } from '../data/reviews.js';
       <div class="reviews__track">
         {[false, true].map((dup) => (
           <div class="reviews__group" aria-hidden={dup ? 'true' : undefined}>
-            {reviews.map((r) => (
+            {groupReviews.map((r) => (
               <a
                 class="review-card"
                 href={aggregate.url}
