@@ -58,7 +58,8 @@ const groupReviews = Array.from({ length: reps }).flatMap(() => real);
         </div>
       </figure>
       <div class="quienes__body">
-        <h2 class="quienes__h2 reveal-head">Un restaurante para curiosos.</h2>
+        <!-- sin reveal-head: quienesReveal.js le aplica el «tighten» de palabras (scrub) -->
+        <h2 class="quienes__h2">Un restaurante para curiosos.</h2>
         <p class="quienes__text reveal">
           Quince pases y en todos manda una flor distinta. No de adorno: como ingrediente principal,
           cocinada hasta donde llega su sabor. Esto no lo vas a encontrar en ningún otro restaurante

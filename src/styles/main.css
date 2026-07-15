@@ -613,6 +613,8 @@ body.menu-open .spine{opacity:0}
   font-family:var(--serif);font-size:clamp(2rem,4vw,3.3rem);
   line-height:1.1;letter-spacing:-.015em;color:var(--moss);max-width:15ch;
 }
+/* palabras del titular (las parte quienesReveal.js para el «tighten» con scrub) */
+.quienes__h2 .w{display:inline-block;will-change:transform}
 .quienes__text{
   max-width:46ch;font-size:clamp(1.05rem,1.45vw,1.22rem);
   line-height:1.75;color:var(--ink);margin-top:clamp(1.3rem,2.6vh,2rem);text-wrap:pretty;
@@ -799,11 +801,18 @@ body.menu-open .spine{opacity:0}
   mask-image:linear-gradient(180deg,transparent 0%,#000 14%,#000 86%,transparent 100%);
 }
 .menu-bloom{position:absolute;height:auto;filter:blur(13px) saturate(1.15);will-change:transform}
-.menu-bloom--1{top:4%;left:3%;width:clamp(220px,30vw,460px);opacity:.6;animation:float 14s ease-in-out infinite}
-.menu-bloom--2{bottom:8%;left:24%;width:clamp(160px,20vw,320px);opacity:.5;animation:float2 17s ease-in-out infinite}
-.menu-bloom--3{top:11%;right:7%;width:clamp(240px,32vw,500px);opacity:.55;animation:float2 15s ease-in-out infinite}
-.menu-bloom--4{bottom:12%;right:25%;width:clamp(150px,18vw,300px);opacity:.5;animation:float 19s ease-in-out infinite}
-.menu-bloom--5{top:42%;left:47%;width:clamp(180px,22vw,360px);opacity:.4;animation:float 16s ease-in-out infinite}
+/* giro lento perpetuo por la propiedad `rotate` (capa aparte: se suma al float
+   de `transform` sin pelearse — es el equivalente moderno del truco de dos
+   elementos que usan las flores de las reseñas). Sentidos alternos. Ritmo
+   lento pero PERCEPTIBLE (~30-60 s/vuelta): a 90-120 s el ojo lo lee quieto. */
+.menu-bloom--1{top:4%;left:3%;width:clamp(220px,30vw,460px);opacity:.6;animation:float 14s ease-in-out infinite,bloomTurn 38s linear infinite}
+.menu-bloom--2{bottom:8%;left:24%;width:clamp(160px,20vw,320px);opacity:.5;animation:float2 17s ease-in-out infinite,bloomTurnRev 52s linear infinite}
+.menu-bloom--3{top:11%;right:7%;width:clamp(240px,32vw,500px);opacity:.55;animation:float2 15s ease-in-out infinite,bloomTurn 44s linear infinite}
+.menu-bloom--4{bottom:12%;right:25%;width:clamp(150px,18vw,300px);opacity:.5;animation:float 19s ease-in-out infinite,bloomTurnRev 34s linear infinite}
+.menu-bloom--5{top:42%;left:47%;width:clamp(180px,22vw,360px);opacity:.4;animation:float 16s ease-in-out infinite,bloomTurn 60s linear infinite}
+@keyframes bloomTurn{from{rotate:0deg}to{rotate:360deg}}
+@keyframes bloomTurnRev{from{rotate:0deg}to{rotate:-360deg}}
+/* (las flores de familia de vinos ya giran con su propio flor-spin, más abajo) */
 .menu-blooms::after{
   content:'';position:absolute;inset:0;opacity:.2;mix-blend-mode:soft-light;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -1362,12 +1371,12 @@ body:has(.cc-banner.is-visible) .reserva-bar{transform:translateY(100%)}
   background:var(--cloud);border:1px solid var(--border-subtle);border-radius:var(--radius);
   padding:1.4rem 1.5rem 1.6rem;text-align:left;color:var(--ink);text-decoration:none;
   box-shadow:0 20px 45px -32px rgba(49,51,31,.5);
-  transition:transform .55s var(--ease),box-shadow .55s var(--ease),border-color .55s var(--ease)}
-/* hover: nada de saltos — la tarjeta se «coge» como papel (giro mínimo, alterno
-   por posición), el borde pasa a oliva y la flor ✿ gira y se enciende */
-.review-card:hover{transform:rotate(-.6deg) scale(1.018);border-color:var(--accent-soft);
-  box-shadow:0 24px 52px -28px rgba(49,51,31,.5)}
-.review-card:nth-child(even):hover{transform:rotate(.6deg) scale(1.018)}
+  transition:background-color .5s var(--ease),box-shadow .5s var(--ease),border-color .5s var(--ease)}
+/* hover: la tarjeta NO se mueve (girarla/escalarla emborrona el borde de 1px por
+   antialiasing) — el marco se enciende con un doble filo nítido (borde + anillo
+   por box-shadow), el fondo sube a blanco y la vida la ponen la flor ✿ y el retrato */
+.review-card:hover{border-color:var(--accent-soft);background:#fff;
+  box-shadow:0 0 0 1px var(--accent-soft),0 26px 54px -30px rgba(49,51,31,.55)}
 .review-card:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .review-card__head{display:flex;align-items:center;gap:.8rem}
 .review-card__photo{width:2.9rem;height:2.9rem;border-radius:50%;object-fit:cover;flex:none;
@@ -1384,9 +1393,10 @@ body:has(.cc-banner.is-visible) .reserva-bar{transform:translateY(100%)}
 .review-card__stars{color:var(--accent);letter-spacing:.14em;font-size:.82rem}
 .review-card blockquote{margin:0;font-family:var(--serif);font-size:1.02rem;line-height:1.5;color:var(--ink)}
 @media (max-width:560px){ .review-card{flex-basis:78vw} }
-/* táctil (sin hover): la pulsación «presiona» la tarjeta — el mismo gesto, invertido */
+/* táctil (sin hover): la pulsación enciende el mismo marco (sin mover la tarjeta) */
 @media (hover:none){
-  .review-card:active{transform:scale(.98);border-color:var(--accent-soft);transition-duration:.25s}
+  .review-card:active{border-color:var(--accent-soft);background:#fff;transition-duration:.25s;
+    box-shadow:0 0 0 1px var(--accent-soft),0 26px 54px -30px rgba(49,51,31,.55)}
   .review-card:active .review-card__mark{transform:translateY(-.1em) rotate(140deg) scale(1.25);color:var(--accent)}
   .review-card:active .review-card__photo{transform:scale(1.08)}
 }
@@ -1562,7 +1572,9 @@ html:not(.js) .marquee__track{animation:marquee 40s linear infinite}
 .cellar-index__title{font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;color:var(--text-subtle);margin-bottom:1.4rem}
 .cellar-index__list{list-style:none;display:flex;flex-direction:column;gap:.35rem}
 .cellar-index__list a{display:flex;align-items:center;gap:.85rem;padding:.5rem 0;color:var(--text-subtle);transition:color .4s var(--ease)}
-.cellar-index__flor{width:30px;height:30px;flex:none;object-fit:contain;opacity:.4;filter:grayscale(.5);transform:scale(.85);transition:opacity .45s var(--ease),filter .45s var(--ease),transform .45s var(--ease)}
+.cellar-index__flor{width:30px;height:30px;flex:none;object-fit:contain;opacity:.4;filter:grayscale(.5);transform:scale(.85);transition:opacity .45s var(--ease),filter .45s var(--ease),transform .45s var(--ease);
+  animation:bloomTurn 48s linear infinite}
+.cellar-index__list li:nth-child(even) .cellar-index__flor{animation-name:bloomTurnRev}
 .cellar-index__name{font-family:var(--sans);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase}
 .cellar-index__list a:hover{color:var(--olive)}
 .cellar-index__list a:hover .cellar-index__flor{opacity:.75;filter:none}
@@ -1727,6 +1739,25 @@ body.menu-open .nav__dock.is-page-morph,
 /* sin JS / reduce-motion: no hay pin ni crecimiento, deja aire alrededor de la tarjeta */
 .gallery__stage{padding:9vh var(--gutter)}
 @media (min-width:769px){ html.js .gallery__stage{padding:0} }
+
+/* ---------- móvil compacto: menos aire vertical entre secciones ----------
+   Los clamp() de escritorio se apoyan en vh y en un teléfono dejan rellenos
+   de 100-200px que alargan el scroll sin contar nada (auditado a 375px:
+   page-header 171px, maridaje 195px, cta-band 211px de aire...). Aquí se
+   recortan ~35-45% conservando el ritmo editorial. */
+@media (max-width:560px){
+  .page-header{padding-top:6.5rem;padding-bottom:1.2rem}
+  .quienes__inner{padding-top:3rem;padding-bottom:3rem}
+  .proof{padding-top:2.6rem;padding-bottom:2.6rem}
+  .menu{padding-top:3rem;padding-bottom:3rem}
+  .maridaje{padding-top:3rem;padding-bottom:3rem}
+  .cta-band{padding-top:2.2rem;padding-bottom:2.4rem;margin-top:2rem;margin-bottom:2rem}
+  .cellar-hero{min-height:0;padding-top:6.5rem;padding-bottom:2rem}
+  .cellar-intro{margin-top:2rem;margin-bottom:2rem}
+  .cellar{padding-bottom:2.5rem}
+  .wine-cat{padding-top:1.8rem;padding-bottom:1.8rem}
+  .faq{padding-bottom:3rem}
+}
 
 /* ---------- accesibilidad: reduce motion ---------- */
 @media (prefers-reduced-motion:reduce){
