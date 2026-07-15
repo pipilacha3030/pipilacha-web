@@ -146,6 +146,9 @@ export const onScroll = (y) => {
   if (compact !== isCompact) {
     isCompact = compact;
     dock.classList.toggle('is-compact', compact);
+    // se expone en <html> para que docks secundarios de página (p. ej. el índice
+    // de vinos en móvil) se coordinen con la contracción del dock principal
+    document.documentElement.classList.toggle('nav-compact', compact);
   }
   const elev = Math.min(1, y / ELEV_RANGE);
   if (Math.abs(elev - lastElev) > 0.01) {

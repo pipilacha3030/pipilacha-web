@@ -4,10 +4,15 @@
    animación (pin + timeline) en src/scripts/animations/primeraFila.js.
    Layout: apilado y editorial en móvil / sin JS; escenas superpuestas que se
    funden con el scroll (pin) en escritorio con JS. */
-import { scenes, reserva } from '../data/primeraFila.js';
+import { scenesEs, reservaEs, scenesEn, reservaEn } from '../data/primeraFila.js';
+
+const { lang = 'es' } = Astro.props;
+const scenes = lang === 'en' ? scenesEn : scenesEs;
+const reserva = lang === 'en' ? reservaEn : reservaEs;
+const label = lang === 'en' ? 'Front row — live the menu from the counter' : 'Primera fila — vivir el menú desde la barra';
 ---
 
-<section class="pf" id="reserva" aria-label="Primera fila — vivir el menú desde la barra">
+<section class="pf" id="reserva" aria-label={label}>
   <div class="pf__pin">
     {scenes.map((s, i) => (
       <div class={`pf__scene pf__scene--${i + 1}`}>

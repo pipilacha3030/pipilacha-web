@@ -11,12 +11,12 @@ const menuSchema = `<script type="application/ld+json">${JSON.stringify({
   "@id": "https://pipilacha.es/menu/",
   "url": "https://pipilacha.es/menu/",
   "mainEntityOfPage": "https://pipilacha.es/menu/",
-  "name": "Despertar de las flores",
+  "name": "Solsticio floral",
   "inLanguage": "es",
   "description": "Menú de degustación de quince pases con flores comestibles como ingrediente. 85 € por persona.",
   "hasMenuSection": {
     "@type": "MenuSection",
-    "name": "Despertar de las flores · 15 pases",
+    "name": "Solsticio floral · 15 pases",
     "hasMenuItem": pases.map((p) => p.surprise
       ? { "@type": "MenuItem", "name": "Pase sorpresa", "description": "A ciegas, se descubre en la mesa." }
       : { "@type": "MenuItem", "name": p.name, "description": p.hook })
@@ -26,8 +26,8 @@ const menuSchema = `<script type="application/ld+json">${JSON.stringify({
 ---
 
 <Base
-  title="Menú · Despertar de las flores · Pipilacha"
-  description="Despertar de las flores: el menú de degustación de Pipilacha. Quince pases con las flores como ingrediente. Madrid, 85 € por persona."
+  title="Menú · Solsticio floral · Pipilacha"
+  description="Solsticio floral: el menú de degustación de Pipilacha. Quince pases con las flores como ingrediente. Madrid, 85 € por persona."
   schema={menuSchema}
 >
 
@@ -36,9 +36,9 @@ const menuSchema = `<script type="application/ld+json">${JSON.stringify({
   <div class="pblur pblur--bottom" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
 
   <section class="page-header">
-    <p class="eyebrow">Degustación · Primavera</p>
-    <h1 class="reveal-head">Despertar de las flores</h1>
-    <p>Quince pases. Sin carta, sin alternativa: se sirve completo. Cada uno con una pista; el resto te lo contamos en la mesa. El décimo te lo guardamos.</p>
+    <p class="eyebrow">Degustación · Verano</p>
+    <h1 class="reveal-head">Solsticio floral</h1>
+    <p>Quince pases. Sin carta, sin alternativa: se sirve completo. 85 € por persona; el maridaje, aparte. Cada uno con una pista; el resto te lo contamos en la mesa.</p>
   </section>
 
   <!-- LISTA DE PASES (nombre + pista) sobre fondo verde moss -->

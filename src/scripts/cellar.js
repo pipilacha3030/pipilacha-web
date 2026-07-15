@@ -10,7 +10,16 @@ export function initCellar() {
   if (!cellar) return;
   const links = Array.from(cellar.querySelectorAll('.cellar-index a'));
   const sections = links.map((a) => document.getElementById(a.dataset.spy)).filter(Boolean);
-  const setActive = (id) => links.forEach((a) => a.classList.toggle('is-active', a.dataset.spy === id));
+  const list = cellar.querySelector('.cellar-index__list');
+  const setActive = (id) => links.forEach((a) => {
+    const on = a.dataset.spy === id;
+    a.classList.toggle('is-active', on);
+    // en móvil el índice es un dock horizontal: centra el chip activo en la tira
+    // (block:'nearest' evita arrastrar el scroll vertical de la página)
+    if (on && list && list.scrollWidth > list.clientWidth) {
+      a.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+  });
 
   // marca la sección visible mientras se hace scroll
   if ('IntersectionObserver' in window) {
@@ -27,7 +36,9 @@ export function initCellar() {
     if (!target) return;
     e.preventDefault();
     setActive(a.dataset.spy);
-    if (lenis) lenis.scrollTo(target, { offset: -110 });
+    // offset mayor en móvil: hay dos docks apilados (nav + índice) que tapar
+    const offset = window.innerWidth <= 900 ? -128 : -110;
+    if (lenis) lenis.scrollTo(target, { offset });
     else target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }));
 

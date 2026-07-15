@@ -6,18 +6,23 @@
    El timeline del morphing (play/reverse), el morphing del burger a ✕, la
    sombra progresiva al scroll y el vuelo de la libélula viven en
    src/scripts/nav.js. */
-const { path = '/' } = Astro.props;
+import { useT, localizeHref, localizeNav, altHref, TRANSLATED } from '../i18n/index.js';
+const { path = '/', lang = 'es' } = Astro.props;
+const t = useT(lang);
 const here = (href) => path === href;
 // `flower`: PNG que asoma en el panel al hover de cada opción (una flor por página)
 const menu = [
-  { href: '/conocenos/', label: 'Conócenos', key: '/conocenos', flower: '/assets/img/flor-dahlia-rosa.png' },
-  { href: '/menu/', label: 'Menú', key: '/menu', flower: '/assets/img/flor-hibiscus.png' },
-  { href: '/vinos/', label: 'Vinos', key: '/vinos', flower: '/assets/img/flor-dahlia-roja.png' },
-  { href: '/galeria/', label: 'Galería', key: '/galeria', flower: '/assets/img/flor-cosmos.png' },
-  { href: '/prensa/', label: 'Prensa', key: '/prensa', flower: '/assets/img/flor-aciano.png' },
-  { href: '/regala/', label: 'Regalar', key: '/regala', flower: '/assets/img/flor-ajo.png' },
-  { href: '/reservas/', label: 'Reservas', key: '/reservas', flower: '/assets/img/flor-coreopsis.png' },
+  { href: '/conocenos/', tkey: 'nav.about', key: '/conocenos', flower: '/assets/img/flor-dahlia-rosa.png' },
+  { href: '/menu/', tkey: 'nav.menu', key: '/menu', flower: '/assets/img/flor-hibiscus.png' },
+  { href: '/vinos/', tkey: 'nav.wine', key: '/vinos', flower: '/assets/img/flor-dahlia-roja.png' },
+  { href: '/galeria/', tkey: 'nav.gallery', key: '/galeria', flower: '/assets/img/flor-cosmos.png' },
+  { href: '/prensa/', tkey: 'nav.press', key: '/prensa', flower: '/assets/img/flor-aciano.png' },
+  { href: '/regala/', tkey: 'nav.gift', key: '/regala', flower: '/assets/img/flor-ajo.png' },
+  { href: '/reservas/', tkey: 'nav.book', key: '/reservas', flower: '/assets/img/flor-coreopsis.png' },
 ];
+// selector de idioma: a la misma página en el otro idioma si existe; si no, a la home
+const otherLang = lang === 'en' ? 'es' : 'en';
+const switchHref = altHref(TRANSLATED.has(path) ? path : '/', otherLang);
 ---
 <header class="nav" id="nav">
   <!-- LUPA PLANA del vidrio: dos feDisplacementMap encadenados cuyos mapas son
@@ -51,14 +56,23 @@ const menu = [
          overflow para no ensuciar la sombra exterior del dock -->
     <span class="nav__sheen" aria-hidden="true"></span>
 
-    <button class="nav__burger" id="burger" aria-label="Abrir menú" aria-controls="navMenu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <div class="nav__left">
+      <button class="nav__burger" id="burger" aria-label={t('nav.openMenu')} aria-controls="navMenu" aria-expanded="false"><span></span><span></span><span></span></button>
+      <!-- selector de idioma SIEMPRE visible (extranjeros): globo + código destino -->
+      <a href={switchHref} class="nav__lang" data-astro-reload aria-label={t('lang.switchLabel')}>
+        <svg class="nav__lang-globe" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/>
+        </svg>
+        <span>{t('lang.switch')}</span>
+      </a>
+    </div>
 
-    <a href="/" class="nav__logo" aria-label="Pipilacha inicio">
+    <a href={localizeHref('/', lang)} class="nav__logo" aria-label={t('nav.home')}>
       <img src="/assets/img/logo-light.png" class="nav__logo-img" alt="Pipilacha" width="560" height="216" />
       <img src="/assets/img/iso-light.png" class="nav__logo-iso" alt="Pipilacha" width="200" height="200" />
     </a>
 
-    <a href="/reservas/" class="nav__cta">Reservar</a>
+    <a href={localizeHref('/reservas/', lang)} class="nav__cta">{t('cta.book')}</a>
 
     <!-- Panel de navegación: oculto dentro del dock, se revela cuando el
          cristal se expande. El burger (mutado a ✕) queda encima como cierre. -->
@@ -67,15 +81,16 @@ const menu = [
          — si no, el scroll nativo de este panel (overflow-y) quedaría muerto
          en viewports donde el contenido no cabe en 80vh -->
     <div class="nav__menu" id="navMenu" aria-hidden="true" data-lenis-prevent>
-      <nav class="nav__menu-list" aria-label="Menú principal">
+      <nav class="nav__menu-list" aria-label={t('nav.mainMenu')}>
         {menu.map((m) => (
-          <a href={m.href} data-flower={m.flower} aria-current={here(m.key) ? 'page' : undefined}><span>{m.label}</span></a>
+          <a href={localizeNav(m.href, lang)} data-flower={m.flower} aria-current={here(m.key) ? 'page' : undefined}><span>{t(m.tkey)}</span></a>
         ))}
       </nav>
       <div class="nav__menu-meta">
-        <div><span>Horario</span>Jueves a domingo · 14:00 y 21:00</div>
-        <div><span>Dirección</span>C. del Azulejo · Madrid</div>
-        <div><span>Contacto</span><a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">@restaurante.pipilacha</a> <a href="tel:+34919125998">919 12 59 98</a></div>
+        <div><span>{t('meta.hours')}</span>{t('meta.hoursValue')}</div>
+        <div><span>{t('meta.address')}</span>{t('meta.addressValue')}</div>
+        <div><span>{t('meta.contact')}</span><a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">@restaurante.pipilacha</a> <a href="tel:+34919125998">919 12 59 98</a></div>
+        <div class="nav__menu-lang"><a href={switchHref} data-astro-reload aria-label={t('lang.switchLabel')}>{t('lang.switch')}</a></div>
       </div>
     </div>
   </div>

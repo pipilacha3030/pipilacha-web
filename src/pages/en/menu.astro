@@ -1,0 +1,101 @@
+---
+import Base from '../../layouts/Base.astro';
+import { pases } from '../../data/menu.en.js';
+
+// Schema.org del menú EN (@id propio en /en/menu/). El Restaurant del grafo
+// base apunta a la versión ES vía hasMenu; este nodo es su equivalente inglés.
+const menuSchema = `<script type="application/ld+json">${JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Menu",
+  "@id": "https://pipilacha.es/en/menu/",
+  "url": "https://pipilacha.es/en/menu/",
+  "mainEntityOfPage": "https://pipilacha.es/en/menu/",
+  "name": "Solsticio floral",
+  "inLanguage": "en",
+  "description": "Fifteen-course tasting menu with edible flowers as the ingredient. €85 per person.",
+  "hasMenuSection": {
+    "@type": "MenuSection",
+    "name": "Solsticio floral · 15 courses",
+    "hasMenuItem": pases.map((p) => p.surprise
+      ? { "@type": "MenuItem", "name": "Surprise course", "description": "Blind, revealed at the table." }
+      : { "@type": "MenuItem", "name": p.name, "description": p.hook })
+  },
+  "offers": { "@type": "Offer", "price": "85.00", "priceCurrency": "EUR" }
+})}</script>`;
+---
+
+<Base
+  title="Menu · Solsticio floral · Pipilacha"
+  description="Solsticio floral: Pipilacha's tasting menu. Fifteen courses with flowers as the ingredient. Madrid, €85 per person."
+  schema={menuSchema}
+>
+
+  <!-- progressive blur: el contenido se disuelve en degradado en los bordes del viewport -->
+  <div class="pblur pblur--top" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+  <div class="pblur pblur--bottom" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+
+  <section class="page-header">
+    <p class="eyebrow">Tasting menu · Summer</p>
+    <h1 class="reveal-head">Solsticio floral</h1>
+    <p>Fifteen courses. No à la carte, no alternatives: it's served whole. €85 per person; the pairing, separate. Each one comes with a hint; the rest we tell you at the table.</p>
+  </section>
+
+  <!-- COURSE LIST (name + hint) over moss green -->
+  <section class="menu" id="menu">
+    <div class="menu__inner">
+    <span class="pases__stem" aria-hidden="true"></span>
+    <ol class="pases">
+      {pases.map((p, i) => (
+        p.surprise ? (
+          <li class="pase pase--secret reveal">
+            <span class="pase__n">{String(i + 1).padStart(2, '0')}</span>
+            <span class="pase__body" aria-label="Surprise course, undisclosed">
+              <span class="pase__name pase__name--secret">We keep it from you</span>
+              <span class="pase__hook">A blind course. You find out at the table, without knowing which flower is coming.</span>
+            </span>
+          </li>
+        ) : (
+          <li class="pase reveal">
+            <span class="pase__n">{String(i + 1).padStart(2, '0')}</span>
+            <span class="pase__body">
+              <span class="pase__name">{p.name}</span>
+              <span class="pase__hook">{p.hook}</span>
+            </span>
+          </li>
+        )
+      ))}
+    </ol>
+    </div>
+  </section>
+
+  <!-- WINE PAIRING -->
+  <section class="maridaje" id="maridaje">
+    <div class="maridaje__inner">
+      <p class="eyebrow reveal">The other half</p>
+      <h2 class="reveal">Pairing</h2>
+      <p class="maridaje__intro reveal">Six glasses to travel the fifteen courses. Wines from small growers, or the ferments we make in-house. You choose when you sit down, and none are on a list: they're poured and explained in the room.</p>
+      <div class="maridaje__cards" data-reveal-stagger>
+        <article class="maridaje__card reveal">
+          <span class="maridaje__count">Six glasses</span>
+          <h3>With wine</h3>
+          <p>Chosen for the season. They change with the flowers that come in each service.</p>
+          <span class="maridaje__price">+€60 / person</span>
+        </article>
+        <article class="maridaje__card reveal">
+          <span class="maridaje__count">Six ferments</span>
+          <h3>Alcohol-free</h3>
+          <p>Kombuchas, water kefirs and flower cheongs, made in-house. The same ambition, without wine.</p>
+          <span class="maridaje__price">+€60 / person</span>
+        </article>
+      </div>
+      <p class="maridaje__more reveal"><a href="/vinos/">See the wine list <span aria-hidden="true">→</span></a></p>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <h2 class="reveal">The menu is told at the table</h2>
+    <p class="cta-band__lead reveal">Which flower goes into each dish, what it does and where the idea came from. Book and we'll tell you course by course.</p>
+    <a href="/en/reservas/" class="btn btn--solid btn--lg reveal">Book</a>
+  </section>
+
+</Base>

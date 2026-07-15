@@ -20,9 +20,11 @@ export function initHero() {
       // se queda quieta. Se retiró el "respiro" infinito: escalar en bucle una foto
       // muy detallada resampleaba el raster cada frame → titileo/aliasing en el borde.
       // force3D mantiene la entrada en su propia capa GPU (compone, no repinta).
+      // reposa en 1.02 (casi a pantalla): el encuadre cerrado de antes (1.18)
+      // recortaba la foto y se percibía borrosa
       gsap.fromTo('.hero__media img',
-        { scale: 1.30, transformOrigin: '50% 42%' },
-        { scale: 1.18, transformOrigin: '50% 42%', duration: 1.8, ease: 'power2.out', force3D: true });
+        { scale: 1.10, transformOrigin: '50% 42%' },
+        { scale: 1.02, transformOrigin: '50% 42%', duration: 1.8, ease: 'power2.out', force3D: true });
       // el título sube tras su máscara
       // y:0 limpia el translateY(110%) que GSAP interpreta como px; el reveal lo mueve solo por yPercent
       gsap.fromTo('.hero__title .reveal-mask',

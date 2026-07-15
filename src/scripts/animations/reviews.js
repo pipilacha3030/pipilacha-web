@@ -17,9 +17,10 @@ export function initReviews() {
 
   const xSet = gsap.quickSetter(track, 'xPercent');
   const wrap = gsap.utils.wrap(-50, 0); // dos grupos: -50% = un grupo entero
-  // deriva base (% por frame a 60 fps) — más lenta en móvil para que no corran
+  // deriva base (% por frame a 60 fps) — calmada a propósito: da tiempo a leer
+  // una tarjeta entera sin perseguirla (y aún más lenta en móvil)
   const isNarrow = window.matchMedia('(max-width:560px)').matches;
-  const BASE = isNarrow ? 0.011 : 0.02;
+  const BASE = isNarrow ? 0.006 : 0.012;
   let x = 0, speed = 1, target = 1;
 
   const tick = (time, dtMs) => {

@@ -1,0 +1,46 @@
+---
+import Base from '../../layouts/Base.astro';
+// El widget de Bonkdo tiene su propio selector ES/EN; el iframe es el mismo.
+---
+
+<Base
+  title="Gift Pipilacha · The flower menu, to give"
+  description="Give Pipilacha: the Solsticio floral tasting menu, fifteen courses built on flowers, in Madrid. Gift card valid for a year."
+>
+
+  <!-- BUY · Bonkdo external widget (temporary, until the in-house gift system) -->
+  <section class="gift-shop" id="comprar">
+    <p class="eyebrow reveal">Buy the card</p>
+    <h1 class="reveal-head">Give it now</h1>
+    <p class="gift-shop__lead reveal">Pick an amount or a menu and the card arrives with its code. The date is booked later through TheFork.</p>
+    <div class="gift-shop__frame reveal">
+      <iframe
+        id="giftFrame"
+        src="https://pipilacha.bonkdo.com?embed=true&hide_main_title_description=false&hide_footer=false&hide_whychooseus=false&hide_create_money_pot=false&hide_group_payment=false&hide_shared_gifts_header=false&hide_whole_shared_gifts=false&hide_giftcards=false&hide_vouchers=false"
+        title="Pipilacha gift cards"
+        loading="lazy"
+        style="width:100%;border:0"></iframe>
+    </div>
+  </section>
+  <!-- iframe-resizer: idéntico al de la versión ES (mismo inline → mismo hash CSP) -->
+  <script is:inline>
+    (function () {
+      var SRC = 'https://pipilacha.bonkdo.com/static/js/iframeResizer.min.js';
+      function attach() {
+        var f = document.getElementById('giftFrame');
+        if (f && window.iFrameResize && !f.iFrameResizer) window.iFrameResize({}, '#giftFrame');
+      }
+      if (window.iFrameResize) { attach(); return; }
+      var existing = document.querySelector('script[data-ifr]');
+      if (!existing) {
+        var s = document.createElement('script');
+        s.src = SRC; s.setAttribute('data-ifr', ''); s.onload = attach;
+        document.head.appendChild(s);
+      } else {
+        var t = setInterval(function () { if (window.iFrameResize) { clearInterval(t); attach(); } }, 60);
+        setTimeout(function () { clearInterval(t); }, 6000);
+      }
+    })();
+  </script>
+
+</Base>

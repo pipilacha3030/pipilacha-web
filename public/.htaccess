@@ -1,3 +1,17 @@
+# La 404 de marca (dist/404.html) — sin esto Apache sirve su error genérico
+ErrorDocument 404 /404.html
+
+# ---- host canónico: www.pipilacha.es → pipilacha.es (301) ----
+# Sin esto ambos hosts servían 200 y Google/Bing veían contenido duplicado.
+# El canonical del sitio es SIN www; esta 301 hace que la URL real coincida.
+# La condición mira el HTTP_HOST exacto: en la beta (live-website.com) no
+# dispara, así que el mismo .htaccess vale para producción y beta.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTP_HOST} ^www\.pipilacha\.es$ [NC]
+  RewriteRule ^ https://pipilacha.es%{REQUEST_URI} [R=301,L]
+</IfModule>
+
 # ---- WebP por negociación de contenido ----
 # Si el navegador acepta webp y existe el hermano .webp, se sirve con el MISMO URL.
 # Cubre <img>, srcset y fondos CSS sin tocar el markup. Si el módulo no está
@@ -51,8 +65,11 @@
 # su propio iframe a hosts hermanos; cerrarlo más rompería reservas/compras.
 # 'unsafe-inline' SOLO en estilos (Astro emite <style> y style= inline); en
 # scripts NO hay unsafe-inline: un XSS inyectado no ejecutaría.
+# Google Analytics (gated por consentimiento en analytics.js): gtag.js viene de
+# googletagmanager.com (script-src) y envía los hits a *.google-analytics.com /
+# *.analytics.google.com por fetch (connect-src) o píxel (img-src).
 <IfModule mod_headers.c>
-  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://*.bonkdo.com 'sha256-98B9qXIvmuDpTxEU4CQI4PON9NbP1zKueDjwTB+7nPY=' 'sha256-rvtsdXrexxwMR2z41Un6uf0dcPu8CWKkOPJNRhptxF8='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src https://*.thefork.com https://*.bonkdo.com https://checkout.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://*.bonkdo.com https://www.googletagmanager.com 'sha256-98B9qXIvmuDpTxEU4CQI4PON9NbP1zKueDjwTB+7nPY=' 'sha256-rvtsdXrexxwMR2z41Un6uf0dcPu8CWKkOPJNRhptxF8='; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com; font-src 'self'; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; frame-src https://*.thefork.com https://*.bonkdo.com https://checkout.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
   Header always set X-Frame-Options "SAMEORIGIN"
   Header always set X-Content-Type-Options "nosniff"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"

@@ -25,6 +25,7 @@ import { initMarquee } from './animations/marquee.js';
 import { initReviews } from './animations/reviews.js';
 import { initMagnetic } from './interactions/magnetic.js';
 import { initCellar } from './cellar.js';
+import { initMaridajePopup } from './maridajePopup.js';
 import { initCookies, applyWidgetConsent } from './cookies.js';
 
 function destroyPage() {
@@ -60,9 +61,20 @@ function initPage() {
   }
 
   initCellar();
+  initMaridajePopup();
   applyWidgetConsent(); // el <main> se intercambia: re-gatea el widget de TheFork según consentimiento
   bindPageAnchors();
   ScrollTrigger.refresh();
+
+  /* en la carga fría (primera visita) las fuentes auto-alojadas aún pueden
+     estar aplicándose cuando corre el refresh() de arriba: el texto crece/
+     encoge (Marcellus/Hanken vs. la fuente de reserva) y desplaza el layout
+     unos px por debajo del pliegue, dejando el punto de disparo de los
+     ScrollTrigger (p. ej. las reseñas) calculado sobre una posición ya
+     obsoleta. Un refresh de cortesía cuando las fuentes asientan corrige
+     ese desfase sin tocar nada más. */
+  const gen = pageGeneration();
+  document.fonts.ready.then(() => { if (gen === pageGeneration()) ScrollTrigger.refresh(); });
 }
 
 initNav();

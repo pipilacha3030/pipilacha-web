@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import MaridajePopup from '../components/MaridajePopup.astro';
 import { grupos } from '../data/vinos.js';
 
 // SEO: datos estructurados de la carta (schema.org Menu).
@@ -39,15 +40,25 @@ const menuLd = {
       <img class="menu-bloom menu-bloom--5" src="/assets/img/flor-coreopsis.png" alt="" />
     </div>
     <div class="cellar-hero__inner">
-      <p class="eyebrow reveal">La bodega</p>
-      <h1 class="cellar-hero__title reveal-head">Vinos para quince pases</h1>
+      <p class="eyebrow reveal">Vinos</p>
+      <h1 class="cellar-hero__title reveal-head">Un recorrido paralelo.</h1>
       <p class="cellar-hero__lead reveal">
-        El maridaje se elige en la mesa. Si prefieres ir a tu aire, esta es la bodega:
-        productores pequeños, vinos naturales y alguna rareza, por copa y por botella.
-        Cambia con la temporada.
+        Cada temporada seleccionamos vinos de pequeños productores que acompañan el menú
+        desde el primer pase hasta el último. Algunos realzan una flor. Otros aportan
+        contraste. Todos están aquí por una razón.
       </p>
     </div>
   </header>
+
+  <!-- SELECCIÓN -->
+  <section class="cellar-intro">
+    <h2 class="reveal">La selección</h2>
+    <p class="reveal">
+      La carta cambia con las estaciones y reúne vinos elegidos por su capacidad para
+      dialogar con la cocina, no por seguir tendencias. Puedes descubrirlos por copa o
+      por botella.
+    </p>
+  </section>
 
   <!-- BODEGA: índice pegajoso + secciones editoriales -->
   <div class="cellar">
@@ -90,9 +101,23 @@ const menuLd = {
     </div>
   </div>
 
+  <!-- CÓMO ELEGIMOS -->
+  <section class="cellar-intro">
+    <h2 class="reveal">Cómo elegimos un vino</h2>
+    <p class="reveal">
+      No buscamos etiquetas conocidas. Buscamos vinos con personalidad, elaborados por
+      productores que trabajan con el mismo respeto por la temporada, el origen y el
+      tiempo que define nuestra cocina.
+    </p>
+  </section>
+
   <section class="cta-band">
-    <h2 class="reveal">Lo fácil: déjate llevar</h2>
-    <p class="cta-band__lead reveal">Seis copas pensadas para los quince pases, vino o fermentos de la casa. Se elige al sentarse y se explica en sala.</p>
+    <p class="eyebrow reveal">Maridaje</p>
+    <h2 class="reveal">Copa a copa</h2>
+    <p class="cta-band__lead reveal">Si prefieres dejarte guiar, el maridaje acompaña los quince pases con una selección de seis vinos que evoluciona junto al menú de temporada.</p>
+    <p class="cta-band__price reveal">60 €</p>
     <a href="/reservas/" class="btn btn--solid btn--lg reveal">Reservar</a>
   </section>
+
+  <MaridajePopup />
 </Base>

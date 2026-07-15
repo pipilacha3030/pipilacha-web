@@ -3,6 +3,9 @@
 import '../styles/main.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import CookieConsent from '../components/CookieConsent.astro';
+import { GOOGLE_SITE_VERIFICATION, BING_SITE_VERIFICATION } from '../config/verification.js';
+import { localeFromPath, basePath, altHref, TRANSLATED, useT } from '../i18n/index.js';
 
 const {
   title,
@@ -11,11 +14,20 @@ const {
   schema,          // JSON-LD opcional por página (string ya serializado)
 } = Astro.props;
 
-const path = Astro.url.pathname.replace(/\/$/, '') || '/';
-const here = (href) => path === href;
+// Idioma y ruta canónica ES se deducen de la URL (las páginas /en/ no pasan nada)
+const lang = localeFromPath(Astro.url.pathname);
+const base = basePath(Astro.url.pathname); // '/', '/menu', '/conocenos'… (sin /en, sin barra)
+const here = (href) => base === href;
+const t = useT(lang);
 // URLs absolutas (Astro.site = dominio final) para canonical, OG y schema
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImageAbs = new URL(ogImage, Astro.site).href;
+// alternativas de idioma (hreflang) — solo en páginas que YA tienen versión EN
+const hasAlt = TRANSLATED.has(base);
+const esHref = new URL(altHref(base, 'es'), Astro.site).href;
+const enHref = new URL(altHref(base, 'en'), Astro.site).href;
+const ogLocale = lang === 'en' ? 'en_US' : 'es_ES';
+const ogLocaleAlt = lang === 'en' ? 'es_ES' : 'en_US';
 
 /* ---------- Grafo schema.org (todas las páginas) ----------
    Entidades con @id estable para que buscadores y LLMs conecten
@@ -24,9 +36,14 @@ const ogImageAbs = new URL(ogImage, Astro.site).href;
    (mismo @id = las propiedades se fusionan). */
 const SITE = Astro.site.href;
 const ID = { restaurant: `${SITE}#restaurant`, website: `${SITE}#website`, aran: `${SITE}#aran`, noe: `${SITE}#noe` };
-const breadcrumbNames = {
+const breadcrumbNames = lang === 'en' ? {
+  '/conocenos': 'About', '/menu': 'Menu', '/vinos': 'Wine', '/galeria': 'Gallery',
+  '/prensa': 'Press', '/regala': 'Gift', '/reservas': 'Reservations',
+  '/aviso-legal': 'Legal notice', '/privacidad': 'Privacy', '/cookies': 'Cookies',
+} : {
   '/conocenos': 'Conócenos', '/menu': 'Menú', '/vinos': 'Vinos', '/galeria': 'Galería',
   '/prensa': 'Prensa', '/regala': 'Regalar', '/reservas': 'Reservas',
+  '/aviso-legal': 'Aviso legal', '/privacidad': 'Privacidad', '/cookies': 'Cookies',
 };
 const graph = [
   {
@@ -44,9 +61,11 @@ const graph = [
       "@type": "PostalAddress",
       "streetAddress": "C. del Azulejo, 2",
       "addressLocality": "Madrid",
+      "addressRegion": "Madrid",
       "postalCode": "28028",
       "addressCountry": "ES"
     },
+    "hasMap": "https://maps.google.com/?q=Pipilacha,+C.+del+Azulejo,+2,+28028+Madrid",
     "geo": { "@type": "GeoCoordinates", "latitude": 40.4291, "longitude": -3.6669 },
     "openingHoursSpecification": [
       { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday","Friday","Saturday","Sunday"], "opens": "14:00", "closes": "16:30" },
@@ -59,10 +78,14 @@ const graph = [
       "Flores comestibles",
       "Cocina floral de autor",
       "Menú de degustación",
-      "Investigación botánica aplicada a la gastronomía",
+      "Investigación aplicada de flores comestibles",
       "Fermentación de flores"
     ],
-    "sameAs": ["https://instagram.com/restaurante.pipilacha"]
+    "sameAs": [
+      "https://instagram.com/restaurante.pipilacha",
+      "https://www.thefork.es/restaurante/pipilacha-r851116",
+      "https://www.tripadvisor.com/Restaurant_Review-g187514-d34014070-Reviews-Pipilacha-Madrid.html"
+    ]
   },
   {
     "@type": "Person",
@@ -70,7 +93,7 @@ const graph = [
     "name": "Arán Rodrigo",
     "jobTitle": "Chef y cofundador",
     "worksFor": { "@id": ID.restaurant },
-    "knowsAbout": ["Flores comestibles", "Alta cocina", "Investigación botánica aplicada a la gastronomía"]
+    "knowsAbout": ["Flores comestibles", "Menú de degustación", "Investigación aplicada de flores comestibles"]
   },
   {
     "@type": "Person",
@@ -78,23 +101,25 @@ const graph = [
     "name": "Noé David",
     "jobTitle": "Chef y cofundador",
     "worksFor": { "@id": ID.restaurant },
-    "knowsAbout": ["Flores comestibles", "Alta cocina", "Fermentación de flores"]
+    "knowsAbout": ["Flores comestibles", "Menú de degustación", "Fermentación de flores"]
   },
   {
     "@type": "WebSite",
     "@id": ID.website,
     "url": SITE,
     "name": "Pipilacha",
-    "inLanguage": "es",
+    "inLanguage": lang,
     "publisher": { "@id": ID.restaurant }
   },
 ];
-if (path !== '/' && breadcrumbNames[path]) {
+const homeName = lang === 'en' ? 'Home' : 'Inicio';
+const homeUrl = new URL(altHref('/', lang), Astro.site).href;
+if (base !== '/' && breadcrumbNames[base]) {
   graph.push({
     "@type": "BreadcrumbList",
     "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Inicio", "item": SITE },
-      { "@type": "ListItem", "position": 2, "name": breadcrumbNames[path], "item": canonical }
+      { "@type": "ListItem", "position": 1, "name": homeName, "item": homeUrl },
+      { "@type": "ListItem", "position": 2, "name": breadcrumbNames[base], "item": canonical }
     ]
   });
 }
@@ -102,7 +127,7 @@ const graphJson = JSON.stringify({ "@context": "https://schema.org", "@graph": g
 ---
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang={lang}>
 <head>
   <!-- La clase `js` activa los hide-states de las animaciones (.js .reveal{…}).
        Si el bundle hasheado falla en descargar (red inestable), nadie animaría
@@ -113,21 +138,34 @@ const graphJson = JSON.stringify({ "@context": "https://schema.org", "@graph": g
   <script is:inline>document.documentElement.classList.add('js');window.addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='SCRIPT'&&t.src)document.documentElement.classList.remove('js')},true)</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {GOOGLE_SITE_VERIFICATION && <meta name="google-site-verification" content={GOOGLE_SITE_VERIFICATION} />}
+  {BING_SITE_VERIFICATION && <meta name="msvalidate.01" content={BING_SITE_VERIFICATION} />}
   <title>{title}</title>
   <meta name="description" content={description} />
 
   <link rel="canonical" href={canonical} />
+  {hasAlt && (
+    <>
+      <link rel="alternate" hreflang="es" href={esHref} />
+      <link rel="alternate" hreflang="en" href={enHref} />
+      <link rel="alternate" hreflang="x-default" href={esHref} />
+    </>
+  )}
 
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Pipilacha" />
-  <meta property="og:locale" content="es_ES" />
+  <meta property="og:locale" content={ogLocale} />
+  {hasAlt && <meta property="og:locale:alternate" content={ogLocaleAlt} />}
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:image" content={ogImageAbs} />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Arán y Noé, los chefs de Pipilacha, entre flores" />
+  <meta property="og:image:alt" content={t('og.imageAlt')} />
   <meta property="og:url" content={canonical} />
+  <!-- max-image-preview:large: Google Discover y resultados de imagen pueden usar
+       las fotos a tamaño completo — la galería y los platos son el gancho visual -->
+  <meta name="robots" content="index, follow, max-image-preview:large" />
   <meta name="theme-color" content="#F4EFE6" />
 
   <meta name="twitter:card" content="summary_large_image" />
@@ -160,17 +198,20 @@ const graphJson = JSON.stringify({ "@context": "https://schema.org", "@graph": g
   </div>
   <noscript><style>.page-transition{display:none!important}</style></noscript>
 
-  <Nav path={path} />
+  <Nav path={base} lang={lang} />
 
   <main>
     <slot />
   </main>
 
-  {path !== '/reservas' && (
-    <a href="/reservas/" class="reserva-bar" id="reservaBar">Reservar</a>
+  {base !== '/reservas' && (
+    <a href={altHref('/reservas', lang)} class="reserva-bar" id="reservaBar">{t('reservaBar')}</a>
   )}
 
-  <Footer />
+  <Footer path={base} lang={lang} />
+
+  <!-- Consentimiento de cookies: fuera de <main>, persiste entre transiciones -->
+  <CookieConsent lang={lang} />
 
   <!-- Interacción: Lenis + GSAP importados desde npm dentro del bundle de src/scripts/
        (Vite lo minifica y hashea el nombre → cache busting automático, sin ?v=N) -->

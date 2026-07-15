@@ -1,0 +1,88 @@
+---
+import Base from '../../layouts/Base.astro';
+import { faqEn as faq } from '../../data/faq.js';
+
+const faqSchema = `<script type="application/ld+json">${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+})}</script>`;
+---
+
+<Base
+  title="Book · Pipilacha"
+  description="Book at Pipilacha. 16 seats per service, Thursday to Sunday, two sittings. Tasting menu €85 per person."
+  schema={faqSchema}
+>
+
+  <!-- Una sola atmósfera de flores en blur para toda la página (decorativa) -->
+  <section class="reservas">
+    <div class="reservas__atmos" aria-hidden="true">
+      <div class="rbloom rbloom--1" data-parallax="0.26"><img src="/assets/img/flor-dahlia-rosa.png" alt="" /></div>
+      <div class="rbloom rbloom--2" data-parallax="0.23"><img src="/assets/img/flor-amapola.png" alt="" /></div>
+      <div class="rbloom rbloom--3" data-parallax="0.16"><img src="/assets/img/flor-campanula.png" alt="" /></div>
+      <div class="rbloom rbloom--4" data-parallax="0.17"><img src="/assets/img/flor-coreopsis.png" alt="" /></div>
+      <div class="rbloom rbloom--5" data-parallax="0.15"><img src="/assets/img/flor-coreopsis.png" alt="" /></div>
+      <div class="rbloom rbloom--6" data-parallax="0.09"><img src="/assets/img/flor-aciano.png" alt="" /></div>
+      <div class="rbloom rbloom--7" data-parallax="0.11"><img src="/assets/img/flor-cosmos.png" alt="" /></div>
+      <div class="rbloom rbloom--8" data-parallax="0.08"><img src="/assets/img/flor-borraja.png" alt="" /></div>
+    </div>
+
+    <div class="page-header">
+      <p class="eyebrow">Reservations</p>
+      <h1 class="reveal-head">Book<br>at Pipilacha</h1>
+      <p>Pick a day and a sitting below. Sixteen seats per service: eight at the counter, facing the open kitchen, and eight at tables.</p>
+    </div>
+
+    <!-- WIDGET THEFORK (mismo widget; carga gated por consentimiento de cookies) -->
+    <div class="reserva-widget" id="reservar-widget">
+      <div class="reserva-widget__inner">
+        <div class="widget-blooms" aria-hidden="true">
+          <div class="wbloom wbloom--l1" data-parallax="0.06"><img src="/assets/img/flor-clavel.png" alt="" /></div>
+          <div class="wbloom wbloom--l2" data-parallax="0.09"><img src="/assets/img/flor-geranio.png" alt="" /></div>
+          <div class="wbloom wbloom--r1" data-parallax="0.08"><img src="/assets/img/flor-dahlia-roja.png" alt="" /></div>
+          <div class="wbloom wbloom--r2" data-parallax="0.05"><img src="/assets/img/flor-hibiscus.png" alt="" /></div>
+          <div class="wbloom wbloom--b1" data-parallax="0.07"><img src="/assets/img/flor-crisantemo.png" alt="" /></div>
+        </div>
+        <div class="reserva-widget__frame">
+          <p class="reserva-widget__loading" hidden>Loading the booking calendar<span class="dots" aria-hidden="true"></span></p>
+          <iframe
+            data-src="https://widget.thefork.com/867dcee9-49b5-47ed-90c0-c6c87149b328"
+            data-consent="reservas"
+            allow="payment *"
+            title="Pipilacha reservations"
+            loading="lazy"
+            hidden>
+          </iframe>
+          <div class="reserva-consent" hidden>
+            <p class="reserva-consent__title">The calendar is powered by TheFork</p>
+            <p class="reserva-consent__text">To book here we need to load the TheFork widget, which uses its own cookies. Turn them on to book on this page, or call +34 919 12 59 98.</p>
+            <button type="button" class="btn btn--solid" data-cc="accept-reservas">Turn on and book</button>
+          </div>
+        </div>
+        <p class="reserva-widget__fallback">Not loading? Call <a href="tel:+34919125998">+34 919 12 59 98</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ: plain-text answers (citable by AIs) + FAQPage schema -->
+  <section class="faq" aria-labelledby="faq-h">
+    <div class="faq__inner">
+      <p class="eyebrow reveal">Before you come</p>
+      <h2 class="faq__title reveal" id="faq-h">Frequently asked questions</h2>
+      <div class="faq__list" data-reveal-stagger>
+        {faq.map((f) => (
+          <details class="faq__item reveal">
+            <summary class="faq__q">{f.q}</summary>
+            <div class="faq__a"><p>{f.a}</p></div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+</Base>

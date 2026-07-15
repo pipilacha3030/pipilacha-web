@@ -3,7 +3,7 @@
 export const grupos = [
   {
     id: 'blancos', titulo: 'Blancos', flor: '/assets/img/flor-begonia.png',
-    nota: 'Filo y verticalidad. Para empezar con la boca despierta.',
+    nota: 'Precisión y frescura. Vinos que abren el menú con tensión y verticalidad.',
     vinos: [
       { nombre: 'JAG', uva: 'Godello y Doña Blanca' },
       { nombre: 'Stallmann-Hiestand', uva: 'Riesling' },
@@ -16,8 +16,8 @@ export const grupos = [
     ],
   },
   {
-    id: 'naranja', titulo: 'Naranja', flor: '/assets/img/flor-coreopsis.png',
-    nota: 'Maceración con pieles. Textura y un punto salvaje.',
+    id: 'naranja', titulo: 'Naranjas', flor: '/assets/img/flor-coreopsis.png',
+    nota: 'Textura y carácter. Maceraciones que dialogan con las flores más intensas.',
     vinos: [
       { nombre: 'Puiggròs «Impresionant»', uva: 'Vino naranja' },
       { nombre: 'Ulterior', uva: 'Naranja' },
@@ -25,7 +25,7 @@ export const grupos = [
   },
   {
     id: 'tintos', titulo: 'Tintos', flor: '/assets/img/flor-roja.png',
-    nota: 'De la encina a la copa. Fruta, tierra y humo.',
+    nota: 'Profundidad sin peso. Fruta, tierra y estructura para acompañar los pases finales.',
     vinos: [
       { nombre: 'Ulterior Parcela 6', uva: 'Garnacha' },
       { nombre: 'La Brecha', uva: 'Ribera' },
@@ -38,7 +38,7 @@ export const grupos = [
   },
   {
     id: 'espumosos', titulo: 'Espumosos', flor: '/assets/img/flor-borraja.png',
-    nota: 'Tensión con aire. Cava, pet-nat y champán.',
+    nota: 'Energía y delicadeza. Burbujas que limpian el paladar sin eclipsar el menú.',
     vinos: [
       { nombre: 'Mas Candi', uva: 'Brut Nature' },
       { nombre: 'Con Altura', uva: 'Pet-Nat' },
@@ -49,7 +49,7 @@ export const grupos = [
   },
   {
     id: 'dulces', titulo: 'Dulces', flor: '/assets/img/flor-dalia.png',
-    nota: 'El cierre. Poco, frío y con flor.',
+    nota: 'El último recuerdo. Un cierre pensado para acompañar el final del recorrido.',
     vinos: [
       { nombre: 'Dulce Enero', uva: 'Vino dulce' },
       { nombre: 'La Chispa Negra', uva: 'Vino dulce' },

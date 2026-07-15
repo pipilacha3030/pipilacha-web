@@ -11,6 +11,7 @@ import { gsap } from './scroll/scrollTrigger.js';
 import { lenis } from './scroll/lenis.js';
 import { reduceMotion } from './utils/motion.js';
 import { setMenu, isMenuOpen, onScroll, seizeMenuTimeline } from './nav.js';
+import { trackPageView } from './analytics.js';
 
 export function initTransitions({ initPage, destroyPage }) {
   const pt = document.getElementById('pageTransition');
@@ -52,6 +53,9 @@ export function initTransitions({ initPage, destroyPage }) {
     return text;
   };
 
+  // idioma de un pathname (español en la raíz, inglés bajo /en/)
+  const localeOf = (p) => (p === '/en' || p.startsWith('/en/')) ? 'en' : 'es';
+
   // URL interna navegable de un <a>, o null si no procede interceptar
   const internalUrl = (a) => {
     const href = a.getAttribute('href');
@@ -59,6 +63,9 @@ export function initTransitions({ initPage, destroyPage }) {
     if (!href.startsWith('/') || href.startsWith('//')) return null;
     const url = new URL(href, location.href);
     if (url.pathname === location.pathname) return null;
+    // cambio de idioma → carga completa: nav/pie/cookies viven fuera de <main>
+    // y el router solo intercambia <main>; recargar los repinta en el idioma nuevo
+    if (localeOf(url.pathname) !== localeOf(location.pathname)) return null;
     return url;
   };
 
@@ -96,11 +103,13 @@ export function initTransitions({ initPage, destroyPage }) {
     gsap.timeline({ onComplete: done, defaults: { overwrite: 'auto' } })
       // el scrim viaja aquí: seizeMenuTimeline() lo deja congelado a media
       // opacidad (mata el timeline del menú SIN limpieza) y nadie más lo apaga
-      .to([menuEl, scrimEl, ...dockChrome], { autoAlpha: 0, duration: 0.22, ease: 'power2.in' }, 0)
-      .to(navEl, { top: 0, paddingLeft: 0, paddingRight: 0, duration: 0.7, ease: 'power4.inOut' }, 0)
+      .to([menuEl, scrimEl, ...dockChrome], { autoAlpha: 0, duration: 0.2, ease: 'power2.in' }, 0)
+      // curva más suave (power2.inOut, sin el acelerón central de power4) y algo
+      // más corta: el estiramiento del cristal se siente fluido, no brusco
+      .to(navEl, { top: 0, paddingLeft: 0, paddingRight: 0, duration: 0.58, ease: 'power2.inOut' }, 0)
       .to(dockEl, {
         maxWidth: '100vw', height: () => window.innerHeight, borderRadius: 0,
-        duration: 0.7, ease: 'power4.inOut'
+        duration: 0.58, ease: 'power2.inOut'
       }, 0);
   });
 
@@ -123,9 +132,13 @@ export function initTransitions({ initPage, destroyPage }) {
         done();
       }
     })
-      .to(dockEl, { height: pillH, maxWidth: 680, borderRadius: 50, duration: 0.75, ease: 'power4.inOut' }, 0)
-      .to(navEl, { top: 24, paddingLeft: navPad, paddingRight: navPad, duration: 0.75, ease: 'power4.inOut' }, 0)
-      .to(dockChrome, { autoAlpha: 1, duration: 0.35, ease: 'power2.out' }, 0.45);
+      // contracción con la misma curva suave y algo más corta que antes.
+      // OJO '680px' CON unidad: el inline vigente es '100vw' y un 680 desnudo
+      // hereda esa unidad (¡680vw!) — el ancho no animaba y el clearProps
+      // final lo soltaba de golpe (el "salto" al recogerse)
+      .to(dockEl, { height: pillH, maxWidth: '680px', borderRadius: 50, duration: 0.6, ease: 'power2.inOut' }, 0)
+      .to(navEl, { top: 24, paddingLeft: navPad, paddingRight: navPad, duration: 0.6, ease: 'power2.inOut' }, 0)
+      .to(dockChrome, { autoAlpha: 1, duration: 0.32, ease: 'power2.out' }, 0.3);
   });
 
   // REVELADO: la cortina sigue hacia arriba y la página nueva se asienta
@@ -147,6 +160,21 @@ export function initTransitions({ initPage, destroyPage }) {
   // aplica el documento nuevo: <main>, título, meta, nav y barra de reserva
   const swapDoc = (text, url, push) => {
     const doc = new DOMParser().parseFromString(text, 'text/html');
+
+    // CSS por página (estilos de componente, p. ej. «Primera fila» en la home):
+    // el router solo intercambia <main> y no toca el <head>, así que las hojas
+    // que la página nueva enlaza y este documento aún no tiene se añaden aquí
+    // (los <link> se acumulan entre navegaciones: son pocos, cacheados e inertes)
+    doc.querySelectorAll('link[rel="stylesheet"]').forEach((lnk) => {
+      const href = lnk.getAttribute('href');
+      if (href && !document.head.querySelector(`link[rel="stylesheet"][href="${href}"]`)) {
+        const s = document.createElement('link');
+        s.rel = 'stylesheet';
+        s.href = href;
+        document.head.appendChild(s);
+      }
+    });
+
     const mainEl = document.querySelector('main');
     const newMain = doc.querySelector('main');
     destroyPage(); // mata triggers/tweens/motores con el DOM viejo aún vivo
@@ -190,6 +218,10 @@ export function initTransitions({ initPage, destroyPage }) {
     onScroll(0);
 
     initPage();
+
+    // GA4 no ve las transiciones SPA (no hay recarga): la vista se envía a mano.
+    // Solo hace algo con consentimiento de analítica y GA_ID configurado.
+    trackPageView();
   };
 
   const transition = async (url, push, viaDock = false) => {
@@ -203,6 +235,19 @@ export function initTransitions({ initPage, destroyPage }) {
     try {
       const [text] = await Promise.all([fetchPage(url), viaDock ? coverDockAsync() : coverAsync()]);
       swapDoc(text, url, push);
+      // el prefetch trae el HTML pero no las imágenes: decodificar el hero de
+      // la página nueva A MITAD de la contracción congelaba un frame (~200ms).
+      // Se decodifican las primeras imágenes bajo el cristal aún cerrado, con
+      // tope de 400 ms para no alargar la transición en redes lentas.
+      await Promise.race([
+        Promise.all(Array.from(document.querySelectorAll('main img:not([loading="lazy"])'), (im) =>
+          im.decode ? im.decode().catch(() => {}) : Promise.resolve()).slice(0, 5)),
+        new Promise((r) => setTimeout(r, 400)),
+      ]);
+      // dos frames de cortesía: el primer layout+raster de la página nueva
+      // (caro en páginas densas como la galería) sucede bajo el cristal
+      // estático, no en el primer frame de la contracción
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
       await (viaDock ? revealDockAsync() : revealAsync());
       // la galería gobierna su propio scroll: no reactivar Lenis sobre ella
       if (lenis && !document.getElementById('galStage')) lenis.start();

@@ -1,10 +1,24 @@
 ---
 import Base from '../layouts/Base.astro';
+import { faqEs as faq } from '../data/faq.js';
+
+// FAQPage schema: los motores generativos (ChatGPT, Perplexity, AI Overviews)
+// extraen los pares pregunta-respuesta. El texto también está visible abajo.
+const faqSchema = `<script type="application/ld+json">${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+})}</script>`;
 ---
 
 <Base
   title="Reservar · Pipilacha"
   description="Reserva en Pipilacha. 16 plazas por servicio, jueves a domingo, dos turnos. Menú degustación 85 € por persona."
+  schema={faqSchema}
 >
 
   <!-- La página entera comparte una sola atmósfera de flores en blur:
@@ -43,16 +57,42 @@ import Base from '../layouts/Base.astro';
           <div class="wbloom wbloom--b1" data-parallax="0.07"><img src="/assets/img/flor-crisantemo.png" alt="" /></div>
         </div>
         <div class="reserva-widget__frame">
-          <p class="reserva-widget__loading">Cargando el calendario de reservas<span class="dots" aria-hidden="true"></span></p>
+          <p class="reserva-widget__loading" hidden>Cargando el calendario de reservas<span class="dots" aria-hidden="true"></span></p>
+          <!-- data-src (no src): TheFork es un tercero; su iframe no carga ni pide
+               cookies hasta que se aceptan las cookies de reservas (ver cookies.js) -->
           <iframe
-            src="https://widget.thefork.com/867dcee9-49b5-47ed-90c0-c6c87149b328"
+            data-src="https://widget.thefork.com/867dcee9-49b5-47ed-90c0-c6c87149b328"
+            data-consent="reservas"
             allow="payment *"
             title="Reservas Pipilacha"
             loading="lazy"
-            onload="this.previousElementSibling.classList.add('is-loaded')">
+            hidden>
           </iframe>
+          <!-- aviso cuando faltan las cookies de reservas -->
+          <div class="reserva-consent" hidden>
+            <p class="reserva-consent__title">El calendario lo pone TheFork</p>
+            <p class="reserva-consent__text">Para reservar aquí necesitamos cargar el widget de TheFork, que usa sus propias cookies. Actívalas para reservar en esta página, o llama al 919 12 59 98.</p>
+            <button type="button" class="btn btn--solid" data-cc="accept-reservas">Activar y reservar</button>
+          </div>
         </div>
-        <p class="reserva-widget__fallback">¿No carga? Reserva por <a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">Instagram</a> o llama al <a href="tel:+34919125998">919 12 59 98</a>.</p>
+        <p class="reserva-widget__fallback">¿No carga? Llama al <a href="tel:+34919125998">919 12 59 98</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ: respuestas en texto plano (citables por IAs) + FAQPage schema.
+       <details> nativo: contenido en el DOM, accesible y sin JS. -->
+  <section class="faq" aria-labelledby="faq-h">
+    <div class="faq__inner">
+      <p class="eyebrow reveal">Antes de venir</p>
+      <h2 class="faq__title reveal" id="faq-h">Preguntas frecuentes</h2>
+      <div class="faq__list" data-reveal-stagger>
+        {faq.map((f) => (
+          <details class="faq__item reveal">
+            <summary class="faq__q">{f.q}</summary>
+            <div class="faq__a"><p>{f.a}</p></div>
+          </details>
+        ))}
       </div>
     </div>
   </section>
