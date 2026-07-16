@@ -536,7 +536,10 @@ body.menu-open .nav__burger{color:var(--cream)}
 .concepto__signs span{font-size:.78rem;letter-spacing:.08em;color:var(--accent);text-transform:uppercase}
 .petal{position:absolute;width:clamp(120px,16vw,260px);height:auto;opacity:.92;pointer-events:none;z-index:0;filter:blur(1.2px) drop-shadow(0 20px 30px rgba(49,51,31,.18))}
 .petal--1{top:-6%;right:-2%;animation:float 9s ease-in-out infinite}
+.petal--2{bottom:-4%;left:-3%;width:clamp(140px,18vw,300px);animation:float2 11s ease-in-out infinite}
+.petal--3{top:6%;right:4%;width:clamp(80px,9vw,150px);animation:float 8s ease-in-out infinite reverse}
 @keyframes float{0%,100%{transform:translateY(0) rotate(8deg)}50%{transform:translateY(-18px) rotate(12deg)}}
+@keyframes float2{0%,100%{transform:translateY(0) rotate(-18deg)}50%{transform:translateY(-22px) rotate(-14deg)}}
 
 /* ---------- showcooking / la barra (Conócenos) ---------- */
 .showcooking{
@@ -604,9 +607,7 @@ body.menu-open .nav__burger{color:var(--cream)}
 }
 .menu-bloom{position:absolute;height:auto;filter:blur(13px) saturate(1.15);will-change:transform}
 .menu-bloom--1{top:4%;left:3%;width:clamp(220px,30vw,460px);opacity:.6;animation:float 14s ease-in-out infinite}
-.menu-bloom--2{bottom:8%;left:24%;width:clamp(160px,20vw,320px);opacity:.5;animation:float2 17s ease-in-out infinite}
 .menu-bloom--3{top:11%;right:7%;width:clamp(240px,32vw,500px);opacity:.55;animation:float2 15s ease-in-out infinite}
-.menu-bloom--4{bottom:12%;right:25%;width:clamp(150px,18vw,300px);opacity:.5;animation:float 19s ease-in-out infinite}
 .menu-bloom--5{top:42%;left:47%;width:clamp(180px,22vw,360px);opacity:.4;animation:float 16s ease-in-out infinite}
 .menu-blooms::after{
   content:'';position:absolute;inset:0;opacity:.2;mix-blend-mode:soft-light;
@@ -729,24 +730,6 @@ body:has(.gal-stage) .reserva-bar{display:none}
 .lightbox__prev{left:clamp(.2rem,2vw,1.5rem)}
 .lightbox__next{right:clamp(.2rem,2vw,1.5rem)}
 .lightbox__close:focus-visible,.lightbox__nav:focus-visible{outline:2px solid var(--accent-soft);outline-offset:4px;opacity:1}
-
-/* ---------- reserva ---------- */
-.reserva{position:relative;padding:clamp(5rem,12vh,11rem) var(--gutter);display:flex;justify-content:center;align-items:center;overflow:hidden}
-.reserva__card{
-  position:relative;z-index:2;background:var(--cloud);max-width:620px;width:100%;
-  padding:clamp(2.4rem,5vw,4rem);border-radius:var(--radius);box-shadow:0 40px 90px -45px rgba(49,51,31,.45);text-align:center;
-}
-.reserva__card h2{font-size:clamp(2.2rem,5vw,4rem);color:var(--moss);margin:.4rem 0 1rem}
-.reserva__lead{color:var(--text-muted);margin-bottom:2rem}
-.reserva__details{list-style:none;text-align:left;margin:0 auto 2.2rem;max-width:420px}
-.reserva__details li{display:flex;justify-content:space-between;padding:.85rem 0;border-bottom:1px solid rgba(49,51,31,.12)}
-.reserva__details span{color:var(--text-subtle);font-size:.92rem}
-.reserva__details strong{font-weight:500;color:var(--moss)}
-.reserva__note{margin-top:1.6rem;font-size:.88rem;color:var(--text-subtle)}
-.reserva__note a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
-.petal--2{bottom:-4%;left:-3%;width:clamp(140px,18vw,300px);animation:float2 11s ease-in-out infinite}
-.petal--3{top:6%;right:4%;width:clamp(80px,9vw,150px);animation:float 8s ease-in-out infinite reverse}
-@keyframes float2{0%,100%{transform:translateY(0) rotate(-18deg)}50%{transform:translateY(-22px) rotate(-14deg)}}
 
 /* ---------- regala: widget de compra (Bonkdo) ---------- */
 .gift-shop{padding:clamp(7rem,15vh,9.5rem) var(--gutter) clamp(3rem,7vh,6rem);max-width:var(--maxw);margin:0 auto;text-align:center}
@@ -1035,16 +1018,6 @@ body:has(.gal-stage) .reserva-bar{display:none}
 .prensa-kit__contact a{font-family:var(--serif);font-size:1.05rem;text-align:right;transition:color .3s var(--ease)}
 .prensa-kit__contact a:hover{color:var(--accent-soft)}
 .prensa-kit__download{margin:1.8rem 0 2.4rem}
-
-/* ---------- regala: cómo funciona ---------- */
-.regala-steps{max-width:var(--maxw);margin:0 auto;padding:clamp(3.5rem,9vh,6.5rem) var(--gutter) clamp(1rem,4vh,2rem);text-align:center}
-.regala-steps h2{font-size:clamp(1.9rem,4.5vw,3.2rem);color:var(--moss);margin-bottom:clamp(2.2rem,5vh,3.4rem)}
-.regala-steps__grid{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(1.6rem,3vw,2.6rem);text-align:left}
-.regala-step{padding-top:1.4rem;border-top:1px solid var(--border-subtle)}
-.regala-step__n{font-family:var(--serif);font-size:1.6rem;color:var(--accent-soft)}
-.regala-step h3{font-family:var(--serif);font-size:1.4rem;color:var(--moss);margin:.5rem 0 .6rem}
-.regala-step p{color:var(--text-muted);font-size:.98rem;line-height:1.7}
-@media(max-width:760px){.regala-steps__grid{grid-template-columns:1fr;gap:1.8rem}}
 
 /* ---------- vinos: la bodega · cada vino, su flor ---------- */
 /* HERO sereno (sin el "Vinos" gigante) */
