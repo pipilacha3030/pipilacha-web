@@ -33,7 +33,7 @@ export function initReveals() {
       const items = group.querySelectorAll('.reveal');
       if (!items.length) return;
       gsap.to(items, {
-        opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: 0.09,
+        opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: 0.05,
         scrollTrigger: { trigger: group, start: 'top 84%' }
       });
     });

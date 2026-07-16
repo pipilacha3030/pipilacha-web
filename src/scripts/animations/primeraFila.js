@@ -24,6 +24,9 @@ export function initPrimeraFila() {
     const scenes = gsap.utils.toArray('.pf__scene');
     if (scenes.length < 3) return;
     const imgs = scenes.map((s) => s.querySelector('.pf__img img'));
+    // pre-decodificar: además de descargarse (eager en el HTML), el navegador rasteriza
+    // cada foto ya — el fundido entre escenas nunca pilla una imagen a medio decodificar.
+    imgs.forEach((img) => { if (img && img.decode) img.decode().catch(() => {}); });
     // "elementos" que entran/salen en cada escena (marca, título, lead, reserva)
     const kids = scenes.map((s) =>
       gsap.utils.toArray(s.querySelectorAll('.pf__marker, .pf__title, .pf__lead, .pf__reserva')));

@@ -16,8 +16,11 @@ const label = lang === 'en' ? 'Front row — live the menu from the counter' : '
   <div class="pf__pin">
     {scenes.map((s, i) => (
       <div class={`pf__scene pf__scene--${i + 1}`}>
+        {/* eager + fetchpriority low: dentro del pin las escenas 2-3 están en opacity:0 y
+            el lazy-load nativo no dispara fiable (iOS) → escena en blanco al hacer scroll.
+            Se descargan con la página, en cola baja para no competir con el hero. */}
         <figure class="pf__img">
-          <img src={s.img} alt={s.alt} width="1120" height="1400" loading="lazy" decoding="async" />
+          <img src={s.img} alt={s.alt} width="1120" height="1400" loading="eager" fetchpriority="low" decoding="async" />
         </figure>
         <div class="pf__panel">
           <p class="pf__marker"><span class="pf__num">{s.n}</span><span class="pf__step">{s.step}</span></p>

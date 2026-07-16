@@ -44,7 +44,6 @@ const groupReviews = Array.from({ length: reps }).flatMap(() => real);
         <a href="/regala/" class="btn btn--ghost reveal" data-delay="0.75">Regalar</a>
       </div>
     </div>
-    <a href="#quienes" class="hero__scroll" aria-label="Bajar"><span class="hero__scroll-track"><span class="hero__scroll-dot"></span></span></a>
   </section>
 
   <!-- QUIÉNES SOMOS: split editorial — foto enmarcada (revelado con clip-path)
@@ -77,10 +76,10 @@ const groupReviews = Array.from({ length: reps }).flatMap(() => real);
     <div class="gallery__stage">
     <a class="gallery-finale showcase" id="despertar" href="/menu/" aria-label="Ver el menú Solsticio floral">
       <div class="showcase__frame">
-        <figure class="showcase__layer" data-layer="0"><img src="/assets/img/df-esparrago.jpg" alt="Espárragos a la brasa con romesco de tagete" loading="lazy" decoding="async" /></figure>
-        <figure class="showcase__layer" data-layer="1"><img src="/assets/img/df-guisante.jpg" alt="Guisante coco-saúco" loading="lazy" decoding="async" /></figure>
-        <figure class="showcase__layer" data-layer="2"><img src="/assets/img/df-vieira.jpg" alt="Vieira con flor de higo" loading="lazy" decoding="async" /></figure>
-        <figure class="showcase__layer" data-layer="3"><img src="/assets/img/df-mandarina.jpg" alt="Torrija de mandarina" loading="lazy" decoding="async" /></figure>
+        <figure class="showcase__layer" data-layer="0"><img src="/assets/img/df-esparrago.jpg" alt="Espárragos a la brasa con romesco de tagete" loading="eager" fetchpriority="low" decoding="async" /></figure>
+        <figure class="showcase__layer" data-layer="1"><img src="/assets/img/df-guisante.jpg" alt="Guisante coco-saúco" loading="eager" fetchpriority="low" decoding="async" /></figure>
+        <figure class="showcase__layer" data-layer="2"><img src="/assets/img/df-vieira.jpg" alt="Vieira con flor de higo" loading="eager" fetchpriority="low" decoding="async" /></figure>
+        <figure class="showcase__layer" data-layer="3"><img src="/assets/img/df-mandarina.jpg" alt="Torrija de mandarina" loading="eager" fetchpriority="low" decoding="async" /></figure>
         <span class="showcase__veil" aria-hidden="true"></span>
       </div>
       <span class="showcase__cap">

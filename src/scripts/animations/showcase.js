@@ -13,6 +13,9 @@ export function initShowcase() {
   if (!showcase) return;
   const sLayers = gsap.utils.toArray(showcase.querySelectorAll('.showcase__layer'));
   if (!sLayers.length) return;
+  // pre-decodificar las 4 capas (llegan eager desde el HTML): el bucle de clip-path
+  // nunca revela una foto a medio decodificar → sin flashes en blanco.
+  sLayers.forEach((l) => { const img = l.querySelector('img'); if (img && img.decode) img.decode().catch(() => {}); });
 
   inPageContext(() => {
     // base: todas reveladas; la primera capa arriba (df-esparrago, la que se ve en reposo)

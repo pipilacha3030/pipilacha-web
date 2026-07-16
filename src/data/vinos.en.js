@@ -2,7 +2,7 @@
 // the room. Wine names stay; group titles, notes and grape connectors translated.
 export const grupos = [
   {
-    id: 'blancos', titulo: 'Whites', flor: '/assets/img/flor-begonia.png',
+    id: 'blancos', titulo: 'Whites', flor: '/assets/img/flor-ajo.png',
     nota: 'Edge and verticality. To start with the mouth awake.',
     vinos: [
       { nombre: 'JAG', uva: 'Godello & Doña Blanca' },

@@ -19,7 +19,9 @@ const t = lang === 'en'
 ---
 
 <aside class="mpop" id="maridajePop" role="dialog" aria-label={t.aria} hidden>
-  <img class="mpop__flor" src="/assets/img/flor-borraja.png" alt="" width="60" height="60" loading="lazy" decoding="async" />
+  {/* eager: el pop-up está oculto hasta abrirse — con lazy la flor se descargaba
+      al abrir y aparecía tarde */}
+  <img class="mpop__flor" src="/assets/img/flor-borraja.png" alt="" width="60" height="60" loading="eager" fetchpriority="low" decoding="async" />
   <button class="mpop__close" type="button" aria-label={t.close}>&times;</button>
   <p class="mpop__eyebrow">{t.eyebrow}</p>
   <p class="mpop__title">{t.title}</p>

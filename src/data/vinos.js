@@ -2,7 +2,7 @@
 // Cada tipo lleva una palabra-sensación: la carta se lee por lo que provoca, no por lo que cuesta.
 export const grupos = [
   {
-    id: 'blancos', titulo: 'Blancos', flor: '/assets/img/flor-begonia.png',
+    id: 'blancos', titulo: 'Blancos', flor: '/assets/img/flor-ajo.png',
     nota: 'Precisión y frescura. Vinos que abren el menú con tensión y verticalidad.',
     vinos: [
       { nombre: 'JAG', uva: 'Godello y Doña Blanca' },
