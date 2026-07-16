@@ -117,8 +117,8 @@ html.lenis,html.lenis body{height:auto}
 }
 .eyebrow::before{content:"";flex:none;width:1.7em;height:1px;background:currentColor;opacity:.5}
 /* eyebrows centrados: filete a ambos lados para que queden simétricos */
-.faq .eyebrow,.cta-band .eyebrow,.gift-shop .eyebrow{justify-content:center}
-.faq .eyebrow::after,.cta-band .eyebrow::after,.gift-shop .eyebrow::after{content:"";flex:none;width:1.7em;height:1px;background:currentColor;opacity:.5}
+.faq .eyebrow,.cta-band .eyebrow,.gift-shop .eyebrow,.showcase__cap .eyebrow,.notfound .eyebrow{justify-content:center}
+.faq .eyebrow::after,.cta-band .eyebrow::after,.gift-shop .eyebrow::after,.showcase__cap .eyebrow::after,.notfound .eyebrow::after{content:"";flex:none;width:1.7em;height:1px;background:currentColor;opacity:.5}
 @media(max-width:560px){.eyebrow{letter-spacing:.14em;font-size:.66rem}}
 .btn{
   position:relative;display:inline-block;font-family:var(--sans);font-weight:500;
@@ -602,7 +602,9 @@ body.menu-open .nav__lang,.nav__dock.is-page-morph .nav__lang{opacity:0;pointer-
   position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(20,20,12,.35) 0%,rgba(20,20,12,0) 28%,rgba(20,20,12,.15) 55%,rgba(20,20,12,.75) 100%);
 }
-.hero__content{position:relative;z-index:2;color:var(--cream);padding:0 var(--gutter) clamp(3.5rem,9vh,7rem);max-width:var(--maxw)}
+/* width:100% — como hijo flex de .hero encogería al ancho del texto y el
+   centrado móvil quedaría descentrado (los px sobrantes caían a la derecha) */
+.hero__content{position:relative;z-index:2;color:var(--cream);padding:0 var(--gutter) clamp(3.5rem,9vh,7rem);width:100%;max-width:var(--maxw)}
 /* único texto del hero: es un <h1> (estructura correcta de la página) pero se
    fija su tipografía explícitamente — si no, heredaría el serif grande de
    h1,h2,h3,h4 en vez de quedarse como texto pequeño */
@@ -611,7 +613,9 @@ body.menu-open .nav__lang,.nav__dock.is-page-morph .nav__lang{opacity:0;pointer-
    centradas sobre la foto a sangre completa que ancladas a la izquierda */
 @media (max-width:560px){
   .hero__content{text-align:center}
-  .hero__sub{margin-inline:auto}
+  /* balance: si en pantallas muy estrechas el texto pasa de 2 a 3 líneas,
+     que queden parejas en vez de dejar una palabra suelta */
+  .hero__sub{margin-inline:auto;text-wrap:balance}
   .hero__actions{justify-content:center}
 }
 .hero .eyebrow{color:var(--cream);opacity:.85}
