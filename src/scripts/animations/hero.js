@@ -25,11 +25,6 @@ export function initHero() {
       gsap.fromTo('.hero__media img',
         { scale: 1.10, transformOrigin: '50% 42%' },
         { scale: 1.02, transformOrigin: '50% 42%', duration: 1.8, ease: 'power2.out', force3D: true });
-      // el título sube tras su máscara
-      // y:0 limpia el translateY(110%) que GSAP interpreta como px; el reveal lo mueve solo por yPercent
-      gsap.fromTo('.hero__title .reveal-mask',
-        { yPercent: 110, y: 0 },
-        { yPercent: 0, y: 0, duration: 1.2, ease: 'expo.out', stagger: 0.12, delay: 0.15 });
       document.querySelectorAll('.hero [data-delay]').forEach((el) => {
         gsap.fromTo(el, { opacity: 0, y: 30 },
           { opacity: 1, y: 0, duration: 1, ease: 'power3.out', delay: parseFloat(el.dataset.delay) + 0.1 });

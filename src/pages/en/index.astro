@@ -10,15 +10,12 @@ import { aggregate, reviewsEn as reviews } from '../../data/reviews.js';
   description="Pipilacha is a tasting-menu restaurant in Madrid where flowers aren't a garnish: they're the main ingredient. 16 seats per service. Thursday to Sunday."
 >
 
-  <!-- TALLO: columna vertebral que cose todas las secciones de la home -->
-  <div class="spine" aria-hidden="true"><span class="spine__line"></span><span class="spine__marker"></span></div>
-
   <!-- HERO -->
   <section class="hero" id="hero">
     <div class="hero__media" data-parallax="0.15">
       <img
         src="/assets/img/hero.jpg"
-        srcset="/assets/img/hero-m.jpg 1200w, /assets/img/hero.jpg 3840w"
+        srcset="/assets/img/hero-m.jpg 1920w, /assets/img/hero.jpg 3840w"
         sizes="100vw"
         width="3840" height="2160"
         fetchpriority="high" decoding="async"
@@ -27,13 +24,11 @@ import { aggregate, reviewsEn as reviews } from '../../data/reviews.js';
       <div class="hero__veil"></div>
     </div>
     <div class="hero__content">
-      <h1 class="hero__title">
-        <span class="line"><span class="reveal-mask">A whole menu</span></span>
-        <span class="line"><span class="reveal-mask">made of flowers.</span></span>
-      </h1>
-      <p class="hero__sub reveal" data-delay="0.5">For centuries flowers were something to look at. Now they're something to taste.</p>
+      <!-- único texto del hero: hace de h1 de la página (estructura correcta),
+           pero mantiene el tamaño pequeño de .hero__sub -->
+      <h1 class="hero__sub reveal" data-delay="0.5">For centuries flowers were something to look at. Now they're something to taste.</h1>
       <div class="hero__actions">
-        <a href="/en/reservas/" class="btn btn--solid reveal" data-delay="0.65">Book</a>
+        <a href="/en/reservas/" class="btn btn--solid btn--shine reveal" data-delay="0.65"><span>Book</span></a>
         <a href="/regala/" class="btn btn--ghost reveal" data-delay="0.75">Gift</a>
       </div>
     </div>
@@ -49,7 +44,7 @@ import { aggregate, reviewsEn as reviews } from '../../data/reviews.js';
         </div>
       </figure>
       <div class="quienes__body">
-        <h2 class="quienes__h2">A restaurant for the curious.</h2>
+        <h2 class="quienes__h2">A whole menu made of flowers.</h2>
         <p class="quienes__text reveal">
           Fifteen courses, and in every one a different flower runs the show. Not as decoration:
           as the main ingredient, cooked as far as its flavour will go. You won't find this at any

@@ -15,15 +15,12 @@ const groupReviews = Array.from({ length: reps }).flatMap(() => real);
   description="Pipilacha es un restaurante de degustación en Madrid donde las flores no son adorno: son el ingrediente principal. 16 plazas por servicio. Jueves a domingo."
 >
 
-  <!-- TALLO: columna vertebral que cose todas las secciones de la home -->
-  <div class="spine" aria-hidden="true"><span class="spine__line"></span><span class="spine__marker"></span></div>
-
   <!-- HERO -->
   <section class="hero" id="hero">
     <div class="hero__media" data-parallax="0.15">
       <img
         src="/assets/img/hero.jpg"
-        srcset="/assets/img/hero-m.jpg 1200w, /assets/img/hero.jpg 3840w"
+        srcset="/assets/img/hero-m.jpg 1920w, /assets/img/hero.jpg 3840w"
         sizes="100vw"
         width="3840" height="2160"
         fetchpriority="high" decoding="async"
@@ -34,13 +31,11 @@ const groupReviews = Array.from({ length: reps }).flatMap(() => real);
       <div class="hero__veil"></div>
     </div>
     <div class="hero__content">
-      <h1 class="hero__title">
-        <span class="line"><span class="reveal-mask">Un menú entero</span></span>
-        <span class="line"><span class="reveal-mask">hecho de flores.</span></span>
-      </h1>
-      <p class="hero__sub reveal" data-delay="0.5">Durante siglos las flores se contemplaron. Ahora también se degustan.</p>
+      <!-- único texto del hero: hace de h1 de la página (estructura correcta),
+           pero mantiene el tamaño pequeño de .hero__sub -->
+      <h1 class="hero__sub reveal" data-delay="0.5">Durante siglos las flores se contemplaron. Ahora también se degustan.</h1>
       <div class="hero__actions">
-        <a href="/reservas/" class="btn btn--solid reveal" data-delay="0.65">Reservar</a>
+        <a href="/reservas/" class="btn btn--solid btn--shine reveal" data-delay="0.65"><span>Reservar</span></a>
         <a href="/regala/" class="btn btn--ghost reveal" data-delay="0.75">Regalar</a>
       </div>
     </div>
@@ -58,7 +53,7 @@ const groupReviews = Array.from({ length: reps }).flatMap(() => real);
       </figure>
       <div class="quienes__body">
         <!-- sin reveal-head: quienesReveal.js le aplica el «tighten» de palabras (scrub) -->
-        <h2 class="quienes__h2">Un restaurante para curiosos.</h2>
+        <h2 class="quienes__h2">Un menú entero hecho de flores.</h2>
         <p class="quienes__text reveal">
           Quince pases y en todos manda una flor distinta. No de adorno: como ingrediente principal,
           cocinada hasta donde llega su sabor. Esto no lo vas a encontrar en ningún otro restaurante
