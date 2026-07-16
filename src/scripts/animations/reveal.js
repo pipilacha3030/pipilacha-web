@@ -63,11 +63,13 @@ export function initReveals() {
           scrollTrigger: { trigger: row, start: 'top 88%' } });
     });
 
-    /* VINOS: la flor de cada familia "florece" al llegar a su sección (sin rebote) */
+    /* VINOS: la flor de cada familia "florece" al llegar a su sección (sin rebote).
+       OJO sin `rotation`: el giro perpetuo vive en CSS (propiedad rotate) y
+       cualquier rotación de GSAP aquí interferiría con él. */
     gsap.utils.toArray('.wine-cat__flor').forEach((flor) => {
       gsap.fromTo(flor,
-        { opacity: 0, scale: 0.9, rotation: -6 },
-        { opacity: 1, scale: 1, rotation: 0, duration: 1.2, ease: 'expo.out',
+        { opacity: 0, scale: 0.9 },
+        { opacity: 1, scale: 1, duration: 1.2, ease: 'expo.out',
           scrollTrigger: { trigger: flor.closest('.wine-cat'), start: 'top 78%' } });
     });
   });

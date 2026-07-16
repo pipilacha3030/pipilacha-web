@@ -813,7 +813,7 @@ body.menu-open .spine{opacity:0}
 .menu-bloom--5{top:42%;left:47%;width:clamp(180px,22vw,360px);opacity:.4;animation:float 16s ease-in-out infinite,bloomTurn 60s linear infinite}
 @keyframes bloomTurn{from{rotate:0deg}to{rotate:360deg}}
 @keyframes bloomTurnRev{from{rotate:0deg}to{rotate:-360deg}}
-/* (las flores de familia de vinos ya giran con su propio flor-spin, más abajo) */
+/* (las flores de familia de vinos giran con estos mismos keyframes, más abajo) */
 .menu-blooms::after{
   content:'';position:absolute;inset:0;opacity:.2;mix-blend-mode:soft-light;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -1574,8 +1574,8 @@ html:not(.js) .marquee__track{animation:marquee 40s linear infinite}
 .cellar-index__list{list-style:none;display:flex;flex-direction:column;gap:.35rem}
 .cellar-index__list a{display:flex;align-items:center;gap:.85rem;padding:.5rem 0;color:var(--text-subtle);transition:color .4s var(--ease)}
 .cellar-index__flor{width:30px;height:30px;flex:none;object-fit:contain;opacity:.4;filter:grayscale(.5);transform:scale(.85);transition:opacity .45s var(--ease),filter .45s var(--ease),transform .45s var(--ease);
-  animation:bloomTurn 48s linear infinite}
-.cellar-index__list li:nth-child(even) .cellar-index__flor{animation-name:bloomTurnRev}
+  animation:bloomTurn 26s linear infinite}
+.cellar-index__list li:nth-child(even) .cellar-index__flor{animation-name:bloomTurnRev;animation-duration:32s}
 .cellar-index__name{font-family:var(--sans);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase}
 .cellar-index__list a:hover{color:var(--olive)}
 .cellar-index__list a:hover .cellar-index__flor{opacity:.75;filter:none}
@@ -1588,9 +1588,12 @@ html:not(.js) .marquee__track{animation:marquee 40s linear infinite}
 .wine-cat__head{display:flex;align-items:flex-start;gap:clamp(1rem,2.5vw,1.8rem);margin-bottom:clamp(1.6rem,4vh,2.6rem)}
 /* flor de familia: gira despacio sobre su eje (sutil) + parallax en su envoltorio */
 .wine-cat__flor-wrap{flex:none;display:inline-block;line-height:0;filter:drop-shadow(0 16px 26px rgba(49,51,31,.18))}
-.wine-cat__flor{width:clamp(64px,9vw,104px);height:auto;object-fit:contain;animation:flor-spin 46s linear infinite}
+/* giro por la propiedad `rotate` (NO por transform): el revelado GSAP deja un
+   transform inline en la flor y el antiguo flor-spin (sobre transform) quedaba
+   congelado a 0° al terminar. `rotate` va en capa aparte y no pelea con nadie. */
+.wine-cat__flor{width:clamp(64px,9vw,104px);height:auto;object-fit:contain;animation:bloomTurn 22s linear infinite}
+.wine-cat:nth-child(even) .wine-cat__flor{animation:bloomTurnRev 28s linear infinite}
 .wine-cat:nth-of-type(even) .wine-cat__flor{animation-duration:54s;animation-direction:reverse}
-@keyframes flor-spin{to{transform:rotate(360deg)}}
 .wine-cat__headtext{flex:1;min-width:0}
 .wine-cat__title{font-family:var(--serif);font-weight:400;font-size:clamp(1.9rem,4.4vw,3rem);color:var(--moss);line-height:1.04}
 .wine-cat__note{margin-top:.5rem;color:var(--text-muted);max-width:42ch;font-size:1.02rem;line-height:1.55}
