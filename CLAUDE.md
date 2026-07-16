@@ -44,12 +44,12 @@ The Claude Code preview config (`.claude/launch.json`, server `pipilacha-web`) s
 
 ## Assets & image workflow
 
-Source photography and brand material live in the **parent directory** `../` (the "Pipilacha Archivos" library), not in this repo. Key folders: `Forografias /` (plated dishes, organized per dish), `Flores png/flores web png/` (transparent flower PNGs used for petals), `Arán y Noé/` + `Forografias /Arán/` (chef portraits), `Brand guidelines/`.
+Source photography and brand material live in the **parent directory** `../` (the "Pipilacha Archivos" library), not in this repo. Reorganized jul 2026 into numbered top-level folders: `01_brand/ 02_web/ 03_fotos/ 04_videos/ 05_menu/ 06_eventos/ 07_rrss/ 08_editables/ 09_impresion/ 10_regalo/ 11_documentos/ 12_audio/` (old names like `Forografias /`, `Flores png/`, `Arán y Noé/` no longer exist — if unsure, `ls` the current structure). Key folders under `03_fotos/`: `aran-y-noe/` (chef portraits), `flores/flores-web-png/` (transparent flower PNGs used for petals), `para-webs/` (photo sets already organized per web section, e.g. `Galeria/`, `banner-prensa/`, `imagenes-enlace/`), `editadas/` (processed sets, organized per season/menu — subfolder names change with the seasonal menu, check current ones before use), `raw/`+`exportadas/` (unprocessed originals). Brand guidelines live under `01_brand/`.
 
 Originals are 25–600 MB (JPG/TIF). **Optimize before adding to `public/assets/img/`** using macOS `sips`, y **generar el hermano `.webp`** (lo sirve `.htaccess` por negociación con el mismo URL; Pillow SÍ está instalado):
 
 ```bash
-sips -Z 1600 "../Forografias /<dish>/<file>.jpg" --out public/assets/img/<name>.jpg
+sips -Z 1600 "../03_fotos/<carpeta>/<file>.jpg" --out public/assets/img/<name>.jpg
 sips -s format jpeg -s formatOptions 72 public/assets/img/<name>.jpg --out public/assets/img/<name>.jpg
 # hermano webp (q78 fotos jpg · q82 flores png · q75 png "-blur"); si no ahorra ≥15%, bórralo:
 python3 -c "from PIL import Image; Image.open('public/assets/img/<name>.jpg').save('public/assets/img/<name>.webp','WEBP',quality=78,method=4)"
@@ -57,7 +57,7 @@ python3 -c "from PIL import Image; Image.open('public/assets/img/<name>.jpg').sa
 
 Naming convention in `public/assets/img/`: `hero.jpg`, `dish-1..3.jpg` (menu courses), `chef-1..2.jpg`, `g1..g9.jpg` (gallery), `petal-*.png` (transparent).
 
-To **inspect PDFs** (the original design `web 3 pipilacha.pdf`, brand guidelines, menus) use `pymupdf` (`import fitz`) in Python — render a slice to PNG and read it. `poppler`/`pdftoppm` are NOT installed and brew fails to install them. `extracted_imgs/` holds low-res images pulled from the design PDF — these were the first-pass placeholders and are no longer used.
+To **inspect PDFs** (the original design `web 3 pipilacha.pdf`, brand guidelines, menus) use `pymupdf` (`import fitz`) in Python — render a slice to PNG and read it. `poppler`/`pdftoppm` are NOT installed and brew fails to install them.
 
 ## Content / brand voice
 
