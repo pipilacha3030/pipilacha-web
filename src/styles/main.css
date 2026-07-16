@@ -124,9 +124,11 @@ html.lenis,html.lenis body{height:auto}
   position:relative;display:inline-block;font-family:var(--sans);font-weight:500;
   font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;
   padding:1.05em 2.4em;border-radius:var(--radius-btn);cursor:pointer;
-  /* sin transition de transform: el movimiento lo lleva GSAP (botón magnético) */
-  transition:background .45s var(--ease), color .4s, box-shadow .5s var(--ease);
+  /* sin transition de transform: el movimiento lo lleva GSAP (botón magnético).
+     La pulsación usa la propiedad scale (independiente de transform → no pelea con GSAP) */
+  transition:background .45s var(--ease), color .4s, box-shadow .5s var(--ease), scale .16s var(--ease);
 }
+.btn:active{scale:.97}
 /* botón principal sobre fondo CLARO: relleno moss profundo (~14:1), hover olivo */
 .btn--solid{
   background:var(--moss);color:var(--cream);
@@ -194,10 +196,10 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius
   -webkit-backdrop-filter:blur(14px) saturate(1.6);backdrop-filter:blur(14px) saturate(1.6);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.1), 0 -10px 30px -18px rgba(13,13,13,.6);
   transform:translateY(100%);
-  transition:transform .55s var(--ease);
+  transition:transform .55s var(--ease), scale .16s var(--ease);
 }
 .reserva-bar.is-visible{transform:translateY(0)}
-.reserva-bar:active{filter:brightness(1.15)}
+.reserva-bar:active{filter:brightness(1.15);scale:.985}
 body.scroll-lock .reserva-bar{transform:translateY(100%)!important}
 @media (min-width:901px){ .reserva-bar{display:none} }
 @media (prefers-reduced-motion:reduce){
@@ -382,9 +384,10 @@ body.menu-open .nav__lang,.nav__dock.is-page-morph .nav__lang{opacity:0;pointer-
   background:var(--olive);color:var(--cloud-white);
   padding:.8em 1.7em;border-radius:var(--radius-btn);
   box-shadow:0 3px 8px -2px rgba(49,51,31,.3), 0 14px 28px -10px rgba(100,93,59,.38);
-  transition:background .3s var(--ease);
+  transition:background .3s var(--ease), scale .16s var(--ease);
   will-change:transform; /* lo mueve el efecto magnético (interactions/magnetic.js) */
 }
+.nav__cta:active{scale:.97}
 /* hover: se invierte a crema — moss desaparecería contra el vidrio oscuro */
 .nav__cta:hover{background:var(--cream);color:var(--moss)}
 
@@ -1599,13 +1602,14 @@ html:not(.js) .marquee__track{animation:marquee 40s linear infinite}
 .wine-cat__note{margin-top:.5rem;color:var(--text-muted);max-width:42ch;font-size:1.02rem;line-height:1.55}
 
 .wine-list{list-style:none;border-top:1px solid var(--border-subtle)}
-.wine-row{display:flex;align-items:baseline;justify-content:space-between;gap:1.5rem;padding:clamp(.9rem,2vh,1.25rem) 0;border-bottom:1px solid rgba(49,51,31,.12);position:relative;transition:padding-left .45s var(--ease)}
-.wine-row__name{font-family:var(--serif);font-size:clamp(1.2rem,2.2vw,1.75rem);color:var(--moss);line-height:1.2;position:relative}
+.wine-row{display:flex;align-items:baseline;justify-content:space-between;gap:1.5rem;padding:clamp(.9rem,2vh,1.25rem) 0;border-bottom:1px solid rgba(49,51,31,.12);position:relative}
+/* el desplazamiento al hover es transform (GPU), no padding (layout) — el filete inferior no se mueve */
+.wine-row__name{font-family:var(--serif);font-size:clamp(1.2rem,2.2vw,1.75rem);color:var(--moss);line-height:1.2;position:relative;transition:transform .45s var(--ease)}
 /* subrayado que se dibuja al pasar el cursor */
 .wine-row__name::after{content:"";position:absolute;left:0;right:0;bottom:-.12em;height:1px;background:var(--olive);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease)}
 .wine-row__grape{flex:0 0 auto;text-align:right;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-subtle);transition:color .4s var(--ease);max-width:42%}
 @media (hover:hover){
-  .wine-row:hover{padding-left:1rem}
+  .wine-row:hover .wine-row__name{transform:translateX(1rem)}
   .wine-row:hover .wine-row__name::after{transform:scaleX(1)}
   .wine-row:hover .wine-row__grape{color:var(--olive)}
 }
