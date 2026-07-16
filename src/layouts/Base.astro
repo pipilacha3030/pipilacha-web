@@ -137,7 +137,11 @@ const graphJson = JSON.stringify({ "@context": "https://schema.org", "@graph": g
        public/.htaccess (script-src) o el navegador lo bloqueará. -->
   <script is:inline>document.documentElement.classList.add('js');window.addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='SCRIPT'&&t.src)document.documentElement.classList.remove('js')},true)</script>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {/* viewport-fit=cover: sin él, iOS encoge el viewport para esquivar el indicador
+      de inicio y `bottom:0` se queda POR ENCIMA de esa franja (se ve el fondo de la
+      página bajo la barra de reserva) y `env(safe-area-inset-*)` devuelve siempre 0.
+      Con cover el lienzo llega al borde real y los safe-area del CSS ya funcionan. */}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   {GOOGLE_SITE_VERIFICATION && <meta name="google-site-verification" content={GOOGLE_SITE_VERIFICATION} />}
   {BING_SITE_VERIFICATION && <meta name="msvalidate.01" content={BING_SITE_VERIFICATION} />}
   <title>{title}</title>
