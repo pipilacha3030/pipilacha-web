@@ -41,26 +41,32 @@ const groupReviews = Array.from({ length: reps }).flatMap(() => real);
     </div>
   </section>
 
-  <!-- QUIÉNES SOMOS: split editorial — foto enmarcada (revelado con clip-path)
-       + texto al lado. Reemplaza el full-bleed con la máscara de flor. -->
+  <!-- QUIÉNES SOMOS: «la ventana a la barra» — en escritorio la panorámica de la
+       barra se abre de ventana recortada a sangre completa ligada al scroll
+       (sticky + scrub, quienesReveal.js) y el texto se posa sobre el velo; en
+       móvil no hay pin: el panorámico recorre la barra lateralmente al scroll. -->
   <section class="quienes" id="quienes">
-    <span class="home-petal home-petal--qa" aria-hidden="true"><img src="/assets/img/flor-cosmos.png" alt="" /></span>
-    <div class="quienes__inner">
-      <figure class="quienes__figure">
-        <div class="quienes__frame">
-          <img src="/assets/img/chef-3.jpg" width="1152" height="2048" alt="Arán Rodrigo y Noé David en la cocina de Pipilacha" loading="lazy" decoding="async" />
+    <div class="quienes__pin">
+      <div class="quienes__stage">
+        <figure class="quienes__media">
+          <img
+            src="/assets/img/barra-aran-noe.jpg"
+            srcset="/assets/img/barra-aran-noe-m.jpg 1600w, /assets/img/barra-aran-noe.jpg 2560w"
+            sizes="100vw"
+            width="2560" height="1209"
+            alt="Arán y Noé tras la barra de Pipilacha, con los pases de flores emplatados delante"
+            loading="lazy" decoding="async" />
+        </figure>
+        <div class="quienes__copy">
+          <h2 class="quienes__h2">Un menú entero hecho de flores.</h2>
+          <p class="quienes__text">
+            Quince pases y en todos manda una flor distinta. No de adorno: como ingrediente principal,
+            cocinada hasta donde llega su sabor. Esto no lo vas a encontrar en ningún otro restaurante
+            de Madrid, porque casi nadie lo ha intentado. Te sientas en la barra, lo ves hacerse a un
+            metro, y sales habiendo probado cosas que no existen en ningún otro sitio.
+          </p>
+          <a href="/conocenos/" class="quienes__link">Quiénes están detrás →</a>
         </div>
-      </figure>
-      <div class="quienes__body">
-        <!-- sin reveal-head: quienesReveal.js le aplica el «tighten» de palabras (scrub) -->
-        <h2 class="quienes__h2">Un menú entero hecho de flores.</h2>
-        <p class="quienes__text reveal">
-          Quince pases y en todos manda una flor distinta. No de adorno: como ingrediente principal,
-          cocinada hasta donde llega su sabor. Esto no lo vas a encontrar en ningún otro restaurante
-          de Madrid, porque casi nadie lo ha intentado. Te sientas en la barra, lo ves hacerse a un
-          metro, y sales habiendo probado cosas que no existen en ningún otro sitio.
-        </p>
-        <a href="/conocenos/" class="quienes__link reveal">Quiénes están detrás →</a>
       </div>
     </div>
   </section>

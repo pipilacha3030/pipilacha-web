@@ -36,22 +36,27 @@ import { aggregate, reviewsEn as reviews } from '../../data/reviews.js';
 
   <!-- WHO WE ARE -->
   <section class="quienes" id="quienes">
-    <span class="home-petal home-petal--qa" aria-hidden="true"><img src="/assets/img/flor-cosmos.png" alt="" /></span>
-    <div class="quienes__inner">
-      <figure class="quienes__figure">
-        <div class="quienes__frame">
-          <img src="/assets/img/chef-3.jpg" width="1152" height="2048" alt="Arán Rodrigo and Noé David in the Pipilacha kitchen" loading="lazy" decoding="async" />
+    <div class="quienes__pin">
+      <div class="quienes__stage">
+        <figure class="quienes__media">
+          <img
+            src="/assets/img/barra-aran-noe.jpg"
+            srcset="/assets/img/barra-aran-noe-m.jpg 1600w, /assets/img/barra-aran-noe.jpg 2560w"
+            sizes="100vw"
+            width="2560" height="1209"
+            alt="Arán and Noé behind the Pipilacha counter, flower courses plated in front"
+            loading="lazy" decoding="async" />
+        </figure>
+        <div class="quienes__copy">
+          <h2 class="quienes__h2">A whole menu made of flowers.</h2>
+          <p class="quienes__text">
+            Fifteen courses, and in every one a different flower runs the show. Not as decoration:
+            as the main ingredient, cooked as far as its flavour will go. You won't find this at any
+            other restaurant in Madrid, because almost no one has tried. You sit at the counter, watch
+            it happen a metre away, and leave having tasted things that exist nowhere else.
+          </p>
+          <a href="/en/conocenos/" class="quienes__link">Who's behind it →</a>
         </div>
-      </figure>
-      <div class="quienes__body">
-        <h2 class="quienes__h2">A whole menu made of flowers.</h2>
-        <p class="quienes__text reveal">
-          Fifteen courses, and in every one a different flower runs the show. Not as decoration:
-          as the main ingredient, cooked as far as its flavour will go. You won't find this at any
-          other restaurant in Madrid, because almost no one has tried. You sit at the counter, watch
-          it happen a metre away, and leave having tasted things that exist nowhere else.
-        </p>
-        <a href="/en/conocenos/" class="quienes__link reveal">Who's behind it →</a>
       </div>
     </div>
   </section>

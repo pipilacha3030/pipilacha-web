@@ -632,62 +632,73 @@ body.menu-open .nav__lang,.nav__dock.is-page-morph .nav__lang{opacity:0;pointer-
    resto del sitio y suavizan los cortes. Decorativos, tras el contenido. */
 .home-petal{position:absolute;z-index:0;pointer-events:none;will-change:transform}
 .home-petal img{display:block;width:100%;height:auto;filter:blur(9px) saturate(1.12)}
-.home-petal--qa{top:-4%;right:-3%;width:clamp(150px,17vw,300px);opacity:.34}
-.home-petal--qa img{animation:float 19s ease-in-out infinite}
 .home-petal--ba{bottom:-6%;left:-4%;width:clamp(150px,16vw,290px);opacity:.32}
 .home-petal--ba img{animation:float2 22s ease-in-out infinite}
 @media (max-width:760px){ .home-petal{opacity:.6} }
 @media (prefers-reduced-motion:reduce){ .home-petal img{animation:none} }
 
 /* ---------- quiénes somos: split editorial (imagen enmarcada + texto) ---------- */
-.quienes{background:var(--cream);position:relative;overflow:hidden}
-.quienes__inner,.book__inner{position:relative;z-index:1}
+/* ---------- QUIÉNES: «la ventana a la barra» ----------
+   Escritorio: sección de 230vh con escenario sticky de 100svh — la panorámica
+   de la barra vive a sangre en el escenario y quienesReveal.js abre su
+   clip-path de ventana→lleno ligado al scroll, asentando la escala y posando
+   el texto sobre el velo. OJO: .quienes NO puede llevar overflow:hidden
+   (rompería el sticky del escenario). Los estados FINALES (foto llena, texto
+   visible) son el CSS por defecto: sin JS o con reduced-motion la sección es
+   una postal estática legible.
+   Móvil (≤900px): sin pin — el panorámico recorre la barra lateralmente
+   (translateX del img, solo transform) y el texto va aparte sobre crema. */
 .book{position:relative;overflow:hidden}
-.quienes__inner{
-  max-width:var(--maxw);margin:0 auto;
-  padding:clamp(4rem,10vh,9rem) var(--gutter);
-  display:grid;gap:clamp(2.5rem,5vw,4rem);align-items:center;
-}
-@media(min-width:901px){
-  .quienes__inner{grid-template-columns:.92fr 1.08fr;gap:clamp(3rem,6vw,7rem)}
-}
-.quienes__figure{margin:0;min-width:0}
-/* marco: el recorte (clip-path) y la escala de la foto los anima quienesReveal.js
-   al entrar — revelado de imagen limpio, sin la antigua máscara de flor.
-   inset(0) es el estado final (visible por defecto sin JS/reduced-motion). */
-.quienes__frame{
-  position:relative;overflow:hidden;border-radius:var(--radius);
-  aspect-ratio:4/5;clip-path:inset(0 0 0 0);
-  box-shadow:0 40px 90px -45px rgba(49,51,31,.55);
-}
-.quienes__frame img{width:100%;height:100%;object-fit:cover;object-position:center 26%;will-change:transform}
-@media(max-width:900px){
-  .quienes__frame{aspect-ratio:3/4;max-height:70vh;width:100%;margin-inline:auto}
-}
-/* teléfono: la sección entera centrada — mismo eje que el hero (título y
-   párrafo tienen max-width, así que necesitan margin auto además del text-align) */
-@media(max-width:560px){
-  .quienes__body{text-align:center}
-  .quienes__h2,.quienes__text{margin-inline:auto}
-}
-.quienes__body{min-width:0}
+.book__inner{position:relative;z-index:1}
+.quienes{background:var(--cream);position:relative}
+.quienes__pin{height:230vh}
+.quienes__stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.quienes__media{position:absolute;inset:0;margin:0}
+.quienes__media img{width:100%;height:100%;object-fit:cover;object-position:center 30%;will-change:transform}
+/* velo inferior: el texto lee AA sobre la foto */
+.quienes__media::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(20,20,12,0) 42%,rgba(20,20,12,.66) 100%)}
+.quienes__copy{position:absolute;left:0;right:0;bottom:0;z-index:2;
+  padding:0 var(--gutter) clamp(2.8rem,7vh,5.5rem);max-width:var(--maxw);margin-inline:auto}
 .quienes__h2{
   font-family:var(--serif);font-size:clamp(2rem,4vw,3.3rem);
-  line-height:1.1;letter-spacing:-.015em;color:var(--moss);max-width:15ch;
+  line-height:1.1;letter-spacing:-.015em;color:var(--cream);max-width:15ch;
+  text-shadow:var(--shadow-photo);
 }
-/* palabras del titular (las parte quienesReveal.js para el «tighten» con scrub) */
-.quienes__h2 .w{display:inline-block;will-change:transform}
 .quienes__text{
-  max-width:46ch;font-size:clamp(1.05rem,1.45vw,1.22rem);
-  line-height:1.75;color:var(--ink);margin-top:clamp(1.3rem,2.6vh,2rem);text-wrap:pretty;
+  max-width:52ch;font-size:clamp(1.02rem,1.4vw,1.2rem);
+  line-height:1.7;color:rgba(244,239,230,.92);margin-top:clamp(1.1rem,2.4vh,1.8rem);
+  text-wrap:pretty;text-shadow:var(--shadow-photo);
 }
 .quienes__link{
-  display:inline-block;margin-top:clamp(1.8rem,4vh,3rem);
+  display:inline-block;margin-top:clamp(1.4rem,3.2vh,2.4rem);
   font-family:var(--sans);font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--moss);border-bottom:1px solid rgba(49,51,31,.38);padding-bottom:.22rem;
+  color:var(--cream);border-bottom:1px solid rgba(244,239,230,.5);padding-bottom:.22rem;
   transition:color .4s var(--ease),border-color .4s var(--ease);
 }
-.quienes__link:hover{color:var(--accent);border-color:var(--accent)}
+.quienes__link:hover{color:var(--accent-soft);border-color:var(--accent-soft)}
+/* foco sobre foto oscura: el outline olive del global no se ve — dorado claro */
+.quienes__link:focus-visible{outline-color:var(--accent-soft)}
+@media(max-width:900px){
+  .quienes__pin{height:auto}
+  .quienes__stage{position:static;height:auto;overflow:visible}
+  /* banda panorámica: el img desborda a lo ancho y quienesReveal.js lo pasea.
+     min-width 100%: en apaisado la banda es tan baja que el panorámico no
+     llegaría a cubrir el ancho — cubre y el paneo queda en 0 (Math.max del JS) */
+  .quienes__media{position:relative;height:56vh;height:56svh;overflow:hidden}
+  .quienes__media img{height:100%;width:auto;min-width:100%;max-width:none;object-fit:cover}
+  .quienes__media::after{background:linear-gradient(180deg,rgba(20,20,12,0) 72%,rgba(20,20,12,.22) 100%)}
+  .quienes__copy{position:static;padding:clamp(2.6rem,7vh,4rem) var(--gutter) clamp(3rem,8vh,4.5rem)}
+  .quienes__h2{color:var(--moss);text-shadow:none}
+  .quienes__text{color:var(--ink);text-shadow:none;max-width:46ch}
+  .quienes__link{color:var(--moss);border-color:rgba(49,51,31,.38)}
+  .quienes__link:hover{color:var(--accent);border-color:var(--accent)}
+}
+/* teléfono: texto centrado — mismo eje que el hero */
+@media(max-width:560px){
+  .quienes__copy{text-align:center}
+  .quienes__h2,.quienes__text{margin-inline:auto}
+}
 
 /* ---------- showcooking (banda moss, cantos vivos) ---------- */
 .barra{background:var(--moss);padding:clamp(4rem,12vh,9rem) var(--gutter)}
@@ -1819,7 +1830,6 @@ body.menu-open .nav__dock.is-page-morph,
    recortan ~35-45% conservando el ritmo editorial. */
 @media (max-width:560px){
   .page-header{padding-top:6.5rem;padding-bottom:1.2rem}
-  .quienes__inner{padding-top:3rem;padding-bottom:3rem}
   .proof{padding-top:2.6rem;padding-bottom:2.6rem}
   .menu{padding-top:3rem;padding-bottom:3rem}
   .maridaje{padding-top:3rem;padding-bottom:3rem}
