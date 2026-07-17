@@ -6,8 +6,11 @@
    (discreto, no scrub) — el hero sube (yPercent -100) y quiénes entra desde
    abajo (100→0). Cuando ya no hay slide en la dirección del gesto, devolvemos
    el scroll a Lenis (hacia la galería si es abajo, hacia el tope si es arriba).
-   Móvil (≤900px): sin jack — un fade/subida simple para la panorámica al
-   entrar en pantalla (la imagen queda estática, sin paneo).
+   Móvil (≤900px): mismo lenguaje que primeraFila.js — el hero se fija
+   (ScrollTrigger.pin, no Observer: en móvil no conviene secuestrar wheel/touch)
+   y quiénes (foto + texto, position:fixed durante la zona) SUBE encima ligado
+   1:1 al scroll (scrub), de y:100vh a y:0. Al terminar la zona, quiénes vuelve
+   a flujo normal para que el resto de la página siga bajando por debajo.
    reduced-motion: nada; el CSS ya deja ambas secciones legibles y estáticas.
 
    Los estados iniciales que oculta/desplaza GSAP solo se ponen en runtime:
@@ -42,19 +45,40 @@ export function initHeroQuienes() {
   const copy = quienes.querySelector('.quienes__copy');
   const desktop = window.matchMedia('(min-width:901px)');
 
-  /* -------------------- MÓVIL: mismo reveal que el resto de la web --------------------
-     Mismos valores que el .reveal genérico (animations/reveal.js): y:32→0,
-     duration 1.1, expo.out, trigger 'top 86%' — así esta sección entra igual
-     que cualquier otra foto/párrafo del sitio, sin timing propio inventado. */
+  /* -------------------- MÓVIL: quiénes sube y cubre el hero -------------------- */
   if (!desktop.matches) {
-    const media = quienes.querySelector('.quienes__media');
     inPageContext(() => {
-      [media, copy].forEach((el) => {
-        if (!el) return;
-        gsap.fromTo(el,
-          { autoAlpha: 0, y: 32 },
-          { autoAlpha: 1, y: 0, duration: 1.1, ease: 'expo.out',
-            scrollTrigger: { trigger: el, start: 'top 86%' } });
+      let pinned = false;
+      // fixed: top/left/right sin bottom → el panel conserva su alto natural
+      // (foto + texto puede superar 100dvh) en vez de recortarse a la pantalla.
+      const pinOn = () => {
+        if (pinned) return;
+        pinned = true;
+        gsap.set(quienes, { position: 'fixed', top: 0, left: 0, right: 0, zIndex: 5 });
+      };
+      const pinOff = (y) => {
+        pinned = false;
+        gsap.set(quienes, { position: 'static', top: 'auto', left: 'auto', right: 'auto', zIndex: 'auto', y });
+      };
+      pinOn();
+      gsap.set(quienes, { y: '100vh' });
+
+      ScrollTrigger.create({
+        trigger: hero,
+        start: 'top top',
+        end: () => '+=' + hero.offsetHeight,
+        pin: hero,
+        // sin esto, ScrollTrigger reserva alto del hero DOS veces (su propia
+        // caja + la distancia del scrub): al superar la zona el hero volvía a
+        // aparecer en flujo normal antes de que quiénes "aterrizara" en su
+        // sitio real. false = quiénes queda pegado justo donde termina el pin.
+        pinSpacing: false,
+        scrub: 0.3,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => { if (pinned) gsap.set(quienes, { y: (1 - self.progress) * 100 + 'vh' }); },
+        onLeave: () => pinOff(0),           // zona superada bajando → flujo normal, ya "aterrizado"
+        onEnterBack: () => pinOn(),         // se vuelve a entrar desde abajo → se refija para el scrub
+        onLeaveBack: () => pinOff('100vh'), // se sube por encima del hero → fuera de escena
       });
     });
     return;
