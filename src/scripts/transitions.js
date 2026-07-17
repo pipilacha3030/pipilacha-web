@@ -12,6 +12,7 @@ import { lenis } from './scroll/lenis.js';
 import { reduceMotion } from './utils/motion.js';
 import { setMenu, isMenuOpen, onScroll, seizeMenuTimeline } from './nav.js';
 import { trackPageView } from './analytics.js';
+import { heroJackHolding } from './animations/heroQuienesScroll.js';
 
 export function initTransitions({ initPage, destroyPage }) {
   const pt = document.getElementById('pageTransition');
@@ -249,8 +250,10 @@ export function initTransitions({ initPage, destroyPage }) {
       // estático, no en el primer frame de la contracción
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
       await (viaDock ? revealDockAsync() : revealAsync());
-      // la galería gobierna su propio scroll: no reactivar Lenis sobre ella
-      if (lenis && !document.getElementById('galStage')) lenis.start();
+      // la galería gobierna su propio scroll: no reactivar Lenis sobre ella;
+      // y si el jack hero→quiénes acaba de armarse en la home (initPage corre
+      // antes que esta línea), reactivarlo aquí desharía su lenis.stop()
+      if (lenis && !document.getElementById('galStage') && !heroJackHolding()) lenis.start();
       isTransitioning = false;
     } catch (err) {
       console.warn('[transitions] red de seguridad → navegación clásica:', err);

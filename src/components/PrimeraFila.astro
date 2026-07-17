@@ -35,7 +35,7 @@ const label = lang === 'en' ? 'Front row — live the menu from the counter' : '
                 <div class="pf__offer-lines">
                   {reserva.lines.map((l) => <p>{l}</p>)}
                 </div>
-                <a href={reserva.cta.href} class="pf__cta">{reserva.cta.label}</a>
+                <a href={reserva.cta.href} class="pf__cta shiny-cta"><span>{reserva.cta.label}</span></a>
               </div>
               <ul class="pf__practical">
                 {reserva.practical.map((p) => <li>{p}</li>)}
@@ -49,6 +49,173 @@ const label = lang === 'en' ? 'Front row — live the menu from the counter' : '
 </section>
 
 <style>
+  /* ====== CSS @property para el efecto shiny ====== */
+  @property --gradient-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  @property --gradient-angle-offset {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  @property --gradient-percent {
+    syntax: "<percentage>";
+    initial-value: 5%;
+    inherits: false;
+  }
+
+  @property --gradient-shine {
+    syntax: "<color>";
+    initial-value: white;
+    inherits: false;
+  }
+
+  /* ====== Botón shiny con colores Pipilacha ====== */
+  .shiny-cta {
+    --shiny-bg: var(--moss);
+    --shiny-bg-subtle: #1a1818;
+    --shiny-fg: var(--cream);
+    --shiny-highlight: var(--olive);
+    --shiny-highlight-subtle: var(--accent-soft);
+    --animation: gradient-angle linear infinite;
+    --duration: 3s;
+    --shadow-size: 2px;
+
+    isolation: isolate;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    outline-offset: 4px;
+    padding: 1rem 2.2rem;
+    font-family: inherit;
+    font-size: 0.76rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    line-height: 1.2;
+    border: 1px solid transparent;
+    border-radius: 360px;
+    color: var(--shiny-fg);
+    background: linear-gradient(var(--shiny-bg), var(--shiny-bg)) padding-box,
+      conic-gradient(
+        from calc(var(--gradient-angle) - var(--gradient-angle-offset)),
+        transparent,
+        var(--shiny-highlight) var(--gradient-percent),
+        var(--gradient-shine) calc(var(--gradient-percent) * 2),
+        var(--shiny-highlight) calc(var(--gradient-percent) * 3),
+        transparent calc(var(--gradient-percent) * 4)
+      )
+      border-box;
+    box-shadow: inset 0 0 0 1px var(--shiny-bg-subtle);
+    transition: 800ms cubic-bezier(0.25, 1, 0.5, 1);
+    transition-property: --gradient-angle-offset, --gradient-percent, --gradient-shine;
+  }
+
+  .shiny-cta::before,
+  .shiny-cta::after,
+  .shiny-cta span::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-start: 50%;
+    translate: -50% -50%;
+    z-index: -1;
+  }
+
+  .shiny-cta:active {
+    translate: 0 1px;
+  }
+
+  /* Patrón de puntos */
+  .shiny-cta::before {
+    --size: calc(100% - var(--shadow-size) * 3);
+    --position: 2px;
+    --space: calc(var(--position) * 2);
+    width: var(--size);
+    height: var(--size);
+    background: radial-gradient(
+        circle at var(--position) var(--position),
+        white calc(var(--position) / 4),
+        transparent 0
+      )
+      padding-box;
+    background-size: var(--space) var(--space);
+    background-repeat: space;
+    mask-image: conic-gradient(
+      from calc(var(--gradient-angle) + 45deg),
+      black,
+      transparent 10% 90%,
+      black
+    );
+    border-radius: inherit;
+    opacity: 0.4;
+    animation: gradient-angle linear infinite 3s;
+  }
+
+  /* Brillo interior */
+  .shiny-cta::after {
+    width: 100%;
+    aspect-ratio: 1;
+    background: linear-gradient(
+      -50deg,
+      transparent,
+      var(--shiny-highlight),
+      transparent
+    );
+    mask-image: radial-gradient(circle at bottom, transparent 40%, black);
+    opacity: 0.6;
+    animation: shimmer linear infinite 3s reverse;
+  }
+
+  .shiny-cta span {
+    z-index: 1;
+    position: relative;
+  }
+
+  .shiny-cta span::before {
+    --size: calc(100% + 1rem);
+    width: var(--size);
+    height: var(--size);
+    box-shadow: inset 0 -1ex 2rem 4px var(--shiny-highlight);
+    opacity: 0;
+    animation: breathe linear infinite calc(3s * 1.5);
+  }
+
+  .shiny-cta:is(:hover, :focus-visible) {
+    --gradient-percent: 20%;
+    --gradient-angle-offset: 95deg;
+    --gradient-shine: var(--shiny-highlight-subtle);
+  }
+
+  .shiny-cta:is(:hover, :focus-visible) span::before {
+    opacity: 1;
+  }
+
+  @keyframes gradient-angle {
+    to {
+      --gradient-angle: 360deg;
+    }
+  }
+
+  @keyframes shimmer {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  @keyframes breathe {
+    from, to {
+      scale: 1;
+    }
+    50% {
+      scale: 1.2;
+    }
+  }
+
   /* ====== base: apilado y editorial (móvil + fallback sin JS) ====== */
   .pf { position: relative; background: var(--cream); }
   .pf__pin { position: relative; }

@@ -6,7 +6,7 @@ import { gsap } from '../scroll/scrollTrigger.js';
 import { reduceMotion } from '../utils/motion.js';
 import { inPageContext } from '../utils/lifecycle.js';
 
-// la foto de «quiénes» la revela ahora quienesReveal.js (clip-path); aquí solo la barra
+// la foto de «quiénes» la gestiona heroQuienesScroll.js (slide/fade); aquí solo la barra
 const BLOOMS = [
   { wrap: '.barra__media',    img: '.barra__media img'  },
 ];
