@@ -42,15 +42,18 @@ export function initHeroQuienes() {
   const copy = quienes.querySelector('.quienes__copy');
   const desktop = window.matchMedia('(min-width:901px)');
 
-  /* -------------------- MÓVIL: fade/subida simple -------------------- */
+  /* -------------------- MÓVIL: mismo reveal que el resto de la web --------------------
+     Mismos valores que el .reveal genérico (animations/reveal.js): y:32→0,
+     duration 1.1, expo.out, trigger 'top 86%' — así esta sección entra igual
+     que cualquier otra foto/párrafo del sitio, sin timing propio inventado. */
   if (!desktop.matches) {
     const media = quienes.querySelector('.quienes__media');
     inPageContext(() => {
       [media, copy].forEach((el) => {
         if (!el) return;
         gsap.fromTo(el,
-          { autoAlpha: 0, y: 34 },
-          { autoAlpha: 1, y: 0, duration: 1, ease: 'expo.out',
+          { autoAlpha: 0, y: 32 },
+          { autoAlpha: 1, y: 0, duration: 1.1, ease: 'expo.out',
             scrollTrigger: { trigger: el, start: 'top 86%' } });
       });
     });
