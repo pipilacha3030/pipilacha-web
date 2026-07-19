@@ -27,6 +27,15 @@ export function loadAnalytics() {
   // send_page_view:false — la vista inicial también la manda trackPageView,
   // así TODAS las vistas salen por el mismo camino (SPA incluida)
   window.gtag('config', GA_ID, { send_page_view: false });
+  // preconnect: adelanta el handshake con el servidor de Google, pero SOLO aquí
+  // (ya hay consentimiento). Nunca en el <head> incondicional → no conectaríamos
+  // con Google antes de que el visitante acepte. Guardián para no duplicarlo.
+  if (!document.querySelector('link[data-pc="gtm"]')) {
+    const pc = document.createElement('link');
+    pc.rel = 'preconnect'; pc.href = 'https://www.googletagmanager.com';
+    pc.dataset.pc = 'gtm';
+    document.head.appendChild(pc);
+  }
   const s = document.createElement('script');
   s.async = true;
   s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;

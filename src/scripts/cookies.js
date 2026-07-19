@@ -49,6 +49,14 @@ export function applyWidgetConsent() {
 
   if (consent && consent.reservas) {
     if (!iframe.src) {
+      // preconnect a TheFork en el momento del consentimiento (no antes): misma
+      // razón que en analytics.js — nada de conectar con el tercero sin permiso.
+      if (!document.querySelector('link[data-pc="thefork"]')) {
+        const pc = document.createElement('link');
+        pc.rel = 'preconnect'; pc.href = 'https://widget.thefork.com';
+        pc.dataset.pc = 'thefork';
+        document.head.appendChild(pc);
+      }
       iframe.addEventListener('load', () => loading && loading.classList.add('is-loaded'), { once: true });
       iframe.src = iframe.dataset.src;
     }
