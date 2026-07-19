@@ -12,12 +12,16 @@ ErrorDocument 404 /404.html
   RewriteRule ^ https://pipilacha.es%{REQUEST_URI} [R=301,L]
 </IfModule>
 
-# ---- WebP por negociación de contenido ----
-# Si el navegador acepta webp y existe el hermano .webp, se sirve con el MISMO URL.
-# Cubre <img>, srcset y fondos CSS sin tocar el markup. Si el módulo no está
-# o falta el .webp, se sirve el original: degradación limpia.
+# ---- AVIF / WebP por negociación de contenido ----
+# Si el navegador acepta el formato y existe el hermano, se sirve con el MISMO
+# URL. AVIF primero (≈20% más ligero que webp); WebP como segundo; si no hay
+# ninguno o falta mod_rewrite, se sirve el original: degradación limpia.
+# Cubre <img>, srcset y fondos CSS sin tocar el markup.
 <IfModule mod_rewrite.c>
   RewriteEngine On
+  RewriteCond %{HTTP_ACCEPT} image/avif
+  RewriteCond %{DOCUMENT_ROOT}/$1.avif -f
+  RewriteRule ^(.+)\.(?:jpe?g|png)$ $1.avif [T=image/avif,L]
   RewriteCond %{HTTP_ACCEPT} image/webp
   RewriteCond %{DOCUMENT_ROOT}/$1.webp -f
   RewriteRule ^(.+)\.(?:jpe?g|png)$ $1.webp [T=image/webp,L]
