@@ -15,11 +15,19 @@ import { dims } from '../data/galeria-dims.js';
     <ul class="gal-track" id="galTrack">
       {fotos.map((f, i) => {
         const [w, h] = dims[f.src.split('/').pop()] || [];
+        // miniatura -m (800w) para móvil; el .htaccess sirve su avif/webp.
+        // La grande queda como fallback y la usa el lightbox al ampliar.
+        // sizes: en desktop el carrusel AGRANDA la foto central (~1400px) → pedimos
+        // la grande (1280px) para no verla borrosa; en móvil la central no crece
+        // tanto → basta la -m y ahorramos datos donde más importa.
+        const mSrc = w > 800 ? f.src.replace(/\.jpg$/, '-m.jpg') : null;
         return (
         <li class="gal-card" data-index={i}>
           <button class="gal-card__btn" type="button" aria-label={`Ampliar: ${f.alt}`}>
             <img
               src={f.src}
+              srcset={mSrc ? `${mSrc} 800w, ${f.src} ${w}w` : undefined}
+              sizes={mSrc ? '(max-width: 900px) 70vw, 1280px' : undefined}
               alt={f.alt}
               width={w}
               height={h}
