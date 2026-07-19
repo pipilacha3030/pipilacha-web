@@ -694,8 +694,14 @@ body.menu-open .nav__lang,.nav__dock.is-page-morph .nav__lang{opacity:0;pointer-
 /* foco sobre foto oscura: el outline olive del global no se ve — dorado claro */
 .quienes__link:focus-visible{outline-color:var(--accent-soft)}
 @media(max-width:900px){
-  /* fuera del escenario: la sección recupera el flujo normal */
-  .quienes{position:relative}
+  /* fuera del escenario: la sección recupera el flujo normal.
+     "Un solo scroll": el hero queda pegado (sticky) al tope mientras quiénes
+     (justo después en el flujo, sin sticky) sube por detrás y lo cubre —
+     geometría pura de CSS, sin JS ni position:fixed que gestionar. El hero
+     se despega exactamente cuando #fsScroll termina (su alto = hero + quiénes),
+     así que nunca puede quedar "colgado" sobre secciones posteriores. */
+  .hero{position:sticky;top:0}
+  .quienes{position:relative;z-index:1}
   /* foto de Arán y Noé COMPLETA: el contenedor usa el ratio real de la imagen
      (1600×1280) en vez de una banda de alto fijo, así cover no recorta nada
      — object-fit:cover con el aspect-ratio igualado a la imagen equivale a
@@ -1348,7 +1354,11 @@ body:has(.cc-banner.is-visible) .reserva-bar{transform:translateY(100%)}
 /* en móvil se retiran un poco de peso para no competir con el contenido */
 @media (max-width:760px){ .rbloom{opacity:.72} }
 
-.reserva-widget{padding:clamp(1rem,3vh,2rem) var(--gutter) clamp(3rem,8vh,6.5rem);position:relative;z-index:1}
+/* scroll-margin-top (no padding/margin: no ocupa espacio, no altera el layout)
+   evita que la píldora fija del header (.nav, ~92px de borde inferior a
+   390px de ancho) tape el widget al aterrizar por scrollIntoView/anchor/focus
+   — mismo valor que .wine-cat, que resuelve el mismo problema en /vinos/. */
+.reserva-widget{padding:clamp(1rem,3vh,2rem) var(--gutter) clamp(3rem,8vh,6.5rem);position:relative;z-index:1;scroll-margin-top:7rem}
 .reserva-widget__inner{max-width:760px;margin:0 auto;position:relative;z-index:1}
 
 /* flores asomando por los bordes del widget: DETRÁS del marco (z-index:-1 dentro del

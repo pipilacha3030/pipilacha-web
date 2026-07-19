@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import CookieConsent from '../components/CookieConsent.astro';
 import { GOOGLE_SITE_VERIFICATION, BING_SITE_VERIFICATION } from '../config/verification.js';
 import { localeFromPath, basePath, altHref, TRANSLATED, useT } from '../i18n/index.js';
+import { aggregate } from '../data/reviews.js';
 
 const {
   title,
@@ -45,15 +46,26 @@ const breadcrumbNames = lang === 'en' ? {
   '/prensa': 'Prensa', '/regala': 'Regalar', '/reservas': 'Reservas',
   '/aviso-legal': 'Aviso legal', '/privacidad': 'Privacidad', '/cookies': 'Cookies',
 };
+// Restaurant: campos que SÍ cambian entre idiomas (el resto —teléfono,
+// dirección, geo, horarios, priceRange— es el mismo restaurante real y no se
+// condiciona por lang). restaurantUrl reutiliza el mismo altHref('/','en')
+// que ya calcula homeUrl más abajo, así que ambos apuntan al mismo sitio.
+const restaurantDescription = lang === 'en'
+  ? 'The only restaurant in the world built entirely on flowers. A fifteen-course tasting menu with edible flowers as the main ingredient, in Madrid.'
+  : 'El único restaurante del mundo construido íntegramente sobre las flores. Menú de degustación de quince pases con flores comestibles como ingrediente principal, en Madrid.';
+const restaurantCuisine = lang === 'en' ? 'Floral author cuisine' : 'Cocina floral de autor';
+const restaurantUrl = lang === 'en' ? new URL(altHref('/', 'en'), Astro.site).href : SITE;
+
 const graph = [
   {
     "@type": "Restaurant",
     "@id": ID.restaurant,
     "name": "Pipilacha",
-    "description": "El único restaurante del mundo construido íntegramente sobre las flores. Menú de degustación de quince pases con flores comestibles como ingrediente principal, en Madrid.",
-    "url": SITE,
+    "description": restaurantDescription,
+    "url": restaurantUrl,
     "image": new URL('/assets/img/hero.jpg', Astro.site).href,
-    "servesCuisine": "Cocina floral de autor",
+    "servesCuisine": restaurantCuisine,
+    "inLanguage": lang,
     "priceRange": "€€€",
     "telephone": "+34919125998",
     "email": "info@pipilacha.es",
@@ -72,6 +84,16 @@ const graph = [
       { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday","Friday","Saturday","Sunday"], "opens": "21:00", "closes": "23:30" }
     ],
     "acceptsReservations": "https://widget.thefork.com/867dcee9-49b5-47ed-90c0-c6c87149b328",
+    // Fuente única: src/data/reviews.js → `aggregate` (mismo "4,9 · 156 reseñas"
+    // que se muestra en la home, sección .proof). Si cambia la valoración real
+    // de Google, actualiza SOLO ahí — nunca hardcodees el número aquí.
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": aggregate.ratingEn,
+      "reviewCount": String(aggregate.count),
+      "bestRating": "5",
+      "worstRating": "1"
+    },
     "hasMenu": [`${SITE}menu/`, `${SITE}vinos/`],
     "founder": [{ "@id": ID.aran }, { "@id": ID.noe }],
     "knowsAbout": [

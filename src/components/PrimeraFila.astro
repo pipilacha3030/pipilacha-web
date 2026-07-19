@@ -276,8 +276,15 @@ const label = lang === 'en' ? 'Front row — live the menu from the counter' : '
   :global(html.js) .pf__scene--1 { opacity: 1; }
   :global(html.js) .pf__img img { will-change: transform; }
 
-  /* — móvil con JS: imagen a sangre + texto sobre degradado (abajo) — */
-  @media (max-width: 768px) {
+  /* — móvil con JS: imagen a sangre + texto sobre degradado (abajo) —
+     900px: MISMO breakpoint que el resto del sitio (nav/hero/quiénes en
+     main.css). Antes era 768/769px, un valor propio de este componente:
+     entre 769 y 900px (iPads en vertical ~768-834px, tablets, algunos
+     plegables) el resto de la web ya se veía en modo móvil pero esta
+     sección caía en el modo escritorio (miniatura pequeña a la derecha,
+     no a sangre) — bug determinista por ancho de pantalla, no un fallo
+     de red puntual. */
+  @media (max-width: 900px) {
     :global(html.js) .pf__img {
       position: absolute; inset: 0; width: 100%; height: 100%;
       border-radius: 0; aspect-ratio: auto; box-shadow: none;
@@ -314,7 +321,7 @@ const label = lang === 'en' ? 'Front row — live the menu from the counter' : '
   }
 
   /* — escritorio con JS: marco vertical dominante + texto en el espacio negativo — */
-  @media (min-width: 769px) {
+  @media (min-width: 901px) {
     :global(html.js) .pf__img {
       position: absolute; top: 11vh; right: 6vw; aspect-ratio: auto;
       height: 78vh; width: min(40vw, 62.4vh);

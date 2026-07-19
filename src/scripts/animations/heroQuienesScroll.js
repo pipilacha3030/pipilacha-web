@@ -6,11 +6,24 @@
    (discreto, no scrub) — el hero sube (yPercent -100) y quiénes entra desde
    abajo (100→0). Cuando ya no hay slide en la dirección del gesto, devolvemos
    el scroll a Lenis (hacia la galería si es abajo, hacia el tope si es arriba).
-   Móvil (≤900px): mismo lenguaje que primeraFila.js — el hero se fija
-   (ScrollTrigger.pin, no Observer: en móvil no conviene secuestrar wheel/touch)
-   y quiénes (foto + texto, position:fixed durante la zona) SUBE encima ligado
-   1:1 al scroll (scrub), de y:100vh a y:0. Al terminar la zona, quiénes vuelve
-   a flujo normal para que el resto de la página siga bajando por debajo.
+   Móvil (≤900px): el hero es sticky (CSS) y quiénes va justo después en flujo
+   normal — la propia geometría del documento hace que quiénes suba y cubra al
+   hero (ver main.css, @media 900px), sea cual sea el origen del scroll. Sobre
+   eso, el MISMO Observer de GSAP que usa escritorio intercepta solo el primer
+   gesto (preventDefault:true) y dispara un único lenis.scrollTo hasta cubrir
+   la pantalla entera — un toque/rueda, un movimiento. Hace falta preventDefault
+   aquí: si dejamos que el dedo dispare scroll nativo Y ADEMÁS lancemos nuestra
+   animación, la inercia nativa de iOS (que sigue corriendo tras soltar el
+   dedo, sin más eventos táctiles) pelea con el scrollTo y se ve entrecortado;
+   por eso NO basta con escuchar 'touchmove'/'scroll' sin más (versión anterior):
+   con un toque corto, la mayoría del recorrido lo pone la inercia DESPUÉS de
+   soltar, sin disparar ningún evento — el Observer, en cambio, consume el
+   gesto original y lo sustituye entero por nuestra animación.
+   Se dejó de usar position:fixed + ScrollTrigger.pin aquí porque en Safari
+   iOS real (barra de URL que aparece/desaparece) el onLeave/onLeaveBack podía
+   no disparar y el panel se quedaba fixed para siempre, flotando sobre
+   secciones posteriores. Esta versión no toca position en ningún momento —el
+   CSS sticky ya resuelve el layout— así que ese bug no puede repetirse aquí.
    reduced-motion: nada; el CSS ya deja ambas secciones legibles y estáticas.
 
    Los estados iniciales que oculta/desplaza GSAP solo se ponen en runtime:
@@ -45,41 +58,35 @@ export function initHeroQuienes() {
   const copy = quienes.querySelector('.quienes__copy');
   const desktop = window.matchMedia('(min-width:901px)');
 
-  /* -------------------- MÓVIL: quiénes sube y cubre el hero -------------------- */
+  /* -------------------- MÓVIL: Observer intercepta SOLO el primer gesto -------------------- */
   if (!desktop.matches) {
+    if (window.scrollY > 4) return; // ya veníamos con scroll (recarga a mitad, anchor…): no intervenir
     inPageContext(() => {
-      let pinned = false;
-      // fixed: top/left/right sin bottom → el panel conserva su alto natural
-      // (foto + texto puede superar 100dvh) en vez de recortarse a la pantalla.
-      const pinOn = () => {
-        if (pinned) return;
-        pinned = true;
-        gsap.set(quienes, { position: 'fixed', top: 0, left: 0, right: 0, zIndex: 5 });
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        obs.disable();
       };
-      const pinOff = (y) => {
-        pinned = false;
-        gsap.set(quienes, { position: 'static', top: 'auto', left: 'auto', right: 'auto', zIndex: 'auto', y });
+      // un único gesto hacia delante → sustituye el scroll nativo entero por
+      // un lenis.scrollTo hasta el borde de la zona (quiénes cubre la pantalla)
+      const onForward = () => {
+        if (done) return;
+        finish();
+        const target = hero.offsetHeight;
+        if (lenis) lenis.scrollTo(target, { duration: DUR, easing: (t) => 1 - Math.pow(1 - t, 3) });
+        else window.scrollTo({ top: target, behavior: 'smooth' });
       };
-      pinOn();
-      gsap.set(quienes, { y: '100vh' });
-
-      ScrollTrigger.create({
-        trigger: hero,
-        start: 'top top',
-        end: () => '+=' + hero.offsetHeight,
-        pin: hero,
-        // sin esto, ScrollTrigger reserva alto del hero DOS veces (su propia
-        // caja + la distancia del scrub): al superar la zona el hero volvía a
-        // aparecer en flujo normal antes de que quiénes "aterrizara" en su
-        // sitio real. false = quiénes queda pegado justo donde termina el pin.
-        pinSpacing: false,
-        scrub: 0.3,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => { if (pinned) gsap.set(quienes, { y: (1 - self.progress) * 100 + 'vh' }); },
-        onLeave: () => pinOff(0),           // zona superada bajando → flujo normal, ya "aterrizado"
-        onEnterBack: () => pinOn(),         // se vuelve a entrar desde abajo → se refija para el scrub
-        onLeaveBack: () => pinOff('100vh'), // se sube por encima del hero → fuera de escena
+      const obs = Observer.create({
+        target: window,
+        type: 'wheel,touch,pointer',
+        wheelSpeed: -1,
+        tolerance: 6,
+        preventDefault: true,
+        onUp: onForward,   // gesto hacia delante (scroll down / swipe up)
+        onDown: () => {},  // en el tope no hay adónde subir: no-op
       });
+      pageSignal().addEventListener('abort', () => { finish(); obs.kill(); }, { once: true });
     });
     return;
   }
