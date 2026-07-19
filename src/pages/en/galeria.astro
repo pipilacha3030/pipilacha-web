@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { fotos } from '../../data/galeria.en.js';
+import { dims } from '../../data/galeria-dims.js';
 ---
 
 <Base
@@ -12,12 +13,22 @@ import { fotos } from '../../data/galeria.en.js';
     <canvas class="gal-stage__bg" id="galBg" aria-hidden="true"></canvas>
 
     <ul class="gal-track" id="galTrack">
-      {fotos.map((f, i) => (
+      {fotos.map((f, i) => {
+        const [w, h] = dims[f.src.split('/').pop()] || [];
+        // misma lógica que la galería ES: miniatura -m (800w) para móvil, la
+        // grande en desktop (el carrusel agranda la central); width/height por
+        // foto evita CLS. El .htaccess sirve su avif/webp.
+        const mSrc = w > 800 ? f.src.replace(/\.jpg$/, '-m.jpg') : null;
+        return (
         <li class="gal-card" data-index={i}>
           <button class="gal-card__btn" type="button" aria-label={`Enlarge: ${f.alt}`}>
             <img
               src={f.src}
+              srcset={mSrc ? `${mSrc} 800w, ${f.src} ${w}w` : undefined}
+              sizes={mSrc ? '(max-width: 900px) 70vw, 1280px' : undefined}
               alt={f.alt}
+              width={w}
+              height={h}
               loading={i < 10 ? 'eager' : 'lazy'}
               fetchpriority={i < 3 ? 'high' : undefined}
               decoding="async"
@@ -25,7 +36,8 @@ import { fotos } from '../../data/galeria.en.js';
             />
           </button>
         </li>
-      ))}
+        );
+      })}
     </ul>
 
     <div class="gal-frame">
