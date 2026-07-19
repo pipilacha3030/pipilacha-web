@@ -601,10 +601,6 @@ body.menu-open .nav__lang,.nav__dock.is-page-morph .nav__lang{opacity:0;pointer-
    animación continua de "respiro" se compone sin repintar el raster grande cada
    frame → sin titileo en el borde superior */
 .hero__media img{filter:saturate(1.02);transform:scale(1.02);transform-origin:50% 42%;will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden}
-/* lienzo WebGL sobre la foto (mejora progresiva; oculto por defecto, lo activa
-   heroGL.js solo en escritorio con WebGL). pointer-events:none → no bloquea el
-   contenido; el puntero se lee en .hero */
-.hero__gl{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;visibility:hidden;pointer-events:none}
 .hero__veil{
   position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(20,20,12,.35) 0%,rgba(20,20,12,0) 28%,rgba(20,20,12,.15) 55%,rgba(20,20,12,.75) 100%);
