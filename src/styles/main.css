@@ -78,6 +78,18 @@
   --serif: 'Marcellus', 'Times New Roman', serif;
   --sans:  'Hanken Grotesk', system-ui, -apple-system, sans-serif;
 
+  /* ---- tipografía UI (Sprint 2 · B7 · referencia) ----
+     Los titulares editoriales usan clamp() afinado a mano por sección
+     (~30 valores distintos) — eso es diseño bespoke, no tocar (mismo
+     criterio que espaciado/duración en bloques previos). Este único valor
+     SÍ es un patrón real: .72rem es el font-size del propio .eyebrow (la
+     etiqueta de marca), copiado tal cual en 7 sitios más sin relación
+     (footer, popup de maridaje, "proof", prensa, barra/menú, galería) en
+     vez de reutilizar la clase. Se nombra para dejarlo consistente; no se
+     tocan las clases HTML — eso sería refactorizar plantillas .astro,
+     fuera de alcance de "no cambies el diseño". */
+  --fs-label: .72rem;
+
   --maxw: 1320px;
   --gutter: clamp(1.25rem, 5vw, 5rem);
   --ease: cubic-bezier(.22,1,.36,1);
@@ -207,7 +219,7 @@ html.lenis,html.lenis body{height:auto}
    filete con el texto sin romper el centrado donde lo haya. */
 .eyebrow{
   display:inline-flex;align-items:center;gap:.75em;
-  font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;
+  font-size:var(--fs-label);letter-spacing:.28em;text-transform:uppercase;
   font-weight:500;color:var(--accent);margin-bottom:var(--space-ml);
 }
 .eyebrow::before{content:"";flex:none;width:1.7em;height:1px;background:currentColor;opacity:.5}
@@ -822,7 +834,7 @@ body.menu-open .nav__lang,.nav__dock.is-page-morph .nav__lang{opacity:0;pointer-
 }
 .barra__head{border-bottom:1px solid rgba(244,239,230,.22)}
 .barra__label,.barra__meta,.book__label,.book__meta{
-  font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;font-weight:500;
+  font-size:var(--fs-label);letter-spacing:.26em;text-transform:uppercase;font-weight:500;
 }
 .barra__label{color:var(--accent-soft)}
 .barra__meta{color:rgba(244,239,230,.62);letter-spacing:.18em}
@@ -1100,7 +1112,7 @@ body:has(.gal-stage) .reserva-bar{display:none}
 .gal-frame__links a:hover{color:var(--moss)}
 .gal-frame__cta{
   padding:.6rem 1.3rem;background:var(--moss);color:var(--cream)!important;border-radius:var(--radius-btn);
-  letter-spacing:.08em;text-transform:uppercase;font-size:.72rem!important;
+  letter-spacing:.08em;text-transform:uppercase;font-size:var(--fs-label)!important;
   transition:background .3s var(--ease)!important;
 }
 .gal-frame__cta:hover{background:var(--olive)}
@@ -1158,7 +1170,7 @@ body:has(.gal-stage) .reserva-bar{display:none}
 .footer__logo{width:140px;height:auto;object-fit:contain;margin:0 auto .9rem;display:block}
 .footer__brand p{opacity:.78;font-size:.86rem}
 .footer__cols{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;max-width:var(--maxw);margin:0 auto;padding-bottom:1.8rem;border-bottom:1px solid rgba(244,239,230,.18)}
-.footer__cols h4{font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;font-family:var(--sans);font-weight:600;margin-bottom:.7rem;opacity:.9}
+.footer__cols h4{font-size:var(--fs-label);letter-spacing:.24em;text-transform:uppercase;font-family:var(--sans);font-weight:600;margin-bottom:.7rem;opacity:.9}
 .footer__cols p{opacity:.8;line-height:1.75;font-size:.88rem}
 .footer__cols a{text-decoration:underline;text-underline-offset:3px;opacity:.85;transition:opacity .3s}
 .footer__cols a:hover{opacity:1}
@@ -1169,7 +1181,7 @@ body:has(.gal-stage) .reserva-bar{display:none}
 .footer__legal a,.footer__legal-btn{opacity:.82;transition:opacity .3s;color:var(--cream)}
 .footer__legal a:hover,.footer__legal-btn:hover{opacity:1}
 .footer__legal-btn{background:none;border:0;padding:0;cursor:pointer;font:inherit;letter-spacing:inherit;text-decoration:underline;text-underline-offset:3px}
-.footer__base{display:flex;justify-content:space-between;align-items:center;max-width:var(--maxw);margin:1.1rem auto 0;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;opacity:.6}
+.footer__base{display:flex;justify-content:space-between;align-items:center;max-width:var(--maxw);margin:1.1rem auto 0;font-size:var(--fs-label);letter-spacing:.1em;text-transform:uppercase;opacity:.6}
 /* selector de idioma en el pie: enmarcado sutil, centrado entre © y Madrid */
 .footer__lang{padding:.3em .8em;border:1px solid currentColor;border-radius:var(--radius-btn);opacity:.85;transition:opacity .3s var(--ease)}
 .footer__lang:hover{opacity:1}
@@ -1393,7 +1405,7 @@ body:has(.cc-banner.is-visible) .reserva-bar{transform:translateY(100%)}
 .mpop__text{font-size:.9rem;line-height:1.6;color:rgba(244,239,230,.82);margin:0 0 1.15rem}
 .mpop__row{display:flex;align-items:center;justify-content:space-between;gap:1rem}
 .mpop__price{font-family:var(--serif);font-size:1.15rem;color:var(--accent-soft)}
-.mpop__cta{display:inline-block;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;
+.mpop__cta{display:inline-block;font-size:var(--fs-label);letter-spacing:.2em;text-transform:uppercase;
   background:var(--cream);color:var(--moss);padding:.8rem 1.7rem;border-radius:100px;text-decoration:none;
   transition:background .35s var(--ease),transform .35s var(--ease)}
 .mpop__cta:hover{background:var(--accent-soft);transform:translateY(-1px)}
@@ -1553,7 +1565,7 @@ body:has(.cc-banner.is-visible) .reserva-bar{transform:translateY(100%)}
 .proof__stars{color:var(--accent);letter-spacing:.2em;font-size:1.05rem}
 .proof__score{font-family:var(--serif);font-size:2rem;color:var(--moss);line-height:1}
 .proof__score strong{font-weight:400}
-.proof__meta{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-subtle)}
+.proof__meta{font-size:var(--fs-label);letter-spacing:.16em;text-transform:uppercase;color:var(--text-subtle)}
 .proof__title{font-family:var(--serif);font-size:clamp(1.6rem,3.5vw,2.4rem);color:var(--moss);margin:0 auto 2.4rem;max-width:20ch;line-height:1.1}
 .proof__link{display:inline-block;margin-top:2.2rem;color:var(--accent);text-decoration:underline;text-underline-offset:4px;font-size:.9rem;letter-spacing:.03em}
 
@@ -1681,7 +1693,7 @@ html:not(.js) .marquee__track{animation:marquee 40s linear infinite}
   align-self:start;transition:color .5s var(--ease), -webkit-text-stroke-color .5s var(--ease), text-shadow .5s var(--ease);
 }
 .press-row__medio{
-  display:block;font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;
+  display:block;font-size:var(--fs-label);letter-spacing:.24em;text-transform:uppercase;
   color:var(--text-subtle);margin-bottom:.7rem;transition:color .5s var(--ease);
 }
 .press-row__titular{
@@ -1732,7 +1744,7 @@ html:not(.js) .marquee__track{animation:marquee 40s linear infinite}
   display:flex;justify-content:space-between;align-items:baseline;gap:1.5rem;
   border-bottom:1px solid rgba(244,239,230,.18);padding-bottom:1.1rem;
 }
-.prensa-kit__contact span{color:var(--accent-soft);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;white-space:nowrap}
+.prensa-kit__contact span{color:var(--accent-soft);font-size:var(--fs-label);letter-spacing:.22em;text-transform:uppercase;white-space:nowrap}
 .prensa-kit__contact a{font-family:var(--serif);font-size:1.05rem;text-align:right;transition:color var(--dur-fast) var(--ease)}
 .prensa-kit__contact a:hover{color:var(--accent-soft)}
 .prensa-kit__download{margin:1.8rem 0 2.4rem}
