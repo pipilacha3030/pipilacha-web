@@ -61,6 +61,25 @@
   --gutter: clamp(1.25rem, 5vw, 5rem);
   --ease: cubic-bezier(.22,1,.36,1);
 
+  /* ---- duraciones (Sprint 2 · Design System) ----
+     Referencia oficial para trabajo NUEVO — nacen de los valores de
+     transition: más repetidos hoy (auditoría Sprint 2). NO se ha
+     retro-aplicado a las ~60 transiciones existentes: la mayoría combina
+     varias propiedades con tiempos distintos aposta por componente (igual
+     que la tipografía, ver --serif/--sans). Aplicado solo donde el valor
+     ya era, de verdad, un patrón repetido con el mismo propósito
+     (--dur-fast: "cambio de color rápido al hover/focus", 6 sitios
+     idénticos — .nav__menu-meta a, .gal-frame__links a, .legal__body a,
+     .cc-link, .prensa-kit__contact a, .mpop__close). Las duraciones de
+     animaciones decorativas en bucle (giro de flores, marquee, pétalos)
+     son intencionalmente distintas por diseño y no entran en esta escala. */
+  --dur-fast:    .3s;
+  --dur-base:    .4s;
+  --dur-md:      .45s;
+  --dur-slow:    .5s;
+  --dur-slower:  .55s;
+  --dur-slowest: .6s;
+
   /* radios suaves (bordes redondeados de marca) */
   --radius: 10px;        /* fotos y tarjetas grandes — poco redondeado */
   --radius-sm: 8px;      /* elementos pequeños */
@@ -618,7 +637,7 @@ body.menu-open .nav__lang,.nav__dock.is-page-morph .nav__lang{opacity:0;pointer-
 }
 .nav__menu-meta > div{display:flex;flex-direction:column;gap:.4rem}
 .nav__menu-meta > div > span{font-size:.62rem;letter-spacing:.22em;color:rgba(244,239,230,.38)}
-.nav__menu-meta a{color:inherit;transition:color .3s var(--ease)}
+.nav__menu-meta a{color:inherit;transition:color var(--dur-fast) var(--ease)}
 .nav__menu-meta a:hover{color:var(--cream)}
 /* selector de idioma: píldora con borde crema, coherente con el CTA del dock */
 .nav__menu-lang{justify-content:center}
@@ -1054,7 +1073,7 @@ body:has(.gal-stage) .reserva-bar{display:none}
 .gal-frame__hint{font-size:.8rem;letter-spacing:.03em;color:var(--text-subtle);max-width:32ch}
 .gal-frame__count{font-family:var(--serif);font-size:1.05rem;letter-spacing:.12em;color:var(--moss)}
 .gal-frame__links{display:flex;align-items:center;gap:1.4rem;pointer-events:auto}
-.gal-frame__links a{font-size:.82rem;letter-spacing:.04em;color:var(--text-muted);transition:color .3s var(--ease)}
+.gal-frame__links a{font-size:.82rem;letter-spacing:.04em;color:var(--text-muted);transition:color var(--dur-fast) var(--ease)}
 .gal-frame__links a:hover{color:var(--moss)}
 .gal-frame__cta{
   padding:.6rem 1.3rem;background:var(--moss);color:var(--cream)!important;border-radius:var(--radius-btn);
@@ -1155,7 +1174,7 @@ body:has(.gal-stage) .reserva-bar{display:none}
 .legal__body h2{font-family:var(--serif);font-size:clamp(1.3rem,2.6vw,1.7rem);color:var(--moss);line-height:1.2;margin-bottom:.8rem}
 .legal__body h3{font-family:var(--sans);font-weight:600;font-size:.95rem;color:var(--moss);margin:1.6rem 0 .7rem;letter-spacing:.01em}
 .legal__body p{line-height:1.75;margin-bottom:.9rem;color:var(--text-muted);text-wrap:pretty}
-.legal__body a{color:var(--olive);text-decoration:underline;text-underline-offset:3px;transition:color .3s var(--ease)}
+.legal__body a{color:var(--olive);text-decoration:underline;text-underline-offset:3px;transition:color var(--dur-fast) var(--ease)}
 .legal__body a:hover{color:var(--moss)}
 .legal__body strong{color:var(--ink);font-weight:600}
 /* ficha de datos del titular/responsable */
@@ -1211,7 +1230,7 @@ body:has(.gal-stage) .reserva-bar{display:none}
 .cc-banner__actions{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem}
 .cc-btn{padding:.7em 1.5em;font-size:.74rem}
 .cc-banner .cc-btn{flex:1 1 auto}
-.cc-link{background:none;border:0;cursor:pointer;font-family:var(--sans);font-weight:500;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-subtle);text-decoration:underline;text-underline-offset:3px;transition:color .3s var(--ease)}
+.cc-link{background:none;border:0;cursor:pointer;font-family:var(--sans);font-weight:500;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-subtle);text-decoration:underline;text-underline-offset:3px;transition:color var(--dur-fast) var(--ease)}
 .cc-link:hover{color:var(--moss)}
 /* el ghost del banner es sobre fondo claro: forzar tinte oscuro (el base asume oscuro) */
 .cc-banner .btn--ghost{color:var(--moss);box-shadow:inset 0 0 0 1px var(--border-subtle)}
@@ -1343,7 +1362,7 @@ body:has(.cc-banner.is-visible) .reserva-bar{transform:translateY(100%)}
   filter:drop-shadow(0 10px 16px rgba(13,13,13,.35));pointer-events:none}
 .mpop__close{position:absolute;top:.5rem;right:.6rem;background:none;border:0;cursor:pointer;
   color:rgba(244,239,230,.65);font-size:1.5rem;line-height:1;padding:.3rem .55rem;border-radius:8px;
-  transition:color .3s var(--ease)}
+  transition:color var(--dur-fast) var(--ease)}
 .mpop__close:hover{color:var(--cream)}
 .mpop__close:focus-visible{outline:2px solid var(--accent-soft);outline-offset:2px}
 .mpop__eyebrow{font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;color:var(--accent-soft);margin:0 0 .45rem}
@@ -1691,7 +1710,7 @@ html:not(.js) .marquee__track{animation:marquee 40s linear infinite}
   border-bottom:1px solid rgba(244,239,230,.18);padding-bottom:1.1rem;
 }
 .prensa-kit__contact span{color:var(--accent-soft);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;white-space:nowrap}
-.prensa-kit__contact a{font-family:var(--serif);font-size:1.05rem;text-align:right;transition:color .3s var(--ease)}
+.prensa-kit__contact a{font-family:var(--serif);font-size:1.05rem;text-align:right;transition:color var(--dur-fast) var(--ease)}
 .prensa-kit__contact a:hover{color:var(--accent-soft)}
 .prensa-kit__download{margin:1.8rem 0 2.4rem}
 
