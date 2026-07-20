@@ -1125,7 +1125,9 @@ body:has(.gal-stage) .reserva-bar{display:none}
 /* ---------- lightbox ---------- */
 .lightbox{position:fixed;inset:0;z-index:var(--z-lightbox);display:none;align-items:center;justify-content:center;padding:clamp(1rem,4vw,3rem);background:rgba(16,16,11,.992);opacity:0;transition:opacity .4s var(--ease)}
 .lightbox.is-open{display:flex;opacity:1}
-.lightbox__stage{margin:0;max-width:min(1100px,92vw);display:flex;flex-direction:column;align-items:center;gap:1rem}
+.lightbox__stage{margin:0;max-width:min(1100px,92vw);display:flex;flex-direction:column;align-items:center;gap:1rem;
+  transform:scale(.96);transition:transform .4s var(--ease)} /* asienta al abrir, como .mpop — centrada: sin translateY, no está anclada a un disparador */
+.lightbox.is-open .lightbox__stage{transform:scale(1)}
 .lightbox__stage img{width:auto;height:auto;max-width:100%;max-height:80vh;object-fit:contain;clip-path:inset(2.5% round var(--radius-sm))}
 .lightbox__cap{color:var(--cream);font-size:.9rem;letter-spacing:.04em;opacity:.85;text-align:center}
 .lightbox__close,.lightbox__nav{position:absolute;background:none;border:0;color:var(--cream);cursor:pointer;line-height:1;opacity:.8;transition:opacity .3s var(--ease)}

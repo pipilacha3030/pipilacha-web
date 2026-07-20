@@ -50,8 +50,12 @@ export function initGallery() {
     if (!lightbox) return;
     lb.lastFocus = document.activeElement;
     lbShow(i);
-    lightbox.classList.add('is-open');
+    // pinta el estado cerrado (opacity:0, stage a scale(.96)) antes de animar la
+    // entrada: si display:flex y la clase is-open llegaran en el mismo tick, el
+    // navegador nunca renderiza el "desde" y la transición se salta entera.
+    lightbox.style.display = 'flex';
     lightbox.setAttribute('aria-hidden', 'false');
+    requestAnimationFrame(() => requestAnimationFrame(() => lightbox.classList.add('is-open')));
     document.body.classList.add('scroll-lock');
     galPaused = true;                 // congela el motor mientras se ve la foto ampliada
     if (lenis) lenis.stop();
@@ -62,6 +66,7 @@ export function initGallery() {
     lightbox.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('scroll-lock');
     galPaused = false;
+    setTimeout(() => { lightbox.style.display = ''; }, 400); // tras la transición de salida (.4s), vuelve a display:none del CSS
     if (lb.lastFocus) lb.lastFocus.focus();
   };
   if (lightbox) {
