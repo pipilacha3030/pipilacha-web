@@ -3,9 +3,10 @@
    está registrado y el driver conectado antes de crear cualquier trigger. */
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { SplitText } from 'gsap/SplitText';
 import { lenis } from './lenis.js';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, SplitText);
 
 // globals de depuración (antes los exponían los <script> del vendor)
 window.gsap = gsap;
@@ -17,4 +18,4 @@ if (lenis) {
   gsap.ticker.lagSmoothing(0);
 }
 
-export { gsap, ScrollTrigger };
+export { gsap, ScrollTrigger, SplitText };
