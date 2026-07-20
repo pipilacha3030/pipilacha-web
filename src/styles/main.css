@@ -54,6 +54,27 @@
   /* la base del vidrio del dock es #0D0D0D, escrita en rgba() en .nav__dock */
   --cloud-white: #FEFCF6; /* texto del CTA del dock */
 
+  /* ---- capa semántica de color — dark mode PREPARADO (Sprint 2 · B6) ----
+     Alias que hoy apuntan, vía var(), a los mismos valores de marca de
+     siempre — cero cambio visual. Solo cubre lo que es de verdad GLOBAL e
+     inequívoco (el fondo/texto base de toda página, aplicado en body más
+     abajo). NO existe un --color-inverse-bg único: la web tiene TRES
+     tratamientos "oscuros" distintos y deliberados (--moss en botones,
+     --olive en el footer, negro-cristal rgba(13,13,13,..) con
+     backdrop-filter en el dock del nav) — inventar un solo alias para los
+     tres fingiría un sistema que no existe (mismo criterio que el z-index
+     del Bloque 2). Un futuro modo oscuro real necesitará decidir cada
+     sección a mano con un selector `[data-theme="dark"]`, no un
+     interruptor único de estas variables. */
+  --color-bg:           var(--cream);
+  --color-surface:      var(--cloud);
+  --color-text:         var(--ink);
+  --color-text-muted:   var(--text-muted);
+  --color-text-subtle:  var(--text-subtle);
+  --color-accent:       var(--accent);
+  --color-accent-soft:  var(--accent-soft);
+  --color-border:       var(--border-subtle);
+
   --serif: 'Marcellus', 'Times New Roman', serif;
   --sans:  'Hanken Grotesk', system-ui, -apple-system, sans-serif;
 
@@ -154,8 +175,8 @@ html{-webkit-text-size-adjust:100%}
 @media (min-width:2100px){ html{font-size:19.5px} }
 body{
   font-family:var(--sans);
-  background:var(--cream);
-  color:var(--ink);
+  background:var(--color-bg);
+  color:var(--color-text);
   font-weight:300;
   line-height:1.6;
   overflow-x:hidden;
