@@ -102,6 +102,23 @@
   --z-nav:           100;  /* .nav: dock de navegación */
   --z-cookie-banner: 120;  /* .cc-banner: por ENCIMA del nav a propósito */
   --z-lightbox:      1200; /* .lightbox: por encima de absolutamente todo */
+
+  /* ---- breakpoints: escala real de @media (Sprint 2 · referencia) ----
+     Documentados aquí como CONSTANTES, no como var(): CSS no permite custom
+     properties dentro de la condición de un @media (`@media (max-width:
+     var(--x))` no es válido) — es una limitación del lenguaje, no un
+     olvido. Tokenizarlo de verdad exigiría añadir PostCSS u otra
+     herramienta de build, fuera de este sprint. Usar estos valores en
+     cualquier @media nuevo en vez de inventar uno distinto:
+       560px   móvil pequeño (11 sitios)
+       760px   móvil / tablet estrecha (10 sitios)
+       900/901px  EL ESTÁNDAR del sitio: móvil vs. escritorio (nav, footer,
+                  PrimeraFila...) — usar este para cualquier corte nuevo
+       1440/1728/2100px  solo escalan el font-size raíz en pantallas grandes
+     Casos de un solo componente, no forman parte de este sistema (no
+     tocar): 640px (.press-row, detecta táctil/estrecho junto a hover:none),
+     420px (.cc-dialog, apila botones del aviso de cookies en móvil muy
+     pequeño). */
 }
 
 /* ---------- reset ---------- */
@@ -1872,13 +1889,13 @@ body.menu-open .nav__dock.is-page-morph,
   box-shadow:0 42px 70px -24px rgba(13,13,13,.50), 0 14px 28px -14px rgba(13,13,13,.42);
 }
 
-@media (max-width:768px){
+@media (max-width:900px){
   .gallery-finale{width:92vw;height:64vh}
 }
 
 /* sin JS / reduce-motion: no hay pin ni crecimiento, deja aire alrededor de la tarjeta */
 .gallery__stage{padding:9vh var(--gutter)}
-@media (min-width:769px){ html.js .gallery__stage{padding:0} }
+@media (min-width:901px){ html.js .gallery__stage{padding:0} }
 
 /* ---------- móvil compacto: menos aire vertical entre secciones ----------
    Los clamp() de escritorio se apoyan en vh y en un teléfono dejan rellenos
