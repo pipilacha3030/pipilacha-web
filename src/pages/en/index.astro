@@ -60,6 +60,29 @@ import { aggregate, reviewsEn as reviews } from '../../data/reviews.js';
     </div>
   </section>
 
+  <!-- MARQUEE
+       Sprint 4 · storytelling: moved up right after "Who we are" — the numbers
+       (35 flowers, 16 seats, one season only) create scarcity/urgency early,
+       before the dish showcase and social proof. -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <div class="marquee__group">
+        <span>35 edible flowers</span><span class="marquee__sep">✿</span>
+        <span>15 courses</span><span class="marquee__sep">✿</span>
+        <span>one season only</span><span class="marquee__sep">✿</span>
+        <span>Madrid</span><span class="marquee__sep">✿</span>
+        <span>16 seats</span><span class="marquee__sep">✿</span>
+      </div>
+      <div class="marquee__group">
+        <span>35 edible flowers</span><span class="marquee__sep">✿</span>
+        <span>15 courses</span><span class="marquee__sep">✿</span>
+        <span>one season only</span><span class="marquee__sep">✿</span>
+        <span>Madrid</span><span class="marquee__sep">✿</span>
+        <span>16 seats</span><span class="marquee__sep">✿</span>
+      </div>
+    </div>
+  </div>
+
   <!-- SUMMER MENU · showcase card that grows to full screen on scroll -->
   <section class="gallery" id="gallery" aria-label="Solsticio floral">
     <div class="gallery__stage">
@@ -80,40 +103,9 @@ import { aggregate, reviewsEn as reviews } from '../../data/reviews.js';
     </div>
   </section>
 
-  <!-- MARQUEE -->
-  <div class="marquee" aria-hidden="true">
-    <div class="marquee__track">
-      <div class="marquee__group">
-        <span>35 edible flowers</span><span class="marquee__sep">✿</span>
-        <span>15 courses</span><span class="marquee__sep">✿</span>
-        <span>one season only</span><span class="marquee__sep">✿</span>
-        <span>Madrid</span><span class="marquee__sep">✿</span>
-        <span>16 seats</span><span class="marquee__sep">✿</span>
-      </div>
-      <div class="marquee__group">
-        <span>35 edible flowers</span><span class="marquee__sep">✿</span>
-        <span>15 courses</span><span class="marquee__sep">✿</span>
-        <span>one season only</span><span class="marquee__sep">✿</span>
-        <span>Madrid</span><span class="marquee__sep">✿</span>
-        <span>16 seats</span><span class="marquee__sep">✿</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- EXPLORE (gallery still in Spanish for now → ES fallback) -->
-  <nav class="explore" aria-label="Sections">
-    <a href="/en/conocenos/" style="--img:url(/assets/img/enlace-conocenos.jpg); --posy:38%">
-      <span class="explore__label">About</span>
-    </a>
-    <a href="/en/menu/" style="--img:url(/assets/img/enlace-menu.jpg); --posy:50%">
-      <span class="explore__label">The menu</span>
-    </a>
-    <a href="/galeria/" style="--img:url(/assets/img/enlace-galeria.jpg); --posy:40%">
-      <span class="explore__label">Gallery</span>
-    </a>
-  </nav>
-
-  <!-- SOCIAL PROOF: aggregate rating (Google) + real testimonials -->
+  <!-- SOCIAL PROOF: aggregate rating (Google) + real testimonials
+       Sprint 4 · storytelling: moved up before Front Row — trust (others already
+       lived it) lands right before the sensory climax that closes on booking. -->
   <section class="proof" aria-labelledby="proof-h">
     <div class="proof__blooms" aria-hidden="true">
       <span class="proof__bloom proof__bloom--1"><img src="/assets/img/flor-coreopsis.png" alt="" loading="lazy" decoding="async" /></span>
@@ -142,7 +134,26 @@ import { aggregate, reviewsEn as reviews } from '../../data/reviews.js';
     </div>
   </section>
 
-  <!-- FRONT ROW — immersive chapter: WATCH → LISTEN → DISCOVER → book -->
+  <!-- FRONT ROW — immersive chapter: WATCH → LISTEN → DISCOVER → book
+       Sprint 4 · storytelling: the climax of the story — it already ends in its
+       own booking call-to-action, so it moves up from the tail of the page to here. -->
   <PrimeraFila lang="en" />
+
+  <!-- EXPLORE (gallery still in Spanish for now → ES fallback)
+       Sprint 4 · storytelling: moved to the end — it's a navigation hub (duplicates
+       destinations already linked from "Who we are"/the showcase), not a narrative
+       beat; now it's the soft exit for anyone who wants to explore before deciding,
+       instead of interrupting the story midway. -->
+  <nav class="explore" aria-label="Sections">
+    <a href="/en/conocenos/" style="--img:url(/assets/img/enlace-conocenos.jpg); --posy:38%">
+      <span class="explore__label">About</span>
+    </a>
+    <a href="/en/menu/" style="--img:url(/assets/img/enlace-menu.jpg); --posy:50%">
+      <span class="explore__label">The menu</span>
+    </a>
+    <a href="/galeria/" style="--img:url(/assets/img/enlace-galeria.jpg); --posy:40%">
+      <span class="explore__label">Gallery</span>
+    </a>
+  </nav>
 
 </Base>

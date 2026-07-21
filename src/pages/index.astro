@@ -74,6 +74,30 @@ const groupReviews = Array.from({ length: reps }).flatMap(() => real);
     </div>
   </div>
 
+  <!-- CINTA: tipografía editorial que corre y reacciona a la velocidad del scroll
+       (skew + aceleración vía GSAP, ver scripts/animations/marquee.js).
+       Sprint 4 · storytelling: sube justo después de Quiénes — las cifras
+       (35 flores, 16 plazas, una sola temporada) crean la urgencia/escasez
+       pronto, antes de mostrar el plato y la prueba social. -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <div class="marquee__group">
+        <span>35 flores comestibles</span><span class="marquee__sep">✿</span>
+        <span>15 pases</span><span class="marquee__sep">✿</span>
+        <span>una única temporada</span><span class="marquee__sep">✿</span>
+        <span>Madrid</span><span class="marquee__sep">✿</span>
+        <span>16 plazas</span><span class="marquee__sep">✿</span>
+      </div>
+      <div class="marquee__group">
+        <span>35 flores comestibles</span><span class="marquee__sep">✿</span>
+        <span>15 pases</span><span class="marquee__sep">✿</span>
+        <span>una única temporada</span><span class="marquee__sep">✿</span>
+        <span>Madrid</span><span class="marquee__sep">✿</span>
+        <span>16 plazas</span><span class="marquee__sep">✿</span>
+      </div>
+    </div>
+  </div>
+
   <!-- DESPERTAR DE LAS FLORES · tarjeta con 4 fotos en crossfade; al hacer scroll
        el escenario se fija (pin) y la tarjeta crece hasta pantalla completa -->
   <section class="gallery" id="gallery" aria-label="Solsticio floral">
@@ -95,41 +119,9 @@ const groupReviews = Array.from({ length: reps }).flatMap(() => real);
     </div>
   </section>
 
-  <!-- CINTA: tipografía editorial que corre y reacciona a la velocidad del scroll
-       (skew + aceleración vía GSAP, ver scripts/animations/marquee.js) -->
-  <div class="marquee" aria-hidden="true">
-    <div class="marquee__track">
-      <div class="marquee__group">
-        <span>35 flores comestibles</span><span class="marquee__sep">✿</span>
-        <span>15 pases</span><span class="marquee__sep">✿</span>
-        <span>una única temporada</span><span class="marquee__sep">✿</span>
-        <span>Madrid</span><span class="marquee__sep">✿</span>
-        <span>16 plazas</span><span class="marquee__sep">✿</span>
-      </div>
-      <div class="marquee__group">
-        <span>35 flores comestibles</span><span class="marquee__sep">✿</span>
-        <span>15 pases</span><span class="marquee__sep">✿</span>
-        <span>una única temporada</span><span class="marquee__sep">✿</span>
-        <span>Madrid</span><span class="marquee__sep">✿</span>
-        <span>16 plazas</span><span class="marquee__sep">✿</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- EXPLORAR — editorial full-bleed, imágenes siempre visibles -->
-  <nav class="explore" aria-label="Secciones">
-    <a href="/conocenos/" style="--img:url(/assets/img/enlace-conocenos.jpg); --posy:38%">
-      <span class="explore__label">Conócenos</span>
-    </a>
-    <a href="/menu/" style="--img:url(/assets/img/enlace-menu.jpg); --posy:50%">
-      <span class="explore__label">El menú</span>
-    </a>
-    <a href="/galeria/" style="--img:url(/assets/img/enlace-galeria.jpg); --posy:40%">
-      <span class="explore__label">Galería</span>
-    </a>
-  </nav>
-
-  <!-- PRUEBA SOCIAL: valoración agregada (Google) + carrusel de reseñas en bucle -->
+  <!-- PRUEBA SOCIAL: valoración agregada (Google) + carrusel de reseñas en bucle.
+       Sprint 4 · storytelling: sube antes de Primera Fila — la confianza (otros ya
+       lo vivieron) se establece justo antes del clímax sensorial que cierra en reserva. -->
   <section class="proof" aria-labelledby="proof-h">
     <div class="proof__blooms" aria-hidden="true">
       <span class="proof__bloom proof__bloom--1"><img src="/assets/img/flor-coreopsis.png" alt="" loading="lazy" decoding="async" /></span>
@@ -187,7 +179,26 @@ const groupReviews = Array.from({ length: reps }).flatMap(() => real);
     </div>
   </section>
 
-  <!-- PRIMERA FILA — capítulo inmersivo: OBSERVAR → ESCUCHAR → DESCUBRIR → reserva -->
+  <!-- PRIMERA FILA — capítulo inmersivo: OBSERVAR → ESCUCHAR → DESCUBRIR → reserva.
+       Sprint 4 · storytelling: el clímax de la historia — ya termina en su propia
+       llamada a reservar, así que sube de la cola de la página a este punto. -->
   <PrimeraFila />
+
+  <!-- EXPLORAR — editorial full-bleed, imágenes siempre visibles.
+       Sprint 4 · storytelling: baja al final — es un hub de navegación (duplica
+       destinos ya enlazados en Quiénes/Despertar), no un beat narrativo; ahora
+       es la puerta de salida suave para quien quiera explorar antes de decidir,
+       en vez de interrumpir la historia a mitad de camino. -->
+  <nav class="explore" aria-label="Secciones">
+    <a href="/conocenos/" style="--img:url(/assets/img/enlace-conocenos.jpg); --posy:38%">
+      <span class="explore__label">Conócenos</span>
+    </a>
+    <a href="/menu/" style="--img:url(/assets/img/enlace-menu.jpg); --posy:50%">
+      <span class="explore__label">El menú</span>
+    </a>
+    <a href="/galeria/" style="--img:url(/assets/img/enlace-galeria.jpg); --posy:40%">
+      <span class="explore__label">Galería</span>
+    </a>
+  </nav>
 
 </Base>
