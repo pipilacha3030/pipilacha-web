@@ -1,11 +1,32 @@
 ---
 import Base from '../layouts/Base.astro';
 import { menciones } from '../data/prensa.js';
+
+// SEO: CollectionPage citando las menciones reales (mentions, no authorship —
+// son artículos ajenos). Sin datePublished: los datos solo tienen mes/año,
+// no día exacto, y un ISO date inventado sería fabricar un dato.
+const pressLd = `<script type="application/ld+json">${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  '@id': 'https://pipilacha.es/prensa/',
+  url: 'https://pipilacha.es/prensa/',
+  name: 'Pipilacha en los medios',
+  inLanguage: 'es',
+  about: { '@id': 'https://pipilacha.es/#restaurant' },
+  mentions: menciones.map((m) => ({
+    '@type': 'NewsArticle',
+    headline: m.titular,
+    url: m.url,
+    publisher: { '@type': 'Organization', name: m.medio },
+    ...(m.autor ? { author: { '@type': 'Person', name: m.autor } } : {}),
+  })),
+})}</script>`;
 ---
 
 <Base
   title="Prensa · Pipilacha"
   description="Pipilacha en los medios. Lo que la prensa cuenta del restaurante de flores comestibles de Madrid: 15 pases, de jueves a domingo. Información y contacto de prensa."
+  schema={pressLd}
 >
 
   <section class="page-header">

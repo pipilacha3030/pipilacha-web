@@ -2,11 +2,29 @@
 import Base from '../../layouts/Base.astro';
 import { fotos } from '../../data/galeria.en.js';
 import { dims } from '../../data/galeria-dims.js';
+
+const galleryLd = `<script type="application/ld+json">${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'ImageGallery',
+  '@id': 'https://pipilacha.es/en/galeria/',
+  url: 'https://pipilacha.es/en/galeria/',
+  name: 'Gallery · Pipilacha',
+  description: 'Dishes, flowers and service at Pipilacha, a flower tasting-menu restaurant in Madrid.',
+  inLanguage: 'en',
+  about: { '@id': 'https://pipilacha.es/#restaurant' },
+  associatedMedia: fotos.slice(0, 12).map((f) => ({
+    '@type': 'ImageObject',
+    contentUrl: `https://pipilacha.es${f.src}`,
+    caption: f.alt,
+  })),
+})}</script>`;
 ---
 
 <Base
   title="Gallery · Pipilacha"
   description="Dishes, flowers and service at Pipilacha, a flower tasting-menu restaurant in Madrid."
+  ogImage="/assets/img/og-galeria.jpg"
+  schema={galleryLd}
 >
 
   <section class="gal-stage" id="galStage" aria-roledescription="carousel" aria-label="Immersive gallery" tabindex="0">

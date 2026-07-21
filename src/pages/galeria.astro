@@ -2,11 +2,31 @@
 import Base from '../layouts/Base.astro';
 import { fotos } from '../data/galeria.js';
 import { dims } from '../data/galeria-dims.js';
+
+// SEO: ImageGallery (12 fotos representativas, no las 76 — decorativo si se repite
+// una por una). about enlaza al @id del Restaurant del grafo base (Base.astro).
+const galleryLd = `<script type="application/ld+json">${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'ImageGallery',
+  '@id': 'https://pipilacha.es/galeria/',
+  url: 'https://pipilacha.es/galeria/',
+  name: 'Galería · Pipilacha',
+  description: 'Platos, flores y servicio en Pipilacha, restaurante de degustación floral en Madrid.',
+  inLanguage: 'es',
+  about: { '@id': 'https://pipilacha.es/#restaurant' },
+  associatedMedia: fotos.slice(0, 12).map((f) => ({
+    '@type': 'ImageObject',
+    contentUrl: `https://pipilacha.es${f.src}`,
+    caption: f.alt,
+  })),
+})}</script>`;
 ---
 
 <Base
   title="Galería · Pipilacha"
   description="Platos, flores y servicio en Pipilacha, restaurante de degustación floral en Madrid."
+  ogImage="/assets/img/og-galeria.jpg"
+  schema={galleryLd}
 >
 
   <section class="gal-stage" id="galStage" aria-roledescription="carrusel" aria-label="Galería inmersiva" tabindex="0">

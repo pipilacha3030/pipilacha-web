@@ -2,11 +2,29 @@
 import Base from '../../layouts/Base.astro';
 import { menciones } from '../../data/prensa.js';
 // Los titulares son de artículos reales en español: se dejan tal cual (son citas).
+
+const pressLd = `<script type="application/ld+json">${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  '@id': 'https://pipilacha.es/en/prensa/',
+  url: 'https://pipilacha.es/en/prensa/',
+  name: 'Pipilacha in the media',
+  inLanguage: 'en',
+  about: { '@id': 'https://pipilacha.es/#restaurant' },
+  mentions: menciones.map((m) => ({
+    '@type': 'NewsArticle',
+    headline: m.titular,
+    url: m.url,
+    publisher: { '@type': 'Organization', name: m.medio },
+    ...(m.autor ? { author: { '@type': 'Person', name: m.autor } } : {}),
+  })),
+})}</script>`;
 ---
 
 <Base
   title="Press · Pipilacha"
   description="Pipilacha in the media. What the press says about the edible-flower restaurant in Madrid: 15 courses, Thursday to Sunday. Press information and contact."
+  schema={pressLd}
 >
 
   <section class="page-header">
