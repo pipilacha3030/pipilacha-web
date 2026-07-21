@@ -55,6 +55,11 @@ const restaurantDescription = lang === 'en'
   : 'El único restaurante del mundo construido íntegramente sobre las flores. Menú de degustación de quince pases con flores comestibles como ingrediente principal, en Madrid.';
 const restaurantCuisine = lang === 'en' ? 'Floral author cuisine' : 'Cocina floral de autor';
 const restaurantUrl = lang === 'en' ? new URL(altHref('/', 'en'), Astro.site).href : SITE;
+// hasMenu: mismo patrón que restaurantUrl — en inglés debe apuntar a /en/menu/ y /en/vinos/,
+// no a las URLs en español (antes eran fijas, sin condicionar por idioma).
+const restaurantMenus = lang === 'en'
+  ? [new URL(altHref('/menu', 'en'), Astro.site).href, new URL(altHref('/vinos', 'en'), Astro.site).href]
+  : [`${SITE}menu/`, `${SITE}vinos/`];
 
 const graph = [
   {
@@ -94,7 +99,7 @@ const graph = [
       "bestRating": "5",
       "worstRating": "1"
     },
-    "hasMenu": [`${SITE}menu/`, `${SITE}vinos/`],
+    "hasMenu": restaurantMenus,
     "founder": [{ "@id": ID.aran }, { "@id": ID.noe }],
     "knowsAbout": [
       "Flores comestibles",
