@@ -1,18 +1,30 @@
 ---
 import Base from '../../layouts/Base.astro';
+import { faqRegalaEn as faq } from '../../data/faq.js';
 // El widget de Bonkdo tiene su propio selector ES/EN; el iframe es el mismo.
+
+const faqSchema = `<script type="application/ld+json">${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+})}</script>`;
 ---
 
 <Base
   title="Gift Pipilacha · The flower menu, to give"
   description="Give Pipilacha: the Solsticio floral tasting menu, fifteen courses built on flowers, in Madrid. Gift card valid for a year."
+  schema={faqSchema}
 >
 
   <!-- BUY · Bonkdo external widget (temporary, until the in-house gift system) -->
   <section class="gift-shop" id="comprar">
     <p class="eyebrow reveal">Buy the card</p>
     <h1 class="reveal-head">Give it now</h1>
-    <p class="gift-shop__lead reveal">Pick an amount or a menu and the card arrives with its code. The date is booked later through TheFork.</p>
+    <p class="gift-shop__lead reveal">Pick an amount or a menu and the card arrives with its code. The date is booked later through TheFork. Valid for a year from purchase.</p>
     <div class="gift-shop__frame reveal">
       <iframe
         id="giftFrame"
@@ -42,5 +54,21 @@ import Base from '../../layouts/Base.astro';
       }
     })();
   </script>
+
+  <!-- Gift-card FAQ: same component/style as /en/reservas/ -->
+  <section class="faq" aria-labelledby="faq-h">
+    <div class="faq__inner">
+      <p class="eyebrow reveal">About the card</p>
+      <h2 class="faq__title reveal" id="faq-h">Frequently asked questions</h2>
+      <div class="faq__list" data-reveal-stagger>
+        {faq.map((f) => (
+          <details class="faq__item reveal">
+            <summary class="faq__q">{f.q}</summary>
+            <div class="faq__a"><p>{f.a}</p></div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
 
 </Base>

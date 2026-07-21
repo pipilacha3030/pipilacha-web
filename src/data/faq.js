@@ -28,6 +28,39 @@ export const faqEs = [
   },
 ];
 
+/* FAQ propia de la tarjeta regalo (/regala/). Solo hechos ya confirmados:
+   vigencia de un año y el mecanismo de canje que ya describe la propia página
+   ("te llega la tarjeta con su código, el día se reserva luego por TheFork"). */
+export const faqRegalaEs = [
+  {
+    q: '¿Caduca la tarjeta regalo?',
+    a: 'Sí, es válida durante un año desde la compra.',
+  },
+  {
+    q: '¿Cómo se canjea?',
+    a: 'Con el código que llega al comprarla, quien la recibe reserva directamente por TheFork el día que prefiera, o llamando al 919 12 59 98.',
+  },
+  {
+    q: '¿Hay que elegir la fecha al comprarla?',
+    a: 'No. La tarjeta llega con su código y la persona que la recibe reserva cuando quiera, dentro del año de validez.',
+  },
+];
+
+export const faqRegalaEn = [
+  {
+    q: 'Does the gift card expire?',
+    a: 'Yes, it’s valid for a year from the purchase date.',
+  },
+  {
+    q: 'How is it redeemed?',
+    a: 'With the code that arrives on purchase, whoever receives it books directly through TheFork for whichever day they prefer, or by calling +34 919 12 59 98.',
+  },
+  {
+    q: 'Do we need to pick a date when buying it?',
+    a: 'No. The card arrives with its code, and whoever receives it books whenever they like, within the year of validity.',
+  },
+];
+
 export const faqEn = [
   {
     q: 'How much does it cost to eat at Pipilacha?',
