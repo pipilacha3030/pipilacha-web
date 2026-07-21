@@ -1,4 +1,4 @@
-/* Prueba social. La valoración agregada es factual (Google 4,9 · 146 reseñas;
+/* Prueba social. La valoración agregada es factual (Google 4,9 · 156 reseñas;
    TheFork 9,9). Cada reseña lleva una miniatura (`photo`): una foto de plato/mesa
    de la casa, no del cocinero — es el hilo visual del carrusel.
 
@@ -11,6 +11,9 @@ export const aggregate = {
   rating: '4,9',
   ratingEn: '4.9',
   count: 156,
+  // TheFork usa escala 0-10; mismo dato factual, antes solo vivía en este comentario
+  thefork: '9,9',
+  theforkEn: '9.9',
   // enlace a la ficha/reseñas en Google Maps (mismo destino que «Cómo llegar»)
   url: 'https://www.google.com/maps/search/?api=1&query=Pipilacha%2C%20C.%20del%20Azulejo%2C%202%2C%2028028%20Madrid',
 };

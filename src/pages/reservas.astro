@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { faqEs as faq } from '../data/faq.js';
+import { aggregate } from '../data/reviews.js';
 
 // FAQPage schema: los motores generativos (ChatGPT, Perplexity, AI Overviews)
 // extraen los pares pregunta-respuesta. El texto también está visible abajo.
@@ -42,6 +43,10 @@ const faqSchema = `<script type="application/ld+json">${JSON.stringify({
       <p class="eyebrow">Reservas</p>
       <h1 class="reveal-head">Reservar<br>en Pipilacha</h1>
       <p>Elige día y turno abajo. Dieciséis plazas por servicio: ocho en la barra, frente a la cocina abierta, y ocho en mesa.</p>
+      <p class="reservas__trust">
+        <span class="proof__stars" aria-hidden="true">★★★★★</span>
+        <strong>{aggregate.rating}</strong> en Google ({aggregate.count} reseñas) · <strong>{aggregate.thefork}</strong> en TheFork · <a href="/prensa/">como en El País, El Español y otros medios</a>
+      </p>
     </div>
 
     <!-- WIDGET THEFORK (reserva online, inline) -->

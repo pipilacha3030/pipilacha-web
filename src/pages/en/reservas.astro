@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { faqEn as faq } from '../../data/faq.js';
+import { aggregate } from '../../data/reviews.js';
 
 const faqSchema = `<script type="application/ld+json">${JSON.stringify({
   '@context': 'https://schema.org',
@@ -36,6 +37,10 @@ const faqSchema = `<script type="application/ld+json">${JSON.stringify({
       <p class="eyebrow">Reservations</p>
       <h1 class="reveal-head">Book<br>at Pipilacha</h1>
       <p>Pick a day and a sitting below. Sixteen seats per service: eight at the counter, facing the open kitchen, and eight at tables.</p>
+      <p class="reservas__trust">
+        <span class="proof__stars" aria-hidden="true">★★★★★</span>
+        <strong>{aggregate.ratingEn}</strong> on Google ({aggregate.count} reviews) · <strong>{aggregate.theforkEn}</strong> on TheFork · <a href="/en/prensa/">as featured in El País, El Español and other outlets</a>
+      </p>
     </div>
 
     <!-- WIDGET THEFORK (mismo widget; carga gated por consentimiento de cookies) -->

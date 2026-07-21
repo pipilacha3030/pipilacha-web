@@ -1200,6 +1200,12 @@ body:has(.gal-stage) .reserva-bar{display:none}
 .page-header--blooms{position:relative;overflow:hidden}
 .page-header--blooms > :not(.menu-blooms){position:relative;z-index:1}
 
+/* reservas: prueba social + prensa justo antes del widget (Sprint 5 · conversión) */
+.page-header .reservas__trust{margin-top:1rem;max-width:none;display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;font-size:.86rem;color:var(--text-subtle)}
+.reservas__trust strong{color:var(--moss);font-weight:600}
+.reservas__trust a{color:var(--accent);text-decoration:underline;text-underline-offset:3px;transition:color var(--dur-fast) var(--ease)}
+.reservas__trust a:hover{color:var(--moss)}
+
 
 /* ---------- páginas legales (aviso legal · privacidad · cookies) ----------
    Prosa larga y legible: una columna estrecha (65ch), tipografía de marca,
