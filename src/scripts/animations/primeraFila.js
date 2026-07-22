@@ -46,7 +46,12 @@ export function initPrimeraFila() {
       scrollTrigger: {
         trigger: pin,
         start: 'top top',
-        end: '+=250%',      // ~350vh de recorrido (100vh pin + 250vh scrub)
+        end: '+=170%',      // ~270vh de recorrido (100vh pin + 170vh scrub) — antes
+                            // 250% (350vh): 3 escenas pedían casi 3.5 pantallas de
+                            // scroll, un tercio del recorrido total de la home. La
+                            // coreografía interna (times 0..28) se reescala sola al
+                            // rango, así que el ritmo relativo de los crossfades no
+                            // cambia — solo hace falta menos scroll físico para verlos.
         pin: true,
         scrub: 0.6,
         anticipatePin: 1,
