@@ -27,9 +27,14 @@ export function initPrimeraFila() {
     // pre-decodificar: además de descargarse (eager en el HTML), el navegador rasteriza
     // cada foto ya — el fundido entre escenas nunca pilla una imagen a medio decodificar.
     imgs.forEach((img) => { if (img && img.decode) img.decode().catch(() => {}); });
-    // "elementos" que entran/salen en cada escena (marca, título, lead, reserva)
+    // "elementos" que entran/salen en cada escena (filete, título, lead, reserva)
     const kids = scenes.map((s) =>
-      gsap.utils.toArray(s.querySelectorAll('.pf__marker, .pf__title, .pf__lead, .pf__reserva')));
+      gsap.utils.toArray(s.querySelectorAll('.pf__rule, .pf__title, .pf__lead, .pf__reserva')));
+    const rules = scenes.map((s) => s.querySelector('.pf__rule'));
+    // el filete se DIBUJA (scaleX 0→1) al asentarse cada escena — gesto motivado,
+    // no decorativo. Un solo tween por escena; la matemática de enter/exit no cambia.
+    const draw = (i, at) => tl.fromTo(rules[i], { scaleX: 0 },
+      { scaleX: 1, duration: 2.4, ease: 'power2.out' }, at);
 
     // estado base: solo la escena 1 visible
     gsap.set(scenes, { opacity: 0 });
@@ -56,6 +61,7 @@ export function initPrimeraFila() {
 
     // ESCENA 01 · Observar — ken burns lento durante la lectura
     tl.to(imgs[0], { scale: 1.05, duration: 11, ease: 'none' }, 0);
+    draw(0, 0); // el filete se dibuja al asentar la pantalla al entrar al pin
 
     // 01 → 02 · Escuchar
     exit(kids[0], 8);
@@ -63,6 +69,7 @@ export function initPrimeraFila() {
       .fromTo(imgs[1], { scale: 1.08 }, { scale: 1, duration: 12, ease: 'none' }, 8)
       .to(scenes[1], { opacity: 1, duration: 3 }, 8.3);
     enter(kids[1], 8.8);
+    draw(1, 8.8);
 
     // 02 → 03 · Descubrir / reserva (transformación, no corte)
     exit(kids[1], 18);
@@ -70,6 +77,7 @@ export function initPrimeraFila() {
       .fromTo(imgs[2], { scale: 1.09 }, { scale: 1.02, duration: 12, ease: 'none' }, 18)
       .to(scenes[2], { opacity: 1, duration: 3 }, 18.3);
     enter(kids[2], 18.8);
+    draw(2, 18.8);
 
     // cola: la reserva reposa antes de soltar el pin
     tl.to({}, { duration: 6 }, 22);

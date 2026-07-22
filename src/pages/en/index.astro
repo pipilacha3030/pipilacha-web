@@ -60,28 +60,13 @@ import { aggregate, reviewsEn as reviews } from '../../data/reviews.js';
     </div>
   </section>
 
-  <!-- MARQUEE
-       Sprint 4 · storytelling: moved up right after "Who we are" — the numbers
-       (35 flowers, 16 seats, one season only) create scarcity/urgency early,
-       before the dish showcase and social proof. -->
-  <div class="marquee" aria-hidden="true">
-    <div class="marquee__track">
-      <div class="marquee__group">
-        <span>35 edible flowers</span><span class="marquee__sep">✿</span>
-        <span>15 courses</span><span class="marquee__sep">✿</span>
-        <span>one season only</span><span class="marquee__sep">✿</span>
-        <span>Madrid</span><span class="marquee__sep">✿</span>
-        <span>16 seats</span><span class="marquee__sep">✿</span>
-      </div>
-      <div class="marquee__group">
-        <span>35 edible flowers</span><span class="marquee__sep">✿</span>
-        <span>15 courses</span><span class="marquee__sep">✿</span>
-        <span>one season only</span><span class="marquee__sep">✿</span>
-        <span>Madrid</span><span class="marquee__sep">✿</span>
-        <span>16 seats</span><span class="marquee__sep">✿</span>
-      </div>
-    </div>
-  </div>
+  <!-- INTERLUDE: editorial standfirst between two full-bleed moments (the counter
+       panorama in "Who we are" and the "Awakening" card that grows to full screen).
+       A single serif line revealed once on scroll (.reveal, no dedicated JS); it
+       carries in prose the two facts that used to run in the marquee. -->
+  <section class="interlude">
+    <p class="interlude__line reveal">Thirty-five edible flowers, a single season.</p>
+  </section>
 
   <!-- SUMMER MENU · showcase card that grows to full screen on scroll -->
   <section class="gallery" id="gallery" aria-label="Solsticio floral">

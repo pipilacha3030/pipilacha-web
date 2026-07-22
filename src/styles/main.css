@@ -1645,28 +1645,12 @@ html:not(.js) .reviews{overflow-x:auto;-webkit-mask-image:none;mask-image:none}
 }
 @keyframes faqOpen{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 
-/* ---------- cinta editorial (la controla GSAP: deriva + skew por velocidad) ---------- */
-.marquee{
-  overflow:hidden;background:var(--cloud);
-  border-block:1px solid var(--border-subtle);
-  padding:clamp(1.1rem,2.6vw,1.9rem) 0;
-  /* desvanecido en los extremos: el texto entra y sale sin corte duro */
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);
-  mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);
-}
-.marquee__track{display:flex;width:max-content;will-change:transform;transform-origin:center}
-.marquee__group{display:flex;align-items:center;gap:clamp(1.6rem,3.4vw,3.2rem);padding-right:clamp(1.6rem,3.4vw,3.2rem)}
-.marquee__group span{
-  font-family:var(--serif);font-size:clamp(1.35rem,3.4vw,2.6rem);font-weight:400;
-  letter-spacing:.005em;color:var(--moss);white-space:nowrap;line-height:1;
-}
-.marquee__sep{color:var(--accent-soft);font-size:.6em;transform:translateY(-.08em)}
-/* fallback sin JS: si el bundle no carga, una animación CSS mantiene la cinta viva */
-@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-html:not(.js) .marquee__track{animation:marquee 40s linear infinite}
-@media (prefers-reduced-motion:reduce){
-  .marquee__track{animation:none}
-  .marquee{-webkit-mask-image:none;mask-image:none}
+/* ---------- interludio: standfirst editorial entre dos secciones a sangre ---------- */
+.interlude{background:var(--cream);padding:clamp(4.5rem,13vh,9rem) 0}
+.interlude__line{
+  max-width:26ch;margin-inline:auto;padding-inline:var(--gutter);
+  font-family:var(--serif);color:var(--moss);
+  font-size:clamp(1.7rem,4vw,2.9rem);line-height:1.16;letter-spacing:-.01em;text-wrap:balance;
 }
 
 /* ---------- prensa: menciones editoriales (disruptivo) ---------- */

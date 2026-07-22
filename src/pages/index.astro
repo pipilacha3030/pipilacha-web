@@ -74,29 +74,13 @@ const groupReviews = Array.from({ length: reps }).flatMap(() => real);
     </div>
   </div>
 
-  <!-- CINTA: tipografía editorial que corre y reacciona a la velocidad del scroll
-       (skew + aceleración vía GSAP, ver scripts/animations/marquee.js).
-       Sprint 4 · storytelling: sube justo después de Quiénes — las cifras
-       (35 flores, 16 plazas, una sola temporada) crean la urgencia/escasez
-       pronto, antes de mostrar el plato y la prueba social. -->
-  <div class="marquee" aria-hidden="true">
-    <div class="marquee__track">
-      <div class="marquee__group">
-        <span>35 flores comestibles</span><span class="marquee__sep">✿</span>
-        <span>15 pases</span><span class="marquee__sep">✿</span>
-        <span>una única temporada</span><span class="marquee__sep">✿</span>
-        <span>Madrid</span><span class="marquee__sep">✿</span>
-        <span>16 plazas</span><span class="marquee__sep">✿</span>
-      </div>
-      <div class="marquee__group">
-        <span>35 flores comestibles</span><span class="marquee__sep">✿</span>
-        <span>15 pases</span><span class="marquee__sep">✿</span>
-        <span>una única temporada</span><span class="marquee__sep">✿</span>
-        <span>Madrid</span><span class="marquee__sep">✿</span>
-        <span>16 plazas</span><span class="marquee__sep">✿</span>
-      </div>
-    </div>
-  </div>
+  <!-- INTERLUDIO: standfirst editorial entre dos momentos a sangre (la barra
+       panorámica de Quiénes y el «Despertar» que crece a pantalla). Una sola
+       frase serif que se revela al entrar en viewport (.reveal, sin JS propio);
+       recoge en prosa los dos datos que antes corrían en la cinta. -->
+  <section class="interlude">
+    <p class="interlude__line reveal">Treinta y cinco flores comestibles, una sola temporada.</p>
+  </section>
 
   <!-- DESPERTAR DE LAS FLORES · tarjeta con 4 fotos en crossfade; al hacer scroll
        el escenario se fija (pin) y la tarjeta crece hasta pantalla completa -->

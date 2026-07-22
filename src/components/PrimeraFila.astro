@@ -23,7 +23,7 @@ const label = lang === 'en' ? 'Front row — live the menu from the counter' : '
           <img src={s.img} alt={s.alt} width="1120" height="1400" loading="eager" fetchpriority="low" decoding="async" />
         </figure>
         <div class="pf__panel">
-          <p class="pf__marker"><span class="pf__num">{s.n}</span><span class="pf__step">{s.step}</span></p>
+          <span class="pf__rule" aria-hidden="true"></span>
           <h2 class="pf__title">{s.title}</h2>
           <p class="pf__lead">{s.lead}</p>
 
@@ -234,12 +234,12 @@ const label = lang === 'en' ? 'Front row — live the menu from the counter' : '
   .pf__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
   .pf__panel { max-width: 36rem; }
-  .pf__marker { display: flex; align-items: baseline; gap: .8rem; margin: 0 0 1.2rem; color: var(--accent); }
-  .pf__num { font-family: var(--serif); font-size: 1.35rem; line-height: 1; }
-  .pf__step { font-size: .7rem; letter-spacing: .28em; text-transform: uppercase; }
+  /* filete-ancla: sustituye al antiguo marcador numerado. Se dibuja (scaleX 0→1)
+     con la entrada de cada escena — ver primeraFila.js. transform-origin izq. */
+  .pf__rule { display: block; width: 2.75rem; height: 1px; margin: 0 0 1.5rem; background: var(--accent); transform-origin: left center; }
   .pf__title {
     font-family: var(--serif); font-size: clamp(2.1rem, 6vw, 3.4rem); line-height: 1.04;
-    color: var(--moss); letter-spacing: -.01em; margin: 0 0 1.2rem; text-wrap: balance;
+    color: var(--moss); letter-spacing: -.01em; margin: 0 0 1.5rem; text-wrap: balance;
   }
   .pf__lead {
     font-family: var(--sans); font-weight: 300; font-size: clamp(1rem, 1.35vw, 1.16rem);
@@ -275,6 +275,9 @@ const label = lang === 'en' ? 'Front row — live the menu from the counter' : '
   }
   :global(html.js) .pf__scene--1 { opacity: 1; }
   :global(html.js) .pf__img img { will-change: transform; }
+  /* con JS el filete arranca colapsado y se dibuja en la timeline (scaleX 0→1);
+     gated en .js para que sin bundle o bajo reduced-motion se muestre completo */
+  :global(html.js) .pf__rule { transform: scaleX(0); }
 
   /* — móvil con JS: imagen a sangre + texto sobre degradado (abajo) —
      900px: MISMO breakpoint que el resto del sitio (nav/hero/quiénes en
@@ -300,7 +303,7 @@ const label = lang === 'en' ? 'Front row — live the menu from the counter' : '
       text-shadow: var(--shadow-photo);
     }
     :global(html.js) .pf__cta { text-shadow: none; }
-    :global(html.js) .pf__marker { color: var(--accent-soft); }
+    :global(html.js) .pf__rule { background: var(--accent-soft); }
     :global(html.js) .pf__title { color: #fff; font-size: clamp(2.1rem, 8vw, 3rem); margin-bottom: .9rem; }
     :global(html.js) .pf__lead { color: rgba(244,239,230,.9); max-width: 42ch; }
     /* escena 3 (reserva) sobre foto: degradado más denso + texto claro y compacto */
@@ -333,12 +336,13 @@ const label = lang === 'en' ? 'Front row — live the menu from the counter' : '
       padding: 8vh clamp(2rem, 6vw, 6rem) 8vh clamp(3rem, 7vw, 7rem);
       display: flex; flex-direction: column; justify-content: center;
     }
-    :global(html.js) .pf__title { font-size: clamp(2.4rem, 4.2vw, 3.9rem); }
+    :global(html.js) .pf__title { font-size: clamp(2.4rem, 4.2vw, 3.9rem); letter-spacing: -.015em; }
     :global(html.js) .pf__lead { max-width: 33ch; }
     :global(html.js) .pf__reserva { margin-top: 2rem; }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .pf__img img { transform: none !important; }
+    :global(html.js) .pf__rule { transform: none; }
   }
 </style>
