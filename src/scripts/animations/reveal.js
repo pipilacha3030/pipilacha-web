@@ -7,7 +7,7 @@
    ============================================================ */
 import { gsap, SplitText, ScrollTrigger } from '../scroll/scrollTrigger.js';
 import { reduceMotion } from '../utils/motion.js';
-import { inPageContext } from '../utils/lifecycle.js';
+import { inPageContext, pageSignal } from '../utils/lifecycle.js';
 
 export function initReveals() {
   if (reduceMotion) {
@@ -61,13 +61,53 @@ export function initReveals() {
        si no, al entrar en pantalla. Las letras se ocultan desde ya (evita flash).
        Sin revert del split: la página se intercambia entera en cada transición,
        mismo patrón que splitReveal.js. */
+    const ebSignal = pageSignal();
     gsap.utils.toArray('.eyebrow--k').forEach((el) => {
-      const split = SplitText.create(el, { type: 'chars', mask: 'chars' });
+      const word = el.querySelector('.eyebrow__word') || el;
+      const seeds = gsap.utils.toArray(el.querySelectorAll('.eyebrow__seed img'));
+      const split = SplitText.create(word, { type: 'chars', mask: 'chars' });
       gsap.set(split.chars, { yPercent: 120 });
+      if (seeds.length) gsap.set(seeds, { opacity: 0, scale: 0, rotation: -18, transformOrigin: '50% 88%' });
       gsap.set(el, { visibility: 'visible' });
+
+      // VIDA CONTINUA: tras florecer, cada flor respira (balanceo + bob) con fase
+      // y ritmo propios → parece un ramillete vivo, nunca congelado.
+      const idle = () => seeds.forEach((f) => {
+        gsap.to(f, {
+          rotation: gsap.utils.random(-6, 6), yPercent: gsap.utils.random(-11, 11),
+          duration: gsap.utils.random(2.8, 4.4), ease: 'sine.inOut',
+          repeat: -1, yoyo: true, delay: gsap.utils.random(0, 0.8),
+        });
+      });
+
+      // INTERACCIÓN con el cursor sobre la palabra: las flores se inclinan hacia el
+      // puntero (magnetismo, cada una con profundidad distinta) y se abren al pasar.
+      if (seeds.length) {
+        const qx = seeds.map((f) => gsap.quickTo(f, 'x', { duration: 0.5, ease: 'power3' }));
+        const qy = seeds.map((f) => gsap.quickTo(f, 'y', { duration: 0.5, ease: 'power3' }));
+        el.addEventListener('pointermove', (e) => {
+          const r = el.getBoundingClientRect();
+          const cx = e.clientX - (r.left + r.width / 2);
+          const cy = e.clientY - (r.top + r.height / 2);
+          seeds.forEach((f, i) => { const k = 0.14 + i * 0.05; qx[i](cx * k); qy[i](cy * k); });
+        }, { signal: ebSignal });
+        el.addEventListener('pointerenter', () => {
+          gsap.to(seeds, { scale: 1.16, duration: 0.45, ease: 'power3.out', stagger: 0.05 });
+        }, { signal: ebSignal });
+        el.addEventListener('pointerleave', () => {
+          seeds.forEach((_, i) => { qx[i](0); qy[i](0); });
+          gsap.to(seeds, { scale: 1, duration: 0.55, ease: 'power3.out' });
+        }, { signal: ebSignal });
+      }
+
+      // ENTRADA "florecen las palabras": brotan las flores (pop back.out) → suben
+      // las letras desde su máscara → se traza el filete → arranca la vida continua.
       const play = () => {
-        gsap.to(split.chars, { yPercent: 0, duration: 0.7, ease: 'expo.out', stagger: 0.03 });
-        gsap.to(el, { '--eb-draw': 1, duration: 0.7, ease: 'power2.out', delay: 0.16 });
+        const tl = gsap.timeline();
+        if (seeds.length) tl.to(seeds, { opacity: 1, scale: 1, rotation: 0, duration: 0.62, ease: 'back.out(1.7)', stagger: 0.09 }, 0);
+        tl.to(split.chars, { yPercent: 0, duration: 0.7, ease: 'expo.out', stagger: 0.03 }, 0.32);
+        tl.to(el, { '--eb-draw': 1, duration: 0.7, ease: 'power2.out' }, 0.5);
+        if (seeds.length) tl.call(idle, null, '>-0.15');
       };
       if (el.getBoundingClientRect().top < window.innerHeight * 0.9) {
         gsap.delayedCall(0.2, play);

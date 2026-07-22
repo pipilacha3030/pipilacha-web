@@ -231,11 +231,24 @@ html.lenis,html.lenis body{height:auto}
    letra a letra (SplitText, en reveal.js) y un filete se traza debajo. El trazo
    lo pinta ::after leyendo --eb-draw (0→1), que anima GSAP. Sin JS o bajo
    reduced-motion: palabra y filete visibles, sin movimiento. */
-.eyebrow--k{position:relative;padding-bottom:.62em;letter-spacing:.22em}
+.eyebrow--k{position:relative;letter-spacing:.22em;gap:.5em;align-items:center}
 .eyebrow--k::before{display:none}
-.eyebrow--k::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:currentColor;opacity:.55;transform:scaleX(var(--eb-draw,1));transform-origin:left center}
+/* la palabra + su trazo (el filete se dibuja bajo la palabra, no bajo el ramillete) */
+.eyebrow__word{position:relative;display:inline-block;padding-bottom:.62em}
+.eyebrow__word::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:currentColor;opacity:.55;transform:scaleX(var(--eb-draw,1));transform-origin:left center}
+/* el ramillete: 3 flores PNG que florecen (scale+rotación, back.out) ANTES que las
+   letras — reveal.js. Pequeñas y nítidas; se apoyan en la línea base del tag */
+.eyebrow__seed{position:relative;display:inline-block;flex:none;width:2.3em;height:1.5em}
+.eyebrow__seed img{position:absolute;height:auto;transform-origin:50% 88%;filter:saturate(1.06) drop-shadow(0 2px 3px rgba(49,51,31,.2))}
+.eyebrow__seed img:nth-child(1){width:1.15em;left:0;bottom:.05em;z-index:1}
+.eyebrow__seed img:nth-child(2){width:1.5em;left:.5em;bottom:.2em;z-index:2}
+.eyebrow__seed img:nth-child(3){width:1em;left:1.3em;bottom:0;z-index:1}
 .js .eyebrow--k{--eb-draw:0;visibility:hidden}
-@media(prefers-reduced-motion:reduce){.js .eyebrow--k{--eb-draw:1;visibility:visible}}
+.js .eyebrow--k .eyebrow__seed img{opacity:0}
+@media(prefers-reduced-motion:reduce){
+  .js .eyebrow--k{--eb-draw:1;visibility:visible}
+  .js .eyebrow--k .eyebrow__seed img{opacity:.95}
+}
 .btn{
   position:relative;display:inline-block;font-family:var(--sans);font-weight:500;
   font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;
