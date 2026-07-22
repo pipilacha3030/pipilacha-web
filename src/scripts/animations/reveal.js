@@ -116,6 +116,33 @@ export function initReveals() {
       }
     });
 
+    /* ESTRELLAS de la valoración de Google: brotan una a una (pop back.out) al
+       entrar en pantalla — se parten en <span> por estrella, sin tocar el markup. */
+    gsap.utils.toArray('.proof__stars').forEach((el) => {
+      const spans = [...el.textContent.trim()].map((ch) => {
+        const s = document.createElement('span');
+        s.className = 'star'; s.textContent = ch;
+        el.appendChild(s); return s;
+      });
+      el.firstChild.remove(); // quita el nodo de texto original "★★★★★"
+      gsap.set(spans, { scale: 0, opacity: 0, display: 'inline-block', transformOrigin: '50% 65%' });
+      gsap.set(el, { visibility: 'visible' });
+      const play = () => gsap.to(spans, { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(2.2)', stagger: 0.1 });
+      if (el.getBoundingClientRect().top < window.innerHeight * 0.95) gsap.delayedCall(0.3, play);
+      else ScrollTrigger.create({ trigger: el, start: 'top 92%', once: true, onEnter: play });
+    });
+
+    /* INTERLUDIO "35 flores": la frase florece palabra a palabra (sube desde una
+       máscara), gesto inmersivo al entrar. */
+    gsap.utils.toArray('.interlude__line').forEach((el) => {
+      const split = SplitText.create(el, { type: 'words', mask: 'words' });
+      gsap.set(split.words, { yPercent: 115 });
+      gsap.set(el, { visibility: 'visible' });
+      const play = () => gsap.to(split.words, { yPercent: 0, duration: 0.95, ease: 'expo.out', stagger: 0.09 });
+      if (el.getBoundingClientRect().top < window.innerHeight * 0.92) gsap.delayedCall(0.2, play);
+      else ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true, onEnter: play });
+    });
+
     /* PRENSA: filas editoriales con reveal de clip-path */
     gsap.utils.toArray('.press-row').forEach((row) => {
       gsap.fromTo(row,

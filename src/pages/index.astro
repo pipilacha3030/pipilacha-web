@@ -79,7 +79,14 @@ const groupReviews = Array.from({ length: reps }).flatMap(() => real);
        frase serif que se revela al entrar en viewport (.reveal, sin JS propio);
        recoge en prosa los dos datos que antes corrían en la cinta. -->
   <section class="interlude">
-    <p class="interlude__line reveal">Treinta y cinco flores comestibles, una sola temporada.</p>
+    <div class="interlude__blooms" aria-hidden="true">
+      <span class="interlude__bloom interlude__bloom--1"><img src="/assets/img/flor-cosmos.png" alt="" loading="lazy" decoding="async" /></span>
+      <span class="interlude__bloom interlude__bloom--2"><img src="/assets/img/flor-dalia.png" alt="" loading="lazy" decoding="async" /></span>
+      <span class="interlude__bloom interlude__bloom--3"><img src="/assets/img/flor-borraja.png" alt="" loading="lazy" decoding="async" /></span>
+      <span class="interlude__bloom interlude__bloom--4"><img src="/assets/img/flor-calendula.png" alt="" loading="lazy" decoding="async" /></span>
+      <span class="interlude__bloom interlude__bloom--5"><img src="/assets/img/flor-aciano.png" alt="" loading="lazy" decoding="async" /></span>
+    </div>
+    <p class="interlude__line">Treinta y cinco flores comestibles, una sola temporada.</p>
   </section>
 
   <!-- DESPERTAR DE LAS FLORES · tarjeta con 4 fotos en crossfade; al hacer scroll
