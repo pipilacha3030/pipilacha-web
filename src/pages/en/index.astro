@@ -60,22 +60,8 @@ import { aggregate, reviewsEn as reviews } from '../../data/reviews.js';
     </div>
   </section>
 
-  <!-- INTERLUDE: editorial standfirst between two full-bleed moments (the counter
-       panorama in "Who we are" and the "Awakening" card that grows to full screen).
-       A single serif line revealed once on scroll (.reveal, no dedicated JS); it
-       carries in prose the two facts that used to run in the marquee. -->
-  <section class="interlude">
-    <div class="interlude__blooms" aria-hidden="true">
-      <span class="interlude__bloom interlude__bloom--1"><img src="/assets/img/flor-cosmos.png" alt="" loading="lazy" decoding="async" /></span>
-      <span class="interlude__bloom interlude__bloom--2"><img src="/assets/img/flor-dalia.png" alt="" loading="lazy" decoding="async" /></span>
-      <span class="interlude__bloom interlude__bloom--3"><img src="/assets/img/flor-borraja.png" alt="" loading="lazy" decoding="async" /></span>
-      <span class="interlude__bloom interlude__bloom--4"><img src="/assets/img/flor-calendula.png" alt="" loading="lazy" decoding="async" /></span>
-      <span class="interlude__bloom interlude__bloom--5"><img src="/assets/img/flor-aciano.png" alt="" loading="lazy" decoding="async" /></span>
-    </div>
-    <p class="interlude__line">Thirty-five edible flowers, a single season.</p>
-  </section>
-
-  <!-- SUMMER MENU · showcase card that grows to full screen on scroll -->
+  <!-- SUMMER MENU · third scene of the same full-bleed stage: showcase card
+       with 4 photos in crossfade (showcase.js). -->
   <section class="gallery" id="gallery" aria-label="Solsticio floral">
     <div class="gallery__stage">
     <a class="gallery-finale showcase" id="despertar" href="/en/menu/" aria-label="See the Solsticio floral menu">
@@ -92,6 +78,24 @@ import { aggregate, reviewsEn as reviews } from '../../data/reviews.js';
         <span class="showcase__more">See the courses →</span>
       </span>
     </a>
+    </div>
+  </section>
+
+  <!-- INTERLUDE: editorial standfirst between the full-bleed stage (hero →
+       who we are → solsticio floral) and social proof. A single serif line
+       revealed once on scroll (.reveal, no dedicated JS); it carries in prose
+       the two facts that used to run in the marquee. -->
+  <section class="interlude">
+    <div class="interlude__blooms" aria-hidden="true">
+      <span class="interlude__bloom interlude__bloom--1"><span class="interlude__bloom-in"><img src="/assets/img/flor-cosmos.png" alt="" loading="lazy" decoding="async" /></span></span>
+      <span class="interlude__bloom interlude__bloom--2"><span class="interlude__bloom-in"><img src="/assets/img/flor-dalia.png" alt="" loading="lazy" decoding="async" /></span></span>
+      <span class="interlude__bloom interlude__bloom--3"><span class="interlude__bloom-in"><img src="/assets/img/flor-borraja.png" alt="" loading="lazy" decoding="async" /></span></span>
+      <span class="interlude__bloom interlude__bloom--4"><span class="interlude__bloom-in"><img src="/assets/img/flor-calendula.png" alt="" loading="lazy" decoding="async" /></span></span>
+      <span class="interlude__bloom interlude__bloom--5"><span class="interlude__bloom-in"><img src="/assets/img/flor-aciano.png" alt="" loading="lazy" decoding="async" /></span></span>
+    </div>
+    <div class="interlude__figure">
+      <span class="interlude__num" aria-hidden="true">35</span>
+      <p class="interlude__line">Thirty-five edible flowers, a single season.</p>
     </div>
   </section>
 

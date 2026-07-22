@@ -143,6 +143,51 @@ export function initReveals() {
       else ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true, onEnter: play });
     });
 
+    /* INTERLUDIO "35 flores" (numeral + brote): el "35" (marca de agua
+       contorneada, detrás de la frase) se solidifica y cada flor brota —
+       de diminuta y girada a su tamaño natural — al hilo del propio tránsito
+       de la sección por el viewport (scrub, sin pin: no añade largo de scroll,
+       usa el que ya recorre la sección). Al completarse, las flores quedan en
+       manos de su deriva infinita de siempre (windCross/bloomSpin, CSS) — por
+       eso el brote vive en un envoltorio propio (.interlude__bloom-in) y nunca
+       toca el `transform` que ya animan esos keyframes.
+       Profundidad con el cursor (solo puntero fino): cada flor se inclina hacia
+       él a una velocidad ligeramente distinta — un guiño sutil, no un efecto. */
+    gsap.utils.toArray('.interlude').forEach((section) => {
+      const num = section.querySelector('.interlude__num');
+      const blooms = gsap.utils.toArray(section.querySelectorAll('.interlude__bloom-in'));
+      if (!num && !blooms.length) return;
+
+      if (num) gsap.set(num, { opacity: 0, scale: 0.8, filter: 'blur(10px)' });
+      if (blooms.length) gsap.set(blooms, { scale: 0, opacity: 0, rotation: () => gsap.utils.random(-24, 24) });
+
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: section, start: 'top 82%', end: 'top 30%', scrub: 0.6 },
+      });
+      if (num) tl.to(num, { opacity: 1, scale: 1, filter: 'blur(0px)', ease: 'none' }, 0);
+      if (blooms.length) tl.to(blooms, { scale: 1, opacity: 1, rotation: 0, ease: 'none', stagger: 0.12 }, 0.05);
+
+      if (blooms.length && window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+        const q = blooms.map((b) => ({
+          x: gsap.quickTo(b, 'x', { duration: 0.9, ease: 'power3' }),
+          y: gsap.quickTo(b, 'y', { duration: 0.9, ease: 'power3' }),
+        }));
+        section.addEventListener('pointermove', (e) => {
+          const r = section.getBoundingClientRect();
+          const cx = (e.clientX - (r.left + r.width / 2)) / r.width;
+          const cy = (e.clientY - (r.top + r.height / 2)) / r.height;
+          blooms.forEach((b, i) => {
+            const depth = 8 + (i % 3) * 6; // profundidad variada: no todas a la vez
+            q[i].x(cx * depth);
+            q[i].y(cy * depth);
+          });
+        }, { signal: pageSignal() });
+        section.addEventListener('pointerleave', () => {
+          blooms.forEach((_, i) => { q[i].x(0); q[i].y(0); });
+        }, { signal: pageSignal() });
+      }
+    });
+
     /* PRENSA: filas editoriales con reveal de clip-path */
     gsap.utils.toArray('.press-row').forEach((row) => {
       gsap.fromTo(row,

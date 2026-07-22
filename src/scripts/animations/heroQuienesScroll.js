@@ -1,11 +1,22 @@
 /* ============================================================
-   HERO → QUIÉNES · scroll a pantalla completa (estilo "fullscreen slideshow").
-   Escritorio (≥901px): el escenario .fs-stage es sticky y recorta dos slides a
-   sangre (.hero y .quienes). Al entrar en la zona bloqueamos Lenis y un GSAP
-   Observer intercepta rueda/táctil/arrastre: cada gesto desliza UN slide
-   (discreto, no scrub) — el hero sube (yPercent -100) y quiénes entra desde
-   abajo (100→0). Cuando ya no hay slide en la dirección del gesto, devolvemos
-   el scroll a Lenis (hacia la galería si es abajo, hacia el tope si es arriba).
+   HERO → QUIÉNES → SOLSTICIO FLORAL · scroll a pantalla completa (estilo
+   "fullscreen slideshow"), con TRES escenas en vez de dos: el hero, "un menú
+   entero hecho de flores" y la tarjeta "Solsticio floral" (el showcase de
+   fotos) entran y salen del mismo escenario, una detrás de otra.
+   Escritorio (≥901px): el escenario .fs-stage es sticky y recorta los tres
+   slides a sangre (.hero, .quienes, .gallery). Al entrar en la zona bloqueamos
+   Lenis y un GSAP Observer intercepta rueda/táctil/arrastre: cada gesto
+   desliza UN slide (discreto, no scrub) — el que sale sube o baja completo
+   (yPercent ±100) mientras el que entra ocupa su lugar (100→0 o -100→0), y
+   como todas las transiciones son entre slides ADYACENTES (next()/prev() solo
+   se mueven de uno en uno) el matiz de "cuál pisa a cuál" nunca importa: dos
+   cajas a pantalla completa separadas siempre por exactamente 100vh no llegan
+   a solaparse. Cuando ya no hay slide en la dirección del gesto, devolvemos
+   el scroll a Lenis (hacia el interludio si es abajo, hacia el tope si es
+   arriba). El crossfade de fotos del showcase (showcase.js) no tiene forma de
+   leer su propia visibilidad aquí dentro (su posición de documento no cambia,
+   solo su yPercent) — por eso recibe un `showcase` handle y este módulo llama
+   a showcase.enter()/leave() cuando la escena 2 entra o sale.
    Móvil (≤900px): el hero es sticky (CSS) y quiénes va justo después en flujo
    normal — la propia geometría del documento hace que quiénes suba y cubra al
    hero (ver main.css, @media 900px), sea cual sea el origen del scroll. Sobre
@@ -47,14 +58,17 @@ const EASE = 'expo.inOut';
 let holding = false;
 export const heroJackHolding = () => holding;
 
-export function initHeroQuienes() {
+export function initHeroQuienes(showcase) {
   if (reduceMotion) return;
 
   const scroll = document.getElementById('fsScroll');
   const hero = document.getElementById('hero');
   const quienes = document.getElementById('quienes');
-  if (!scroll || !hero || !quienes) return;
+  const gallery = document.getElementById('gallery');
+  if (!scroll || !hero || !quienes || !gallery) return;
 
+  const slides = [hero, quienes, gallery];
+  const last = slides.length - 1; // 2 = solsticio floral
   const copy = quienes.querySelector('.quienes__copy');
   const desktop = window.matchMedia('(min-width:901px)');
 
@@ -93,7 +107,7 @@ export function initHeroQuienes() {
 
   /* -------------------- ESCRITORIO: scroll-jacking -------------------- */
   inPageContext(() => {
-    let idx = 0;          // 0 = hero, 1 = quiénes
+    let idx = 0;          // 0 = hero, 1 = quiénes, 2 = solsticio floral
     let active = false;   // ¿Observer capturando el gesto?
     let animating = false;
     let releasing = false; // soltando el scroll a Lenis (ignora activaciones espurias)
@@ -101,31 +115,44 @@ export function initHeroQuienes() {
                            // trajo no cuenta como gesto nuevo (si no, al volver de
                            // la galería te atraviesa quiénes sin verla)
 
-    // estados iniciales (idx 0): hero a la vista, quiénes esperando debajo
-    gsap.set(hero, { yPercent: 0 });
-    gsap.set(quienes, { yPercent: 100 });
-    gsap.set(copy, { autoAlpha: 0, y: 40 });
+    // coloca los slides en reposo según qué índice esté "a la vista"
+    const layout = (target) => {
+      slides.forEach((el, i) => {
+        gsap.set(el, { yPercent: i < target ? -100 : i > target ? 100 : 0 });
+      });
+      gsap.set(copy, target === 1 ? { autoAlpha: 1, y: 0 } : { autoAlpha: 0, y: 40 });
+    };
 
-    // desliza al slide `target` (0|1); el texto de quiénes aparece al llegar
+    // estados iniciales (idx 0): hero a la vista, el resto esperando debajo
+    layout(0);
+
+    // desliza al slide `target` (adyacente a idx); el texto de quiénes solo
+    // aparece/desaparece al cruzar la escena 1, y el crossfade del showcase
+    // se enciende/apaga al cruzar la escena 2 (solsticio floral)
     function goTo(target) {
       if (animating || target === idx) return;
       animating = true;
-      const toQuienes = target === 1;
+      const forward = target > idx;
+      const leaving = slides[idx];
+      const entering = slides[target];
+      const prevIdx = idx;
       const tl = gsap.timeline({
         defaults: { duration: DUR, ease: EASE },
-        onComplete: () => { idx = target; animating = false; settleUntil = performance.now() + 250; },
+        onComplete: () => {
+          idx = target; animating = false; settleUntil = performance.now() + 250;
+          if (target === last) showcase?.enter();
+          else if (prevIdx === last) showcase?.leave();
+        },
       });
-      tl.to(hero, { yPercent: toQuienes ? -100 : 0 }, 0)
-        .to(quienes, { yPercent: toQuienes ? 0 : 100 }, 0)
-        .to(copy,
-          toQuienes
-            ? { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power2.out' }
-            : { autoAlpha: 0, y: 40, duration: 0.35, ease: 'power2.in' },
-          toQuienes ? 0.42 : 0);
+      tl.to(leaving, { yPercent: forward ? -100 : 100 }, 0)
+        .to(entering, { yPercent: 0 }, 0);
+      if (target === 1) tl.to(copy, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 0.42);
+      else if (idx === 1) tl.to(copy, { autoAlpha: 0, y: 40, duration: 0.35, ease: 'power2.in' }, 0);
     }
 
-    // libera el scroll a Lenis y baja hacia la galería. Va SIEMPRE hacia delante
-    // (desde quiénes): el hero es el tope de la página, arriba no hay adónde ir.
+    // libera el scroll a Lenis y baja hacia el interludio. Va SIEMPRE hacia
+    // delante (desde la última escena): el hero es el tope de la página,
+    // arriba no hay adónde ir.
     // Scroll ANIMADO (no immediate): así el DOM y Lenis avanzan juntos y no hay un
     // tick de desfase en el que ScrollTrigger lea scrollTop=0 y dispare un onEnter
     // espurio; aun así, `releasing` blinda activate() hasta que el scroll acaba.
@@ -135,9 +162,10 @@ export function initHeroQuienes() {
       holding = false;
       releasing = true;
       obs.disable();
+      showcase?.leave();
       if (!lenis) { releasing = false; return; }
       lenis.start();
-      // un pelín pasado el final de la zona → el sticky se despega y entra la galería
+      // un pelín pasado el final de la zona → el sticky se despega y entra el interludio
       lenis.scrollTo(st.end + 2, {
         force: true,
         onComplete: () => { releasing = false; },
@@ -145,22 +173,15 @@ export function initHeroQuienes() {
     }
 
     // engancha el jack: bloquea Lenis en el tope de la zona y captura el gesto.
-    // entryIdx marca qué slide se ve al entrar (0 por arriba, 1 por abajo)
+    // entryIdx marca qué slide se ve al entrar (0 por arriba, last por abajo)
     function activate(entryIdx) {
       if (active || releasing) return;
       active = true;
       holding = true;
       idx = entryIdx;
       animating = false;
-      if (entryIdx === 0) {
-        gsap.set(hero, { yPercent: 0 });
-        gsap.set(quienes, { yPercent: 100 });
-        gsap.set(copy, { autoAlpha: 0, y: 40 });
-      } else {
-        gsap.set(hero, { yPercent: -100 });
-        gsap.set(quienes, { yPercent: 0 });
-        gsap.set(copy, { autoAlpha: 1, y: 0 });
-      }
+      layout(entryIdx);
+      if (entryIdx === last) showcase?.enter(); else showcase?.leave();
       // +1: aparcar EXACTAMENTE en st.start deja el progreso del trigger en 0,
       // que para ScrollTrigger es "fuera de la zona" → disparaba onLeaveBack y
       // deactivate() deshacía el jack un tick después de armarlo. 1px dentro
@@ -176,6 +197,7 @@ export function initHeroQuienes() {
       active = false;
       holding = false;
       obs.disable();
+      if (idx === last) showcase?.leave();
       if (lenis) lenis.start();
     }
 
@@ -184,7 +206,7 @@ export function initHeroQuienes() {
     // signifiquen lo mismo (AVANZAR) → onUp = siguiente, onDown = anterior.
     const next = () => {
       if (!active || animating || performance.now() < settleUntil) return;
-      if (idx < 1) goTo(idx + 1); else release();   // ya en quiénes → soltar hacia la galería
+      if (idx < last) goTo(idx + 1); else release();   // ya en la última escena → soltar
     };
     const prev = () => {
       if (!active || animating || performance.now() < settleUntil) return;
@@ -207,7 +229,7 @@ export function initHeroQuienes() {
       start: 'top top',
       end: 'bottom bottom',
       onEnter: () => activate(0),        // bajando: llegamos con el hero
-      onEnterBack: () => activate(1),    // subiendo desde la galería: con quiénes
+      onEnterBack: () => activate(last), // subiendo desde el interludio: con la última escena
       onLeave: deactivate,               // pasamos de largo hacia abajo
       onLeaveBack: deactivate,           // pasamos de largo hacia arriba
     });

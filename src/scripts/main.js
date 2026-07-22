@@ -40,9 +40,9 @@ function initPage() {
   initMediaBlooms();
   initMenuStem();
   initParallax();
-  initShowcase();
+  const showcase = initShowcase();
   initPrimeraFila();
-  initHeroQuienes();
+  initHeroQuienes(showcase);
   initReviews();
   initMagnetic();
 

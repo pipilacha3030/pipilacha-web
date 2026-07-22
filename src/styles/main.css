@@ -762,23 +762,27 @@ body.menu-open .nav__lang,.nav__dock.is-page-morph .nav__lang{opacity:0;pointer-
 @media (max-width:760px){ .home-petal{opacity:.6} }
 @media (prefers-reduced-motion:reduce){ .home-petal img{animation:none} }
 
-/* ---------- HERO → QUIÉNES · escenario de slides a pantalla completa ----------
-   Escritorio (≥901px): .fs-scroll mide 200vh y .fs-stage es un escenario sticky
-   de 100vh que recorta (overflow) dos slides a sangre (.hero y .quienes,
-   absolutos e imbricados). heroQuienesScroll.js bloquea Lenis, intercepta el
-   gesto con Observer y desliza los slides con yPercent (hero 0→-100, quiénes
-   100→0). El runway de 100vh sobrante deja que, al liberar hacia abajo, el
-   escenario se despegue y aparezca la galería sin salto.
-   Móvil / sin JS: .fs-stage es display:contents → hero y quiénes vuelven a
+/* ---------- HERO → QUIÉNES → SOLSTICIO FLORAL · escenario de slides a pantalla completa ----------
+   Escritorio (≥901px): .fs-scroll mide 300vh y .fs-stage es un escenario sticky
+   de 100vh que recorta (overflow) TRES slides a sangre (.hero, .quienes y
+   .gallery, absolutos e imbricados). heroQuienesScroll.js bloquea Lenis,
+   intercepta el gesto con Observer y desliza los slides con yPercent (el que
+   sale, 0→∓100; el que entra, ±100→0). El runway de 100vh sobrante deja que,
+   al liberar hacia abajo, el escenario se despegue y aparezca el interludio
+   sin salto.
+   Móvil / sin JS: .fs-stage es display:contents → los tres slides vuelven a
    apilarse en flujo normal (cada uno con su altura propia). */
 .fs-scroll{position:relative}
 .fs-stage{display:contents}
 @media(min-width:901px){
-  .fs-scroll{height:200vh}
+  .fs-scroll{height:300vh}
   .fs-stage{display:block;position:sticky;top:0;height:100vh;overflow:hidden}
   .fs-slide{position:absolute;inset:0;height:100vh;will-change:transform}
   /* el hero, como slide absoluto, ya no necesita su alto/min-height propio */
   .hero.fs-slide{min-height:0}
+  /* .gallery{position:relative} se declara más abajo en el archivo — como
+     compuesto, .gallery.fs-slide gana igual sin depender del orden de cascada */
+  .gallery.fs-slide{position:absolute}
 }
 
 /* ---------- quiénes somos: la panorámica de la barra ----------
@@ -1740,10 +1744,23 @@ html:not(.js) .reviews{overflow-x:auto;-webkit-mask-image:none;mask-image:none}
 }
 @keyframes faqOpen{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 
-/* ---------- interludio "35 flores": momento inmersivo con flores flotantes ---------- */
+/* ---------- interludio "35 flores": momento inmersivo con flores flotantes ----------
+   .interlude__figure apila el numeral "35" (marca de agua tipográfica, mismo
+   lenguaje que el índice contorneado de Prensa) y la frase en la misma celda de
+   grid — el numeral respalda el texto en vez de competir con él. Ambos, más el
+   brote de cada flor, se "asientan" con el tránsito natural de la sección por
+   el viewport (scroll-scrub, ver reveal.js): no hay pin, así que no añade
+   largo de scroll — usa el que ya recorre la sección. */
 .interlude{position:relative;overflow:hidden;background:var(--cream);padding:clamp(6rem,20vh,13rem) 0}
+.interlude__figure{position:relative;z-index:1;display:grid;place-items:center;padding-inline:var(--gutter)}
+.interlude__num,.interlude__line{grid-area:1/1}
+.interlude__num{
+  font-family:var(--serif);font-size:clamp(9rem,30vw,23rem);line-height:1;letter-spacing:-.02em;
+  color:transparent;-webkit-text-stroke:1px rgba(49,51,31,.16);
+  user-select:none;pointer-events:none;
+}
 .interlude__line{
-  position:relative;z-index:1;max-width:20ch;margin-inline:auto;padding-inline:var(--gutter);
+  position:relative;max-width:20ch;margin-inline:auto;
   font-family:var(--serif);color:var(--moss);text-align:center;
   font-size:clamp(2rem,5.6vw,4.1rem);line-height:1.08;letter-spacing:-.015em;text-wrap:balance;
 }
@@ -1753,6 +1770,10 @@ html:not(.js) .reviews{overflow-x:auto;-webkit-mask-image:none;mask-image:none}
 .interlude__blooms{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .interlude__bloom{position:absolute;top:var(--top);left:0;width:var(--sz);will-change:transform,opacity;
   transform:translate(-16vw,0);animation:windCross var(--dur) linear var(--delay,0s) infinite}
+/* capa intermedia SOLO para el brote de entrada (scale+giro+opacity vía GSAP,
+   scrub): mantenerla separada del windCross del padre y del bloomSpin del img
+   evita que dos animadores (CSS y GSAP) se disputen el mismo `transform` */
+.interlude__bloom-in{display:block;width:100%;height:100%}
 .interlude__bloom img{display:block;width:100%;height:auto;filter:blur(3px) saturate(1.1);
   will-change:transform;animation:bloomSpin var(--spin,90s) linear infinite}
 .interlude__bloom--1{--top:16%;--sz:clamp(40px,5.2vw,78px);--op:.42;--dur:37s;--delay:-4s;--spin:88s}
@@ -1762,7 +1783,10 @@ html:not(.js) .reviews{overflow-x:auto;-webkit-mask-image:none;mask-image:none}
 .interlude__bloom--5{--top:6%;--sz:clamp(28px,3.6vw,52px);--op:.28;--dur:30s;--delay:-7s;--spin:66s}
 .interlude__bloom--2,.interlude__bloom--4{animation-name:windCross2}
 .interlude__bloom--2 img,.interlude__bloom--4 img{animation-name:bloomSpinRev}
-@media (max-width:760px){.interlude__blooms{opacity:.7}}
+@media (max-width:760px){
+  .interlude__blooms{opacity:.7}
+  .interlude__num{font-size:clamp(7rem,42vw,12rem)}
+}
 @media (prefers-reduced-motion:reduce){.interlude__bloom{animation:none;display:none}}
 /* estrellas de la valoración: ocultas hasta que brotan (reveal.js) */
 .js .proof__stars{visibility:hidden}
@@ -2039,7 +2063,9 @@ body.menu-open .nav__dock.is-page-morph,
 /* ============================================================
    DESPERTAR DE LAS FLORES · la tarjeta está a sangre, a pantalla completa,
    sin animación de tamaño (antes crecía con scroll, ver git history). El
-   crossfade de las 4 capas sigue corriendo dentro (.showcase).
+   crossfade de las 4 capas sigue corriendo dentro (.showcase). En la home ES
+   (≥901px) .gallery ES la tercera escena del escenario de slides — ver
+   .gallery.fs-slide más arriba y heroQuienesScroll.js.
    ============================================================ */
 .gallery{position:relative;background:var(--cream)}
 .gallery__stage{min-height:100svh;display:flex;align-items:center;justify-content:center;overflow:hidden}
