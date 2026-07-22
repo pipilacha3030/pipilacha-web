@@ -721,10 +721,6 @@ body.menu-open .nav__lang,.nav__dock.is-page-morph .nav__lang{opacity:0;pointer-
   position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(20,20,12,.35) 0%,rgba(20,20,12,0) 28%,rgba(20,20,12,.15) 55%,rgba(20,20,12,.75) 100%);
 }
-/* pétalos ambientales (petals.js): entre la foto (z-index:0) y el texto
-   (z-index:2) — se ven caer sobre la imagen, nunca tapan el contenido */
-.hero__petals{position:absolute;inset:0;z-index:1;pointer-events:none;display:block}
-@media (prefers-reduced-motion:reduce){.hero__petals{display:none}}
 /* width:100% — como hijo flex de .hero encogería al ancho del texto y el
    centrado móvil quedaría descentrado (los px sobrantes caían a la derecha) */
 .hero__content{position:relative;z-index:2;color:var(--cream);padding:0 var(--gutter) clamp(3.5rem,9vh,7rem);width:100%;max-width:var(--maxw)}
