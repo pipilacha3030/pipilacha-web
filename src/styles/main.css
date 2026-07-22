@@ -227,6 +227,15 @@ html.lenis,html.lenis body{height:auto}
 .faq .eyebrow,.cta-band .eyebrow,.gift-shop .eyebrow,.showcase__cap .eyebrow,.notfound .eyebrow{justify-content:center}
 .faq .eyebrow::after,.cta-band .eyebrow::after,.gift-shop .eyebrow::after,.showcase__cap .eyebrow::after,.notfound .eyebrow::after{content:"";flex:none;width:1.7em;height:1px;background:currentColor;opacity:.5}
 @media(max-width:560px){.eyebrow{letter-spacing:.14em;font-size:.66rem}}
+/* etiqueta cinética (prototipo): sin guion decorativo; la palabra se ensambla
+   letra a letra (SplitText, en reveal.js) y un filete se traza debajo. El trazo
+   lo pinta ::after leyendo --eb-draw (0→1), que anima GSAP. Sin JS o bajo
+   reduced-motion: palabra y filete visibles, sin movimiento. */
+.eyebrow--k{position:relative;padding-bottom:.62em;letter-spacing:.22em}
+.eyebrow--k::before{display:none}
+.eyebrow--k::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:currentColor;opacity:.55;transform:scaleX(var(--eb-draw,1));transform-origin:left center}
+.js .eyebrow--k{--eb-draw:0;visibility:hidden}
+@media(prefers-reduced-motion:reduce){.js .eyebrow--k{--eb-draw:1;visibility:visible}}
 .btn{
   position:relative;display:inline-block;font-family:var(--sans);font-weight:500;
   font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;

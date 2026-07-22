@@ -5,7 +5,7 @@
    - filas de prensa (.press-row) y flores de vinos (.wine-cat__flor):
      revelados específicos de página, misma responsabilidad.
    ============================================================ */
-import { gsap } from '../scroll/scrollTrigger.js';
+import { gsap, SplitText, ScrollTrigger } from '../scroll/scrollTrigger.js';
 import { reduceMotion } from '../utils/motion.js';
 import { inPageContext } from '../utils/lifecycle.js';
 
@@ -52,6 +52,27 @@ export function initReveals() {
       } else {
         // bajo el pliegue: revelar al entrar en pantalla
         gsap.fromTo(el, from, { ...to, scrollTrigger: { trigger: el, start: 'top 88%' } });
+      }
+    });
+
+    /* ETIQUETA CINÉTICA (.eyebrow--k, prototipo Conócenos): sin guion; la palabra
+       se ensambla letra a letra (SplitText, máscara por char) y el filete se traza
+       (--eb-draw 0→1) un pelín después. Arranca al cargar si está sobre el pliegue;
+       si no, al entrar en pantalla. Las letras se ocultan desde ya (evita flash).
+       Sin revert del split: la página se intercambia entera en cada transición,
+       mismo patrón que splitReveal.js. */
+    gsap.utils.toArray('.eyebrow--k').forEach((el) => {
+      const split = SplitText.create(el, { type: 'chars', mask: 'chars' });
+      gsap.set(split.chars, { yPercent: 120 });
+      gsap.set(el, { visibility: 'visible' });
+      const play = () => {
+        gsap.to(split.chars, { yPercent: 0, duration: 0.7, ease: 'expo.out', stagger: 0.03 });
+        gsap.to(el, { '--eb-draw': 1, duration: 0.7, ease: 'power2.out', delay: 0.16 });
+      };
+      if (el.getBoundingClientRect().top < window.innerHeight * 0.9) {
+        gsap.delayedCall(0.2, play);
+      } else {
+        ScrollTrigger.create({ trigger: el, start: 'top 90%', once: true, onEnter: play });
       }
     });
 
