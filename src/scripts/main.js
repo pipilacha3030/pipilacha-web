@@ -12,6 +12,7 @@ import { initNav } from './nav.js';
 import { initTransitions } from './transitions.js';
 import { bindPageAnchors } from './scroll/anchors.js';
 import { initHero, resetHero } from './animations/hero.js';
+import { initPetals } from './animations/petals.js';
 import { initReveals } from './animations/reveal.js';
 import { initSplitReveal } from './animations/splitReveal.js';
 import { initMediaBlooms } from './animations/media.js';
@@ -35,6 +36,7 @@ function destroyPage() {
 
 function initPage() {
   initHero();
+  initPetals();
   initReveals();
   initSplitReveal();
   initMediaBlooms();
