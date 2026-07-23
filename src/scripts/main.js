@@ -18,6 +18,7 @@ import { initMediaBlooms } from './animations/media.js';
 import { initMenuStem } from './animations/menu.js';
 import { initParallax } from './animations/parallax.js';
 import { initShowcase } from './animations/showcase.js';
+import { initInterlude } from './animations/interlude.js';
 import { initPrimeraFila } from './animations/primeraFila.js';
 import { initHeroQuienes } from './animations/heroQuienesScroll.js';
 import { initReviews } from './animations/reviews.js';
@@ -41,6 +42,7 @@ function initPage() {
   initMenuStem();
   initParallax();
   const showcase = initShowcase();
+  initInterlude();
   initPrimeraFila();
   initHeroQuienes(showcase);
   initReviews();

@@ -14,6 +14,7 @@
 import { gsap, ScrollTrigger } from '../scroll/scrollTrigger.js';
 import { reduceMotion } from '../utils/motion.js';
 import { inPageContext } from '../utils/lifecycle.js';
+import { heroJackOwnsGallery } from './heroQuienesScroll.js';
 
 export function initShowcase() {
   if (reduceMotion) return null;
@@ -48,15 +49,12 @@ export function initShowcase() {
         .fromTo(img, { scale: scaleFrom },
           { scale: 1, duration: 3.4, ease: 'power1.out', immediateRender: false }, '<');
     });
-    // el escenario de slides (heroQuienesScroll.js) solo secuestra el scroll
-    // cuando la sección ES un fs-slide dentro de #fsScroll (hoy: la home ES;
-    // la EN aún no tiene ese marcado) Y estamos a ≥901px. Fuera de eso la
-    // sección vive en flujo normal y necesita su propio ScrollTrigger de
-    // visibilidad, igual que antes.
-    const jacked = window.matchMedia('(min-width:901px)').matches
-      && document.getElementById('fsScroll')
-      && showcase.closest('.gallery')?.classList.contains('fs-slide');
-    if (jacked) return; // el slide-jack llama a enter()/leave() por su cuenta
+    // si el escenario de slides se hace cargo de la sección (escritorio en la
+    // home ES), es él quien llama a enter()/leave(): dentro del escenario la
+    // sección no cambia de posición en el documento, solo de yPercent, así que
+    // un ScrollTrigger de visibilidad nunca dispararía. En móvil, en la home EN
+    // y bajo reduced-motion vive en flujo normal → ScrollTrigger de siempre.
+    if (heroJackOwnsGallery()) return;
     ScrollTrigger.create({
       trigger: showcase, start: 'top 85%', end: 'bottom top',
       onToggle: ({ isActive }) => isActive ? showcaseTl.play() : showcaseTl.pause()

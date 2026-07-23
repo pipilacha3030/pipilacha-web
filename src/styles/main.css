@@ -1744,50 +1744,46 @@ html:not(.js) .reviews{overflow-x:auto;-webkit-mask-image:none;mask-image:none}
 }
 @keyframes faqOpen{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 
-/* ---------- interludio "35 flores": momento inmersivo con flores flotantes ----------
-   .interlude__figure apila el numeral "35" (marca de agua tipográfica, mismo
-   lenguaje que el índice contorneado de Prensa) y la frase en la misma celda de
-   grid — el numeral respalda el texto en vez de competir con él. Ambos, más el
-   brote de cada flor, se "asientan" con el tránsito natural de la sección por
-   el viewport (scroll-scrub, ver reveal.js): no hay pin, así que no añade
-   largo de scroll — usa el que ya recorre la sección. */
-.interlude{position:relative;overflow:hidden;background:var(--cream);padding:clamp(6rem,20vh,13rem) 0}
-.interlude__figure{position:relative;z-index:1;display:grid;place-items:center;padding-inline:var(--gutter)}
-.interlude__num,.interlude__line{grid-area:1/1}
-.interlude__num{
-  font-family:var(--serif);font-size:clamp(9rem,30vw,23rem);line-height:1;letter-spacing:-.02em;
-  color:transparent;-webkit-text-stroke:1px rgba(49,51,31,.16);
-  user-select:none;pointer-events:none;
+/* ---------- interludio "35 flores": el dato, hecho literal ----------
+   Hay EXACTAMENTE 35 flores en pantalla, una por cada flor comestible de la
+   temporada (components/Interlude.astro las genera con posiciones dispersas
+   deterministas). El scroll las reúne en una guirnalda alrededor de la frase;
+   animations/interlude.js calcula el destino con la caja real del texto.
+   Tres capas por flor, una por animador, para que nadie pise el `transform`
+   de otro:  .ilf (GSAP, reunión) → .ilf__push (GSAP, cursor/onda) → img (CSS,
+   deriva perpetua). Sin JS: campo disperso y quieto, frase legible. */
+.interlude{position:relative;overflow:hidden;background:var(--cream);
+  padding:clamp(7rem,24vh,15rem) 0;isolation:isolate}
+.interlude__field{position:absolute;inset:0;z-index:0;pointer-events:none}
+.ilf{position:absolute;left:var(--x);top:var(--y);width:var(--sz);opacity:var(--op);
+  transform:translate(-50%,-50%);will-change:transform,opacity}
+.ilf__push{display:block}
+.ilf img{display:block;width:100%;height:auto;
+  animation:ilfDrift var(--dur,12s) ease-in-out var(--delay,0s) infinite alternate}
+/* tres profundidades: tamaño, opacidad y desenfoque cuentan la distancia */
+.ilf--d0{--sz:clamp(20px,2.5vw,36px);--op:.5}
+.ilf--d0 img{filter:blur(2px) saturate(1.05)}
+.ilf--d1{--sz:clamp(28px,3.5vw,52px);--op:.72}
+.ilf--d1 img{filter:blur(.6px) saturate(1.08)}
+.ilf--d2{--sz:clamp(36px,4.8vw,70px);--op:.92}
+.ilf--d2 img{filter:saturate(1.12) drop-shadow(0 6px 14px rgba(49,51,31,.14))}
+@keyframes ilfDrift{
+  from{transform:translate(0,0) rotate(calc(var(--spin,0deg) * -1))}
+  to{transform:translate(5px,-10px) rotate(var(--spin,0deg))}
 }
 .interlude__line{
-  position:relative;max-width:20ch;margin-inline:auto;
+  position:relative;z-index:1;max-width:19ch;margin-inline:auto;padding-inline:var(--gutter);
   font-family:var(--serif);color:var(--moss);text-align:center;
   font-size:clamp(2rem,5.6vw,4.1rem);line-height:1.08;letter-spacing:-.015em;text-wrap:balance;
 }
 .js .interlude__line{visibility:hidden}
-/* flores flotantes: mismo sistema que la reseña (windCross + giro lento), aquí en
-   crema — las flores de la reseña "suben" hasta esta sección (nunca al hero) */
-.interlude__blooms{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.interlude__bloom{position:absolute;top:var(--top);left:0;width:var(--sz);will-change:transform,opacity;
-  transform:translate(-16vw,0);animation:windCross var(--dur) linear var(--delay,0s) infinite}
-/* capa intermedia SOLO para el brote de entrada (scale+giro+opacity vía GSAP,
-   scrub): mantenerla separada del windCross del padre y del bloomSpin del img
-   evita que dos animadores (CSS y GSAP) se disputen el mismo `transform` */
-.interlude__bloom-in{display:block;width:100%;height:100%}
-.interlude__bloom img{display:block;width:100%;height:auto;filter:blur(3px) saturate(1.1);
-  will-change:transform;animation:bloomSpin var(--spin,90s) linear infinite}
-.interlude__bloom--1{--top:16%;--sz:clamp(40px,5.2vw,78px);--op:.42;--dur:37s;--delay:-4s;--spin:88s}
-.interlude__bloom--2{--top:60%;--sz:clamp(48px,6.4vw,92px);--op:.36;--dur:47s;--delay:-21s;--spin:104s}
-.interlude__bloom--3{--top:38%;--sz:clamp(30px,4vw,58px);--op:.32;--dur:32s;--delay:-11s;--spin:72s}
-.interlude__bloom--4{--top:80%;--sz:clamp(34px,4.6vw,66px);--op:.3;--dur:43s;--delay:-29s;--spin:96s}
-.interlude__bloom--5{--top:6%;--sz:clamp(28px,3.6vw,52px);--op:.28;--dur:30s;--delay:-7s;--spin:66s}
-.interlude__bloom--2,.interlude__bloom--4{animation-name:windCross2}
-.interlude__bloom--2 img,.interlude__bloom--4 img{animation-name:bloomSpinRev}
+/* móvil: sin blur (es lo caro de 35 capas) y flores algo más discretas */
 @media (max-width:760px){
-  .interlude__blooms{opacity:.7}
-  .interlude__num{font-size:clamp(7rem,42vw,12rem)}
+  .ilf img{filter:none}
+  .ilf--d2 img{filter:drop-shadow(0 4px 10px rgba(49,51,31,.12))}
+  .ilf--d0{--op:.42}
 }
-@media (prefers-reduced-motion:reduce){.interlude__bloom{animation:none;display:none}}
+@media (prefers-reduced-motion:reduce){.ilf img{animation:none}}
 /* estrellas de la valoración: ocultas hasta que brotan (reveal.js) */
 .js .proof__stars{visibility:hidden}
 @media (prefers-reduced-motion:reduce){.js .interlude__line,.js .proof__stars{visibility:visible}}

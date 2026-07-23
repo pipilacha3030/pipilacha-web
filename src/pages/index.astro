@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import PrimeraFila from '../components/PrimeraFila.astro';
+import Interlude from '../components/Interlude.astro';
 import { aggregate, reviewsEs as reviews } from '../data/reviews.js';
 
 // salvaguarda: solo reseñas reales (descarta cualquier `draft`). Y repite lo justo
@@ -71,45 +72,33 @@ const groupReviews = Array.from({ length: reps }).flatMap(() => real);
         </div>
       </section>
 
-      <!-- SOLSTICIO FLORAL · tercera escena del mismo escenario a pantalla
-           completa: tarjeta con 4 fotos en crossfade (showcase.js), a sangre. -->
-      <section class="gallery fs-slide" id="gallery" data-fs-slide="2" aria-label="Solsticio floral">
-        <div class="gallery__stage">
-        <a class="gallery-finale showcase" id="despertar" href="/menu/" aria-label="Ver el menú Solsticio floral">
-          <div class="showcase__frame">
-            <figure class="showcase__layer" data-layer="0"><img src="/assets/img/df-esparrago.jpg" alt="Espárragos a la brasa con romesco de tagete" loading="eager" fetchpriority="low" decoding="async" /></figure>
-            <figure class="showcase__layer" data-layer="1"><img src="/assets/img/df-guisante.jpg" alt="Guisante coco-saúco" loading="eager" fetchpriority="low" decoding="async" /></figure>
-            <figure class="showcase__layer" data-layer="2"><img src="/assets/img/df-vieira.jpg" alt="Vieira con flor de higo" loading="eager" fetchpriority="low" decoding="async" /></figure>
-            <figure class="showcase__layer" data-layer="3"><img src="/assets/img/df-mandarina.jpg" alt="Torrija de mandarina" loading="eager" fetchpriority="low" decoding="async" /></figure>
-            <span class="showcase__veil" aria-hidden="true"></span>
-          </div>
-          <span class="showcase__cap">
-            <span class="eyebrow">El menú de verano</span>
-            <span class="showcase__title">Solsticio floral</span>
-            <span class="showcase__more">Ver los pases →</span>
-          </span>
-        </a>
-        </div>
-      </section>
-
     </div>
   </div>
 
-  <!-- INTERLUDIO: standfirst editorial entre el escenario a sangre (hero →
-       quiénes → solsticio floral) y la prueba social. Una sola frase serif
-       que se revela al entrar en viewport (.reveal, sin JS propio); recoge en
-       prosa los dos datos que antes corrían en la cinta. -->
-  <section class="interlude">
-    <div class="interlude__blooms" aria-hidden="true">
-      <span class="interlude__bloom interlude__bloom--1"><span class="interlude__bloom-in"><img src="/assets/img/flor-cosmos.png" alt="" loading="lazy" decoding="async" /></span></span>
-      <span class="interlude__bloom interlude__bloom--2"><span class="interlude__bloom-in"><img src="/assets/img/flor-dalia.png" alt="" loading="lazy" decoding="async" /></span></span>
-      <span class="interlude__bloom interlude__bloom--3"><span class="interlude__bloom-in"><img src="/assets/img/flor-borraja.png" alt="" loading="lazy" decoding="async" /></span></span>
-      <span class="interlude__bloom interlude__bloom--4"><span class="interlude__bloom-in"><img src="/assets/img/flor-calendula.png" alt="" loading="lazy" decoding="async" /></span></span>
-      <span class="interlude__bloom interlude__bloom--5"><span class="interlude__bloom-in"><img src="/assets/img/flor-aciano.png" alt="" loading="lazy" decoding="async" /></span></span>
-    </div>
-    <div class="interlude__figure">
-      <span class="interlude__num" aria-hidden="true">35</span>
-      <p class="interlude__line">Treinta y cinco flores comestibles, una sola temporada.</p>
+  <!-- INTERLUDIO "35 flores": el dato se hace literal (ver Interlude.astro) -->
+  <Interlude />
+
+  <!-- SOLSTICIO FLORAL · tarjeta con 4 fotos en crossfade (showcase.js), a sangre.
+       En ESCRITORIO (≥901px) heroQuienesScroll.js la MUEVE al escenario de slides
+       como tercera escena (justo tras «un menú entero hecho de flores»). Aquí, en
+       el HTML, vive en su sitio de siempre: así móvil, sin-JS y reduced-motion
+       conservan el orden original (…interludio → solsticio) sin depender del JS. -->
+  <section class="gallery" id="gallery" aria-label="Solsticio floral">
+    <div class="gallery__stage">
+    <a class="gallery-finale showcase" id="despertar" href="/menu/" aria-label="Ver el menú Solsticio floral">
+      <div class="showcase__frame">
+        <figure class="showcase__layer" data-layer="0"><img src="/assets/img/df-esparrago.jpg" alt="Espárragos a la brasa con romesco de tagete" loading="eager" fetchpriority="low" decoding="async" /></figure>
+        <figure class="showcase__layer" data-layer="1"><img src="/assets/img/df-guisante.jpg" alt="Guisante coco-saúco" loading="eager" fetchpriority="low" decoding="async" /></figure>
+        <figure class="showcase__layer" data-layer="2"><img src="/assets/img/df-vieira.jpg" alt="Vieira con flor de higo" loading="eager" fetchpriority="low" decoding="async" /></figure>
+        <figure class="showcase__layer" data-layer="3"><img src="/assets/img/df-mandarina.jpg" alt="Torrija de mandarina" loading="eager" fetchpriority="low" decoding="async" /></figure>
+        <span class="showcase__veil" aria-hidden="true"></span>
+      </div>
+      <span class="showcase__cap">
+        <span class="eyebrow">El menú de verano</span>
+        <span class="showcase__title">Solsticio floral</span>
+        <span class="showcase__more">Ver los pases →</span>
+      </span>
+    </a>
     </div>
   </section>
 

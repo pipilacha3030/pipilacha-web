@@ -58,6 +58,18 @@ const EASE = 'expo.inOut';
 let holding = false;
 export const heroJackHolding = () => holding;
 
+/* ¿Va a hacerse cargo este módulo de "Solsticio floral" (.gallery), moviéndola
+   al escenario como tercera escena? Única fuente de verdad — showcase.js la
+   consulta para saber si debe crear su propio ScrollTrigger de visibilidad o
+   si el jack le llamará a enter()/leave(). No vale mirar la clase .fs-slide:
+   la pone este módulo, que corre DESPUÉS de initShowcase(). */
+export function heroJackOwnsGallery() {
+  if (reduceMotion) return false;
+  if (!window.matchMedia('(min-width:901px)').matches) return false;
+  return !!(document.getElementById('fsScroll') && document.getElementById('hero')
+    && document.getElementById('quienes') && document.getElementById('gallery'));
+}
+
 export function initHeroQuienes(showcase) {
   if (reduceMotion) return;
 
@@ -105,7 +117,20 @@ export function initHeroQuienes(showcase) {
     return;
   }
 
-  /* -------------------- ESCRITORIO: scroll-jacking -------------------- */
+  /* -------------------- ESCRITORIO: scroll-jacking --------------------
+     "Solsticio floral" vive en el HTML DESPUÉS del interludio (orden de móvil,
+     sin-JS y reduced-motion). Solo aquí, en escritorio y con el jack vivo, se
+     mueve al escenario para ser la tercera escena. Se mueve ANTES de crear
+     nada: el ScrollTrigger de la zona y el refresh() de main.js miden ya con
+     el DOM definitivo. El nodo se va con el <main> en cada transición SPA, así
+     que no hace falta deshacer el movimiento en destroyPage(). */
+  const stage = scroll.querySelector('.fs-stage');
+  if (stage && gallery.parentElement !== stage) {
+    gallery.classList.add('fs-slide');
+    gallery.setAttribute('data-fs-slide', '2');
+    stage.appendChild(gallery);
+  }
+
   inPageContext(() => {
     let idx = 0;          // 0 = hero, 1 = quiénes, 2 = solsticio floral
     let active = false;   // ¿Observer capturando el gesto?
