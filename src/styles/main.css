@@ -1034,6 +1034,15 @@ body.menu-open .nav__lang,.nav__dock.is-page-morph .nav__lang{opacity:0;pointer-
 .cn-bar{position:relative;min-height:min(92vh,900px);overflow:hidden;display:flex;align-items:flex-end;background:var(--moss)}
 .cn-bar__media{position:absolute;inset:-7% 0;z-index:0;will-change:transform}
 .cn-bar__media img{width:100%;height:100%;object-fit:cover;object-position:center 32%;display:block}
+/* Móvil: la sección es casi vertical (390×885 ≈ 0.44) y la foto apaisada (1.36),
+   así que `cover` solo deja ver un tercio del ancho. Centrado, ese tercio es la
+   pared del fondo y los dos cocineros quedan fuera; como están en extremos
+   opuestos no caben ambos, así que el encuadre se corre a la izquierda para
+   sostener al que está apoyado en la mesa. (En vertical no se recorta nada:
+   cover ajusta por altura, por eso solo importa la coordenada X.) */
+@media (max-width:900px){
+  .cn-bar__media img{object-position:12% center}
+}
 .cn-bar__veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,20,12,.28) 0%,rgba(20,20,12,0) 30%,rgba(20,20,12,.35) 55%,rgba(20,20,12,.86) 100%)}
 .cn-bar__copy{position:relative;z-index:2;color:var(--cream);width:100%;max-width:var(--maxw);margin-inline:auto;padding:0 var(--gutter) clamp(3rem,9vh,6rem)}
 .cn-bar .eyebrow{color:var(--accent-soft)}
@@ -1755,8 +1764,10 @@ html:not(.js) .reviews{overflow-x:auto;-webkit-mask-image:none;mask-image:none}
 .interlude{position:relative;overflow:hidden;background:var(--cream);
   padding:clamp(7rem,24vh,15rem) 0;isolation:isolate}
 .interlude__field{position:absolute;inset:0;z-index:0;pointer-events:none}
-.ilf{position:absolute;left:var(--x);top:var(--y);width:var(--sz);opacity:var(--op);
-  transform:translate(-50%,-50%);will-change:transform,opacity}
+/* el tamaño sale de la profundidad (--sz) POR el factor propio de cada flor
+   (--sc): tres tallas fijas se leían como sistema, no como jardín */
+.ilf{position:absolute;left:var(--x);top:var(--y);width:calc(var(--sz) * var(--sc,1));
+  opacity:var(--op);transform:translate(-50%,-50%);will-change:transform,opacity}
 .ilf__push{display:block}
 .ilf img{display:block;width:100%;height:auto;
   animation:ilfDrift var(--dur,12s) ease-in-out var(--delay,0s) infinite alternate}

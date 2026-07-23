@@ -143,31 +143,67 @@ export function initInterlude() {
     if (line.getBoundingClientRect().top < window.innerHeight * 0.92) gsap.delayedCall(0.25, settle);
     else ScrollTrigger.create({ trigger: section, start: 'top 62%', once: true, onEnter: settle });
 
-    /* 3 · EL CURSOR APARTA las flores mientras lees */
-    if (!window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+    /* 3 · EL DEDO O EL CURSOR APARTAN las flores mientras lees.
+       Con puntero fino el efecto sigue al ratón; en táctil ocurre mientras
+       arrastras el dedo (pointermove también dispara con el dedo apoyado) y
+       un toque abre además el ramo alrededor. Todo passive y sin
+       preventDefault: no se toca el scroll nativo del móvil. */
+    const signal = pageSignal();
     const qx = pushers.map((p) => gsap.quickTo(p, 'x', { duration: 0.7, ease: 'power3' }));
     const qy = pushers.map((p) => gsap.quickTo(p, 'y', { duration: 0.7, ease: 'power3' }));
-    // separación media entre flores ≈ √(área/35) ≈ 150px: con R=270 el puntero
-    // siempre lleva un puñado consigo, nunca "no pasa nada"
-    const R = 270;    // radio de influencia del puntero
-    const FORCE = 68; // cuánto llega a apartarse la flor más cercana
-    section.addEventListener('pointermove', (e) => {
-      const fb = field.getBoundingClientRect();
-      const px = e.clientX - fb.left;
-      const py = e.clientY - fb.top;
+
+    /* El comportamiento lo decide el EVENTO (e.pointerType), no un media query:
+       `(pointer:fine)` describe el puntero PRINCIPAL del aparato, así que en un
+       portátil táctil o en un iPad con trackpad la rama táctil no llegaría a
+       registrarse nunca. Preguntando al evento, cada gesto se comporta como lo
+       que es, y los híbridos funcionan con ratón y con dedo.
+       Separación media entre flores ≈ √(área/35) ≈ 150px: con estos radios el
+       puntero siempre lleva un puñado consigo. Con el dedo, que tapa lo que
+       toca, el radio baja y el empuje sube — así el gesto se ve POR FUERA de
+       la mano. */
+    const MOUSE = { R: 270, FORCE: 68 };
+    const TOUCH = { R: 210, FORCE: 88 };
+    const cfg = (e) => (e.pointerType === 'mouse' ? MOUSE : TOUCH);
+
+    // posición actual de cada flor = sitio disperso + lo que lleve la reunión
+    const near = (px, py, fn) => {
       blooms.forEach((b, i) => {
-        // posición actual = sitio disperso + lo que lleve puesto la reunión
         const dx = b.offsetLeft + gsap.getProperty(b, 'x') - px;
         const dy = b.offsetTop + gsap.getProperty(b, 'y') - py;
-        const d = Math.hypot(dx, dy);
+        fn(i, dx, dy, Math.hypot(dx, dy));
+      });
+    };
+    const repel = (e) => {
+      const { R, FORCE } = cfg(e);
+      const fb = field.getBoundingClientRect();
+      near(e.clientX - fb.left, e.clientY - fb.top, (i, dx, dy, d) => {
         if (d > R || d === 0) { qx[i](0); qy[i](0); return; }
         const f = (1 - d / R) * FORCE;
         qx[i]((dx / d) * f);
         qy[i]((dy / d) * f);
       });
-    }, { signal: pageSignal() });
-    section.addEventListener('pointerleave', () => {
-      pushers.forEach((_, i) => { qx[i](0); qy[i](0); });
-    }, { signal: pageSignal() });
+    };
+    const relax = () => { pushers.forEach((_, i) => { qx[i](0); qy[i](0); }); };
+
+    section.addEventListener('pointermove', repel, { signal, passive: true });
+
+    // TÁCTIL: el toque abre el ramo (las de alrededor dan un respingo)…
+    section.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse') return;
+      repel(e);
+      const fb = field.getBoundingClientRect();
+      near(e.clientX - fb.left, e.clientY - fb.top, (i, _dx, _dy, d) => {
+        if (d > TOUCH.R) return;
+        gsap.fromTo(pushers[i], { scale: 1 },
+          { scale: 1.2, duration: 0.3, ease: 'sine.out', yoyo: true, repeat: 1 });
+      });
+    }, { signal, passive: true });
+    // …y al levantar el dedo vuelve todo a su sitio. pointercancel además cubre
+    // el caso de que el navegador se quede el gesto para hacer scroll: sin él,
+    // las flores se quedarían apartadas para siempre.
+    const release = (e) => { if (e.pointerType !== 'mouse') relax(); };
+    section.addEventListener('pointerup', release, { signal, passive: true });
+    section.addEventListener('pointercancel', release, { signal, passive: true });
+    section.addEventListener('pointerleave', relax, { signal, passive: true });
   });
 }

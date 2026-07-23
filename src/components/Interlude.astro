@@ -14,16 +14,34 @@ const line = lang === 'en'
   ? 'Thirty-five edible flowers, a single season.'
   : 'Treinta y cinco flores comestibles, una sola temporada.';
 
-const FLORES = ['cosmos', 'dalia', 'borraja', 'calendula', 'aciano', 'coreopsis', 'amapola', 'geranio', 'clavel'];
+/* Las 16 flores del jardín, todas las que hay en la librería: con 35 brotes
+   cada variedad sale 2-3 veces, así que el ramo se lee variado de verdad y no
+   como el mismo pétalo repetido. Se sirven en versión -xs (220px): en pantalla
+   ninguna pasa de ~105px, y usar los originales de 800px costaba 1,5 MB. */
+const FLORES = [
+  'cosmos', 'dalia', 'borraja', 'calendula', 'aciano', 'coreopsis', 'amapola',
+  'geranio', 'clavel', 'ajo', 'campanula', 'crisantemo', 'dahlia-roja',
+  'dahlia-rosa', 'hibiscus', 'roja',
+];
 /* PRNG con semilla fija: la dispersión es "aleatoria" pero el HTML sale
    idéntico en cada build (nada de Math.random en tiempo de compilación). */
 let s = 3535;
 const rnd = () => ((s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296);
-const blooms = Array.from({ length: 35 }, (_, i) => ({
-  src: FLORES[i % FLORES.length],
+/* reparto por barajado (Fisher-Yates con el mismo PRNG) en vez de i % n: así
+   ninguna variedad cae siempre a la misma distancia de la anterior */
+const pool = Array.from({ length: 35 }, (_, i) => FLORES[i % FLORES.length]);
+for (let i = pool.length - 1; i > 0; i--) {
+  const j = Math.floor(rnd() * (i + 1));
+  [pool[i], pool[j]] = [pool[j], pool[i]];
+}
+const blooms = pool.map((src, i) => ({
+  src,
   x: +(3 + rnd() * 94).toFixed(2),   // dispersión de partida, % de la sección
   y: +(5 + rnd() * 90).toFixed(2),
-  depth: i % 3,                      // 0 = al fondo (pequeña, difusa) · 2 = delante
+  depth: i % 3,                      // 0 = al fondo (difusa) · 2 = delante (nítida)
+  // tamaño propio ADEMÁS del que da la profundidad: entre un jardín real no hay
+  // dos flores iguales, y tres tallas fijas se notaban como sistema
+  sc: +(0.62 + rnd() * 0.92).toFixed(2),
   dur: +(9 + rnd() * 9).toFixed(1),  // deriva propia: ninguna respira igual
   delay: +(-rnd() * 12).toFixed(1),
   spin: +(rnd() * 26 - 13).toFixed(1),
@@ -35,10 +53,10 @@ const blooms = Array.from({ length: 35 }, (_, i) => ({
     {blooms.map((b) => (
       <span
         class={`ilf ilf--d${b.depth}`}
-        style={`--x:${b.x}%;--y:${b.y}%;--dur:${b.dur}s;--delay:${b.delay}s;--spin:${b.spin}deg`}
+        style={`--x:${b.x}%;--y:${b.y}%;--sc:${b.sc};--dur:${b.dur}s;--delay:${b.delay}s;--spin:${b.spin}deg`}
       >
         <span class="ilf__push">
-          <img src={`/assets/img/flor-${b.src}.png`} alt="" width="80" height="80" loading="lazy" decoding="async" />
+          <img src={`/assets/img/flor-${b.src}-xs.png`} alt="" width="110" height="110" loading="lazy" decoding="async" />
         </span>
       </span>
     ))}
