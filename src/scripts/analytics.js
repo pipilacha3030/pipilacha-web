@@ -13,6 +13,8 @@
    llama a trackPageView en cada cambio de página): GA4 solo no
    vería las transiciones porque no hay recarga real.
    ============================================================ */
+import { flushPending, dropPending } from './conversions.js';
+
 export const GA_ID = 'G-N137XN3B2V';
 
 let loaded = false;
@@ -41,12 +43,14 @@ export function loadAnalytics() {
   s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
   document.head.appendChild(s);
   trackPageView();
+  flushPending(); // eventos de conversión ocurridos antes de aceptar (p. ej. reserva_view)
 }
 
 /* Al rechazar (o retirar) el consentimiento: se apaga la medición con la
    señal estándar de Google y se barren las cookies _ga que pudieran quedar
    de una visita anterior (mejor esfuerzo: con y sin dominio raíz). */
 export function disableAnalytics() {
+  dropPending(); // lo que estuviera esperando consentimiento se descarta, no se envía
   if (!GA_ID) return;
   window[`ga-disable-${GA_ID}`] = true;
   const past = 'Thu, 01 Jan 1970 00:00:00 GMT';

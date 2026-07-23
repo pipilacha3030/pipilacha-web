@@ -31,9 +31,35 @@ import { pageSignal } from './utils/lifecycle.js';
    así que un solo patrón los cubre sin tocar el markup de cada uno. */
 const RESERVAS = /^\/(en\/)?reservas\/?$/;
 
+/* Cola de eventos anteriores al consentimiento.
+   Sin esto se perdía el evento más importante: reserva_view se dispara al
+   montar la página, cuando el visitante NUEVO aún no ha tocado el banner —
+   es decir, justo el visitante que queremos medir. Lo mismo que ya hacía
+   analytics.js reenviando el page_view al aceptar: mismo momento, misma
+   base legal (nada sale mientras no haya consentimiento; si rechaza, la
+   cola se tira sin enviarse). Tope por si alguien navega mucho sin decidir. */
+let pending = [];
+const MAX_PENDING = 10;
+
 export function trackEvent(name, params = {}) {
-  if (typeof window.gtag !== 'function') return;
+  if (typeof window.gtag !== 'function') {
+    if (pending.length < MAX_PENDING) pending.push([name, params]);
+    return;
+  }
   window.gtag('event', name, params);
+}
+
+/* La llama loadAnalytics() justo después del primer page_view */
+export function flushPending() {
+  if (typeof window.gtag !== 'function') return;
+  const queued = pending;
+  pending = [];
+  queued.forEach(([name, params]) => window.gtag('event', name, params));
+}
+
+/* Al rechazar o retirar el consentimiento: lo pendiente no se envía nunca */
+export function dropPending() {
+  pending = [];
 }
 
 export function initConversions() {
