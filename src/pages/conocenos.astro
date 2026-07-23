@@ -45,17 +45,11 @@ const personSchema = `<script type="application/ld+json">${JSON.stringify({
        parallax dan la atmósfera; el eyebrow entra con .reveal. -->
   <section class="cn-open">
     <div class="cn-open__media" data-parallax="0.12">
-      {/* Móvil (<= 900px) vs escritorio: foto distinta sin duplication —
-          .htaccess negocia webp automáticamente, el srcset del <picture> solo
-          elige por ancho de viewport. */}
-      <picture>
-        <source media="(max-width: 900px)" srcset="/assets/img/cn-open-movil.jpg" />
-        <img
-          src="/assets/img/chef-3.jpg"
-          width="1152" height="2048"
-          fetchpriority="high" decoding="async"
-          alt="Arán y Noé, los chefs de Pipilacha, trabajando en la cocina" />
-      </picture>
+      <img
+        src="/assets/img/chef-3.jpg"
+        width="1152" height="2048"
+        fetchpriority="high" decoding="async"
+        alt="Arán y Noé, los chefs de Pipilacha, trabajando en la cocina" />
       <span class="cn-open__veil" aria-hidden="true"></span>
     </div>
     <div class="cn-open__content">
@@ -116,12 +110,10 @@ const personSchema = `<script type="application/ld+json">${JSON.stringify({
   <section class="cn-bar" id="showcooking">
     <div class="cn-bar__media" data-parallax="0.10">
       <img
-        src="/assets/img/cn-showcooking.jpg"
-        srcset="/assets/img/cn-showcooking-m.jpg 1600w, /assets/img/cn-showcooking.jpg 2560w"
-        sizes="100vw"
-        width="2560" height="1881"
+        src="/assets/img/cn-open-movil.jpg"
+        width="1200" height="1499"
         loading="lazy" decoding="async"
-        alt="Arán y Noé en la cocina de Pipilacha: uno apoyado en la mesa de trabajo, el otro abriendo un tarro de conserva" />
+        alt="Arán y Noé, los chefs de Pipilacha, trabajando en la cocina" />
       <span class="cn-bar__veil" aria-hidden="true"></span>
     </div>
     <div class="cn-bar__copy">
