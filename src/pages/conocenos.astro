@@ -45,11 +45,17 @@ const personSchema = `<script type="application/ld+json">${JSON.stringify({
        parallax dan la atmósfera; el eyebrow entra con .reveal. -->
   <section class="cn-open">
     <div class="cn-open__media" data-parallax="0.12">
-      <img
-        src="/assets/img/chef-3.jpg"
-        width="1152" height="2048"
-        fetchpriority="high" decoding="async"
-        alt="Arán y Noé, los chefs de Pipilacha, trabajando en la cocina" />
+      {/* Móvil (<= 900px) vs escritorio: foto distinta sin duplication —
+          .htaccess negocia webp automáticamente, el srcset del <picture> solo
+          elige por ancho de viewport. */}
+      <picture>
+        <source media="(max-width: 900px)" srcset="/assets/img/cn-open-movil.jpg" />
+        <img
+          src="/assets/img/chef-3.jpg"
+          width="1152" height="2048"
+          fetchpriority="high" decoding="async"
+          alt="Arán y Noé, los chefs de Pipilacha, trabajando en la cocina" />
+      </picture>
       <span class="cn-open__veil" aria-hidden="true"></span>
     </div>
     <div class="cn-open__content">
