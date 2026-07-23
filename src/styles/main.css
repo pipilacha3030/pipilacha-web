@@ -1755,20 +1755,28 @@ html:not(.js) .reviews{overflow-x:auto;-webkit-mask-image:none;mask-image:none}
 
 /* ---------- interludio "35 flores": el dato, hecho literal ----------
    Hay EXACTAMENTE 35 flores en pantalla, una por cada flor comestible de la
-   temporada (components/Interlude.astro las genera con posiciones dispersas
-   deterministas). El scroll las reúne en una guirnalda alrededor de la frase;
-   animations/interlude.js calcula el destino con la caja real del texto.
-   Tres capas por flor, una por animador, para que nadie pise el `transform`
-   de otro:  .ilf (GSAP, reunión) → .ilf__push (GSAP, cursor/onda) → img (CSS,
-   deriva perpetua). Sin JS: campo disperso y quieto, frase legible. */
+   temporada (components/Interlude.astro las genera con sitios dispersos
+   deterministas y sin dos iguales cerca). El scroll las lleva a su anillo y
+   allí navegan, cruzando por delante y por detrás de la frase para arroparla
+   (animations/interlude.js).
+   Cuatro capas por flor, una por animador, para que nadie pise el `transform`
+   de otro:  .ilf (GSAP, reunión + z) → .ilf__orbit (ticker, la órbita) →
+   .ilf__push (GSAP, cursor/onda) → img (CSS, respiración lenta).
+   Sin JS: campo disperso y quieto, frase legible. */
 .interlude{position:relative;overflow:hidden;background:var(--cream);
   padding:clamp(7rem,24vh,15rem) 0;isolation:isolate}
-.interlude__field{position:absolute;inset:0;z-index:0;pointer-events:none}
+/* SIN z-index propio a propósito: si el campo creara contexto de apilado, sus
+   flores quedarían todas por debajo (o por encima) de la frase en bloque. Sin
+   él, cada .ilf compite directamente con .interlude__line dentro del contexto
+   que abre .interlude{isolation:isolate} — y por eso una flor puede pasar por
+   delante del texto (z-index 8) y a la media vuelta por detrás (2). */
+.interlude__field{position:absolute;inset:0;pointer-events:none}
 /* el tamaño sale de la profundidad (--sz) POR el factor propio de cada flor
    (--sc): tres tallas fijas se leían como sistema, no como jardín */
 .ilf{position:absolute;left:var(--x);top:var(--y);width:calc(var(--sz) * var(--sc,1));
-  opacity:var(--op);transform:translate(-50%,-50%);will-change:transform,opacity}
-.ilf__push{display:block}
+  opacity:var(--op);transform:translate(-50%,-50%);will-change:transform,opacity;z-index:2}
+.ilf__orbit,.ilf__push{display:block}
+.ilf__orbit{will-change:transform}
 .ilf img{display:block;width:100%;height:auto;
   animation:ilfDrift var(--dur,12s) ease-in-out var(--delay,0s) infinite alternate}
 /* tres profundidades: tamaño, opacidad y desenfoque cuentan la distancia */
@@ -1782,8 +1790,10 @@ html:not(.js) .reviews{overflow-x:auto;-webkit-mask-image:none;mask-image:none}
   from{transform:translate(0,0) rotate(calc(var(--spin,0deg) * -1))}
   to{transform:translate(5px,-10px) rotate(var(--spin,0deg))}
 }
+/* z-index 5: deja hueco por debajo (2) y por encima (8) para que las flores
+   crucen de un lado a otro según por dónde vayan de su órbita */
 .interlude__line{
-  position:relative;z-index:1;max-width:19ch;margin-inline:auto;padding-inline:var(--gutter);
+  position:relative;z-index:5;max-width:19ch;margin-inline:auto;padding-inline:var(--gutter);
   font-family:var(--serif);color:var(--moss);text-align:center;
   font-size:clamp(2rem,5.6vw,4.1rem);line-height:1.08;letter-spacing:-.015em;text-wrap:balance;
 }
