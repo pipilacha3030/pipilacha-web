@@ -12,6 +12,21 @@ ErrorDocument 404 /404.html
   RewriteRule ^ https://pipilacha.es%{REQUEST_URI} [R=301,L]
 </IfModule>
 
+# ---- URLs de la web anterior → su equivalente actual (301) ----
+# Google seguía indexando estas dos y mandaba gente a un 404 (1.469 impresiones
+# en jun–jul 2026). Una 301 le dice al buscador "esto se ha mudado, para siempre"
+# y le traspasa el posicionamiento que la URL vieja ya tenía.
+#   /regalo               → /regala/   (la página existe, cambió de nombre)
+#   /preguntas-frecuentes → /reservas/ (las FAQ ahora viven dentro de reservas,
+#                                       con su FAQPage schema — mismo contenido)
+# El `/?` cubre la URL con y sin barra final. Van ANTES de la negociación de
+# imágenes: son [L], así que la petición termina aquí y no sigue evaluando.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^regalo/?$ /regala/ [R=301,L]
+  RewriteRule ^preguntas-frecuentes/?$ /reservas/ [R=301,L]
+</IfModule>
+
 # ---- AVIF / WebP por negociación de contenido ----
 # Si el navegador acepta el formato y existe el hermano, se sirve con el MISMO
 # URL. AVIF primero (≈20% más ligero que webp); WebP como segundo; si no hay
