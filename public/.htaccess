@@ -73,7 +73,7 @@ ErrorDocument 404 /404.html
 # googletagmanager.com (script-src) y envía los hits a *.google-analytics.com /
 # *.analytics.google.com por fetch (connect-src) o píxel (img-src).
 <IfModule mod_headers.c>
-  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://*.bonkdo.com https://www.googletagmanager.com 'sha256-98B9qXIvmuDpTxEU4CQI4PON9NbP1zKueDjwTB+7nPY=' 'sha256-rvtsdXrexxwMR2z41Un6uf0dcPu8CWKkOPJNRhptxF8='; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com; font-src 'self'; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; frame-src https://*.thefork.com https://*.bonkdo.com https://checkout.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://*.bonkdo.com https://www.googletagmanager.com 'sha256-6E7I2IFsrVmwmR07U9nWCgkkiFrbQfcJgdZRjsIFzDc=' 'sha256-rvtsdXrexxwMR2z41Un6uf0dcPu8CWKkOPJNRhptxF8='; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com; font-src 'self'; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; frame-src https://*.thefork.com https://*.bonkdo.com https://checkout.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
   Header always set X-Frame-Options "SAMEORIGIN"
   Header always set X-Content-Type-Options "nosniff"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"

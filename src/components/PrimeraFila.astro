@@ -267,7 +267,16 @@ const label = lang === 'en' ? 'Front row — live the menu from the counter' : '
   }
   .pf__practical li { font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--text-subtle); }
 
-  /* ====== con JS: escenas superpuestas que se funden (pin — móvil y escritorio) ====== */
+  /* ====== con JS: escenas superpuestas que se funden (pin — móvil y escritorio) ======
+     Los TRES bloques que siguen van condicionados a (prefers-reduced-motion:
+     no-preference) porque primeraFila.js sale antes con reduced-motion: sin
+     esa condición el CSS seguía apilando las escenas en absoluto dentro de un
+     contenedor de 100svh y nadie las animaba → solo se veía la escena 1 y las
+     2 y 3 (con TODO el bloque de reserva: precio, CTA, datos) quedaban en
+     opacity:0, inalcanzables. Comprobado en pipilacha.es con Reducir
+     movimiento activado. La regla es: el layout de animación solo existe si la
+     animación va a correr. */
+  @media (prefers-reduced-motion: no-preference) {
   :global(html.js) .pf__pin { height: 100vh; height: 100svh; overflow: hidden; }
   :global(html.js) .pf__scene {
     position: absolute; inset: 0; display: block;
@@ -278,6 +287,7 @@ const label = lang === 'en' ? 'Front row — live the menu from the counter' : '
   /* con JS el filete arranca colapsado y se dibuja en la timeline (scaleX 0→1);
      gated en .js para que sin bundle o bajo reduced-motion se muestre completo */
   :global(html.js) .pf__rule { transform: scaleX(0); }
+  }
 
   /* — móvil con JS: imagen a sangre + texto sobre degradado (abajo) —
      900px: MISMO breakpoint que el resto del sitio (nav/hero/quiénes en
@@ -287,7 +297,7 @@ const label = lang === 'en' ? 'Front row — live the menu from the counter' : '
      sección caía en el modo escritorio (miniatura pequeña a la derecha,
      no a sangre) — bug determinista por ancho de pantalla, no un fallo
      de red puntual. */
-  @media (max-width: 900px) {
+  @media (max-width: 900px) and (prefers-reduced-motion: no-preference) {
     :global(html.js) .pf__img {
       position: absolute; inset: 0; width: 100%; height: 100%;
       border-radius: 0; aspect-ratio: auto; box-shadow: none;
@@ -324,7 +334,7 @@ const label = lang === 'en' ? 'Front row — live the menu from the counter' : '
   }
 
   /* — escritorio con JS: marco vertical dominante + texto en el espacio negativo — */
-  @media (min-width: 901px) {
+  @media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
     :global(html.js) .pf__img {
       position: absolute; top: 11vh; right: 6vw; aspect-ratio: auto;
       height: 78vh; width: min(40vw, 62.4vh);

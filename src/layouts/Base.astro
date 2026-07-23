@@ -162,7 +162,16 @@ const graphJson = JSON.stringify({ "@context": "https://schema.org", "@graph": g
        scripts la retira y la página vuelve al estado sin-JS, todo visible.
        OJO: si cambias este script, recalcula su hash sha256 en la CSP de
        public/.htaccess (script-src) o el navegador lo bloqueará. -->
-  <script is:inline>document.documentElement.classList.add('js');window.addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='SCRIPT'&&t.src)document.documentElement.classList.remove('js')},true)</script>
+  {/* La clase `js` significa UNA cosa: "nuestro bundle va a correr". Solo la
+      retira el fallo de NUESTRO bundle (mismo origen + /_assets/). Antes valía
+      cualquier <script src>: si gtag.js (googletagmanager.com) no cargaba —red
+      móvil, bloqueador, DNS filtrado, navegador embebido de Instagram— la web
+      entera caía al layout sin-JS aunque GSAP estuviese corriendo, y quedaba
+      pineada sobre el layout equivocado (Primera fila con la foto en tarjeta y
+      el texto cortado). Reproducido bloqueando googletagmanager.com.
+      OJO: si tocas este script, recalcula su sha256 en la CSP de public/.htaccess:
+        printf '%s' "<contenido exacto>" | openssl dgst -sha256 -binary | openssl base64 */}
+  <script is:inline>document.documentElement.classList.add('js');window.addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='SCRIPT'&&t.src&&t.src.indexOf(location.origin+'/_assets/')===0)document.documentElement.classList.remove('js')},true)</script>
   <meta charset="UTF-8" />
   {/* viewport-fit=cover: sin él, iOS encoge el viewport para esquivar el indicador
       de inicio y `bottom:0` se queda POR ENCIMA de esa franja (se ve el fondo de la

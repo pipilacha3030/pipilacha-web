@@ -784,6 +784,17 @@ body.menu-open .nav__lang,.nav__dock.is-page-morph .nav__lang{opacity:0;pointer-
      compuesto, .gallery.fs-slide gana igual sin depender del orden de cascada */
   .gallery.fs-slide{position:absolute}
 }
+/* reduced-motion: heroQuienesScroll.js sale antes, así que NADIE desplaza los
+   slides. Sin esto el hero y quiénes quedaban los dos absolutos en el mismo
+   inset:0 y quiénes tapaba el hero ENTERO (comprobado en pipilacha.es con
+   Reducir movimiento). Devolvemos los slides al flujo: una pantalla cada uno,
+   se recorren con scroll normal. Misma regla que en Primera fila — el layout
+   de animación solo existe si la animación va a correr. */
+@media(min-width:901px) and (prefers-reduced-motion:reduce){
+  .fs-scroll{height:auto}
+  .fs-stage{display:block;position:static;height:auto;overflow:visible}
+  .fs-slide{position:relative;inset:auto;height:100svh}
+}
 
 /* ---------- quiénes somos: la panorámica de la barra ----------
    Escritorio: la sección ES un slide (absoluto, inset:0 dentro de .fs-stage);
