@@ -48,8 +48,18 @@ import { inPageContext, pageSignal } from '../utils/lifecycle.js';
 
 gsap.registerPlugin(Observer);
 
-const DUR = 0.9;
-const EASE = 'expo.inOut';
+/* Cada gesto queda "consumido" durante DUR + SETTLE: mientras tanto la rueda no
+   hace nada (es el precio del jack). Medido con scroll real, 0.9 + 0.25 daba
+   1.15 s de bloqueo por slide —2.5 s para cruzar las tres escenas— y se sentía
+   pegado. 0.62 + 0.25 baja a 0.87 s sin tocar SETTLE: ese margen es el que
+   impide que la inercia de UN solo golpe de trackpad cuele dos slides (te
+   saltarías "quiénes" sin verla). expo.inOut arrancaba y frenaba tan despacio
+   que el movimiento parecía empezar tarde; power2.inOut responde antes. */
+const DUR = 0.62;
+const EASE = 'power2.inOut';
+const SETTLE = 250;      // ms sordos tras cada slide (inercia del gesto)
+const SETTLE_ENTER = 300; // ms sordos al enganchar el jack (el gesto que nos trajo)
+const RELEASE_DUR = 0.6;  // s del scroll de salida (antes: 1.2 por defecto de Lenis)
 
 /* ¿El jack tiene el scroll secuestrado (Lenis parado) AHORA MISMO?
    Lo consulta transitions.js al final de una transición: su lenis.start()
@@ -164,7 +174,7 @@ export function initHeroQuienes(showcase) {
       const tl = gsap.timeline({
         defaults: { duration: DUR, ease: EASE },
         onComplete: () => {
-          idx = target; animating = false; settleUntil = performance.now() + 250;
+          idx = target; animating = false; settleUntil = performance.now() + SETTLE;
           if (target === last) showcase?.enter();
           else if (prevIdx === last) showcase?.leave();
         },
@@ -193,6 +203,7 @@ export function initHeroQuienes(showcase) {
       // un pelín pasado el final de la zona → el sticky se despega y entra el interludio
       lenis.scrollTo(st.end + 2, {
         force: true,
+        duration: RELEASE_DUR,
         onComplete: () => { releasing = false; },
       });
     }
@@ -212,7 +223,7 @@ export function initHeroQuienes(showcase) {
       // deactivate() deshacía el jack un tick después de armarlo. 1px dentro
       // (invisible: el escenario es sticky en toda la zona) lo mantiene activo.
       if (lenis) { lenis.stop(); lenis.scrollTo(st.start + 1, { immediate: true, force: true }); }
-      settleUntil = performance.now() + 350;
+      settleUntil = performance.now() + SETTLE_ENTER;
       obs.enable();
     }
 

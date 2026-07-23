@@ -46,14 +46,17 @@ export function initPrimeraFila() {
       scrollTrigger: {
         trigger: pin,
         start: 'top top',
-        end: '+=170%',      // ~270vh de recorrido (100vh pin + 170vh scrub) — antes
-                            // 250% (350vh): 3 escenas pedían casi 3.5 pantallas de
-                            // scroll, un tercio del recorrido total de la home. La
+        end: '+=90%',       // ~190vh de recorrido (100vh pin + 90vh scrub). Historial:
+                            // 250% (350vh) → 170% (270vh) → 90%. Con 170% seguía
+                            // sintiéndose pegado: 2430px pineados en un 1440×900 son
+                            // 2,7 pantallas en las que la página no avanza. La
                             // coreografía interna (times 0..28) se reescala sola al
                             // rango, así que el ritmo relativo de los crossfades no
                             // cambia — solo hace falta menos scroll físico para verlos.
         pin: true,
-        scrub: 0.6,
+        // el scrub es retardo: 0.6 s de inercia entre la rueda y la imagen se leía
+        // como "no responde". 0.3 conserva el suavizado y devuelve el control.
+        scrub: 0.3,
         anticipatePin: 1,
       },
     });

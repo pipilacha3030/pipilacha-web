@@ -979,7 +979,12 @@ body.menu-open .nav__lang,.nav__dock.is-page-morph .nav__lang{opacity:0;pointer-
 /* 1 · apertura */
 .cn-open{position:relative;height:100svh;min-height:600px;overflow:hidden;display:flex;align-items:flex-end}
 .cn-open__media{position:absolute;inset:-8% 0;z-index:0;will-change:transform}
-.cn-open__media img{width:100%;height:100%;object-fit:cover;object-position:50% 36%;filter:saturate(1.02);will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+/* El eje X encuadra en ARÁN (izquierda) en vez de en Noé (derecha, en primer
+   plano): con 50% el retrato de Arán quedaba cortado por el borde en pantallas
+   verticales. 12% lo mete entero y deja a Noé presente a la derecha. Solo muerde
+   donde la foto (9:16) desborda a lo ancho —móvil/tablet en vertical—; en
+   escritorio ancho no hay recorte horizontal y el encuadre no cambia. */
+.cn-open__media img{width:100%;height:100%;object-fit:cover;object-position:12% 36%;filter:saturate(1.02);will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 /* asentamiento de cámara UNA vez al cargar (no bucle → sin titileo), gated en .js */
 .js .cn-open__media img{animation:cnSettle 1.9s cubic-bezier(.22,1,.36,1) both}
 @keyframes cnSettle{from{transform:scale(1.09)}to{transform:scale(1.04)}}
