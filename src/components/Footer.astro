@@ -1,0 +1,50 @@
+---
+/* Pie estático, sin animación. Los datos de contacto/horario son los
+   oficiales del restaurante (mantener consistentes con CLAUDE.md).
+   Bilingüe: los textos vienen de src/i18n; los enlaces se prefijan con
+   /en cuando toca. */
+import { useT, localizeHref, localizeNav, altHref, TRANSLATED } from '../i18n/index.js';
+const { path = '/', lang = 'es' } = Astro.props;
+const t = useT(lang);
+const otherLang = lang === 'en' ? 'es' : 'en';
+const switchHref = altHref(TRANSLATED.has(path) ? path : '/', otherLang);
+const pages = [
+  ['/conocenos/', 'nav.about'], ['/menu/', 'nav.menu'], ['/vinos/', 'nav.wine'],
+  ['/galeria/', 'nav.gallery'], ['/prensa/', 'nav.press'], ['/regala/', 'nav.gift'], ['/reservas/', 'nav.book'],
+];
+---
+<footer class="footer" id="footer">
+  <div class="footer__brand">
+    <img src="/assets/img/logo-light.png" class="footer__logo" alt="Pipilacha" width="560" height="216" loading="lazy" decoding="async" />
+    <p>{t('footer.claim')}</p>
+  </div>
+  <div class="footer__cols">
+    <div>
+      <h4>{t('footer.hours')}</h4>
+      <p set:html={t('footer.hoursValue')}></p>
+    </div>
+    <div>
+      <h4>{t('footer.location')}</h4>
+      <p set:html={t('footer.locationValue')}></p>
+      <a href="https://www.google.com/maps/search/?api=1&query=Pipilacha%2C%20C.%20del%20Azulejo%2C%202%2C%2028028%20Madrid" target="_blank" rel="noopener">{t('footer.directions')}</a>
+    </div>
+    <div>
+      <h4>{t('meta.contact')}</h4>
+      <p><a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">@restaurante.pipilacha</a><br><a href="tel:+34919125998">+34 919 12 59 98</a><br><a href="mailto:info@pipilacha.es">info@pipilacha.es</a></p>
+    </div>
+  </div>
+  <nav class="footer__nav" aria-label={t('footer.pages')}>
+    {pages.map(([href, key]) => <a href={localizeNav(href, lang)}>{t(key)}</a>)}
+  </nav>
+  <nav class="footer__legal" aria-label={t('footer.legal')}>
+    <a href={localizeNav('/aviso-legal/', lang)}>{t('legal.notice')}</a>
+    <a href={localizeNav('/privacidad/', lang)}>{t('legal.privacy')}</a>
+    <a href={localizeNav('/cookies/', lang)}>{t('legal.cookies')}</a>
+    <button type="button" class="footer__legal-btn" data-cc-open>{t('legal.settings')}</button>
+  </nav>
+  <div class="footer__base">
+    <span>© 2026 Pipilacha</span>
+    <a class="footer__lang" href={switchHref} data-astro-reload aria-label={t('lang.switchLabel')}>{t('lang.switch')}</a>
+    <span>Madrid</span>
+  </div>
+</footer>

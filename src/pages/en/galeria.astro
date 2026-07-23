@@ -1,0 +1,88 @@
+---
+import Base from '../../layouts/Base.astro';
+import { fotos } from '../../data/galeria.en.js';
+import { dims } from '../../data/galeria-dims.js';
+
+const galleryLd = `<script type="application/ld+json">${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'ImageGallery',
+  '@id': 'https://pipilacha.es/en/galeria/',
+  url: 'https://pipilacha.es/en/galeria/',
+  name: 'Gallery · Pipilacha',
+  description: 'Dishes, flowers and service at Pipilacha, a flower tasting-menu restaurant in Madrid.',
+  inLanguage: 'en',
+  about: { '@id': 'https://pipilacha.es/#restaurant' },
+  associatedMedia: fotos.slice(0, 12).map((f) => ({
+    '@type': 'ImageObject',
+    contentUrl: `https://pipilacha.es${f.src}`,
+    caption: f.alt,
+  })),
+})}</script>`;
+---
+
+<Base
+  title="Gallery · Pipilacha"
+  description="Dishes, flowers and service at Pipilacha, a flower tasting-menu restaurant in Madrid."
+  ogImage="/assets/img/og-galeria.jpg"
+  schema={galleryLd}
+>
+
+  <section class="gal-stage" id="galStage" aria-roledescription="carousel" aria-label="Immersive gallery" tabindex="0">
+    <canvas class="gal-stage__bg" id="galBg" aria-hidden="true"></canvas>
+
+    <ul class="gal-track" id="galTrack">
+      {fotos.map((f, i) => {
+        const [w, h] = dims[f.src.split('/').pop()] || [];
+        // misma lógica que la galería ES: miniatura -m (800w) para móvil, la
+        // grande en desktop (el carrusel agranda la central); width/height por
+        // foto evita CLS. El .htaccess sirve su avif/webp.
+        const mSrc = w > 800 ? f.src.replace(/\.jpg$/, '-m.jpg') : null;
+        return (
+        <li class="gal-card" data-index={i}>
+          <button class="gal-card__btn" type="button" aria-label={`Enlarge: ${f.alt}`}>
+            <img
+              src={f.src}
+              srcset={mSrc ? `${mSrc} 800w, ${f.src} ${w}w` : undefined}
+              sizes={mSrc ? '(max-width: 900px) 70vw, 1280px' : undefined}
+              alt={f.alt}
+              width={w}
+              height={h}
+              loading={i < 10 ? 'eager' : 'lazy'}
+              fetchpriority={i < 3 ? 'high' : undefined}
+              decoding="async"
+              draggable="false"
+            />
+          </button>
+        </li>
+        );
+      })}
+    </ul>
+
+    <div class="gal-frame">
+      <div class="gal-frame__top">
+        <p class="eyebrow">Gallery</p>
+        <h1 class="gal-frame__title">What happens at the table</h1>
+      </div>
+      <div class="gal-frame__bottom">
+        <p class="gal-frame__hint">Drag, spin with the wheel or the arrows. Tap a photo to enlarge it.</p>
+        <p class="gal-frame__count"><span id="galIdx">01</span> / {fotos.length}</p>
+        <div class="gal-frame__links">
+          <a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">@restaurante.pipilacha</a>
+          <a href="/en/reservas/" class="gal-frame__cta">Book</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Enlarged gallery">
+    <button class="lightbox__close" id="lbClose" type="button" aria-label="Close gallery">&times;</button>
+    <button class="lightbox__nav lightbox__prev" id="lbPrev" type="button" aria-label="Previous photo">&lsaquo;</button>
+    <figure class="lightbox__stage">
+      <img id="lbImg" src="" alt="" />
+      <figcaption class="lightbox__cap" id="lbCap"></figcaption>
+    </figure>
+    <button class="lightbox__nav lightbox__next" id="lbNext" type="button" aria-label="Next photo">&rsaquo;</button>
+  </div>
+
+</Base>

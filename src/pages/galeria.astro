@@ -1,48 +1,56 @@
 ---
 import Base from '../layouts/Base.astro';
+import { fotos } from '../data/galeria.js';
+import { dims } from '../data/galeria-dims.js';
 
-/* Las fotos van en el HTML (no las inyecta el JS) para que la galería funcione
-   sin JavaScript, sea rastreable y respete prefers-reduced-motion. El motor de
-   /js/main.js las convierte en un carrusel 3D coverflow con fondo floral. */
-const fotos = [
-  { src: '/assets/img/g10.jpg', alt: 'Esferificación de hierba luisa' },
-  { src: '/assets/img/g15.jpg', alt: 'Pho de flores' },
-  { src: '/assets/img/g16.jpg', alt: 'Arán y Noé cocinando en la barra' },
-  { src: '/assets/img/g1.jpg',  alt: 'Espárragos a la brasa con tagete' },
-  { src: '/assets/img/g13.jpg', alt: 'Claveles sobre fresas con nata' },
-  { src: '/assets/img/g18.jpg', alt: 'Corvina con pétalos de tagete' },
-  { src: '/assets/img/g17.jpg', alt: 'Ajo blanco con hojas de capuchina' },
-  { src: '/assets/img/g11.jpg', alt: 'Helado de tupinambo' },
-  { src: '/assets/img/g9.jpg',  alt: 'Arán y Noé en el pase' },
-  { src: '/assets/img/g3.jpg',  alt: 'Guisante coco-saúco' },
-  { src: '/assets/img/g19.jpg', alt: 'Saco de colirrábano con clavelina' },
-  { src: '/assets/img/g12.jpg', alt: 'Tartaleta de remolacha' },
-  { src: '/assets/img/g6.jpg',  alt: 'Servicio en cocina' },
-  { src: '/assets/img/g8.jpg',  alt: 'Vieira con flor de higo' },
-  { src: '/assets/img/g14.jpg', alt: 'La sala' },
-  { src: '/assets/img/g5.jpg',  alt: 'Guiso de setas' },
-  { src: '/assets/img/g2.jpg',  alt: 'Flores y técnica' },
-  { src: '/assets/img/g4.jpg',  alt: 'Detalle de mise en place' },
-  { src: '/assets/img/g7.jpg',  alt: 'Pase de temporada' },
-  { src: '/assets/img/esparragos-tagete.jpg', alt: 'Espárragos con tagete' },
-];
+// SEO: ImageGallery (12 fotos representativas, no las 76 — decorativo si se repite
+// una por una). about enlaza al @id del Restaurant del grafo base (Base.astro).
+const galleryLd = `<script type="application/ld+json">${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'ImageGallery',
+  '@id': 'https://pipilacha.es/galeria/',
+  url: 'https://pipilacha.es/galeria/',
+  name: 'Galería · Pipilacha',
+  description: 'Platos, flores y servicio en Pipilacha, restaurante de degustación floral en Madrid.',
+  inLanguage: 'es',
+  about: { '@id': 'https://pipilacha.es/#restaurant' },
+  associatedMedia: fotos.slice(0, 12).map((f) => ({
+    '@type': 'ImageObject',
+    contentUrl: `https://pipilacha.es${f.src}`,
+    caption: f.alt,
+  })),
+})}</script>`;
 ---
 
 <Base
   title="Galería · Pipilacha"
   description="Platos, flores y servicio en Pipilacha, restaurante de degustación floral en Madrid."
+  ogImage="/assets/img/og-galeria.jpg"
+  schema={galleryLd}
 >
 
   <section class="gal-stage" id="galStage" aria-roledescription="carrusel" aria-label="Galería inmersiva" tabindex="0">
     <canvas class="gal-stage__bg" id="galBg" aria-hidden="true"></canvas>
 
     <ul class="gal-track" id="galTrack">
-      {fotos.map((f, i) => (
+      {fotos.map((f, i) => {
+        const [w, h] = dims[f.src.split('/').pop()] || [];
+        // miniatura -m (800w) para móvil; el .htaccess sirve su avif/webp.
+        // La grande queda como fallback y la usa el lightbox al ampliar.
+        // sizes: en desktop el carrusel AGRANDA la foto central (~1400px) → pedimos
+        // la grande (1280px) para no verla borrosa; en móvil la central no crece
+        // tanto → basta la -m y ahorramos datos donde más importa.
+        const mSrc = w > 800 ? f.src.replace(/\.jpg$/, '-m.jpg') : null;
+        return (
         <li class="gal-card" data-index={i}>
           <button class="gal-card__btn" type="button" aria-label={`Ampliar: ${f.alt}`}>
             <img
               src={f.src}
+              srcset={mSrc ? `${mSrc} 800w, ${f.src} ${w}w` : undefined}
+              sizes={mSrc ? '(max-width: 900px) 70vw, 1280px' : undefined}
               alt={f.alt}
+              width={w}
+              height={h}
               loading={i < 10 ? 'eager' : 'lazy'}
               fetchpriority={i < 3 ? 'high' : undefined}
               decoding="async"
@@ -50,16 +58,16 @@ const fotos = [
             />
           </button>
         </li>
-      ))}
+        );
+      })}
     </ul>
 
     <div class="gal-frame">
       <div class="gal-frame__top">
         <p class="eyebrow">Galería</p>
-        <h1 class="gal-frame__title">Lo que ocurre en la mesa</h1>
+        <h1 class="gal-frame__title">Entre flores</h1>
       </div>
       <div class="gal-frame__bottom">
-        <p class="gal-frame__hint">Arrastra, gira con la rueda o las flechas. Toca una foto para ampliarla.</p>
         <p class="gal-frame__count"><span id="galIdx">01</span> / {fotos.length}</p>
         <div class="gal-frame__links">
           <a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">@restaurante.pipilacha</a>

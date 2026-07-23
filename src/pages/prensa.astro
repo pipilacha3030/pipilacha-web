@@ -1,61 +1,38 @@
 ---
 import Base from '../layouts/Base.astro';
+import { menciones } from '../data/prensa.js';
 
-// Menciones reales en medios. Campos: medio, titular, fecha, autor (opcional), url, img.
-// img = foto propia self-hosted que aparece como preview al pasar el cursor.
-const menciones = [
-  {
-    medio: 'El País',
-    titular: 'Pipilacha, el restaurante donde averiguar a qué saben las margaritas',
-    fecha: 'Abril 2026',
-    autor: '',
-    url: 'https://elpais.com/gastronomia/restaurantes/2026-04-30/pipilacha-el-restaurante-donde-averiguar-a-que-saben-las-margaritas.html',
-    img: '/assets/img/chef-3.jpg',
-  },
-  {
-    medio: 'El Español',
-    titular: 'Los chefs de 20 años que cocinan flores: «Ahora damos que hablar»',
-    fecha: 'Noviembre 2025',
-    autor: 'Mar León',
-    url: 'https://www.elespanol.com/madrid/ocio/20251102/noe-david-aran-rodrigo-chefs-anos-cocinan-flores-menu-eur-ahora-damos-hablar/1003743994304_0.html',
-    img: '/assets/img/prensa-barra.jpg',
-  },
-  {
-    medio: 'Neo2 Magazine',
-    titular: 'Restaurante Pipilacha: cuando las flores son protagonistas',
-    fecha: 'Octubre 2025',
-    autor: 'Miguel A. Palomo',
-    url: 'https://www.neo2.com/restaurante-pipilacha/',
-    img: '/assets/img/prensa-aran-flores.jpg',
-  },
-  {
-    medio: 'Beandlife Magazine',
-    titular: 'Pipilacha, cuando las flores se convierten en cocina',
-    fecha: 'Enero 2026',
-    autor: 'Ana S. Diéguez',
-    url: 'https://beandlifemagazine.com/pipilacha-madrid/',
-    img: '/assets/img/prensa-noe.jpg',
-  },
-  {
-    medio: 'El Mundo Financiero',
-    titular: 'Pipilacha, el original restaurante donde Madrid huele a pétalos y sabe siempre a primavera',
-    fecha: '',
-    autor: '',
-    url: 'https://www.elmundofinanciero.com/noticia/124560/mundo-del-vino---gastro/pipilacha-el-original-restaurante-donde-madrid-huele-a-petalos-y-sabe-siempre-a-primavera.html',
-    img: '/assets/img/prensa-retiro.jpg',
-  },
-];
+// SEO: CollectionPage citando las menciones reales (mentions, no authorship —
+// son artículos ajenos). Sin datePublished: los datos solo tienen mes/año,
+// no día exacto, y un ISO date inventado sería fabricar un dato.
+const pressLd = `<script type="application/ld+json">${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  '@id': 'https://pipilacha.es/prensa/',
+  url: 'https://pipilacha.es/prensa/',
+  name: 'Pipilacha en los medios',
+  inLanguage: 'es',
+  about: { '@id': 'https://pipilacha.es/#restaurant' },
+  mentions: menciones.map((m) => ({
+    '@type': 'NewsArticle',
+    headline: m.titular,
+    url: m.url,
+    publisher: { '@type': 'Organization', name: m.medio },
+    ...(m.autor ? { author: { '@type': 'Person', name: m.autor } } : {}),
+  })),
+})}</script>`;
 ---
 
 <Base
   title="Prensa · Pipilacha"
   description="Pipilacha en los medios. Lo que la prensa cuenta del restaurante de flores comestibles de Madrid: 15 pases, de jueves a domingo. Información y contacto de prensa."
+  schema={pressLd}
 >
 
   <section class="page-header">
     <p class="eyebrow">Prensa</p>
     <h1 class="reveal-head">Pipilacha<br>en los medios</h1>
-    <p>Pipilacha es un restaurante de Madrid que cocina con flores comestibles como ingrediente principal, no como decoración. Abre de jueves a domingo, en dos servicios (14:00 y 21:00), con un menú de degustación de quince pases —«Despertar de las flores»— a 85 € por persona, con maridaje opcional de seis copas (+60 €). Dieciséis plazas por servicio, ocho de ellas en la barra del showcooking, frente a la cocina. Los chefs fundadores son Arán Rodrigo y Noé David. Dirección: C. del Azulejo, 2, 28028 Madrid.</p>
+    <p>Pipilacha es un restaurante de Madrid que cocina con flores comestibles como ingrediente principal, no como decoración. Abre de jueves a domingo, en dos servicios (14:00 y 21:00), con un menú de degustación de quince pases —«Solsticio floral»— a 85 € por persona, con maridaje opcional de seis copas (+60 €). Dieciséis plazas por servicio, ocho de ellas en la barra del showcooking, frente a la cocina. Los chefs fundadores son Arán Rodrigo y Noé David. Dirección: C. del Azulejo, 2, 28028 Madrid.</p>
   </section>
 
   <!-- MENCIONES (filas editoriales + preview que sigue al cursor) -->
@@ -95,7 +72,7 @@ const menciones = [
       <ul class="prensa-kit__contact reveal">
         <li><span>Email</span><a href="mailto:info@pipilacha.es">info@pipilacha.es</a></li>
         <li><span>Teléfono</span><a href="tel:+34919125998">+34 919 12 59 98</a></li>
-        <li><span>Dirección</span><a href="https://maps.google.com/?q=C.+del+Azulejo+2+28028+Madrid" target="_blank" rel="noopener">C. del Azulejo, 2 · Madrid</a></li>
+        <li><span>Dirección</span><a href="https://www.google.com/maps/search/?api=1&query=Pipilacha%2C%20C.%20del%20Azulejo%2C%202%2C%2028028%20Madrid" target="_blank" rel="noopener">C. del Azulejo, 2 · Madrid</a></li>
       </ul>
     </div>
   </section>

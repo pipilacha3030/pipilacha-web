@@ -1,0 +1,140 @@
+---
+import Base from '../../layouts/Base.astro';
+import PrimeraFila from '../../components/PrimeraFila.astro';
+import Interlude from '../../components/Interlude.astro';
+import { aggregate, reviewsEn as reviews } from '../../data/reviews.js';
+// Versión inglesa de la home. El idioma lo detecta Base por la URL (/en/).
+---
+
+<Base
+  title="Pipilacha · The only restaurant built entirely on flowers"
+  description="Pipilacha is a tasting-menu restaurant in Madrid where flowers aren't a garnish: they're the main ingredient. 16 seats per service. Thursday to Sunday."
+>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero__media" data-parallax="0.15">
+      <img
+        src="/assets/img/hero.jpg"
+        srcset="/assets/img/hero-m.jpg 1920w, /assets/img/hero.jpg 3840w"
+        sizes="100vw"
+        width="3840" height="2160"
+        fetchpriority="high" decoding="async"
+        alt="A ceramic bowl full of edible flowers held in two hands" />
+      <div class="hero__veil"></div>
+    </div>
+    <div class="hero__content">
+      <!-- único texto del hero: hace de h1 de la página (estructura correcta),
+           pero mantiene el tamaño pequeño de .hero__sub -->
+      <h1 class="hero__sub reveal" data-delay="0.5">For centuries flowers were something to look at. Now they're something to taste.</h1>
+      <div class="hero__actions">
+        <a href="/en/reservas/" class="btn btn--solid btn--shine reveal" data-delay="0.65"><span>Book</span></a>
+        <a href="/en/regala/" class="btn btn--ghost btn--shine reveal" data-delay="0.75"><span>Gift</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHO WE ARE -->
+  <section class="quienes" id="quienes">
+    <div class="quienes__pin">
+      <div class="quienes__stage">
+        <figure class="quienes__media">
+          <img
+            src="/assets/img/barra-aran-noe.jpg"
+            srcset="/assets/img/barra-aran-noe-m.jpg 1600w, /assets/img/barra-aran-noe.jpg 2560w"
+            sizes="100vw"
+            width="2560" height="1209"
+            alt="Arán and Noé behind the Pipilacha counter, flower courses plated in front"
+            loading="lazy" decoding="async" />
+        </figure>
+        <div class="quienes__copy">
+          <h2 class="quienes__h2">A whole menu made of flowers.</h2>
+          <p class="quienes__text">
+            Fifteen courses, and in every one a different flower runs the show. Not as decoration:
+            as the main ingredient, cooked as far as its flavour will go. You won't find this at any
+            other restaurant in Madrid, because almost no one has tried. You sit at the counter, watch
+            it happen a metre away, and leave having tasted things that exist nowhere else.
+          </p>
+          <a href="/en/conocenos/" class="quienes__link">Who's behind it →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERLUDE "35 flowers": the fact made literal (see Interlude.astro) -->
+  <Interlude lang="en" />
+
+  <!-- SUMMER MENU · showcase card with 4 photos in crossfade (showcase.js) -->
+  <section class="gallery" id="gallery" aria-label="Solsticio floral">
+    <div class="gallery__stage">
+    <a class="gallery-finale showcase" id="despertar" href="/en/menu/" aria-label="See the Solsticio floral menu">
+      <div class="showcase__frame">
+        <figure class="showcase__layer" data-layer="0"><img src="/assets/img/df-esparrago.jpg" alt="Grilled asparagus with tagetes romesco" loading="eager" fetchpriority="low" decoding="async" /></figure>
+        <figure class="showcase__layer" data-layer="1"><img src="/assets/img/df-guisante.jpg" alt="Pea, coconut and elderflower" loading="eager" fetchpriority="low" decoding="async" /></figure>
+        <figure class="showcase__layer" data-layer="2"><img src="/assets/img/df-vieira.jpg" alt="Scallop with fig flower" loading="eager" fetchpriority="low" decoding="async" /></figure>
+        <figure class="showcase__layer" data-layer="3"><img src="/assets/img/df-mandarina.jpg" alt="Mandarin torrija" loading="eager" fetchpriority="low" decoding="async" /></figure>
+        <span class="showcase__veil" aria-hidden="true"></span>
+      </div>
+      <span class="showcase__cap">
+        <span class="eyebrow">The summer menu</span>
+        <span class="showcase__title">Solsticio floral</span>
+        <span class="showcase__more">See the courses →</span>
+      </span>
+    </a>
+    </div>
+  </section>
+
+  <!-- SOCIAL PROOF: aggregate rating (Google) + real testimonials
+       Sprint 4 · storytelling: moved up before Front Row — trust (others already
+       lived it) lands right before the sensory climax that closes on booking. -->
+  <section class="proof" aria-labelledby="proof-h">
+    <div class="proof__blooms" aria-hidden="true">
+      <span class="proof__bloom proof__bloom--1"><img src="/assets/img/flor-coreopsis.png" alt="" loading="lazy" decoding="async" /></span>
+      <span class="proof__bloom proof__bloom--2"><img src="/assets/img/flor-cosmos.png" alt="" loading="lazy" decoding="async" /></span>
+      <span class="proof__bloom proof__bloom--3"><img src="/assets/img/flor-amapola.png" alt="" loading="lazy" decoding="async" /></span>
+      <span class="proof__bloom proof__bloom--4"><img src="/assets/img/flor-borraja.png" alt="" loading="lazy" decoding="async" /></span>
+    </div>
+    <div class="proof__inner">
+      <div class="proof__rating reveal">
+        <span class="proof__stars" aria-hidden="true">★★★★★</span>
+        <p class="proof__score"><strong>{aggregate.ratingEn}</strong> / 5</p>
+        <p class="proof__meta">{aggregate.count} reviews on Google</p>
+      </div>
+      <h2 class="proof__title reveal" id="proof-h">What they take from the table</h2>
+      <ul class="proof__quotes" data-reveal-stagger>
+        {reviews.map((r) => (
+          <li class="proof__quote reveal">
+            <a href={aggregate.url} target="_blank" rel="noopener" aria-label="See the reviews on Google">
+              <blockquote>{r.text}</blockquote>
+              <cite>{r.author} · {r.source}</cite>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <a class="proof__link reveal" href={aggregate.url} target="_blank" rel="noopener">See reviews on Google →</a>
+    </div>
+  </section>
+
+  <!-- FRONT ROW — immersive chapter: WATCH → LISTEN → DISCOVER → book
+       Sprint 4 · storytelling: the climax of the story — it already ends in its
+       own booking call-to-action, so it moves up from the tail of the page to here. -->
+  <PrimeraFila lang="en" />
+
+  <!-- EXPLORE (gallery still in Spanish for now → ES fallback)
+       Sprint 4 · storytelling: moved to the end — it's a navigation hub (duplicates
+       destinations already linked from "Who we are"/the showcase), not a narrative
+       beat; now it's the soft exit for anyone who wants to explore before deciding,
+       instead of interrupting the story midway. -->
+  <nav class="explore" aria-label="Sections">
+    <a href="/en/conocenos/" style="--img:url(/assets/img/enlace-conocenos.jpg); --posy:38%">
+      <span class="explore__label">About</span>
+    </a>
+    <a href="/en/menu/" style="--img:url(/assets/img/enlace-menu.jpg); --posy:50%">
+      <span class="explore__label">The menu</span>
+    </a>
+    <a href="/galeria/" style="--img:url(/assets/img/enlace-galeria.jpg); --posy:40%">
+      <span class="explore__label">Gallery</span>
+    </a>
+  </nav>
+
+</Base>

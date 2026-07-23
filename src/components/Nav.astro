@@ -1,0 +1,100 @@
+---
+/* Dock flotante de vidrio líquido oscuro (obsidiana): [burger] — [logo centrado] — [CTA Reservar].
+   El MENÚ vive DENTRO del propio cristal: al pulsar el burger, el dock MUTA
+   (morphing de geometría con GSAP: max-width/height/border-radius) hasta
+   convertirse en el panel de navegación, y los enlaces entran en cascada.
+   El timeline del morphing (play/reverse), el morphing del burger a ✕, la
+   sombra progresiva al scroll y el vuelo de la libélula viven en
+   src/scripts/nav.js. */
+import { useT, localizeHref, localizeNav, altHref, TRANSLATED } from '../i18n/index.js';
+const { path = '/', lang = 'es' } = Astro.props;
+const t = useT(lang);
+const here = (href) => path === href;
+// `flower`: PNG que asoma en el panel al hover de cada opción (una flor por página)
+const menu = [
+  { href: '/conocenos/', tkey: 'nav.about', key: '/conocenos', flower: '/assets/img/flor-dahlia-rosa.png' },
+  { href: '/menu/', tkey: 'nav.menu', key: '/menu', flower: '/assets/img/flor-hibiscus.png' },
+  { href: '/vinos/', tkey: 'nav.wine', key: '/vinos', flower: '/assets/img/flor-dahlia-roja.png' },
+  { href: '/galeria/', tkey: 'nav.gallery', key: '/galeria', flower: '/assets/img/flor-cosmos.png' },
+  { href: '/prensa/', tkey: 'nav.press', key: '/prensa', flower: '/assets/img/flor-aciano.png' },
+  { href: '/regala/', tkey: 'nav.gift', key: '/regala', flower: '/assets/img/flor-ajo.png' },
+  { href: '/reservas/', tkey: 'nav.book', key: '/reservas', flower: '/assets/img/flor-coreopsis.png' },
+];
+// selector de idioma: a la misma página en el otro idioma si existe; si no, a la home
+const otherLang = lang === 'en' ? 'es' : 'en';
+const switchHref = altHref(TRANSLATED.has(path) ? path : '/', otherLang);
+---
+<header class="nav" id="nav">
+  <!-- LUPA PLANA del vidrio: dos feDisplacementMap encadenados cuyos mapas son
+       RAMPAS LINEALES (feImage con un degradado: R crece con x en el primero,
+       G crece con y en el segundo; el otro canal queda en 128 = neutro).
+       Desplazamiento lineal desde el centro = AUMENTO uniforme del fondo
+       (magnificación plana) — sin el domo/abombado de un mapa radial y sin
+       las ondas del ruido. Escalas por eje: 50 horizontal (dock ancho, sutil)
+       y 16 vertical (dock bajo: el zoom se nota al pasar contenido al scroll).
+       Se aplica en backdrop-filter:url(#glass-distortion) (main.css, solo
+       navegadores que lo soporten; el resto queda en blur). -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <filter id="glass-distortion" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feImage x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="mapx"
+        href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><linearGradient id='g' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='rgb(0,128,0)'/><stop offset='1' stop-color='rgb(255,128,0)'/></linearGradient><rect width='300' height='300' fill='url(%23g)'/></svg>"/>
+      <feDisplacementMap in="SourceGraphic" in2="mapx" scale="50" xChannelSelector="R" yChannelSelector="G" result="dx"/>
+      <feImage x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="mapy"
+        href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='rgb(128,0,0)'/><stop offset='1' stop-color='rgb(128,255,0)'/></linearGradient><rect width='300' height='300' fill='url(%23g)'/></svg>"/>
+      <feDisplacementMap in="dx" in2="mapy" scale="16" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </svg>
+
+  <!-- la flor de la opción bajo el cursor: vive FUERA del dock (hermana previa)
+       para quedar DETRÁS del cristal — el backdrop-filter del dock la difumina
+       de verdad, como un pétalo apoyado tras el vidrio. Grande, a la derecha,
+       con deriva flotante (solo puntero fino; ver .nav__menu-bloom). -->
+  <figure class="nav__menu-bloom" aria-hidden="true"><img alt="" decoding="async" /></figure>
+
+  <div class="nav__dock" id="navDock">
+    <!-- haz de luz que cruza el cristal (sheen); recorta su propio brillo con
+         overflow para no ensuciar la sombra exterior del dock -->
+    <span class="nav__sheen" aria-hidden="true"></span>
+
+    <div class="nav__left">
+      <button class="nav__burger" id="burger" aria-label={t('nav.openMenu')} aria-controls="navMenu" aria-expanded="false"><span></span><span></span><span></span></button>
+      <!-- selector de idioma SIEMPRE visible (extranjeros): globo + código destino -->
+      <a href={switchHref} class="nav__lang" data-astro-reload aria-label={t('lang.switchLabel')}>
+        <svg class="nav__lang-globe" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/>
+        </svg>
+        <span>{t('lang.switch')}</span>
+      </a>
+    </div>
+
+    <a href={localizeHref('/', lang)} class="nav__logo" aria-label={t('nav.home')}>
+      <img src="/assets/img/logo-light.png" class="nav__logo-img" alt="Pipilacha" width="560" height="216" />
+      <img src="/assets/img/iso-light.png" class="nav__logo-iso" alt="Pipilacha" width="200" height="200" />
+    </a>
+
+    <a href={localizeHref('/reservas/', lang)} class="nav__cta">{t('cta.book')}</a>
+
+    <!-- Panel de navegación: oculto dentro del dock, se revela cuando el
+         cristal se expande. El burger (mutado a ✕) queda encima como cierre. -->
+    <!-- data-lenis-prevent: con el menú abierto, lenis.stop() intercepta y
+         cancela TODO wheel/touch del documento salvo en nodos marcados así
+         — si no, el scroll nativo de este panel (overflow-y) quedaría muerto
+         en viewports donde el contenido no cabe en 80vh -->
+    <div class="nav__menu" id="navMenu" aria-hidden="true" data-lenis-prevent>
+      <nav class="nav__menu-list" aria-label={t('nav.mainMenu')}>
+        {menu.map((m) => (
+          <a href={localizeNav(m.href, lang)} data-flower={m.flower} aria-current={here(m.key) ? 'page' : undefined}><span>{t(m.tkey)}</span></a>
+        ))}
+      </nav>
+      <div class="nav__menu-meta">
+        <div><span>{t('meta.hours')}</span>{t('meta.hoursValue')}</div>
+        <div><span>{t('meta.address')}</span>{t('meta.addressValue')}</div>
+        <div><span>{t('meta.contact')}</span><a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">@restaurante.pipilacha</a> <a href="tel:+34919125998">919 12 59 98</a></div>
+        <div class="nav__menu-lang"><a href={switchHref} data-astro-reload aria-label={t('lang.switchLabel')}>{t('lang.switch')}</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- velo sobre el resto de la página cuando el menú está abierto (clic = cerrar) -->
+<div class="nav-scrim" id="navScrim" aria-hidden="true"></div>

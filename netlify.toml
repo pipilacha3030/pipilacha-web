@@ -1,0 +1,14 @@
+# Vista previa de ramas para Pipilacha — NO es producción.
+# Producción = pipilacha.es en Arsys (Apache + .htaccess), se sube a mano con el skill de deploy.
+# Netlify solo construye y publica ramas de trabajo para revisar la experiencia sin riesgo.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Nota: el .htaccess (negociación WebP + CSP) es de Apache y NO aplica en Netlify.
+# En preview se sirven los .jpg/.png directamente; la animación y el diseño se ven igual.
+# Es un entorno de revisión, no de paridad de cabeceras con producción.

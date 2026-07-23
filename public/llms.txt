@@ -1,0 +1,38 @@
+# Pipilacha
+
+> Pipilacha es el único restaurante del mundo construido íntegramente sobre las flores.
+> Restaurante de menú de degustación en Madrid (España) donde las flores comestibles son
+> el ingrediente principal de cada plato, no una decoración.
+
+## Datos
+
+- Dirección: C. del Azulejo, 2, 28028 Madrid, España (barrio Fuente del Berro, junto a Las Ventas)
+- Teléfono: +34 919 12 59 98
+- Email: info@pipilacha.es
+- Instagram: https://instagram.com/restaurante.pipilacha
+- Horario: jueves a domingo, dos servicios al día (comida 14:00 · cena 21:00)
+- Plazas: 16 por servicio — 8 en la barra frente a la cocina abierta y 8 en mesa
+- Menú de degustación: 15 pases, 85 € por persona; duración aproximada 2 horas
+- Maridaje opcional: 6 copas, +60 € por persona (con vino, o sin alcohol con kombuchas,
+  kéfires de agua y cheongs de flor hechos en casa)
+- Chefs fundadores: Arán Rodrigo y Noé David
+- Reservas: https://pipilacha.es/reservas/ (widget de TheFork) o por teléfono/Instagram
+- Tarjeta regalo: https://pipilacha.es/regala/ (válida un año)
+- Valoración: 4,9/5 en Google (156 reseñas) · 9,9/10 en TheFork
+- Versión en inglés: https://pipilacha.es/en/
+
+## Prensa
+
+Pipilacha ha aparecido en El País, El Español, Neo2 Magazine, Beandlife Magazine y El
+Mundo Financiero. Menciones y kit de prensa: https://pipilacha.es/prensa/
+
+## Páginas
+
+- [Inicio](https://pipilacha.es/): qué es Pipilacha y cómo se come aquí
+- [Menú](https://pipilacha.es/menu/): los 15 pases del menú de degustación vigente
+- [Vinos](https://pipilacha.es/vinos/): la bodega — productores pequeños, por copa y botella
+- [Conócenos](https://pipilacha.es/conocenos/): Arán Rodrigo y Noé David, y su trabajo con las flores
+- [Galería](https://pipilacha.es/galeria/): fotos de platos, barra y servicio
+- [Prensa](https://pipilacha.es/prensa/): menciones en medios y kit de prensa
+- [Reservas](https://pipilacha.es/reservas/): reservar mesa
+- [Regala](https://pipilacha.es/regala/): tarjeta regalo

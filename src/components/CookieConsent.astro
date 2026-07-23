@@ -1,0 +1,76 @@
+---
+/* Consentimiento de cookies. Vive fuera de <main> (persiste entre transiciones).
+   La lógica está en src/scripts/cookies.js (módulo bundleado, sin JS inline → CSP).
+   Tres categorías reales: técnicas (necesarias), reservas (TheFork) y
+   analítica (Google Analytics 4, gated en analytics.js). Bilingüe vía src/i18n. */
+import { useT, localizeNav } from '../i18n/index.js';
+const { lang = 'es' } = Astro.props;
+const t = useT(lang);
+---
+<!-- Banner: región no modal, no bloquea la página -->
+<div class="cc-banner" id="cookieBanner" role="region" aria-label={t('cc.title')}>
+  <div class="cc-banner__body">
+    <img class="cc-banner__flor" src="/assets/img/flor-borraja.png" alt="" aria-hidden="true" width="56" height="56" />
+    <div class="cc-banner__text">
+      <p class="cc-banner__title">{t('cc.title')}</p>
+      <p class="cc-banner__lead">{t('cc.lead')} <a href={localizeNav('/cookies/', lang)}>{t('cc.more')}</a>.</p>
+    </div>
+  </div>
+  <div class="cc-banner__actions">
+    <button type="button" class="btn btn--ghost cc-btn" data-cc="reject">{t('cc.reject')}</button>
+    <button type="button" class="cc-link" data-cc="prefs">{t('cc.prefs')}</button>
+    <button type="button" class="btn btn--solid cc-btn" data-cc="accept">{t('cc.accept')}</button>
+  </div>
+</div>
+
+<!-- Preferencias: diálogo nativo (modal accesible, Esc para cerrar) -->
+<dialog class="cc-dialog" id="cookiePrefs" aria-labelledby="ccPrefsTitle">
+  <form method="dialog" class="cc-dialog__inner">
+    <button type="button" class="cc-dialog__close" data-cc="close" aria-label={t('cc.close')}>&times;</button>
+    <p class="eyebrow">{t('cc.privacy')}</p>
+    <h2 class="cc-dialog__title" id="ccPrefsTitle">{t('cc.prefsTitle')}</h2>
+    <p class="cc-dialog__lead">{t('cc.prefsLead')}</p>
+
+    <ul class="cc-cats">
+      <li class="cc-cat">
+        <div class="cc-cat__head">
+          <span class="cc-cat__name">{t('cc.necessary')}</span>
+          <label class="cc-switch cc-switch--locked">
+            <input type="checkbox" checked disabled aria-label={t('cc.necessaryAria')} />
+            <span class="cc-switch__track" aria-hidden="true"></span>
+          </label>
+        </div>
+        <p class="cc-cat__desc">{t('cc.necessaryDesc')}</p>
+      </li>
+      <li class="cc-cat">
+        <div class="cc-cat__head">
+          <span class="cc-cat__name">{t('cc.reservations')}</span>
+          <label class="cc-switch">
+            <input type="checkbox" id="cookieReservas" aria-label={t('cc.reservationsAria')} />
+            <span class="cc-switch__track" aria-hidden="true"></span>
+          </label>
+        </div>
+        <p class="cc-cat__desc">{t('cc.reservationsDesc')}</p>
+      </li>
+      <li class="cc-cat">
+        <div class="cc-cat__head">
+          <span class="cc-cat__name">{t('cc.analytics')}</span>
+          <label class="cc-switch">
+            <input type="checkbox" id="cookieAnalitica" aria-label={t('cc.analyticsAria')} />
+            <span class="cc-switch__track" aria-hidden="true"></span>
+          </label>
+        </div>
+        <p class="cc-cat__desc">{t('cc.analyticsDesc')}</p>
+      </li>
+    </ul>
+
+    <div class="cc-dialog__actions">
+      <button type="button" class="cc-link" data-cc="reject-all">{t('cc.rejectAll')}</button>
+      <button type="button" class="cc-link" data-cc="accept-all">{t('cc.acceptAll')}</button>
+      <button type="button" class="btn btn--solid cc-btn" data-cc="save">{t('cc.save')}</button>
+    </div>
+    <p class="cc-dialog__links">
+      <a href={localizeNav('/cookies/', lang)}>{t('cc.policy')}</a> · <a href={localizeNav('/privacidad/', lang)}>{t('cc.privacy')}</a> · <a href={localizeNav('/aviso-legal/', lang)}>{t('legal.notice')}</a>
+    </p>
+  </form>
+</dialog>

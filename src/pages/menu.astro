@@ -1,37 +1,22 @@
 ---
 import Base from '../layouts/Base.astro';
+import { pases } from '../data/menu.js';
 
-// Despertar de las flores — 15 pases (nombres reales).
-// Cada pase lleva una pista: lo que hace la flor, no la receta entera.
-// El nº 10 va oculto a propósito: pase sorpresa, a ciegas.
-const pases = [
-  { name: 'Pipilacha', hook: 'La flor eléctrica despierta el paladar para todo lo que viene.' },
-  { name: 'Sabores de las flores', hook: 'Cinco flores en su punto. Un mapa de boca antes de empezar.' },
-  { name: 'Taco de tila y alisos', hook: 'La tila calma; el aliso cierra con un punto de mostaza.' },
-  { name: 'Explosión de flor de higo', hook: 'Hueles otoño y comes primavera.' },
-  { name: 'Fusión entre vieiras e hibiscus', hook: 'El hibiscus corta la grasa de la vieira.' },
-  { name: 'La magia del alhelí', hook: 'Pasa de azul a violeta y deja el paladar a cero.' },
-  { name: 'Pan y mantequilla', hook: 'Masa madre con flores y mantequilla de caléndula.' },
-  { name: 'Guisante coco-saúco', hook: 'El saúco sube el dulzor del guisante sin azúcar.' },
-  { name: 'Espárragos, romesco y tagetes', hook: 'Brasa de encina y romesco reformulado con tagete.' },
-  { surprise: true },
-  { name: 'Cheong de glicinias sobre caballa', hook: 'Un fermento floral coreano sobre caballa.' },
-  { name: 'Atún y margaritas', hook: 'Almadraba y manzanilla silvestre en el ponzu.' },
-  { name: 'Ternera unagi con flores de huerto', hook: 'Robata, lacado unagi y hojas del huerto.' },
-  { name: 'Torrija de mandarina', hook: 'Flambeada, con un gel picante de mandarina.' },
-  { name: 'Fresas con nata madrileña', hook: 'Fresón de Aranjuez rallado al momento.' },
-];
-
-// Schema.org: el menú (coincide con los 15 pases listados en la página)
+// Schema.org: el menú (coincide con los 15 pases listados en la página).
+// El @id es la URL de la página: el Restaurant del grafo base (Base.astro)
+// apunta aquí vía hasMenu, y buscadores/LLMs cierran el círculo.
 const menuSchema = `<script type="application/ld+json">${JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Menu",
-  "name": "Despertar de las flores",
+  "@id": "https://pipilacha.es/menu/",
+  "url": "https://pipilacha.es/menu/",
+  "mainEntityOfPage": "https://pipilacha.es/menu/",
+  "name": "Solsticio floral",
   "inLanguage": "es",
   "description": "Menú de degustación de quince pases con flores comestibles como ingrediente. 85 € por persona.",
   "hasMenuSection": {
     "@type": "MenuSection",
-    "name": "Despertar de las flores · 15 pases",
+    "name": "Solsticio floral · 15 pases",
     "hasMenuItem": pases.map((p) => p.surprise
       ? { "@type": "MenuItem", "name": "Pase sorpresa", "description": "A ciegas, se descubre en la mesa." }
       : { "@type": "MenuItem", "name": p.name, "description": p.hook })
@@ -41,15 +26,20 @@ const menuSchema = `<script type="application/ld+json">${JSON.stringify({
 ---
 
 <Base
-  title="Menú · Despertar de las flores · Pipilacha"
-  description="Despertar de las flores: el menú de degustación de Pipilacha. Quince pases con las flores como ingrediente. Madrid, 85 € por persona."
+  title="Menú · Solsticio floral · Pipilacha"
+  description="Solsticio floral: el menú de degustación de Pipilacha. Quince pases con las flores como ingrediente. Madrid, 85 € por persona."
+  ogImage="/assets/img/og-menu.jpg"
   schema={menuSchema}
 >
 
+  <!-- progressive blur: el contenido se disuelve en degradado en los bordes del viewport -->
+  <div class="pblur pblur--top" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+  <div class="pblur pblur--bottom" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+
   <section class="page-header">
-    <p class="eyebrow">Degustación · Primavera</p>
-    <h1 class="reveal-head">Despertar de las flores</h1>
-    <p>Quince pases. Sin carta, sin alternativa: se sirve completo. Cada uno con una pista; el resto te lo contamos en la mesa. El décimo te lo guardamos.</p>
+    <p class="eyebrow">Degustación · Verano</p>
+    <h1 class="reveal-head">Solsticio floral</h1>
+    <p data-split-lines>Quince pases. Sin carta, sin alternativa: se sirve completo. 85 € por persona; el maridaje, aparte. Cada uno con una pista; el resto te lo contamos en la mesa.</p>
   </section>
 
   <!-- LISTA DE PASES (nombre + pista) sobre fondo verde moss -->

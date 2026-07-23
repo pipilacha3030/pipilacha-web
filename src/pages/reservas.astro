@@ -1,43 +1,105 @@
 ---
 import Base from '../layouts/Base.astro';
+import { faqEs as faq } from '../data/faq.js';
+import { aggregate } from '../data/reviews.js';
+
+// FAQPage schema: los motores generativos (ChatGPT, Perplexity, AI Overviews)
+// extraen los pares pregunta-respuesta. El texto también está visible abajo.
+const faqSchema = `<script type="application/ld+json">${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+})}</script>`;
 ---
 
 <Base
   title="Reservar · Pipilacha"
   description="Reserva en Pipilacha. 16 plazas por servicio, jueves a domingo, dos turnos. Menú degustación 85 € por persona."
+  ogImage="/assets/img/og-reservas.jpg"
+  schema={faqSchema}
 >
 
-  <section class="page-header page-header--blooms">
-    <div class="menu-blooms" aria-hidden="true">
-      <img class="menu-bloom menu-bloom--1" src="/assets/img/flor-amapola.png" alt="" />
-      <img class="menu-bloom menu-bloom--3" src="/assets/img/flor-cosmos.png" alt="" />
-      <img class="menu-bloom menu-bloom--5" src="/assets/img/flor-borraja.png" alt="" />
+  <!-- La página entera comparte una sola atmósfera de flores en blur:
+       cada flor va en un contenedor con parallax (GSAP mueve el contenedor)
+       y el float ambiente vive en la <img> — así los dos transforms no pelean. -->
+  <section class="reservas">
+    <div class="reservas__atmos" aria-hidden="true">
+      <!-- composición en 3 capas de profundidad; cada flor es distinta.
+           CERCA (grandes, poco blur, más parallax) · MEDIA · LEJOS (pequeñas, mucho blur) -->
+      <div class="rbloom rbloom--1" data-parallax="0.26"><img src="/assets/img/flor-dahlia-rosa.png" alt="" /></div>
+      <div class="rbloom rbloom--2" data-parallax="0.23"><img src="/assets/img/flor-amapola.png" alt="" /></div>
+      <div class="rbloom rbloom--3" data-parallax="0.16"><img src="/assets/img/flor-campanula.png" alt="" /></div>
+      <div class="rbloom rbloom--4" data-parallax="0.17"><img src="/assets/img/flor-coreopsis.png" alt="" /></div>
+      <div class="rbloom rbloom--5" data-parallax="0.15"><img src="/assets/img/flor-coreopsis.png" alt="" /></div>
+      <div class="rbloom rbloom--6" data-parallax="0.09"><img src="/assets/img/flor-aciano.png" alt="" /></div>
+      <div class="rbloom rbloom--7" data-parallax="0.11"><img src="/assets/img/flor-cosmos.png" alt="" /></div>
+      <div class="rbloom rbloom--8" data-parallax="0.08"><img src="/assets/img/flor-borraja.png" alt="" /></div>
     </div>
-    <p class="eyebrow">Reservas</p>
-    <h1 class="reveal-head">Reservar<br>en Pipilacha</h1>
-    <p>Elige día y turno abajo. Dieciséis plazas por servicio: ocho en la barra, frente a la cocina abierta, y ocho en mesa.</p>
+
+    <div class="page-header">
+      <p class="eyebrow">Reservas</p>
+      <h1 class="reveal-head">Reservar<br>en Pipilacha</h1>
+      <p>Elige día y turno abajo. Dieciséis plazas por servicio: ocho en la barra, frente a la cocina abierta, y ocho en mesa.</p>
+      <p class="reservas__trust">
+        <span class="proof__stars" aria-hidden="true">★★★★★</span>
+        <strong>{aggregate.rating}</strong> en Google ({aggregate.count} reseñas) · <strong>{aggregate.thefork}</strong> en TheFork · <a href="/prensa/">como en El País, El Español y otros medios</a>
+      </p>
+    </div>
+
+    <!-- WIDGET THEFORK (reserva online, inline) -->
+    <div class="reserva-widget" id="reservar-widget">
+      <div class="reserva-widget__inner">
+        <!-- flores asomando por los bordes del widget: van DETRÁS del marco (z-index<marco),
+             así parte queda tapada y parte asoma, como flotando por debajo y pasando lento -->
+        <div class="widget-blooms" aria-hidden="true">
+          <div class="wbloom wbloom--l1" data-parallax="0.06"><img src="/assets/img/flor-clavel.png" alt="" loading="lazy" /></div>
+          <div class="wbloom wbloom--l2" data-parallax="0.09"><img src="/assets/img/flor-geranio.png" alt="" loading="lazy" /></div>
+          <div class="wbloom wbloom--r1" data-parallax="0.08"><img src="/assets/img/flor-dahlia-roja.png" alt="" loading="lazy" /></div>
+          <div class="wbloom wbloom--r2" data-parallax="0.05"><img src="/assets/img/flor-hibiscus.png" alt="" loading="lazy" /></div>
+          <div class="wbloom wbloom--b1" data-parallax="0.07"><img src="/assets/img/flor-crisantemo.png" alt="" loading="lazy" /></div>
+        </div>
+        <div class="reserva-widget__frame">
+          <p class="reserva-widget__loading" hidden>Cargando el calendario de reservas<span class="dots" aria-hidden="true"></span></p>
+          <!-- data-src (no src): TheFork es un tercero; su iframe no carga ni pide
+               cookies hasta que se aceptan las cookies de reservas (ver cookies.js) -->
+          <iframe
+            data-src="https://widget.thefork.com/867dcee9-49b5-47ed-90c0-c6c87149b328"
+            data-consent="reservas"
+            allow="payment *"
+            title="Reservas Pipilacha"
+            loading="lazy"
+            hidden>
+          </iframe>
+          <!-- aviso cuando faltan las cookies de reservas -->
+          <div class="reserva-consent" hidden>
+            <p class="reserva-consent__title">El calendario lo pone TheFork</p>
+            <p class="reserva-consent__text">Para reservar aquí necesitamos cargar el widget de TheFork, que usa sus propias cookies. Actívalas para reservar en esta página, o llama al 919 12 59 98.</p>
+            <button type="button" class="btn btn--solid" data-cc="accept-reservas">Activar y reservar</button>
+          </div>
+        </div>
+        <p class="reserva-widget__fallback">¿No carga? Llama al <a href="tel:+34919125998">919 12 59 98</a>.</p>
+      </div>
+    </div>
   </section>
 
-  <!-- WIDGET THEFORK (reserva online, inline) -->
-  <section class="reserva-widget" id="reservar-widget">
-    <div class="menu-blooms reserva-widget__blooms desktop-only" aria-hidden="true">
-      <img class="menu-bloom reserva-bloom reserva-bloom--l1" src="/assets/img/flor-dalia.png" alt="" />
-      <img class="menu-bloom reserva-bloom reserva-bloom--l2" src="/assets/img/flor-borraja.png" alt="" />
-      <img class="menu-bloom reserva-bloom reserva-bloom--r1" src="/assets/img/flor-calendula.png" alt="" />
-      <img class="menu-bloom reserva-bloom reserva-bloom--r2" src="/assets/img/flor-cosmos.png" alt="" />
-    </div>
-    <div class="reserva-widget__inner">
-      <div class="reserva-widget__frame">
-        <p class="reserva-widget__loading">Cargando el calendario de reservas<span class="dots" aria-hidden="true"></span></p>
-        <iframe
-          src="https://widget.thefork.com/867dcee9-49b5-47ed-90c0-c6c87149b328"
-          allow="payment *"
-          title="Reservas Pipilacha"
-          loading="lazy"
-          onload="this.previousElementSibling.classList.add('is-loaded')">
-        </iframe>
+  <!-- FAQ: respuestas en texto plano (citables por IAs) + FAQPage schema.
+       <details> nativo: contenido en el DOM, accesible y sin JS. -->
+  <section class="faq" aria-labelledby="faq-h">
+    <div class="faq__inner">
+      <p class="eyebrow reveal">Antes de venir</p>
+      <h2 class="faq__title reveal" id="faq-h">Preguntas frecuentes</h2>
+      <div class="faq__list" data-reveal-stagger>
+        {faq.map((f) => (
+          <details class="faq__item reveal">
+            <summary class="faq__q">{f.q}</summary>
+            <div class="faq__a"><p>{f.a}</p></div>
+          </details>
+        ))}
       </div>
-      <p class="reserva-widget__fallback">¿No carga? Reserva por <a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">Instagram</a> o llama al <a href="tel:+34919125998">919 12 59 98</a>.</p>
     </div>
   </section>
 

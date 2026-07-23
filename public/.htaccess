@@ -1,9 +1,55 @@
+# La 404 de marca (dist/404.html) — sin esto Apache sirve su error genérico
+ErrorDocument 404 /404.html
+
+# ---- host canónico: www.pipilacha.es → pipilacha.es (301) ----
+# Sin esto ambos hosts servían 200 y Google/Bing veían contenido duplicado.
+# El canonical del sitio es SIN www; esta 301 hace que la URL real coincida.
+# La condición mira el HTTP_HOST exacto: en la beta (live-website.com) no
+# dispara, así que el mismo .htaccess vale para producción y beta.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTP_HOST} ^www\.pipilacha\.es$ [NC]
+  RewriteRule ^ https://pipilacha.es%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+# ---- URLs de la web anterior → su equivalente actual (301) ----
+# Google seguía indexando estas dos y mandaba gente a un 404 (1.469 impresiones
+# en jun–jul 2026). Una 301 le dice al buscador "esto se ha mudado, para siempre"
+# y le traspasa el posicionamiento que la URL vieja ya tenía.
+#   /regalo               → /regala/   (la página existe, cambió de nombre)
+#   /preguntas-frecuentes → /reservas/ (las FAQ ahora viven dentro de reservas,
+#                                       con su FAQPage schema — mismo contenido)
+# El `/?` cubre la URL con y sin barra final. Van ANTES de la negociación de
+# imágenes: son [L], así que la petición termina aquí y no sigue evaluando.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^regalo/?$ /regala/ [R=301,L]
+  RewriteRule ^preguntas-frecuentes/?$ /reservas/ [R=301,L]
+</IfModule>
+
+# ---- AVIF / WebP por negociación de contenido ----
+# Si el navegador acepta el formato y existe el hermano, se sirve con el MISMO
+# URL. AVIF primero (≈20% más ligero que webp); WebP como segundo; si no hay
+# ninguno o falta mod_rewrite, se sirve el original: degradación limpia.
+# Cubre <img>, srcset y fondos CSS sin tocar el markup.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTP_ACCEPT} image/avif
+  RewriteCond %{DOCUMENT_ROOT}/$1.avif -f
+  RewriteRule ^(.+)\.(?:jpe?g|png)$ $1.avif [T=image/avif,L]
+  RewriteCond %{HTTP_ACCEPT} image/webp
+  RewriteCond %{DOCUMENT_ROOT}/$1.webp -f
+  RewriteRule ^(.+)\.(?:jpe?g|png)$ $1.webp [T=image/webp,L]
+</IfModule>
+
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType image/jpeg "access plus 1 year"
   ExpiresByType image/png "access plus 1 year"
   ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/avif "access plus 1 year"
   ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
   ExpiresByType text/css "access plus 1 month"
   ExpiresByType application/javascript "access plus 1 month"
   ExpiresByType text/javascript "access plus 1 month"
@@ -11,11 +57,42 @@
 </IfModule>
 
 <IfModule mod_headers.c>
-  <FilesMatch "\.(jpg|jpeg|png|webp|svg|css|js)$">
-    Header set Cache-Control "public, max-age=2592000, immutable"
+  # Bundles con hash en el nombre (/_assets/ de Astro): cache eterna de verdad
+  <If "%{REQUEST_URI} =~ m#^/_assets/#">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </If>
+  # Resto de estáticos (imágenes, fuentes): un mes, revalidable
+  <FilesMatch "\.(jpg|jpeg|png|webp|avif|svg|woff2)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  # la respuesta jpg/png varía según Accept (negociación webp de arriba)
+  <FilesMatch "\.(jpg|jpeg|png)$">
+    Header append Vary Accept
   </FilesMatch>
 </IfModule>
 
 <IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html text/css application/javascript text/javascript
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript text/javascript image/svg+xml
+</IfModule>
+
+# ---- Cabeceras de seguridad ----
+# CSP: solo scripts propios + el iframeResizer de Bonkdo + los DOS inline
+# permitidos por hash (la clase `js` de Base.astro y el iFrameResize() de
+# regala). Si cambias cualquiera de esos <script is:inline>, recalcula:
+#   printf '%s' "<contenido exacto>" | openssl dgst -sha256 -binary | openssl base64
+# frame-src con comodín de vendor: los widgets (TheFork/Bonkdo) pueden navegar
+# su propio iframe a hosts hermanos; cerrarlo más rompería reservas/compras.
+# 'unsafe-inline' SOLO en estilos (Astro emite <style> y style= inline); en
+# scripts NO hay unsafe-inline: un XSS inyectado no ejecutaría.
+# Google Analytics (gated por consentimiento en analytics.js): gtag.js viene de
+# googletagmanager.com (script-src) y envía los hits a *.google-analytics.com /
+# *.analytics.google.com por fetch (connect-src) o píxel (img-src).
+<IfModule mod_headers.c>
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://*.bonkdo.com https://www.googletagmanager.com 'sha256-6E7I2IFsrVmwmR07U9nWCgkkiFrbQfcJgdZRjsIFzDc=' 'sha256-rvtsdXrexxwMR2z41Un6uf0dcPu8CWKkOPJNRhptxF8='; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com; font-src 'self'; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; frame-src https://*.thefork.com https://*.bonkdo.com https://checkout.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  # HSTS moderado (6 meses, sin preload): la beta ya sirve https
+  Header always set Strict-Transport-Security "max-age=15552000"
 </IfModule>

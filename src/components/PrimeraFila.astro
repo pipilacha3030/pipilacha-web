@@ -1,0 +1,358 @@
+---
+/* PRIMERA FILA — capítulo inmersivo (OBSERVAR → ESCUCHAR → DESCUBRIR → reserva).
+   Sustituye a Showcooking + Reserva. Contenido en src/data/primeraFila.js,
+   animación (pin + timeline) en src/scripts/animations/primeraFila.js.
+   Layout: apilado y editorial en móvil / sin JS; escenas superpuestas que se
+   funden con el scroll (pin) en escritorio con JS. */
+import { scenesEs, reservaEs, scenesEn, reservaEn } from '../data/primeraFila.js';
+
+const { lang = 'es' } = Astro.props;
+const scenes = lang === 'en' ? scenesEn : scenesEs;
+const reserva = lang === 'en' ? reservaEn : reservaEs;
+const label = lang === 'en' ? 'Front row — live the menu from the counter' : 'Primera fila — vivir el menú desde la barra';
+---
+
+<section class="pf" id="reserva" aria-label={label}>
+  <div class="pf__pin">
+    {scenes.map((s, i) => (
+      <div class={`pf__scene pf__scene--${i + 1}`}>
+        {/* eager + fetchpriority low: dentro del pin las escenas 2-3 están en opacity:0 y
+            el lazy-load nativo no dispara fiable (iOS) → escena en blanco al hacer scroll.
+            Se descargan con la página, en cola baja para no competir con el hero. */}
+        <figure class="pf__img">
+          <img src={s.img} alt={s.alt} width="1120" height="1400" loading="eager" fetchpriority="low" decoding="async" />
+        </figure>
+        <div class="pf__panel">
+          <span class="pf__rule" aria-hidden="true"></span>
+          <h2 class="pf__title">{s.title}</h2>
+          <p class="pf__lead">{s.lead}</p>
+
+          {i === 2 && (
+            <div class="pf__reserva">
+              <div class="pf__offer">
+                <p class="pf__offer-ey">{reserva.eyebrow}</p>
+                <p class="pf__price"><strong>{reserva.price}</strong><span>{reserva.priceNote}</span></p>
+                <div class="pf__offer-lines">
+                  {reserva.lines.map((l) => <p>{l}</p>)}
+                </div>
+                <a href={reserva.cta.href} class="pf__cta shiny-cta"><span>{reserva.cta.label}</span></a>
+              </div>
+              <ul class="pf__practical">
+                {reserva.practical.map((p) => <li>{p}</li>)}
+              </ul>
+            </div>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  /* ====== CSS @property para el efecto shiny ====== */
+  @property --gradient-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  @property --gradient-angle-offset {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  @property --gradient-percent {
+    syntax: "<percentage>";
+    initial-value: 5%;
+    inherits: false;
+  }
+
+  @property --gradient-shine {
+    syntax: "<color>";
+    initial-value: white;
+    inherits: false;
+  }
+
+  /* ====== Botón shiny con colores Pipilacha ====== */
+  .shiny-cta {
+    --shiny-bg: var(--moss);
+    --shiny-bg-subtle: #1a1818;
+    --shiny-fg: var(--cream);
+    --shiny-highlight: var(--olive);
+    --shiny-highlight-subtle: var(--accent-soft);
+    --animation: gradient-angle linear infinite;
+    --duration: 3s;
+    --shadow-size: 2px;
+
+    isolation: isolate;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    outline-offset: 4px;
+    padding: 1rem 2.2rem;
+    font-family: inherit;
+    font-size: 0.76rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    line-height: 1.2;
+    border: 1px solid transparent;
+    border-radius: 360px;
+    color: var(--shiny-fg);
+    background: linear-gradient(var(--shiny-bg), var(--shiny-bg)) padding-box,
+      conic-gradient(
+        from calc(var(--gradient-angle) - var(--gradient-angle-offset)),
+        transparent,
+        var(--shiny-highlight) var(--gradient-percent),
+        var(--gradient-shine) calc(var(--gradient-percent) * 2),
+        var(--shiny-highlight) calc(var(--gradient-percent) * 3),
+        transparent calc(var(--gradient-percent) * 4)
+      )
+      border-box;
+    box-shadow: inset 0 0 0 1px var(--shiny-bg-subtle);
+    transition: 800ms cubic-bezier(0.25, 1, 0.5, 1);
+    transition-property: --gradient-angle-offset, --gradient-percent, --gradient-shine;
+  }
+
+  .shiny-cta::before,
+  .shiny-cta::after,
+  .shiny-cta span::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-start: 50%;
+    translate: -50% -50%;
+    z-index: -1;
+  }
+
+  .shiny-cta:active {
+    translate: 0 1px;
+  }
+
+  /* Patrón de puntos */
+  .shiny-cta::before {
+    --size: calc(100% - var(--shadow-size) * 3);
+    --position: 2px;
+    --space: calc(var(--position) * 2);
+    width: var(--size);
+    height: var(--size);
+    background: radial-gradient(
+        circle at var(--position) var(--position),
+        white calc(var(--position) / 4),
+        transparent 0
+      )
+      padding-box;
+    background-size: var(--space) var(--space);
+    background-repeat: space;
+    mask-image: conic-gradient(
+      from calc(var(--gradient-angle) + 45deg),
+      black,
+      transparent 10% 90%,
+      black
+    );
+    border-radius: inherit;
+    opacity: 0.4;
+    animation: gradient-angle linear infinite 3s;
+  }
+
+  /* Brillo interior */
+  .shiny-cta::after {
+    width: 100%;
+    aspect-ratio: 1;
+    background: linear-gradient(
+      -50deg,
+      transparent,
+      var(--shiny-highlight),
+      transparent
+    );
+    mask-image: radial-gradient(circle at bottom, transparent 40%, black);
+    opacity: 0.6;
+    animation: shimmer linear infinite 3s reverse;
+  }
+
+  .shiny-cta span {
+    z-index: 1;
+    position: relative;
+  }
+
+  .shiny-cta span::before {
+    --size: calc(100% + 1rem);
+    width: var(--size);
+    height: var(--size);
+    box-shadow: inset 0 -1ex 2rem 4px var(--shiny-highlight);
+    opacity: 0;
+    animation: breathe linear infinite calc(3s * 1.5);
+  }
+
+  .shiny-cta:is(:hover, :focus-visible) {
+    --gradient-percent: 20%;
+    --gradient-angle-offset: 95deg;
+    --gradient-shine: var(--shiny-highlight-subtle);
+  }
+
+  .shiny-cta:is(:hover, :focus-visible) span::before {
+    opacity: 1;
+  }
+
+  @keyframes gradient-angle {
+    to {
+      --gradient-angle: 360deg;
+    }
+  }
+
+  @keyframes shimmer {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  @keyframes breathe {
+    from, to {
+      scale: 1;
+    }
+    50% {
+      scale: 1.2;
+    }
+  }
+
+  /* ====== base: apilado y editorial (móvil + fallback sin JS) ====== */
+  .pf { position: relative; background: var(--cream); }
+  .pf__pin { position: relative; }
+
+  .pf__scene {
+    position: relative;
+    display: flex; flex-direction: column; gap: 1.8rem;
+    max-width: var(--maxw); margin-inline: auto;
+    padding: clamp(3rem, 9vh, 6rem) var(--gutter);
+  }
+  .pf__img {
+    position: relative; margin: 0; overflow: hidden;
+    border-radius: var(--radius); aspect-ratio: 4 / 5;
+    box-shadow: 0 40px 80px -50px rgba(49, 51, 31, .5);
+  }
+  .pf__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .pf__panel { max-width: 36rem; }
+  /* filete-ancla: sustituye al antiguo marcador numerado. Se dibuja (scaleX 0→1)
+     con la entrada de cada escena — ver primeraFila.js. transform-origin izq. */
+  .pf__rule { display: block; width: 2.75rem; height: 1px; margin: 0 0 1.5rem; background: var(--accent); transform-origin: left center; }
+  .pf__title {
+    font-family: var(--serif); font-size: clamp(2.1rem, 6vw, 3.4rem); line-height: 1.04;
+    color: var(--moss); letter-spacing: -.01em; margin: 0 0 1.5rem; text-wrap: balance;
+  }
+  .pf__lead {
+    font-family: var(--sans); font-weight: 300; font-size: clamp(1rem, 1.35vw, 1.16rem);
+    line-height: 1.7; color: var(--text-muted); margin: 0; max-width: 34ch;
+  }
+
+  /* — bloque reserva (escena 3): editorial, no tabla — */
+  .pf__reserva { margin-top: 2.6rem; display: flex; flex-direction: column; gap: 1.9rem; }
+  .pf__offer { display: flex; flex-direction: column; }
+  .pf__offer-ey { font-size: .7rem; letter-spacing: .24em; text-transform: uppercase; color: var(--text-subtle); margin: 0 0 .5rem; }
+  .pf__price { font-family: var(--serif); color: var(--moss); margin: 0 0 .7rem; display: flex; align-items: baseline; gap: .55rem; }
+  .pf__price strong { font-weight: 400; font-size: clamp(2.4rem, 5vw, 3.1rem); line-height: 1; }
+  .pf__price span { font-family: var(--sans); font-size: .92rem; color: var(--text-muted); }
+  .pf__offer-lines p { margin: .16rem 0; font-size: .9rem; color: var(--text-muted); }
+  .pf__cta {
+    align-self: flex-start; margin-top: 1.3rem; display: inline-block;
+    font-family: var(--sans); font-size: .76rem; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--cream); background: var(--moss); padding: 1rem 2.6rem; border-radius: 100px;
+    transition: background .4s var(--ease), transform .4s var(--ease);
+  }
+  .pf__cta:hover { background: var(--olive); transform: translateY(-2px); }
+  .pf__practical {
+    list-style: none; margin: 0; padding: 1.5rem 0 0; border-top: 1px solid var(--border-subtle);
+    display: flex; flex-wrap: wrap; gap: .5rem 1.8rem;
+  }
+  .pf__practical li { font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--text-subtle); }
+
+  /* ====== con JS: escenas superpuestas que se funden (pin — móvil y escritorio) ======
+     Los TRES bloques que siguen van condicionados a (prefers-reduced-motion:
+     no-preference) porque primeraFila.js sale antes con reduced-motion: sin
+     esa condición el CSS seguía apilando las escenas en absoluto dentro de un
+     contenedor de 100svh y nadie las animaba → solo se veía la escena 1 y las
+     2 y 3 (con TODO el bloque de reserva: precio, CTA, datos) quedaban en
+     opacity:0, inalcanzables. Comprobado en pipilacha.es con Reducir
+     movimiento activado. La regla es: el layout de animación solo existe si la
+     animación va a correr. */
+  @media (prefers-reduced-motion: no-preference) {
+  :global(html.js) .pf__pin { height: 100vh; height: 100svh; overflow: hidden; }
+  :global(html.js) .pf__scene {
+    position: absolute; inset: 0; display: block;
+    padding: 0; max-width: none; margin: 0; opacity: 0; will-change: opacity;
+  }
+  :global(html.js) .pf__scene--1 { opacity: 1; }
+  :global(html.js) .pf__img img { will-change: transform; }
+  /* con JS el filete arranca colapsado y se dibuja en la timeline (scaleX 0→1);
+     gated en .js para que sin bundle o bajo reduced-motion se muestre completo */
+  :global(html.js) .pf__rule { transform: scaleX(0); }
+  }
+
+  /* — móvil con JS: imagen a sangre + texto sobre degradado (abajo) —
+     900px: MISMO breakpoint que el resto del sitio (nav/hero/quiénes en
+     main.css). Antes era 768/769px, un valor propio de este componente:
+     entre 769 y 900px (iPads en vertical ~768-834px, tablets, algunos
+     plegables) el resto de la web ya se veía en modo móvil pero esta
+     sección caía en el modo escritorio (miniatura pequeña a la derecha,
+     no a sangre) — bug determinista por ancho de pantalla, no un fallo
+     de red puntual. */
+  @media (max-width: 900px) and (prefers-reduced-motion: no-preference) {
+    :global(html.js) .pf__img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      border-radius: 0; aspect-ratio: auto; box-shadow: none;
+    }
+    :global(html.js) .pf__scene::after {
+      content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background: linear-gradient(180deg, rgba(20,20,12,.30) 0%, rgba(20,20,12,0) 24%,
+        rgba(20,20,12,.48) 60%, rgba(20,20,12,.84) 100%);
+    }
+    :global(html.js) .pf__panel {
+      position: absolute; inset: auto 0 0 0; z-index: 2; height: auto; max-width: none;
+      display: block; padding: 0 var(--gutter) clamp(2.4rem, 8vh, 4rem);
+      text-shadow: var(--shadow-photo);
+    }
+    :global(html.js) .pf__cta { text-shadow: none; }
+    :global(html.js) .pf__rule { background: var(--accent-soft); }
+    :global(html.js) .pf__title { color: #fff; font-size: clamp(2.1rem, 8vw, 3rem); margin-bottom: .9rem; }
+    :global(html.js) .pf__lead { color: rgba(244,239,230,.9); max-width: 42ch; }
+    /* escena 3 (reserva) sobre foto: degradado más denso + texto claro y compacto */
+    :global(html.js) .pf__scene--3::after {
+      background: linear-gradient(180deg, rgba(20,20,12,.35) 0%, rgba(20,20,12,.14) 28%,
+        rgba(20,20,12,.6) 54%, rgba(20,20,12,.9) 100%);
+    }
+    :global(html.js) .pf__scene--3 .pf__title { font-size: clamp(1.9rem, 7vw, 2.6rem); margin-bottom: .7rem; }
+    :global(html.js) .pf__scene--3 .pf__lead { font-size: .95rem; line-height: 1.55; }
+    :global(html.js) .pf__reserva { margin-top: 1.4rem; gap: 1.1rem; }
+    :global(html.js) .pf__offer-ey { color: rgba(244,239,230,.72); }
+    :global(html.js) .pf__price { color: #fff; }
+    :global(html.js) .pf__price span { color: rgba(244,239,230,.85); }
+    :global(html.js) .pf__offer-lines p { color: rgba(244,239,230,.85); }
+    :global(html.js) .pf__cta { margin-top: 1rem; }
+    :global(html.js) .pf__practical { padding-top: 1.1rem; border-top-color: rgba(244,239,230,.28); }
+    :global(html.js) .pf__practical li { color: rgba(244,239,230,.75); }
+  }
+
+  /* — escritorio con JS: marco vertical dominante + texto en el espacio negativo — */
+  @media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+    :global(html.js) .pf__img {
+      position: absolute; top: 11vh; right: 6vw; aspect-ratio: auto;
+      height: 78vh; width: min(40vw, 62.4vh);
+      box-shadow: 0 55px 100px -55px rgba(49, 51, 31, .55);
+    }
+    :global(html.js) .pf__panel {
+      position: absolute; top: 0; left: 0; height: 100%; max-width: none;
+      width: min(46vw, 42rem);
+      padding: 8vh clamp(2rem, 6vw, 6rem) 8vh clamp(3rem, 7vw, 7rem);
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    :global(html.js) .pf__title { font-size: clamp(2.4rem, 4.2vw, 3.9rem); letter-spacing: -.015em; }
+    :global(html.js) .pf__lead { max-width: 33ch; }
+    :global(html.js) .pf__reserva { margin-top: 2rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pf__img img { transform: none !important; }
+    :global(html.js) .pf__rule { transform: none; }
+  }
+</style>

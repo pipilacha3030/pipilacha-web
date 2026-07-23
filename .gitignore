@@ -27,6 +27,9 @@ dist/
 # ajustes locales de Claude Code (acumulan comandos de deploy con credenciales — NUNCA commitear)
 .claude/settings.local.json
 
+# config sFTP de VS Code (contiene la contraseña de Arsys — NUNCA commitear)
+.vscode/sftp.json
+
 # imágenes sueltas en la raíz (las de la web viven en public/assets/img/)
 /*.jpeg
 /*.jpg

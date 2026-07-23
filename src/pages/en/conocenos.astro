@@ -1,0 +1,82 @@
+---
+import Base from '../../layouts/Base.astro';
+
+// Person schema (mismo @id que el grafo base; aquí en inglés para la página EN).
+const personSchema = `<script type="application/ld+json">${JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://pipilacha.es/#aran",
+      "name": "Arán Rodrigo",
+      "jobTitle": "Chef and co-founder",
+      "worksFor": { "@id": "https://pipilacha.es/#restaurant" },
+      "description": "Co-founder of Pipilacha. Treats edible flowers as the main ingredient: flavour, technique and origin in every course.",
+      "image": "https://pipilacha.es/assets/img/chef-1.jpg",
+      "mainEntityOfPage": "https://pipilacha.es/en/conocenos/",
+      "sameAs": ["https://instagram.com/restaurante.pipilacha"]
+    },
+    {
+      "@type": "Person",
+      "@id": "https://pipilacha.es/#noe",
+      "name": "Noé David",
+      "jobTitle": "Chef and co-founder",
+      "worksFor": { "@id": "https://pipilacha.es/#restaurant" },
+      "description": "Co-founder of Pipilacha. Looks into what happens when flowers are fermented, dried or turned into flour.",
+      "image": "https://pipilacha.es/assets/img/chef-2.jpg",
+      "mainEntityOfPage": "https://pipilacha.es/en/conocenos/",
+      "sameAs": ["https://instagram.com/restaurante.pipilacha"]
+    }
+  ]
+})}</script>`;
+---
+
+<Base
+  title="About · Arán and Noé · Pipilacha Madrid"
+  description="Arán Rodrigo and Noé David treat edible flowers as a real ingredient: flavour, technique and origin in every dish at Pipilacha, Madrid."
+  ogImage="/assets/img/og-conocenos.jpg"
+  schema={personSchema}
+>
+
+  <section class="page-header">
+    <p class="eyebrow">About</p>
+    <h1 class="reveal-head">It all starts<br>with a question</h1>
+  </section>
+
+  <!-- CONCEPT / CHEFS -->
+  <section class="concepto" id="concepto">
+    <div class="concepto__imgs">
+      <figure class="concepto__img concepto__img--a" data-parallax="0.12">
+        <img src="/assets/img/chef-1.jpg" width="880" height="1100" fetchpriority="high" decoding="async" alt="Arán Rodrigo, co-founder and chef" />
+      </figure>
+      <figure class="concepto__img concepto__img--b" data-parallax="0.22">
+        <img src="/assets/img/chef-2.jpg" width="880" height="1100" decoding="async" alt="Noé David, co-founder and chef" />
+      </figure>
+    </div>
+    <div class="concepto__text" data-reveal-stagger>
+      <p class="reveal">Flowers have been in the kitchen for centuries. As decoration, as a wink, as the visual signature of someone who wants the plate to look good in a photo.</p>
+      <p class="reveal">We asked ourselves what happens when you treat them as a real ingredient. With the same rigour others bring to meat, fish or vegetables. What flavours they hold, how they behave with heat, what happens when you ferment them, dry them or turn them into flour.</p>
+      <p class="reveal">There are thousands of edible flowers. We've been working with them for a while. And there's still a lot left to find out.</p>
+      <div class="concepto__signs reveal">
+        <div><strong>Arán Rodrigo</strong><span>Co-founder &amp; Chef</span></div>
+        <div><strong>Noé David</strong><span>Co-founder &amp; Chef</span></div>
+      </div>
+    </div>
+    <img src="/assets/img/petal-fig.png" class="petal petal--1" alt="" aria-hidden="true" />
+  </section>
+
+  <!-- SHOW COOKING / THE COUNTER -->
+  <section class="showcooking" id="showcooking">
+    <figure class="showcooking__img reveal">
+      <img src="/assets/img/noe-barra.jpg" width="1200" height="1600" loading="lazy" decoding="async" alt="Noé David leaning on the counter, in the Pipilacha apron" />
+    </figure>
+    <div class="showcooking__text">
+      <p class="eyebrow reveal">Show cooking</p>
+      <h2 class="reveal">We cook facing you</h2>
+      <p class="reveal">Eight seats at the counter, facing the open kitchen. Each dish is finished in front of you, and whoever cooks it tells you which flower it carries, what it does on the plate and where the idea came from. We take turns: one cooks, the other talks.</p>
+      <p class="reveal">With sixteen people per service, there's time to learn your name.</p>
+      <a href="/en/reservas/" class="btn btn--solid reveal">Book</a>
+    </div>
+  </section>
+
+</Base>

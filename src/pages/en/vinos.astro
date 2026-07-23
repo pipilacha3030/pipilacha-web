@@ -1,0 +1,95 @@
+---
+import Base from '../../layouts/Base.astro';
+import MaridajePopup from '../../components/MaridajePopup.astro';
+import { grupos } from '../../data/vinos.en.js';
+
+const menuLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Menu',
+  '@id': 'https://pipilacha.es/en/vinos/',
+  url: 'https://pipilacha.es/en/vinos/',
+  mainEntityOfPage: 'https://pipilacha.es/en/vinos/',
+  name: 'Wine list · Pipilacha',
+  inLanguage: 'en',
+  description: "Pipilacha's cellar: wines from small growers, natural and honest, by the glass and the bottle, to go with the flower tasting menu in Madrid.",
+  hasMenuSection: grupos.map((g) => ({
+    '@type': 'MenuSection',
+    name: g.titulo,
+    description: g.nota,
+    hasMenuItem: g.vinos.map((v) => ({ '@type': 'MenuItem', name: v.nombre, description: v.uva })),
+  })),
+};
+---
+
+<Base
+  title="Wine · Pipilacha's cellar · Madrid"
+  description="Pipilacha's wine list: small growers, natural and honest wines, by the glass and the bottle, chosen to go with the flower menu in Madrid. It changes with the season."
+  ogImage="/assets/img/og-vinos.jpg"
+>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(menuLd)} />
+
+  <header class="cellar-hero">
+    <div class="menu-blooms" aria-hidden="true">
+      <img class="menu-bloom menu-bloom--1" src="/assets/img/flor-amapola.png" alt="" />
+      <img class="menu-bloom menu-bloom--3" src="/assets/img/flor-cosmos.png" alt="" />
+      <img class="menu-bloom menu-bloom--5" src="/assets/img/flor-coreopsis.png" alt="" />
+    </div>
+    <div class="cellar-hero__inner">
+      <p class="eyebrow reveal">The cellar</p>
+      <h1 class="cellar-hero__title reveal-head">Wines for fifteen courses</h1>
+      <p class="cellar-hero__lead reveal">
+        The pairing is chosen at the table. If you'd rather go your own way, this is the cellar:
+        small growers, natural wines and the odd rarity, by the glass and the bottle.
+        It changes with the season.
+      </p>
+    </div>
+  </header>
+
+  <div class="cellar">
+    <aside class="cellar-index" aria-label="Wine types">
+      <p class="cellar-index__title">The list</p>
+      <ol class="cellar-index__list">
+        {grupos.map((g) => (
+          <li>
+            <a href={`#${g.id}`} data-spy={g.id}>
+              <img class="cellar-index__flor" src={g.flor} alt="" aria-hidden="true" width="30" height="30" />
+              <span class="cellar-index__name">{g.titulo}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </aside>
+
+    <div class="cellar-body">
+      {grupos.map((g) => (
+        <section class="wine-cat" id={g.id} aria-labelledby={`${g.id}-h`}>
+          <div class="wine-cat__head">
+            <span class="wine-cat__flor-wrap" data-parallax="0.1" aria-hidden="true">
+              <img class="wine-cat__flor" src={g.flor} alt="" loading="lazy" />
+            </span>
+            <div class="wine-cat__headtext">
+              <h2 class="wine-cat__title reveal" id={`${g.id}-h`}>{g.titulo}</h2>
+              <p class="wine-cat__note reveal">{g.nota}</p>
+            </div>
+          </div>
+          <ul class="wine-list">
+            {g.vinos.map((v) => (
+              <li class="wine-row reveal">
+                <span class="wine-row__name">{v.nombre}</span>
+                <span class="wine-row__grape">{v.uva}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  </div>
+
+  <section class="cta-band">
+    <h2 class="reveal">The easy way: let us lead</h2>
+    <p class="cta-band__lead reveal">Six glasses built for the fifteen courses — wine or the house ferments. Chosen when you sit down and explained in the room.</p>
+    <a href="/en/reservas/" class="btn btn--solid btn--lg reveal">Book</a>
+  </section>
+
+  <MaridajePopup lang="en" />
+</Base>

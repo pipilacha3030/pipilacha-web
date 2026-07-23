@@ -1,43 +1,31 @@
 ---
 import Base from '../layouts/Base.astro';
+import { faqRegalaEs as faq } from '../data/faq.js';
+
+// FAQPage schema: mismo patrón que /reservas/ (faqSchema con las preguntas propias del regalo)
+const faqSchema = `<script type="application/ld+json">${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+})}</script>`;
 ---
 
 <Base
   title="Regala Pipilacha · El menú de flores, para regalar"
-  description="Regala una experiencia en Pipilacha: el menú de degustación Despertar de las flores, quince pases entre flores, en Madrid. Tarjeta regalo válida un año."
+  description="Regala Pipilacha: el menú de degustación Solsticio floral, quince pases construidos sobre flores, en Madrid. Tarjeta regalo válida un año."
+  ogImage="/assets/img/og-regala.jpg"
+  schema={faqSchema}
 >
-
-  <section class="page-header">
-    <p class="eyebrow">Regalar</p>
-    <h1 class="reveal-head">Regala una mesa<br>entre flores</h1>
-    <p>Un regalo para quien tú quieras: el menú de degustación en el único restaurante construido sobre las flores. Tú eliges el gesto; quien lo recibe elige el día.</p>
-  </section>
-
-  <!-- TARJETA REGALO -->
-  <section class="reserva" id="tarjeta">
-    <img src="/assets/img/petal-borraja.png" class="petal petal--2" alt="" aria-hidden="true" />
-    <img src="/assets/img/petal-oxalis.png" class="petal petal--3" alt="" aria-hidden="true" />
-    <div class="reserva__card reveal">
-      <p class="eyebrow">La tarjeta regalo</p>
-      <h2>Despertar de las flores</h2>
-      <p class="reserva__lead">Nuestro menú de quince pases, para regalar. Sin fecha cerrada: quien la recibe reserva cuando le apetezca.</p>
-      <ul class="reserva__details">
-        <li><span>Incluye</span><strong>Menú degustación · 15 pases</strong></li>
-        <li><span>Para</span><strong>Una o dos personas</strong></li>
-        <li><span>Precio</span><strong>85 € / persona</strong></li>
-        <li><span>Maridaje</span><strong>+60 € / persona (opcional)</strong></li>
-        <li><span>Validez</span><strong>12 meses</strong></li>
-      </ul>
-      <a href="#comprar" class="btn btn--solid btn--lg">Quiero regalarlo</a>
-      <p class="reserva__note">Te la enviamos en digital o impresa. ¿Dudas? Escríbenos a <a href="mailto:info@pipilacha.es">info@pipilacha.es</a> o llama al <a href="tel:+34919125998">919 12 59 98</a>.</p>
-    </div>
-  </section>
 
   <!-- COMPRA · widget externo Bonkdo (provisional, hasta el sistema de regalo propio) -->
   <section class="gift-shop" id="comprar">
     <p class="eyebrow reveal">Comprar la tarjeta</p>
-    <h2 class="reveal">Regálalo ahora</h2>
-    <p class="gift-shop__lead reveal">Elige importe o menú y te llega la tarjeta con su código. El día se reserva luego por TheFork.</p>
+    <h1 class="reveal-head">Regálalo ahora</h1>
+    <p class="gift-shop__lead reveal">Elige importe o menú y te llega la tarjeta con su código. El día se reserva luego por TheFork. Válida un año desde la compra.</p>
     <div class="gift-shop__frame reveal">
       <iframe
         id="giftFrame"
@@ -47,14 +35,50 @@ import Base from '../layouts/Base.astro';
         style="width:100%;border:0"></iframe>
     </div>
   </section>
-  <script is:inline src="https://pipilacha.bonkdo.com/static/js/iframeResizer.min.js"></script>
-  <script is:inline>iFrameResize()</script>
+  <!-- iframe-resizer: el hijo de Bonkdo (v3) publica su altura y el iframe crece
+       para mostrar TODO el contenido — sin scroll dentro del scroll, se desplaza
+       solo la página (como el widget de reservas). El contenido de la tienda
+       cambia de alto según el ancho, por eso un min-height fijo no vale: el
+       resizer se adapta a cada tamaño.
+       OJO router SPA (transitions.js): al entrar por un clic del menú, swapDoc
+       re-ejecuta este inline. El `iFrameResize()` naïve corría ANTES de que el
+       <script src> externo recargara (carrera) → el iframe se quedaba en 640px.
+       Este arranque carga la librería UNA vez (en <head>, que el router no
+       reemplaza) y engancha cuando esté lista, en cada visita. -->
+  <script is:inline>
+    (function () {
+      var SRC = 'https://pipilacha.bonkdo.com/static/js/iframeResizer.min.js';
+      function attach() {
+        var f = document.getElementById('giftFrame');
+        if (f && window.iFrameResize && !f.iFrameResizer) window.iFrameResize({}, '#giftFrame');
+      }
+      if (window.iFrameResize) { attach(); return; }
+      var existing = document.querySelector('script[data-ifr]');
+      if (!existing) {
+        var s = document.createElement('script');
+        s.src = SRC; s.setAttribute('data-ifr', ''); s.onload = attach;
+        document.head.appendChild(s);
+      } else {
+        var t = setInterval(function () { if (window.iFrameResize) { clearInterval(t); attach(); } }, 60);
+        setTimeout(function () { clearInterval(t); }, 6000);
+      }
+    })();
+  </script>
 
-  <!-- CTA de cierre (solo en escritorio) -->
-  <section class="cta-band desktop-only">
-    <h2 class="reveal">El mejor regalo se cuenta en mesa</h2>
-    <p class="cta-band__lead reveal">Quince pases, las flores como ingrediente y dos chefs contándolos uno a uno. Regálalo y deja que elijan cuándo.</p>
-    <a href="#comprar" class="btn btn--solid btn--lg reveal">Regalar ahora</a>
+  <!-- FAQ propia de la tarjeta regalo: mismo componente/estilo que /reservas/ -->
+  <section class="faq" aria-labelledby="faq-h">
+    <div class="faq__inner">
+      <p class="eyebrow reveal">Sobre la tarjeta</p>
+      <h2 class="faq__title reveal" id="faq-h">Preguntas frecuentes</h2>
+      <div class="faq__list" data-reveal-stagger>
+        {faq.map((f) => (
+          <details class="faq__item reveal">
+            <summary class="faq__q">{f.q}</summary>
+            <div class="faq__a"><p>{f.a}</p></div>
+          </details>
+        ))}
+      </div>
+    </div>
   </section>
 
 </Base>

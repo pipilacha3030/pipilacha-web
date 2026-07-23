@@ -1,40 +1,212 @@
 ---
 // Layout común a todas las páginas (nav + footer + scripts compartidos).
 import '../styles/main.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import CookieConsent from '../components/CookieConsent.astro';
+import { GOOGLE_SITE_VERIFICATION, BING_SITE_VERIFICATION } from '../config/verification.js';
+import { localeFromPath, basePath, altHref, TRANSLATED, useT } from '../i18n/index.js';
+import { aggregate } from '../data/reviews.js';
 
 const {
   title,
   description,
   ogImage = '/assets/img/og.jpg', // imagen al compartir el enlace: los dos chefs en El Retiro
-  solidNav = true, // nav sólida sobre cream; en el Inicio va transparente sobre el hero
   schema,          // JSON-LD opcional por página (string ya serializado)
 } = Astro.props;
 
-const path = Astro.url.pathname.replace(/\/$/, '') || '/';
-const here = (href) => path === href;
+// Idioma y ruta canónica ES se deducen de la URL (las páginas /en/ no pasan nada)
+const lang = localeFromPath(Astro.url.pathname);
+const base = basePath(Astro.url.pathname); // '/', '/menu', '/conocenos'… (sin /en, sin barra)
+const here = (href) => base === href;
+const t = useT(lang);
 // URLs absolutas (Astro.site = dominio final) para canonical, OG y schema
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImageAbs = new URL(ogImage, Astro.site).href;
+// alternativas de idioma (hreflang) — solo en páginas que YA tienen versión EN
+const hasAlt = TRANSLATED.has(base);
+const esHref = new URL(altHref(base, 'es'), Astro.site).href;
+const enHref = new URL(altHref(base, 'en'), Astro.site).href;
+const ogLocale = lang === 'en' ? 'en_US' : 'es_ES';
+const ogLocaleAlt = lang === 'en' ? 'es_ES' : 'en_US';
+
+/* ---------- Grafo schema.org (todas las páginas) ----------
+   Entidades con @id estable para que buscadores y LLMs conecten
+   Pipilacha → restaurante → Madrid → flores comestibles → menú →
+   chefs. Las páginas pueden ampliar nodos vía la prop `schema`
+   (mismo @id = las propiedades se fusionan). */
+const SITE = Astro.site.href;
+const ID = { restaurant: `${SITE}#restaurant`, website: `${SITE}#website`, aran: `${SITE}#aran`, noe: `${SITE}#noe` };
+const breadcrumbNames = lang === 'en' ? {
+  '/conocenos': 'About', '/menu': 'Menu', '/vinos': 'Wine', '/galeria': 'Gallery',
+  '/prensa': 'Press', '/regala': 'Gift', '/reservas': 'Reservations',
+  '/aviso-legal': 'Legal notice', '/privacidad': 'Privacy', '/cookies': 'Cookies',
+} : {
+  '/conocenos': 'Conócenos', '/menu': 'Menú', '/vinos': 'Vinos', '/galeria': 'Galería',
+  '/prensa': 'Prensa', '/regala': 'Regalar', '/reservas': 'Reservas',
+  '/aviso-legal': 'Aviso legal', '/privacidad': 'Privacidad', '/cookies': 'Cookies',
+};
+// Restaurant: campos que SÍ cambian entre idiomas (el resto —teléfono,
+// dirección, geo, horarios, priceRange— es el mismo restaurante real y no se
+// condiciona por lang). restaurantUrl reutiliza el mismo altHref('/','en')
+// que ya calcula homeUrl más abajo, así que ambos apuntan al mismo sitio.
+const restaurantDescription = lang === 'en'
+  ? 'The only restaurant in the world built entirely on flowers. A fifteen-course tasting menu with edible flowers as the main ingredient, in Madrid.'
+  : 'El único restaurante del mundo construido íntegramente sobre las flores. Menú de degustación de quince pases con flores comestibles como ingrediente principal, en Madrid.';
+const restaurantCuisine = lang === 'en' ? 'Floral author cuisine' : 'Cocina floral de autor';
+const restaurantUrl = lang === 'en' ? new URL(altHref('/', 'en'), Astro.site).href : SITE;
+// hasMenu: mismo patrón que restaurantUrl — en inglés debe apuntar a /en/menu/ y /en/vinos/,
+// no a las URLs en español (antes eran fijas, sin condicionar por idioma).
+const restaurantMenus = lang === 'en'
+  ? [new URL(altHref('/menu', 'en'), Astro.site).href, new URL(altHref('/vinos', 'en'), Astro.site).href]
+  : [`${SITE}menu/`, `${SITE}vinos/`];
+
+const graph = [
+  {
+    "@type": "Restaurant",
+    "@id": ID.restaurant,
+    "name": "Pipilacha",
+    "description": restaurantDescription,
+    "url": restaurantUrl,
+    "image": new URL('/assets/img/hero.jpg', Astro.site).href,
+    "servesCuisine": restaurantCuisine,
+    "inLanguage": lang,
+    "priceRange": "€€€",
+    "telephone": "+34919125998",
+    "email": "info@pipilacha.es",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "C. del Azulejo, 2",
+      "addressLocality": "Madrid",
+      "addressRegion": "Madrid",
+      "postalCode": "28028",
+      "addressCountry": "ES"
+    },
+    "hasMap": "https://maps.google.com/?q=Pipilacha,+C.+del+Azulejo,+2,+28028+Madrid",
+    "geo": { "@type": "GeoCoordinates", "latitude": 40.4291, "longitude": -3.6669 },
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday","Friday","Saturday","Sunday"], "opens": "14:00", "closes": "16:30" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday","Friday","Saturday","Sunday"], "opens": "21:00", "closes": "23:30" }
+    ],
+    "acceptsReservations": "https://widget.thefork.com/867dcee9-49b5-47ed-90c0-c6c87149b328",
+    // Fuente única: src/data/reviews.js → `aggregate` (mismo "4,9 · 156 reseñas"
+    // que se muestra en la home, sección .proof). Si cambia la valoración real
+    // de Google, actualiza SOLO ahí — nunca hardcodees el número aquí.
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": aggregate.ratingEn,
+      "reviewCount": String(aggregate.count),
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "hasMenu": restaurantMenus,
+    "founder": [{ "@id": ID.aran }, { "@id": ID.noe }],
+    "knowsAbout": [
+      "Flores comestibles",
+      "Cocina floral de autor",
+      "Menú de degustación",
+      "Investigación aplicada de flores comestibles",
+      "Fermentación de flores"
+    ],
+    "sameAs": [
+      "https://instagram.com/restaurante.pipilacha",
+      "https://www.thefork.es/restaurante/pipilacha-r851116",
+      "https://www.tripadvisor.com/Restaurant_Review-g187514-d34014070-Reviews-Pipilacha-Madrid.html"
+    ]
+  },
+  {
+    "@type": "Person",
+    "@id": ID.aran,
+    "name": "Arán Rodrigo",
+    "jobTitle": "Chef y cofundador",
+    "worksFor": { "@id": ID.restaurant },
+    "knowsAbout": ["Flores comestibles", "Menú de degustación", "Investigación aplicada de flores comestibles"]
+  },
+  {
+    "@type": "Person",
+    "@id": ID.noe,
+    "name": "Noé David",
+    "jobTitle": "Chef y cofundador",
+    "worksFor": { "@id": ID.restaurant },
+    "knowsAbout": ["Flores comestibles", "Menú de degustación", "Fermentación de flores"]
+  },
+  {
+    "@type": "WebSite",
+    "@id": ID.website,
+    "url": SITE,
+    "name": "Pipilacha",
+    "inLanguage": lang,
+    "publisher": { "@id": ID.restaurant }
+  },
+];
+const homeName = lang === 'en' ? 'Home' : 'Inicio';
+const homeUrl = new URL(altHref('/', lang), Astro.site).href;
+if (base !== '/' && breadcrumbNames[base]) {
+  graph.push({
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": homeName, "item": homeUrl },
+      { "@type": "ListItem", "position": 2, "name": breadcrumbNames[base], "item": canonical }
+    ]
+  });
+}
+const graphJson = JSON.stringify({ "@context": "https://schema.org", "@graph": graph });
 ---
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang={lang}>
 <head>
-  <script is:inline>document.documentElement.classList.add('js')</script>
+  <!-- La clase `js` activa los hide-states de las animaciones (.js .reveal{…}).
+       Si el bundle hasheado falla en descargar (red inestable), nadie animaría
+       los .reveal y el contenido quedaría oculto: el listener de error de
+       scripts la retira y la página vuelve al estado sin-JS, todo visible.
+       OJO: si cambias este script, recalcula su hash sha256 en la CSP de
+       public/.htaccess (script-src) o el navegador lo bloqueará. -->
+  {/* La clase `js` significa UNA cosa: "nuestro bundle va a correr". Solo la
+      retira el fallo de NUESTRO bundle (mismo origen + /_assets/). Antes valía
+      cualquier <script src>: si gtag.js (googletagmanager.com) no cargaba —red
+      móvil, bloqueador, DNS filtrado, navegador embebido de Instagram— la web
+      entera caía al layout sin-JS aunque GSAP estuviese corriendo, y quedaba
+      pineada sobre el layout equivocado (Primera fila con la foto en tarjeta y
+      el texto cortado). Reproducido bloqueando googletagmanager.com.
+      OJO: si tocas este script, recalcula su sha256 en la CSP de public/.htaccess:
+        printf '%s' "<contenido exacto>" | openssl dgst -sha256 -binary | openssl base64 */}
+  <script is:inline>document.documentElement.classList.add('js');window.addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='SCRIPT'&&t.src&&t.src.indexOf(location.origin+'/_assets/')===0)document.documentElement.classList.remove('js')},true)</script>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {/* viewport-fit=cover: sin él, iOS encoge el viewport para esquivar el indicador
+      de inicio y `bottom:0` se queda POR ENCIMA de esa franja (se ve el fondo de la
+      página bajo la barra de reserva) y `env(safe-area-inset-*)` devuelve siempre 0.
+      Con cover el lienzo llega al borde real y los safe-area del CSS ya funcionan. */}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  {GOOGLE_SITE_VERIFICATION && <meta name="google-site-verification" content={GOOGLE_SITE_VERIFICATION} />}
+  {BING_SITE_VERIFICATION && <meta name="msvalidate.01" content={BING_SITE_VERIFICATION} />}
   <title>{title}</title>
   <meta name="description" content={description} />
 
   <link rel="canonical" href={canonical} />
+  {hasAlt && (
+    <>
+      <link rel="alternate" hreflang="es" href={esHref} />
+      <link rel="alternate" hreflang="en" href={enHref} />
+      <link rel="alternate" hreflang="x-default" href={esHref} />
+    </>
+  )}
 
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Pipilacha" />
-  <meta property="og:locale" content="es_ES" />
+  <meta property="og:locale" content={ogLocale} />
+  {hasAlt && <meta property="og:locale:alternate" content={ogLocaleAlt} />}
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:image" content={ogImageAbs} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content={t('og.imageAlt')} />
   <meta property="og:url" content={canonical} />
+  <!-- max-image-preview:large: Google Discover y resultados de imagen pueden usar
+       las fotos a tamaño completo — la galería y los platos son el gancho visual -->
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#F4EFE6" />
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={title} />
@@ -51,37 +223,11 @@ const ogImageAbs = new URL(ogImage, Astro.site).href;
       imagesizes="100vw" fetchpriority="high" />
   )}
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hanken+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <!-- tipografías auto-alojadas (@font-face en main.css); preload de las dos críticas -->
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/marcellus-400-latin.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/hanken-grotesk-variable-latin.woff2" crossorigin />
 
-  {here('/') && (
-    <script type="application/ld+json" is:inline set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Restaurant",
-      "name": "Pipilacha",
-      "description": "El único restaurante del mundo construido íntegramente sobre las flores. Menú de degustación en Madrid.",
-      "servesCuisine": "Cocina floral de autor",
-      "priceRange": "€€€",
-      "image": new URL('/assets/img/hero.jpg', Astro.site).href,
-      "url": Astro.site.href,
-      "telephone": "+34919125998",
-      "acceptsReservations": "https://widget.thefork.com/867dcee9-49b5-47ed-90c0-c6c87149b328",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "C. del Azulejo, 2",
-        "addressLocality": "Madrid",
-        "postalCode": "28028",
-        "addressCountry": "ES"
-      },
-      "geo": { "@type": "GeoCoordinates", "latitude": 40.4291, "longitude": -3.6669 },
-      "openingHoursSpecification": [
-        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday","Friday","Saturday","Sunday"], "opens": "14:00", "closes": "16:30" },
-        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday","Friday","Saturday","Sunday"], "opens": "21:00", "closes": "23:30" }
-      ],
-      "sameAs": ["https://instagram.com/restaurante.pipilacha"]
-    })} />
-  )}
+  <script type="application/ld+json" is:inline set:html={graphJson} />
   {schema && <Fragment set:html={schema} />}
 </head>
 <body>
@@ -92,73 +238,25 @@ const ogImageAbs = new URL(ogImage, Astro.site).href;
   </div>
   <noscript><style>.page-transition{display:none!important}</style></noscript>
 
-  <!-- NAV -->
-  <header class={`nav${solidNav ? ' nav--solid' : ''}`} id="nav">
-    <a href="/" class="nav__logo" aria-label="Pipilacha inicio">
-      <img src="/assets/img/logo-light.png" class="nav__logo-img nav__logo-img--light" alt="Pipilacha" width="560" height="216" />
-      <img src="/assets/img/logo-dark.png" class="nav__logo-img nav__logo-img--dark" alt="" aria-hidden="true" width="560" height="216" />
-      <img src="/assets/img/iso-light.png" class="nav__logo-iso" alt="Pipilacha" width="200" height="200" />
-    </a>
-    <nav class="nav__links" id="navLinks">
-      <a href="/conocenos/" aria-current={here('/conocenos') ? 'page' : undefined}>Conócenos</a>
-      <a href="/menu/" aria-current={here('/menu') ? 'page' : undefined}>Menú</a>
-      <a href="/vinos/" aria-current={here('/vinos') ? 'page' : undefined}>Vinos</a>
-      <a href="/galeria/" aria-current={here('/galeria') ? 'page' : undefined}>Galería</a>
-      <a href="/prensa/" aria-current={here('/prensa') ? 'page' : undefined}>Prensa</a>
-      <a href="/regala/" aria-current={here('/regala') ? 'page' : undefined}>Regalar</a>
-      <a href="/reservas/" class="nav__cta">Reservar</a>
-    </nav>
-    <button class="nav__burger" id="burger" aria-label="Abrir menú" aria-controls="navLinks" aria-expanded="false"><span></span><span></span><span></span></button>
-  </header>
+  <Nav path={base} lang={lang} />
 
   <main>
     <slot />
   </main>
 
-  {path !== '/reservas' && (
-    <a href="/reservas/" class="reserva-bar" id="reservaBar">Reservar</a>
+  {base !== '/reservas' && (
+    <a href={altHref('/reservas', lang)} class="reserva-bar" id="reservaBar">{t('reservaBar')}</a>
   )}
 
-  <!-- FOOTER (estático, sin animación) -->
-  <footer class="footer" id="footer">
-    <div class="footer__brand">
-      <img src="/assets/img/logo-light.png" class="footer__logo" alt="Pipilacha" width="560" height="216" />
-      <p>El único restaurante del mundo construido íntegramente sobre las flores.</p>
-    </div>
-    <div class="footer__cols">
-      <div>
-        <h4>Horario</h4>
-        <p>Jueves a domingo<br>Comida 14:00 · Cena 21:00<br>16 plazas por servicio</p>
-      </div>
-      <div>
-        <h4>Ubicación</h4>
-        <p>C. del Azulejo, 2<br>28028 Madrid</p>
-        <a href="https://maps.google.com/?q=C.+del+Azulejo+2+28028+Madrid" target="_blank" rel="noopener">Cómo llegar →</a>
-      </div>
-      <div>
-        <h4>Contacto</h4>
-        <p><a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">@restaurante.pipilacha</a><br><a href="tel:+34919125998">+34 919 12 59 98</a><br><a href="mailto:info@pipilacha.es">info@pipilacha.es</a></p>
-      </div>
-    </div>
-    <nav class="footer__nav" aria-label="Páginas">
-      <a href="/conocenos/">Conócenos</a>
-      <a href="/menu/">Menú</a>
-      <a href="/vinos/">Vinos</a>
-      <a href="/galeria/">Galería</a>
-      <a href="/prensa/">Prensa</a>
-      <a href="/regala/">Regalar</a>
-      <a href="/reservas/">Reservar</a>
-    </nav>
-    <div class="footer__base">
-      <span>© 2026 Pipilacha</span>
-      <span>Madrid</span>
-    </div>
-  </footer>
+  <Footer path={base} lang={lang} />
 
-  <!-- Lenis (scroll suave) + GSAP (animaciones) — auto-alojados (npm), sin CDN -->
-  <script is:inline src="/js/vendor/lenis.min.js"></script>
-  <script is:inline src="/js/vendor/gsap.min.js"></script>
-  <script is:inline src="/js/vendor/ScrollTrigger.min.js"></script>
-  <script is:inline src="/js/main.js?v=81"></script>
+  <!-- Consentimiento de cookies: fuera de <main>, persiste entre transiciones -->
+  <CookieConsent lang={lang} />
+
+  <!-- Interacción: Lenis + GSAP importados desde npm dentro del bundle de src/scripts/
+       (Vite lo minifica y hashea el nombre → cache busting automático, sin ?v=N) -->
+  <script>
+    import '../scripts/main.js';
+  </script>
 </body>
 </html>

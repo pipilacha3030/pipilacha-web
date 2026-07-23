@@ -1,0 +1,106 @@
+---
+/* ============================================================
+   INTERLUDIO "35 flores" — el dato se hace literal.
+   No hay número dibujado ni adorno: hay EXACTAMENTE 35 flores en pantalla,
+   una por cada flor comestible de la temporada. Cada una recorre su propio
+   anillo alrededor de la frase (animations/interlude.js): pasa por delante
+   del texto cuando va por la mitad cercana y por detrás cuando va por la
+   lejana, de modo que el ramo ARROPA la frase en vez de rodearla quieto.
+   Sin JS / reduced-motion: campo de flores disperso y quieto, frase legible.
+   ============================================================ */
+const { lang = 'es' } = Astro.props;
+const line = lang === 'en'
+  ? 'Thirty-five edible flowers, a single season.'
+  : 'Treinta y cinco flores comestibles, una sola temporada.';
+
+/* Las flores del jardín. Fuera la campánula (la morada de la gota). La
+   caléndula —la naranja— entra con cupo corto y siempre POR DETRÁS del texto:
+   es la más saturada del juego y en primer plano se comía la frase. */
+const ORANGE = 'calendula';
+const ORANGE_CUPO = 2;
+const FLORES = [
+  'cosmos', 'dalia', 'borraja', 'aciano', 'coreopsis', 'amapola', 'geranio',
+  'clavel', 'ajo', 'crisantemo', 'dahlia-roja', 'dahlia-rosa', 'hibiscus',
+  'roja', ORANGE,
+];
+const TOTAL = 35;
+
+/* PRNG con semilla fija: la dispersión es "aleatoria" pero el HTML sale
+   idéntico en cada build (nada de Math.random en tiempo de compilación). */
+let s = 3535;
+const rnd = () => ((s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296);
+
+// 1 · sitios: dispersión por toda la sección
+const spots = Array.from({ length: TOTAL }, () => ({
+  x: +(3 + rnd() * 94).toFixed(2),
+  y: +(5 + rnd() * 90).toFixed(2),
+}));
+
+// 2 · cupos por variedad: la naranja va corta, el resto se reparte lo demás
+const cupo = Object.fromEntries(FLORES.map((f) => [f, 0]));
+cupo[ORANGE] = ORANGE_CUPO;
+const resto = FLORES.filter((f) => f !== ORANGE);
+for (let i = 0; i < TOTAL - ORANGE_CUPO; i++) cupo[resto[i % resto.length]]++;
+
+/* 3 · la SECUENCIA por vueltas (una pasada por variedad antes de repetir
+   ninguna): así dos flores iguales quedan siempre a 15 posiciones de
+   distancia. Importa porque interlude.js deriva el anillo de cada flor de su
+   índice — si dos clones tuvieran índices cercanos, compartirían órbita
+   parecida y acabarían viajando pegadas. */
+const seq = [];
+for (let pass = 0; seq.length < TOTAL; pass++) {
+  for (const f of FLORES) {
+    if (cupo[f] > pass && seq.length < TOTAL) seq.push(f);
+  }
+}
+
+/* 4 · a cada puesto de la secuencia se le da el SITIO disperso que más lejos
+   quede de sus clones ya colocados. (Antes elegía la variedad para un sitio
+   fijo; ahora es al revés, porque la variedad ya la fija la secuencia.) */
+const libres = spots.slice();
+const placed = [];
+for (const src of seq) {
+  let bi = 0; let bd = -1;
+  libres.forEach((spot, k) => {
+    let d = Infinity;
+    for (const p of placed) {
+      if (p.src !== src) continue;
+      d = Math.min(d, Math.hypot(p.x - spot.x, p.y - spot.y));
+    }
+    if (d > bd) { bd = d; bi = k; }
+  });
+  const [spot] = libres.splice(bi, 1);
+  placed.push({ ...spot, src });
+}
+
+const blooms = placed.map((p, i) => ({
+  ...p,
+  back: p.src === ORANGE,             // la naranja nunca pasa por delante
+  depth: p.src === ORANGE ? 0 : i % 3, // 0 = al fondo (difusa) · 2 = delante
+  // tamaño propio ADEMÁS del que da la profundidad: entre un jardín real no hay
+  // dos flores iguales, y tres tallas fijas se notaban como sistema
+  sc: +(0.62 + rnd() * 0.92).toFixed(2),
+  // respiración lenta: el viaje lo pone la órbita, esto solo la mantiene viva
+  dur: +(26 + rnd() * 26).toFixed(1),
+  delay: +(-rnd() * 26).toFixed(1),
+  spin: +(rnd() * 20 - 10).toFixed(1),
+}));
+---
+
+<section class="interlude">
+  <div class="interlude__field" aria-hidden="true">
+    {blooms.map((b) => (
+      <span
+        class={`ilf ilf--d${b.depth}${b.back ? ' ilf--back' : ''}`}
+        style={`--x:${b.x}%;--y:${b.y}%;--sc:${b.sc};--dur:${b.dur}s;--delay:${b.delay}s;--spin:${b.spin}deg`}
+      >
+        <span class="ilf__orbit">
+          <span class="ilf__push">
+            <img src={`/assets/img/flor-${b.src}-xs.png`} alt="" width="110" height="110" loading="lazy" decoding="async" />
+          </span>
+        </span>
+      </span>
+    ))}
+  </div>
+  <p class="interlude__line">{line}</p>
+</section>

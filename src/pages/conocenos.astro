@@ -1,54 +1,130 @@
 ---
 import Base from '../layouts/Base.astro';
 
-// Schema.org: los dos chefs (coincide con el contenido visible de la página)
-const personSchema = `<script type="application/ld+json">${JSON.stringify([
-  { "@context": "https://schema.org", "@type": "Person", "name": "Arán Rodrigo", "jobTitle": "Chef y cofundador", "worksFor": { "@type": "Restaurant", "name": "Pipilacha", "url": "https://pipilacha.es" } },
-  { "@context": "https://schema.org", "@type": "Person", "name": "Noé David", "jobTitle": "Chef y cofundador", "worksFor": { "@type": "Restaurant", "name": "Pipilacha", "url": "https://pipilacha.es" } }
-])}</script>`;
+// Schema.org: los dos chefs, con el MISMO @id que en el grafo base (Base.astro):
+// las propiedades se fusionan y esta página aporta el detalle (EEAT: quiénes son,
+// qué saben hacer, dónde encontrarlos).
+const personSchema = `<script type="application/ld+json">${JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://pipilacha.es/#aran",
+      "name": "Arán Rodrigo",
+      "jobTitle": "Chef y cofundador",
+      "worksFor": { "@id": "https://pipilacha.es/#restaurant" },
+      "description": "Cofundador de Pipilacha. Trata las flores comestibles como ingrediente principal: sabor, técnica y origen en cada pase.",
+      "image": "https://pipilacha.es/assets/img/chef-1.jpg",
+      "mainEntityOfPage": "https://pipilacha.es/conocenos/",
+      "sameAs": ["https://instagram.com/restaurante.pipilacha"]
+    },
+    {
+      "@type": "Person",
+      "@id": "https://pipilacha.es/#noe",
+      "name": "Noé David",
+      "jobTitle": "Chef y cofundador",
+      "worksFor": { "@id": "https://pipilacha.es/#restaurant" },
+      "description": "Cofundador de Pipilacha. Investiga qué pasa cuando las flores se fermentan, se secan o se convierten en harina.",
+      "image": "https://pipilacha.es/assets/img/chef-2.jpg",
+      "mainEntityOfPage": "https://pipilacha.es/conocenos/",
+      "sameAs": ["https://instagram.com/restaurante.pipilacha"]
+    }
+  ]
+})}</script>`;
 ---
 
 <Base
   title="Conócenos · Arán y Noé · Pipilacha Madrid"
   description="Arán Rodrigo y Noé David tratan las flores comestibles como un ingrediente de verdad: sabor, técnica y origen de cada plato en Pipilacha, Madrid."
+  ogImage="/assets/img/og-conocenos.jpg"
   schema={personSchema}
 >
 
-  <section class="page-header">
-    <p class="eyebrow">Conócenos</p>
-    <h1 class="reveal-head">Todo empieza<br>con una pregunta</h1>
+  <!-- 1 · LA PREGUNTA — apertura a sangre (sustituye la cabecera genérica).
+       Retrato vertical velado + titular con cortina (.reveal-head). El velo y el
+       parallax dan la atmósfera; el eyebrow entra con .reveal. -->
+  <section class="cn-open">
+    <div class="cn-open__media" data-parallax="0.12">
+      <img
+        src="/assets/img/chef-3.jpg"
+        width="1152" height="2048"
+        fetchpriority="high" decoding="async"
+        alt="Arán y Noé, los chefs de Pipilacha, trabajando en la cocina" />
+      <span class="cn-open__veil" aria-hidden="true"></span>
+    </div>
+    <div class="cn-open__content">
+      <p class="eyebrow eyebrow--k">
+        <span class="eyebrow__seed" aria-hidden="true">
+          <img src="/assets/img/flor-borraja.png" alt="" width="40" height="40" decoding="async" />
+          <img src="/assets/img/flor-aciano.png" alt="" width="40" height="40" decoding="async" />
+          <img src="/assets/img/flor-coreopsis.png" alt="" width="40" height="40" decoding="async" />
+        </span><span class="eyebrow__word">Conócenos</span>
+      </p>
+      <h1 class="cn-open__title reveal-head">Todo empieza<br>con una pregunta</h1>
+    </div>
   </section>
 
-  <!-- CONCEPTO / CHEFS -->
-  <section class="concepto" id="concepto">
-    <div class="concepto__imgs">
-      <figure class="concepto__img concepto__img--a" data-parallax="0.12">
-        <img src="/assets/img/chef-1.jpg" alt="Arán Rodrigo, cofundador y chef" />
-      </figure>
-      <figure class="concepto__img concepto__img--b" data-parallax="0.22">
-        <img src="/assets/img/chef-2.jpg" alt="Noé David, cofundador y chef" />
-      </figure>
-    </div>
-    <div class="concepto__text" data-reveal-stagger>
-      <p class="reveal">Las flores llevan siglos en la cocina. Como adorno, como guiño, como firma visual de quien quiere que el plato quede bonito en foto.</p>
-      <p class="reveal">Nosotros nos preguntamos qué pasa cuando las tratas como un ingrediente de verdad. Con el mismo rigor con el que otros trabajan la carne, el pescado o el vegetal. Qué sabores tienen, cómo se comportan con el calor, qué ocurre cuando las fermentas, las secas o las conviertes en harina.</p>
-      <p class="reveal">Hay miles de flores comestibles. Llevamos tiempo trabajando con ellas. Y todavía nos queda mucho por descubrir.</p>
-      <div class="concepto__signs reveal">
-        <div><strong>Arán Rodrigo</strong><span>Cofundador &amp; Chef</span></div>
-        <div><strong>Noé David</strong><span>Cofundador &amp; Chef</span></div>
+  <!-- 2 · EL MANIFIESTO — crema, texto protagonista. Los tres párrafos entran
+       línea a línea (SplitText, [data-split-lines]); cierran sobre un filete
+       hacia las firmas. Sin las fotos-split de plantilla: la apertura ya pagó
+       la imagen. -->
+  <section class="cn-manifesto" id="concepto">
+    <div class="cn-manifesto__inner">
+      <p class="cn-manifesto__p" data-split-lines>Las flores llevan siglos en la cocina. Como adorno, como guiño, como firma visual de quien quiere que el plato quede bonito en foto.</p>
+      <p class="cn-manifesto__p" data-split-lines>Nosotros nos preguntamos qué pasa cuando las tratas como un ingrediente de verdad. Con el mismo rigor con el que otros trabajan la carne, el pescado o el vegetal. Qué sabores tienen, cómo se comportan con el calor, qué ocurre cuando las fermentas, las secas o las conviertes en harina.</p>
+      <p class="cn-manifesto__p" data-split-lines>Hay miles de flores comestibles. Llevamos tiempo trabajando con ellas. Y todavía nos queda mucho por descubrir.</p>
+      <div class="cn-manifesto__signs reveal">
+        <span class="cn-rule" aria-hidden="true"></span>
+        <div class="cn-manifesto__names">
+          <div><strong>Arán Rodrigo</strong><span>Cofundador &amp; Chef</span></div>
+          <div><strong>Noé David</strong><span>Cofundador &amp; Chef</span></div>
+        </div>
       </div>
     </div>
     <img src="/assets/img/petal-fig.png" class="petal petal--1" alt="" aria-hidden="true" />
   </section>
 
-  <!-- SHOWCOOKING / LA BARRA -->
-  <section class="showcooking" id="showcooking">
-    <figure class="showcooking__img reveal">
-      <img src="/assets/img/noe-barra.jpg" alt="Noé David apoyado en la barra, con el delantal de Pipilacha" />
-    </figure>
-    <div class="showcooking__text">
-      <p class="eyebrow reveal">Showcooking</p>
-      <h2 class="reveal">Cocinamos de cara</h2>
+  <!-- 3 · EL DÍPTICO VIVO — split-screen de los dos fundadores (momento firma;
+       primera composición a pantalla partida del sitio). Reacciona al hover/foco
+       (CSS puro): una mitad crece y se ilumina, la otra se recoge. La diferencia
+       entre ellos (dato del schema) se vuelve layout. -->
+  <section class="cn-duo" aria-label="Arán y Noé, los dos fundadores">
+    <article class="cn-duo__half" tabindex="0">
+      <img src="/assets/img/chef-1.jpg" width="880" height="1100" loading="lazy" decoding="async" alt="Arán Rodrigo, cofundador y chef" />
+      <div class="cn-duo__copy">
+        <p class="cn-duo__name">Arán Rodrigo</p>
+        <p class="cn-duo__line">Trata la flor como ingrediente principal: sabor, técnica y origen en cada pase.</p>
+      </div>
+    </article>
+    <article class="cn-duo__half" tabindex="0">
+      <img src="/assets/img/chef-2.jpg" width="880" height="1100" loading="lazy" decoding="async" alt="Noé David, cofundador y chef" />
+      <div class="cn-duo__copy">
+        <p class="cn-duo__name">Noé David</p>
+        <p class="cn-duo__line">Investiga qué pasa cuando la flor se fermenta, se seca o se convierte en harina.</p>
+      </div>
+    </article>
+  </section>
+
+  <!-- 4 · LA BARRA — convergencia a sangre + reserva (cierre que convierte). Los
+       dos que vivieron separados se funden en la panorámica. Copy preservado. -->
+  <section class="cn-bar" id="showcooking">
+    <div class="cn-bar__media" data-parallax="0.10">
+      <img
+        src="/assets/img/cn-open-movil.jpg"
+        width="1200" height="1499"
+        loading="lazy" decoding="async"
+        alt="Arán y Noé, los chefs de Pipilacha, trabajando en la cocina" />
+      <span class="cn-bar__veil" aria-hidden="true"></span>
+    </div>
+    <div class="cn-bar__copy">
+      <p class="eyebrow eyebrow--k">
+        <span class="eyebrow__seed" aria-hidden="true">
+          <img src="/assets/img/flor-amapola.png" alt="" width="40" height="40" decoding="async" />
+          <img src="/assets/img/flor-calendula.png" alt="" width="40" height="40" decoding="async" />
+          <img src="/assets/img/flor-cosmos.png" alt="" width="40" height="40" decoding="async" />
+        </span><span class="eyebrow__word">Showcooking</span>
+      </p>
+      <h2 class="cn-bar__h2 reveal">Cocinamos de cara</h2>
       <p class="reveal">Ocho asientos en la barra, frente a la cocina abierta. Cada plato se termina delante de ti y quien lo cocina te cuenta qué flor lleva, qué hace en el plato y de dónde salió la idea. Nos turnamos: uno cocina, el otro habla.</p>
       <p class="reveal">Con dieciséis personas por servicio nos da tiempo a saber tu nombre.</p>
       <a href="/reservas/" class="btn btn--solid reveal">Reservar</a>

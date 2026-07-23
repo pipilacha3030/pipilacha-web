@@ -1,0 +1,78 @@
+---
+import Base from '../../layouts/Base.astro';
+import { menciones } from '../../data/prensa.js';
+// Los titulares son de artículos reales en español: se dejan tal cual (son citas).
+
+const pressLd = `<script type="application/ld+json">${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  '@id': 'https://pipilacha.es/en/prensa/',
+  url: 'https://pipilacha.es/en/prensa/',
+  name: 'Pipilacha in the media',
+  inLanguage: 'en',
+  about: { '@id': 'https://pipilacha.es/#restaurant' },
+  mentions: menciones.map((m) => ({
+    '@type': 'NewsArticle',
+    headline: m.titular,
+    url: m.url,
+    publisher: { '@type': 'Organization', name: m.medio },
+    ...(m.autor ? { author: { '@type': 'Person', name: m.autor } } : {}),
+  })),
+})}</script>`;
+---
+
+<Base
+  title="Press · Pipilacha"
+  description="Pipilacha in the media. What the press says about the edible-flower restaurant in Madrid: 15 courses, Thursday to Sunday. Press information and contact."
+  schema={pressLd}
+>
+
+  <section class="page-header">
+    <p class="eyebrow">Press</p>
+    <h1 class="reveal-head">Pipilacha<br>in the media</h1>
+    <p>Pipilacha is a restaurant in Madrid that cooks with edible flowers as the main ingredient, not as decoration. Open Thursday to Sunday, two sittings (2pm and 9pm), with a fifteen-course tasting menu —«Solsticio floral»— at €85 per person, plus an optional six-glass pairing (+€60). Sixteen seats per service, eight of them at the show-cooking counter, facing the kitchen. The founding chefs are Arán Rodrigo and Noé David. Address: C. del Azulejo, 2, 28028 Madrid.</p>
+  </section>
+
+  <!-- MENTIONS (real headlines in Spanish, kept as-is) -->
+  <section class="press" id="press">
+    <ol class="press-list">
+      {menciones.map((m, i) => (
+        <li class="press-row">
+          <a
+            class="press-row__link"
+            href={m.url}
+            target="_blank"
+            rel="noopener"
+            style={`--img:url(${m.img})`}
+            aria-label={`${m.titular} — ${m.medio}, ${m.fecha}. Opens in a new tab.`}
+          >
+            <span class="press-row__index">{String(i + 1).padStart(2, '0')}</span>
+            <span class="press-row__main">
+              <span class="press-row__medio">{[m.medio, m.fecha, m.autor].filter(Boolean).join(' · ')}</span>
+              <span class="press-row__titular">{m.titular}</span>
+            </span>
+            <span class="press-row__cta" aria-hidden="true">Read →</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <!-- PRESS KIT / CONTACT -->
+  <section class="prensa-kit">
+    <div class="prensa-kit__inner">
+      <p class="eyebrow reveal">For media</p>
+      <h2 class="reveal">Press kit</h2>
+      <p class="reveal">High-resolution photographs, a dossier and restaurant information for journalists and creators. Download the dossier or write to us and we'll send it over.</p>
+      <p class="prensa-kit__download reveal">
+        <a href="/assets/docs/pipilacha-dossier-prensa.pdf" class="btn btn--solid" download>Download dossier (PDF, in Spanish)</a>
+      </p>
+      <ul class="prensa-kit__contact reveal">
+        <li><span>Email</span><a href="mailto:info@pipilacha.es">info@pipilacha.es</a></li>
+        <li><span>Phone</span><a href="tel:+34919125998">+34 919 12 59 98</a></li>
+        <li><span>Address</span><a href="https://www.google.com/maps/search/?api=1&query=Pipilacha%2C%20C.%20del%20Azulejo%2C%202%2C%2028028%20Madrid" target="_blank" rel="noopener">C. del Azulejo, 2 · Madrid</a></li>
+      </ul>
+    </div>
+  </section>
+
+</Base>
