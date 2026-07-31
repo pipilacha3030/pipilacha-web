@@ -12,8 +12,25 @@ export const pases = [
   { name: 'Fusión tomate-hinojo', hook: 'Tomate maduro y flor de hinojo cruzan el anís con el dulzor en el mismo bocado.' },
   { name: 'Higo a la brasa con helado de saúco', hook: 'El higo se marca a la brasa; el saúco llega frío, floral y ligeramente vinoso.' },
   { name: 'Vieiras shiso-dalias', hook: 'El shiso pica en verde; el pétalo de dalia endulza el yodo de la vieira.' },
-  { name: 'Salmonete, boletus y pétalos', hook: 'El salmonete se apoya en el boletus, y los pétalos aportan el contrapunto floral.' },
+  { name: 'Rape, boletus y pétalos', hook: 'El rape se apoya en el boletus, y los pétalos aportan el contrapunto floral.' },
   { name: 'Codorniz y flores ácidas', hook: 'Flores con acidez natural cortan la grasa de la codorniz sin necesitar vinagre.' },
   { name: 'Regaliz, chocolate y cardamomo', hook: 'Regaliz y cardamomo se funden en un chocolate intenso, sin azúcar de más.' },
   { name: 'Calabacín y crisantemos', hook: 'El crisantemo, amargo y herbal, retiene el dulzor del calabacín asado.' },
 ];
+
+// Nombre de la carta en curso y las 32 flores que trabaja. Viven aquí, junto a los
+// pases, porque son el mismo menú: al cambiar de carta se cambian los dos a la vez.
+// Los usa la banda «el jardín que se vacía» (Newsletter.astro): el recuento del
+// antetítulo sale de flores.length, no de un número escrito a mano.
+export const menuNombre = 'Solsticio floral';
+
+export const flores = [
+  'guisante mariposa', 'flor eléctrica', 'margarita', 'hisopo', 'albahaca', 'ajo',
+  'oxalis', 'tilo', 'aliso', 'anís estrellado', 'geranio', 'farolillo', 'orégano',
+  'kalanchoe', 'hierbabuena', 'borraja', 'lavanda', 'aciano', 'amapola', 'capuchina',
+  'hinojo', 'lantana', 'saúco', 'dalia', 'phlox estrellado', 'tagete', 'caléndula',
+  'hibiscus', 'begonia', 'regaliz azteca', 'cosmos', 'crisantemo',
+];
+
+// La que queda en pie al final del vaciado va la ÚLTIMA de este array a propósito:
+// Newsletter.astro la saca de ahí, así que no hay dos sitios que puedan discrepar.

@@ -1295,6 +1295,128 @@ body:has(.gal-stage) .reserva-bar{display:none}
 .footer__brand{text-align:center;max-width:480px;margin:0 auto 2.2rem}
 .footer__logo{width:140px;height:auto;object-fit:contain;margin:0 auto .9rem;display:block}
 .footer__brand p{opacity:.78;font-size:.86rem}
+/* ---------- «el jardín que se vacía»: alta en la lista de correo ----------
+   Banda propia en moss, ANTES del pie oliva: un escalón tonal, no otra fila del footer.
+   Arriba el matorral con las 32 flores de la carta; el scroll las va apagando hasta que
+   queda una con su nota (newsletter.js). Abajo, el formulario.
+
+   OJO: esto se pinta en las 23 páginas (Newsletter.astro va dentro de Footer.astro).
+   Todo por transform/opacity, que compone en GPU y no recalcula maquetación.
+
+   Estado en reposo = TODO visible y a contraste pleno. El apagado lo hace el JS, así
+   que sin JS o con movimiento reducido no hay nada oculto. */
+.jardin{position:relative;background:var(--moss);color:var(--cream);overflow:hidden;
+  padding:clamp(3.4rem,9vh,6rem) var(--gutter) clamp(2.6rem,6vh,4rem)}
+
+/* ---- el matorral ---- */
+.jardin__campo{position:relative;max-width:var(--maxw);margin:0 auto clamp(2.6rem,7vh,4.5rem)}
+/* velo de moss por delante de los pétalos y por detrás del texto: garantiza el
+   contraste de los nombres pase lo que pase debajo, y de paso da profundidad */
+.jardin__campo::after{content:"";position:absolute;inset:-12% -8%;pointer-events:none;z-index:1;
+  background:radial-gradient(ellipse at center,rgba(49,51,31,.82) 0%,rgba(49,51,31,.5) 55%,rgba(49,51,31,0) 100%)}
+
+.jardin__petalos{position:absolute;inset:0;z-index:0;pointer-events:none}
+/* DOS capas a propósito: GSAP mueve el <span> (reacción al puntero) y el CSS deriva el
+   <img>. Si compartieran `transform` se pisarían — es el mismo choque que ya tienen las
+   flores flotantes de la home con data-parallax (ver CLAUDE.md).
+   El centrado va por margen negativo, no por translate(-50%), para que GSAP encuentre
+   x/y a cero y no tenga que convivir con un translate en porcentaje. */
+.jardin__petalo{position:absolute;left:var(--x);top:var(--y);width:var(--s);
+  margin:calc(var(--s) / -2) 0 0 calc(var(--s) / -2);will-change:transform}
+/* saturate(.7): las fotos vienen a todo color y sobre moss los rojos y morados
+   saltan a primer plano y compiten con los nombres. Bajadas de saturación pasan a
+   ser lo que deben ser, fondo. */
+.jardin__petalo-img{display:block;width:100%;aspect-ratio:1;height:auto;object-fit:contain;
+  filter:blur(var(--b)) saturate(.7);opacity:var(--o);
+  animation:jardin-flota var(--dur) ease-in-out var(--del) infinite alternate}
+/* la rotación base vive DENTRO de los fotogramas: una animación de transform pisa
+   cualquier transform estático que se declare aparte */
+@keyframes jardin-flota{
+  from{transform:rotate(var(--r)) translate3d(0,6px,0)}
+  to{transform:rotate(calc(var(--r) + 5deg)) translate3d(0,-14px,0)}
+}
+
+.jardin__eyebrow{position:relative;z-index:2;text-align:center;margin:0 0 clamp(1.1rem,3vh,1.8rem);
+  font-size:var(--fs-label);letter-spacing:.2em;text-transform:uppercase;
+  font-weight:600;color:var(--accent-soft)}
+
+.jardin__lista{position:relative;z-index:2;list-style:none;margin:0;padding:0;
+  display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;
+  column-gap:clamp(.7rem,1.6vw,1.3rem);row-gap:clamp(.1rem,.6vh,.45rem)}
+.jardin__nombre{font-family:var(--serif);font-weight:400;line-height:1.35;
+  font-size:calc(clamp(1rem,1.6vw,1.35rem) * var(--s));
+  color:rgba(244,239,230,.88)}            /* ~9:1 sobre moss */
+.jardin__nombre:not(:last-child)::after{content:"·";margin-left:clamp(.7rem,1.6vw,1.3rem);
+  opacity:.3;font-size:.7em;vertical-align:middle}
+
+/* ---- la que queda en pie ---- */
+.jardin__ultima{position:relative;z-index:2;text-align:center;
+  margin:clamp(1.6rem,4vh,2.6rem) auto 0;font-family:var(--serif);line-height:1.1;
+  font-size:clamp(1.9rem,4.8vw,3.2rem);letter-spacing:-.01em}
+/* con JS entra al final del vaciado; sin JS (Base.astro retira .js) sale ya puesta */
+.js .jardin__ultima{opacity:0}
+
+/* ---- la invitación ---- */
+.jardin__copy{position:relative;z-index:2;max-width:34rem;margin:0 auto;text-align:center}
+.jardin__title{font-family:var(--serif);font-weight:400;line-height:1.02;text-wrap:balance;
+  font-size:clamp(2.1rem,5.4vw,3.4rem);letter-spacing:-.015em;margin:0 0 .6rem}
+.jardin__lead{opacity:.82;line-height:1.7;font-size:clamp(.9rem,1.1vw,1rem);
+  margin:0 auto clamp(1.6rem,3.4vh,2.2rem);max-width:38ch}
+
+/* ---- formulario: campo de línea, no caja ---- */
+.jardin__form{text-align:left;max-width:30rem;margin:0 auto}
+.jardin__field{position:relative;display:flex;align-items:center;gap:.8rem;padding-bottom:.7rem}
+.jardin__field::before{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:rgba(244,239,230,.28)}
+.jardin__rule{position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--cream);
+  transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.jardin__field:focus-within .jardin__rule{transform:scaleX(1)}
+.jardin__input{flex:1 1 auto;min-width:0;background:none;border:0;color:var(--cream);
+  font:inherit;font-size:clamp(1rem,1.3vw,1.12rem);padding:.35rem 0}
+.jardin__input::placeholder{color:rgba(244,239,230,.58)}  /* 4.9:1 sobre moss */
+.jardin__input:focus{outline:0}
+.jardin__submit{flex:0 0 auto;background:none;border:0;color:var(--cream);cursor:pointer;
+  font-family:var(--sans);font-size:var(--fs-label);font-weight:600;letter-spacing:.18em;
+  text-transform:uppercase;padding:.35rem 0}
+.jardin__submit > span{display:inline-block;padding-bottom:2px;
+  background:linear-gradient(var(--accent-soft),var(--accent-soft)) 0 100%/0 1px no-repeat;
+  transition:background-size .45s cubic-bezier(.22,1,.36,1),color .3s}
+.jardin__submit:hover > span,.jardin__submit:focus-visible > span{background-size:100% 1px;color:var(--accent-soft)}
+.jardin__submit:disabled{opacity:.55;cursor:default}
+.jardin__submit:focus-visible{outline:2px solid var(--accent-soft);outline-offset:4px}
+
+.jardin__consent{display:flex;gap:.6rem;align-items:flex-start;margin-top:1.1rem;
+  font-size:.78rem;line-height:1.65;opacity:.72}
+.jardin__consent input{margin-top:.24rem;accent-color:var(--accent-soft);flex:0 0 auto}
+.jardin__consent a{text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+/* trampa de robots: fuera de pantalla, nunca display:none (algunos robots lo detectan) */
+.jardin__trap{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.jardin__msg{margin:.9rem 0 0;font-size:.84rem;line-height:1.6;min-height:1.3em;opacity:0;
+  transform:translateY(6px);transition:opacity .4s,transform .4s cubic-bezier(.22,1,.36,1)}
+.jardin__msg.is-on{opacity:1;transform:none}
+/* raya corta delante: marca la respuesta sin recuadros ni iconos */
+.jardin__msg.is-on::before{content:"";display:inline-block;width:1.4rem;height:1px;
+  background:currentColor;opacity:.55;vertical-align:middle;margin-right:.6rem}
+.jardin__msg.is-error{color:#F0C9B8}
+
+@media (max-width:900px){
+  .jardin__campo::after{inset:-16% -14%}
+}
+@media (max-width:560px){
+  /* menos pétalos y más pequeños: en 390 px de ancho, ocho estorban la lectura.
+     Van ordenados de más a menos protagonismo, así que se cae la cola. */
+  .jardin__petalo:nth-child(n+6){display:none}
+  .jardin__petalo{width:calc(var(--s) * .72);margin:calc(var(--s) * -.36) 0 0 calc(var(--s) * -.36)}
+  .jardin__lista{column-gap:.55rem}
+  .jardin__nombre:not(:last-child)::after{margin-left:.55rem}
+}
+/* sin animación: el matorral entero visible y quieto, y la última flor ya puesta */
+@media (prefers-reduced-motion:reduce){
+  .js .jardin__ultima{opacity:1}
+  .jardin__rule,.jardin__submit > span,.jardin__msg{transition:none}
+  .jardin__petalo{will-change:auto}
+  .jardin__petalo-img{animation:none;transform:rotate(var(--r))}
+}
+
 .footer__cols{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;max-width:var(--maxw);margin:0 auto;padding-bottom:1.8rem;border-bottom:1px solid rgba(244,239,230,.18)}
 .footer__cols h4{font-size:var(--fs-label);letter-spacing:.24em;text-transform:uppercase;font-family:var(--sans);font-weight:600;margin-bottom:.7rem;opacity:.9}
 .footer__cols p{opacity:.8;line-height:1.75;font-size:.88rem}

@@ -30,6 +30,9 @@ dist/
 # config sFTP de VS Code (contiene la contraseña de Arsys — NUNCA commitear)
 .vscode/sftp.json
 
+# clave de API de Brevo (el .example.php sí se commitea; este NO)
+public/api/brevo-config.php
+
 # imágenes sueltas en la raíz (las de la web viven en public/assets/img/)
 /*.jpeg
 /*.jpg

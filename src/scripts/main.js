@@ -27,6 +27,7 @@ import { initCellar } from './cellar.js';
 import { initMaridajePopup } from './maridajePopup.js';
 import { initCookies, applyWidgetConsent } from './cookies.js';
 import { initConversions } from './conversions.js';
+import { initNewsletter } from './newsletter.js';
 
 function destroyPage() {
   resetPage();   // aborta listeners, corre cleanups y revierte el gsap.context de la página
@@ -61,6 +62,7 @@ function initPage() {
 
   initCellar();
   initMaridajePopup();
+  initNewsletter();
   initConversions();    // ANTES de applyWidgetConsent: ata el load del iframe antes de que se le ponga src
   applyWidgetConsent(); // el <main> se intercambia: re-gatea el widget de TheFork según consentimiento
   bindPageAnchors();

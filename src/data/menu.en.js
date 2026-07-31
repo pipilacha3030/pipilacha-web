@@ -12,8 +12,21 @@ export const pases = [
   { name: 'Tomato-fennel fusion', hook: 'Ripe tomato and fennel flower cross aniseed with sweetness in the same bite.' },
   { name: 'Grilled fig with elderflower ice cream', hook: 'The fig is marked over embers; elderflower arrives cold, floral, faintly wine-like.' },
   { name: 'Scallops, shiso and dahlia', hook: "Shiso bites green; dahlia petal sweetens the scallop's iodine." },
-  { name: 'Red mullet, boletus and petals', hook: 'Red mullet leans on boletus, and petals bring the floral counterpoint.' },
+  { name: 'Monkfish, boletus and petals', hook: 'Monkfish leans on boletus, and petals bring the floral counterpoint.' },
   { name: 'Quail and sour flowers', hook: "Naturally sour flowers cut through the quail's fat without needing vinegar." },
   { name: 'Liquorice, chocolate and cardamom', hook: 'Liquorice and cardamom melt into an intense chocolate, without excess sugar.' },
   { name: 'Courgette and chrysanthemum', hook: 'Bitter, herbal chrysanthemum holds the sweetness of the roasted courgette.' },
 ];
+
+// Current menu name and the 32 flowers it works with. Mirrors src/data/menu.js.
+export const menuNombre = 'Solsticio floral';
+
+export const flores = [
+  'butterfly pea', 'electric daisy', 'daisy', 'hyssop', 'basil', 'garlic',
+  'oxalis', 'linden', 'alder', 'star anise', 'geranium', 'fuchsia', 'oregano',
+  'kalanchoe', 'mint', 'borage', 'lavender', 'cornflower', 'poppy', 'nasturtium',
+  'fennel', 'lantana', 'elderflower', 'dahlia', 'star phlox', 'tagetes', 'calendula',
+  'hibiscus', 'begonia', 'Aztec sweet herb', 'cosmos', 'chrysanthemum',
+];
+
+// The one left standing at the end is deliberately LAST in this array.

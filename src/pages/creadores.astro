@@ -8,7 +8,7 @@ const description = 'Guía para crear contenido sobre la cocina de flores. 32 fl
 
 <Base title={title} description={description}>
 <style>
-  .hero-creadores { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding-top: clamp(5rem, 14vh, 8rem); padding-bottom: 3.2rem; position: relative; overflow: hidden; }
+  .hero-creadores { min-height: 80svh; display: flex; flex-direction: column; justify-content: center; padding-top: clamp(3.5rem, 12vh, 6rem); padding-bottom: 3.2rem; position: relative; overflow: hidden; }
   .hero-creadores__bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
   .hero-creadores__bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 90% at 78% 12%, rgba(100, 93, 59, 0.22), transparent 55%), radial-gradient(90% 70% at 8% 100%, rgba(49, 51, 31, 0.5), transparent 60%); }
   .hero-creadores__inner { position: relative; z-index: 2; max-width: 1180px; margin: 0 auto; width: 100%; padding: 0 var(--pad); }
@@ -20,16 +20,16 @@ const description = 'Guía para crear contenido sobre la cocina de flores. 32 fl
 
   .stmt-creadores { padding-top: clamp(5rem, 15vh, 11rem); padding-bottom: clamp(5rem, 15vh, 11rem); }
   .stmt-creadores__wrap { max-width: 1180px; margin: 0 auto; padding: 0 var(--pad); }
-  .stmt-creadores__big { font-family: var(--serif); font-size: clamp(2.3rem, 7.5vw, 6rem); line-height: 1.02; letter-spacing: -0.015em; margin: 1.6rem 0 1.8rem; max-width: 16ch; color: var(--cloud); }
-  .stmt-creadores__big em { font-style: italic; color: var(--oat); }
+  .stmt-creadores__big { font-family: var(--serif); font-size: clamp(1.8rem, 6vw, 6rem); line-height: 1.05; letter-spacing: -0.015em; margin: 1.6rem 0 1.8rem; max-width: 16ch; color: var(--cloud); font-weight: 400; }
+  .stmt-creadores__big em { font-style: normal; color: var(--oat); font-weight: 400; }
   .stmt-creadores__body { max-width: 52ch; font-size: clamp(1.02rem, 2.2vw, 1.3rem); color: var(--cream-dim); line-height: 1.65; }
 
   .numbers-creadores { border-top: 1px solid var(--olive-line); }
   .numbers-creadores__head { max-width: 1180px; margin: 0 auto 3rem; padding: 0 var(--pad); }
   .numbers-creadores__grid { max-width: 1180px; margin: 0 auto; padding: 0 var(--pad); display: grid; grid-template-columns: 1fr; gap: 0; }
-  .stat-creadores { padding: 2rem 0; border-top: 1px solid var(--olive-line); display: grid; grid-template-columns: auto 1fr; gap: 1.4rem; align-items: baseline; }
+  .stat-creadores { padding: 1.8rem 0; border-top: 1px solid var(--olive-line); display: grid; grid-template-columns: auto 1fr; gap: 1.2rem; align-items: baseline; }
   .stat-creadores:first-child { border-top: none; }
-  .stat-creadores__num { font-family: var(--serif); font-size: clamp(3.4rem, 13vw, 6.5rem); line-height: 0.85; color: var(--cloud); font-variant-numeric: tabular-nums; }
+  .stat-creadores__num { font-family: var(--serif); font-size: clamp(2.4rem, 11vw, 6.5rem); line-height: 0.9; color: var(--cloud); font-variant-numeric: tabular-nums; min-width: max-content; }
   .stat-creadores__num .unit { font-size: 0.32em; color: var(--oat); margin-left: 0.1em; }
   .stat-creadores__txt { padding-top: 0.4rem; }
   .stat-creadores__txt b { font-family: var(--serif); font-size: 1.15rem; color: var(--cream); display: block; margin-bottom: 0.25rem; font-weight: 400; }
@@ -193,7 +193,12 @@ const description = 'Guía para crear contenido sobre la cocina de flores. 32 fl
       <p class="founders-creadores__body" data-reveal>Cocineros formados en <b>Ramón Freixa, dos estrellas</b>, donde aprendieron a construir cada plato como si fuera un experimento. Abrieron Pipilacha para investigar una sola pregunta: qué puede hacer el sabor de una flor dentro de un plato. Dieciséis asientos. Dos servicios. Lo mínimo para que sea posible cocinar con atención.</p>
     </div>
     <div class="founders-creadores__photo" data-reveal>
-      <img src="/assets/img/barra-aran-noe.jpg" alt="Arán y Noé, cocineros de Pipilacha" />
+      <picture>
+        <source media="(max-width: 720px)" srcset="/assets/img/chef-1.webp" type="image/webp">
+        <source media="(max-width: 720px)" srcset="/assets/img/chef-1.jpg">
+        <source srcset="/assets/img/barra-aran-noe.webp" type="image/webp">
+        <img src="/assets/img/barra-aran-noe.jpg" alt="Arán y Noé, cocineros de Pipilacha" />
+      </picture>
     </div>
   </div>
 </section>
@@ -240,7 +245,11 @@ const description = 'Guía para crear contenido sobre la cocina de flores. 32 fl
 
     <article class="dish-creadores" data-reveal>
       <div class="dish-creadores__photo">
-        <img src="/assets/img/df-vieira.jpg" alt="Vieira y flores" />
+        <picture>
+          <source media="(max-width: 720px)" srcset="/assets/img/df-vieira.webp" type="image/webp">
+          <source media="(max-width: 720px)" srcset="/assets/img/df-vieira.jpg">
+          <img src="/assets/img/df-vieira.jpg" alt="Vieira y flores" />
+        </picture>
       </div>
       <div class="dish-creadores__meta">
         <span class="dish-creadores__idx">Pase 11 · Centro</span>

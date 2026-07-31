@@ -96,3 +96,18 @@ ErrorDocument 404 /404.html
   # HSTS moderado (6 meses, sin preload): la beta ya sirve https
   Header always set Strict-Transport-Security "max-age=15552000"
 </IfModule>
+
+# ---------------------------------------------------------------------------
+# Configuración de Brevo: el archivo solo hace `return [...]`, así que pedirlo
+# por HTTP no imprime nada. Aun así se bloquea el acceso directo — la clave de
+# API no debe depender de un detalle del intérprete.
+# NOTA: esto NO toca la CSP, así que no hace falta el despliegue en 3 pasos.
+<FilesMatch "^brevo-config(\.example)?\.php$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>

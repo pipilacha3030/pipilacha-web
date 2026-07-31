@@ -4,6 +4,7 @@
    Bilingüe: los textos vienen de src/i18n; los enlaces se prefijan con
    /en cuando toca. */
 import { useT, localizeHref, localizeNav, altHref, TRANSLATED } from '../i18n/index.js';
+import Newsletter from './Newsletter.astro';
 const { path = '/', lang = 'es' } = Astro.props;
 const t = useT(lang);
 const otherLang = lang === 'en' ? 'es' : 'en';
@@ -13,6 +14,7 @@ const pages = [
   ['/galeria/', 'nav.gallery'], ['/prensa/', 'nav.press'], ['/regala/', 'nav.gift'], ['/reservas/', 'nav.book'],
 ];
 ---
+<Newsletter lang={lang} />
 <footer class="footer" id="footer">
   <div class="footer__brand">
     <img src="/assets/img/logo-light.png" class="footer__logo" alt="Pipilacha" width="560" height="216" loading="lazy" decoding="async" />

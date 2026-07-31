@@ -1,0 +1,130 @@
+---
+/* Banda «el jardín que se vacía»: alta en la lista de correo.
+
+   Va ANTES del <footer>, en moss, para que sea un momento propio y no una fila más
+   del pie. La idea: en vez de decir que el menú cambia, se enseña. Arriba un matorral
+   con las 32 flores reales de la carta; según la sección cruza la pantalla el scroll
+   las va apagando una a una hasta que solo queda una en pie con su nota del pase.
+   Al ir atado al scroll (no a un temporizador), subir vuelve a encenderlo.
+
+   OJO — ESTA SECCIÓN SE PINTA EN LAS 23 PÁGINAS (va dentro de Footer.astro). Todo lo
+   que se añada aquí corre en toda la web: nada de <canvas>, nada de física, y las
+   fotos son las variantes -xs con loading="lazy".
+
+   Ninguna foto lleva nombre a propósito: son atmósfera, no un índice. Por eso 16 PNG
+   bastan para 32 flores — se repiten a otra escala, giro y desenfoque y no se cuentan.
+
+   Funciona SIN JavaScript: el matorral sale entero y a contraste pleno, los pétalos
+   quietos y el formulario es un <form> POST normal contra /api/suscribir.php. El JS
+   (src/scripts/newsletter.js) solo añade el vaciado, la deriva y la respuesta en línea.
+
+   El campo `web` es la trampa para robots: fuera de pantalla, si llega relleno el PHP
+   descarta el envío en silencio. */
+import { useT, localizeNav } from '../i18n/index.js';
+import { flores as floresEs, menuNombre } from '../data/menu.js';
+import { flores as floresEn } from '../data/menu.en.js';
+
+const { lang = 'es' } = Astro.props;
+const t = useT(lang);
+const flores = lang === 'en' ? floresEn : floresEs;
+// la que queda en pie es la última del array (ver el comentario en src/data/menu.js):
+// se saca de ahí y no de una constante aparte para que no puedan desincronizarse
+const ultima = flores[flores.length - 1];
+
+/* Tamaños del matorral. Ciclo fijo (no aleatorio) para que el build sea reproducible y
+   el diff no cambie solo. La secuencia está desordenada a mano: si fuese creciente se
+   vería la escalera. */
+const ESCALA = [1.6, .88, 1.12, .85, 1.38, .95, .87, 1.5, 1, 1.22, .9, 1.05];
+
+/* Pétalos: colocados a mano, no al azar. Van a los bordes del matorral para no pelearse
+   con la lectura. `d` = profundidad (cuánto se aparta del puntero, 0 = al fondo);
+   `dur`/`del` desincronizan la deriva para que no respiren a la vez.
+
+   Los ordeno de más a menos protagonismo porque en móvil se ocultan a partir del 6º.
+
+   El marcado es <span> envolviendo <img> A PROPÓSITO: GSAP mueve el span (puntero) y el
+   CSS deriva la imagen. Compartir `transform` entre los dos es justo lo que rompe las
+   flores flotantes de la home — está avisado en CLAUDE.md. */
+const PETALOS = [
+  { img: 'flor-borraja',     x: 76, y: 66, s: 9,   r:  -8, b: 1.2, o: .46, d: 1,   dur: 11, del: 0 },
+  { img: 'flor-roja',        x: 95, y: 44, s: 8,   r:  10, b: 2,   o: .34, d: .85, dur: 13, del: -3 },
+  { img: 'flor-campanula',   x:  4, y: 12, s: 7.5, r: -14, b: 3.5, o: .26, d: .35, dur: 15, del: -6 },
+  { img: 'flor-dahlia-roja', x: 13, y: 76, s: 6.5, r:  16, b: 2.5, o: .3,  d: .6,  dur: 12, del: -8 },
+  { img: 'flor-geranio',     x: 60, y: 88, s: 6,   r: -18, b: 3,   o: .26, d: .5,  dur: 14, del: -2 },
+  { img: 'flor-calendula',   x: 91, y:  6, s: 5.5, r:  22, b: 4.5, o: .2,  d: .25, dur: 17, del: -5 },
+  { img: 'flor-cosmos',      x: 27, y: 26, s: 5,   r:  32, b: 4,   o: .18, d: .22, dur: 16, del: -11 },
+  { img: 'flor-coreopsis',   x: 47, y:  2, s: 4.5, r: -26, b: 5,   o: .16, d: .18, dur: 19, del: -7 },
+];
+---
+<section class="jardin" aria-labelledby="jardin-title">
+
+  {/* ---- el matorral: lo que hay hoy en la carta ---- */}
+  <div class="jardin__campo">
+
+    {/* Decorativos: los nombres ya están en la lista de al lado, así que un lector de
+        pantalla no gana nada leyéndolos. width/height reales aunque vayan en absoluto. */}
+    <div class="jardin__petalos" aria-hidden="true" data-jardin-petalos>
+      {PETALOS.map((p) => (
+        <span
+          class="jardin__petalo" data-d={p.d} data-x={p.x} data-y={p.y}
+          style={`--x:${p.x}%;--y:${p.y}%;--s:${p.s}rem;--r:${p.r}deg;--b:${p.b}px;--o:${p.o};--dur:${p.dur}s;--del:${p.del}s`}
+        >
+          <img class="jardin__petalo-img" src={`/assets/img/${p.img}-xs.png`} alt=""
+               width="220" height="220" loading="lazy" decoding="async" />
+        </span>
+      ))}
+    </div>
+
+    <p class="jardin__eyebrow">{menuNombre} · {flores.length} {t('news.flowers')}</p>
+
+    {/* Contenido real, no decoración: es la carta. El apagado es solo visual — sin
+        aria-live, que anunciaría 32 cambios seguidos y sería ruido puro. */}
+    <ul class="jardin__lista" data-jardin-lista>
+      {flores.map((f, i) => (
+        <li class="jardin__nombre" style={`--s:${ESCALA[i % ESCALA.length]}`}>{f}</li>
+      ))}
+    </ul>
+
+    {/* La que queda en pie cuando el matorral se apaga: el nombre solo. */}
+    <p class="jardin__ultima" data-jardin-ultima>{ultima}</p>
+  </div>
+
+  {/* ---- y lo que queda: la invitación ---- */}
+  <div class="jardin__copy">
+    <h2 class="jardin__title" id="jardin-title">{t('news.title')}</h2>
+    <p class="jardin__lead">{t('news.lead')}</p>
+
+    <form class="jardin__form" action="/api/suscribir.php" method="post" novalidate>
+      <input type="hidden" name="lang" value={lang} />
+
+      <div class="jardin__field">
+        <label class="sr-only" for="news-email">{t('news.label')}</label>
+        <input
+          class="jardin__input" id="news-email" name="email" type="email"
+          placeholder={t('news.placeholder')} autocomplete="email"
+          required inputmode="email" spellcheck="false"
+        />
+        <button class="jardin__submit" type="submit">
+          <span>{t('news.submit')}</span>
+        </button>
+        <span class="jardin__rule" aria-hidden="true"></span>
+      </div>
+
+      <label class="jardin__consent">
+        <input type="checkbox" name="consentimiento" value="1" required />
+        <span>
+          {t('news.consent')}
+          <a href={localizeNav('/privacidad/', lang)}>{t('news.privacy')}</a>
+        </span>
+      </label>
+
+      <p class="jardin__trap" aria-hidden="true">
+        <label>No rellenar<input type="text" name="web" tabindex="-1" autocomplete="off" /></label>
+      </p>
+
+      <p class="jardin__msg" role="status" aria-live="polite"
+         data-ok={t('news.ok')} data-error={t('news.error')} data-sending={t('news.sending')}></p>
+    </form>
+  </div>
+
+</section>
