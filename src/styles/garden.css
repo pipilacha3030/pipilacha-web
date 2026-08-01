@@ -1,0 +1,346 @@
+/* ============================================================
+   CREATOR GARDEN · sistema visual
+   Solo se carga en /creator-garden/. Hereda de main.css los
+   @font-face y los tokens de marca; aquí abajo únicamente lo que
+   esta pieza necesita y el sitio no tiene.
+
+   La composición se apoya en cuatro reglas, no en adornos:
+   · contraste de escala — display enorme contra pie diminuto
+   · alternancia de escena — oscuro / crema como respiración
+   · asimetría — la rejilla es de 12 y casi nada empieza en la 1
+   · aire — el vacío es material de trabajo, no espacio sobrante
+   ============================================================ */
+
+.gd {
+  --gd-void: #0B0B09;
+  --gd-veil: rgba(11, 11, 9, .72);
+  --gd-hair: rgba(176, 167, 127, .22);   /* filete sobre oscuro */
+  --gd-hair-dark: rgba(49, 51, 31, .16); /* filete sobre crema  */
+  --gd-dim: rgba(244, 239, 230, .62);
+  --gd-dimmer: rgba(244, 239, 230, .42);
+
+  --gd-display: clamp(2.9rem, 10.5vw, 10rem);
+  --gd-h1: clamp(2.2rem, 6.4vw, 5.4rem);
+  --gd-h2: clamp(1.7rem, 4vw, 3.1rem);
+  --gd-h3: clamp(1.2rem, 2.4vw, 1.72rem);
+  --gd-body: clamp(1rem, 1.5vw, 1.16rem);
+  --gd-lede: clamp(1.1rem, 2.2vw, 1.5rem);
+
+  --gd-scene-y: clamp(5rem, 16vh, 12rem);
+
+  background: var(--gd-void);
+  color: var(--cream);
+  font-family: var(--sans);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.gd ::selection { background: var(--olive); color: var(--cloud); }
+
+.gd-skip {
+  position: absolute; left: -9999px; top: 0; z-index: 100;
+  background: var(--cream); color: var(--ink); padding: .9em 1.4em;
+  font-size: .8rem; letter-spacing: .1em; text-transform: uppercase;
+}
+.gd-skip:focus { left: 1rem; top: 1rem; }
+.gd :focus-visible { outline: 2px solid var(--accent-soft); outline-offset: 4px; }
+
+/* ---------- escenas ---------- */
+.gd-scene { position: relative; padding: var(--gd-scene-y) var(--gutter); }
+.gd-scene--cream { background: var(--cream); color: var(--ink); }
+.gd-scene--moss  { background: var(--moss); }
+.gd-scene--tight { padding-top: clamp(3rem, 8vh, 6rem); }
+.gd-wrap { max-width: var(--maxw); margin-inline: auto; width: 100%; }
+
+/* rejilla editorial: 12 columnas de verdad, para poder desalinear */
+.gd-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(1.5rem, 3vw, 3rem); }
+
+/* ---------- tipografía ---------- */
+.gd-display, .gd-h1, .gd-h2, .gd-h3 {
+  font-family: var(--serif); font-weight: 400; letter-spacing: -.02em;
+}
+.gd-display { font-size: var(--gd-display); line-height: .93; }
+.gd-h1 { font-size: var(--gd-h1); line-height: .99; }
+.gd-h2 { font-size: var(--gd-h2); line-height: 1.06; letter-spacing: -.015em; }
+.gd-h3 { font-size: var(--gd-h3); line-height: 1.16; letter-spacing: -.01em; }
+.gd-lede { font-size: var(--gd-lede); line-height: 1.5; color: var(--gd-dim); max-width: 34ch; }
+.gd-scene--cream .gd-lede { color: var(--text-muted); }
+.gd-body { font-size: var(--gd-body); line-height: 1.68; color: var(--gd-dim); max-width: 46ch; }
+.gd-scene--cream .gd-body { color: var(--text-muted); }
+
+/* cabecera de escena: número diminuto contra titular enorme */
+.gd-eyebrow {
+  display: inline-flex; align-items: center; gap: .8em;
+  font-size: .68rem; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--accent-soft);
+}
+.gd-eyebrow::before { content: ""; width: 2.2em; height: 1px; background: currentColor; opacity: .55; }
+.gd-scene--cream .gd-eyebrow { color: var(--accent); }
+.gd-num {
+  font-family: var(--serif); font-size: .8rem; letter-spacing: .12em;
+  color: var(--olive); font-variant-numeric: tabular-nums;
+}
+
+/* ---------- estados de entrada (gated en .js, como el sitio) ----------
+   Sin JS o si el bundle no baja, todo se ve: el contenido no depende
+   de que una animación lo destape. */
+.js .gd .gd-reveal { opacity: 0; transform: translateY(22px); }
+.js .gd [data-gd-stagger] .gd-item { opacity: 0; transform: translateY(22px); }
+.js .gd [data-gd-words], .js .gd [data-gd-lines] { opacity: 0; }
+/* SplitText envuelve cada línea en .gd-line; el clip es lo que permite
+   que las palabras suban desde detrás de su propia línea */
+.gd .gd-line { overflow: hidden; padding-bottom: .08em; }
+
+@media (prefers-reduced-motion: reduce) {
+  .js .gd .gd-reveal,
+  .js .gd [data-gd-stagger] .gd-item,
+  .js .gd [data-gd-words],
+  .js .gd [data-gd-lines] { opacity: 1 !important; transform: none !important; }
+}
+
+/* ---------- tallo + índice ---------- */
+.gd-spine {
+  position: fixed; left: max(1rem, calc((100vw - var(--maxw)) / 2 - 2.4rem));
+  top: 0; height: 100vh; width: 2px; z-index: 3; pointer-events: none;
+}
+.gd-spine svg { width: 100%; height: 100%; overflow: visible; }
+.gd-spine__path { fill: none; stroke: var(--olive); stroke-width: 1.4; vector-effect: non-scaling-stroke; }
+
+.gd-index {
+  position: fixed; right: clamp(.9rem, 2.2vw, 2rem); top: 50%; z-index: 4;
+  transform: translateY(-50%); display: grid; gap: .55rem;
+}
+.gd-index__link {
+  display: flex; align-items: center; gap: .6rem; justify-content: flex-end;
+  text-decoration: none; color: var(--gd-dimmer);
+  font-size: .58rem; letter-spacing: .18em; text-transform: uppercase;
+  transition: color .35s var(--ease);
+}
+.gd-index__label {
+  opacity: 0; transform: translateX(6px);
+  transition: opacity .35s var(--ease), transform .35s var(--ease);
+}
+.gd-index__dot {
+  width: 5px; height: 5px; border-radius: 50%; flex: none;
+  background: currentColor; transition: scale .35s var(--ease);
+}
+.gd-index__link.is-on { color: var(--accent-soft); }
+.gd-index__link.is-on .gd-index__dot { scale: 1.9; }
+.gd-index__link.is-on .gd-index__label,
+.gd-index__link:hover .gd-index__label,
+.gd-index__link:focus-visible .gd-index__label { opacity: 1; transform: none; }
+
+/* ---------- 00 · apertura ---------- */
+.gd-open { position: relative; min-height: 100svh; display: flex; align-items: flex-end; overflow: clip; }
+.gd-open__media { position: absolute; inset: -8% 0; z-index: 0; }
+.gd-open__media img { width: 100%; height: 100%; object-fit: cover; }
+/* la portada es una foto CLARA y el texto va en crema: la rampa tiene que
+   cubrir todo el bloque de texto, no solo el último tercio */
+.gd-open__veil {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(11,11,9,.52) 0%, rgba(11,11,9,.12) 18%,
+              rgba(11,11,9,0) 30%, rgba(11,11,9,.34) 44%, rgba(11,11,9,.66) 58%,
+              rgba(11,11,9,.86) 72%, rgba(11,11,9,.96) 88%, var(--gd-void) 100%);
+}
+.gd-open__inner {
+  position: relative; z-index: 1; width: 100%; max-width: var(--maxw);
+  margin-inline: auto; padding: 0 var(--gutter) clamp(2.6rem, 7vh, 5rem);
+}
+/* por debajo del display general: a 10rem el titular subía hasta la franja
+   limpia del velo y peleaba con el cuenco */
+.gd-open__title {
+  font-size: clamp(2.5rem, 7.4vw, 7rem);
+  color: var(--cloud); margin: .34em 0 .46em;
+  text-shadow: 0 2px 44px rgba(0,0,0,.5);
+}
+.gd-open__sub { color: var(--cloud); max-width: 30ch; text-shadow: 0 1px 24px rgba(0,0,0,.5); }
+.gd-open .gd-eyebrow { color: var(--cloud); text-shadow: 0 1px 20px rgba(0,0,0,.6); }
+.gd-open__credit {
+  margin-top: 1.6rem; font-size: .66rem; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--accent-soft); opacity: .85;
+}
+
+/* ---------- 01 · manifiesto ---------- */
+.gd-manifiesto p {
+  font-family: var(--serif); font-weight: 400;
+  font-size: clamp(1.35rem, 3.6vw, 2.4rem); line-height: 1.3;
+  letter-spacing: -.012em; max-width: 24ch;
+}
+.gd-manifiesto p + p { margin-top: 1.1em; }
+.gd-manifiesto p:last-child { color: var(--olive); }
+
+/* ---------- 02 · visión ---------- */
+.gd-vision__cuerpo { display: grid; gap: 1.3em; }
+.gd-dato { border-top: 1px solid var(--gd-hair-dark); padding-top: 1.6rem; }
+.gd-dato__n {
+  font-family: var(--serif); font-size: clamp(4rem, 12vw, 8.5rem);
+  line-height: .82; color: var(--ink); font-variant-numeric: tabular-nums; display: block;
+}
+.gd-dato__t {
+  display: block; margin-top: .7rem; font-size: .7rem; letter-spacing: .22em;
+  text-transform: uppercase; color: var(--accent);
+}
+.gd-dato__pie { margin-top: .9rem; font-size: .95rem; line-height: 1.55; color: var(--text-muted); max-width: 26ch; }
+
+/* ---------- listas numeradas (filosofía, ángulos, movimiento) ---------- */
+.gd-list { display: grid; gap: 0; }
+.gd-list__item {
+  display: grid; gap: .55rem 2rem; padding: clamp(1.6rem, 3.5vh, 2.6rem) 0;
+  border-top: 1px solid var(--gd-hair);
+  grid-template-columns: 1fr;
+}
+.gd-scene--cream .gd-list__item { border-top-color: var(--gd-hair-dark); }
+.gd-list__n { font-family: var(--serif); font-size: .78rem; color: var(--olive); letter-spacing: .1em; }
+.gd-list__t { font-family: var(--serif); font-size: var(--gd-h3); line-height: 1.15; color: var(--cloud); }
+.gd-scene--cream .gd-list__t { color: var(--ink); }
+.gd-list__d { font-size: var(--gd-body); line-height: 1.62; color: var(--gd-dim); max-width: 48ch; }
+.gd-scene--cream .gd-list__d { color: var(--text-muted); }
+
+/* ---------- tarjetas sin caja (historias, ideas, detalles) ---------- */
+.gd-cards { display: grid; gap: clamp(1.8rem, 4vw, 3.2rem); }
+.gd-card { border-top: 1px solid var(--gd-hair); padding-top: 1.4rem; }
+.gd-scene--cream .gd-card { border-top-color: var(--gd-hair-dark); }
+.gd-card__f {
+  font-size: .62rem; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--olive); display: block; margin-bottom: .8rem;
+}
+.gd-card__t { font-family: var(--serif); font-size: var(--gd-h3); line-height: 1.14; margin-bottom: .55rem; color: var(--cloud); }
+.gd-scene--cream .gd-card__t { color: var(--ink); }
+.gd-card__d { font-size: .99rem; line-height: 1.62; color: var(--gd-dim); }
+.gd-scene--cream .gd-card__d { color: var(--text-muted); }
+
+/* ---------- 06 · cámara: dos columnas contrapuestas ---------- */
+.gd-camara { display: grid; gap: clamp(2.5rem, 6vw, 5rem); }
+.gd-camara__h {
+  font-size: .68rem; letter-spacing: .26em; text-transform: uppercase;
+  color: var(--accent-soft); margin-bottom: 1.6rem;
+  padding-bottom: .9rem; border-bottom: 1px solid var(--gd-hair);
+}
+.gd-camara__list { display: grid; gap: 1.5rem; }
+.gd-camara__t { font-family: var(--serif); font-size: 1.16rem; color: var(--cloud); margin-bottom: .3rem; }
+.gd-camara__d { font-size: .97rem; line-height: 1.6; color: var(--gd-dim); max-width: 40ch; }
+
+/* ---------- 08 · identidad ---------- */
+.gd-paleta { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--gd-hair); }
+.gd-swatch { background: var(--gd-void); padding: 1.3rem 1.1rem; display: grid; gap: .5rem; }
+.gd-swatch__chip { width: 100%; aspect-ratio: 2.4/1; border-radius: 2px; }
+.gd-swatch__n { font-size: .78rem; color: var(--cloud); }
+.gd-swatch__hex { font-size: .62rem; letter-spacing: .12em; color: var(--olive); font-variant-numeric: tabular-nums; }
+.gd-swatch__u { font-size: .66rem; line-height: 1.45; color: var(--gd-dimmer); }
+
+.gd-tipo { display: grid; gap: 2rem; }
+.gd-tipo__muestra { font-family: var(--serif); font-size: clamp(2.6rem, 8vw, 5rem); line-height: 1; color: var(--cloud); }
+.gd-tipo__muestra--sans { font-family: var(--sans); font-weight: 300; font-size: clamp(1.8rem, 5vw, 3.2rem); }
+.gd-tipo__meta { display: flex; flex-wrap: wrap; gap: .5rem 1.4rem; margin-top: .9rem; align-items: baseline; }
+.gd-tipo__fam { font-size: .82rem; color: var(--accent-soft); }
+.gd-tipo__rol { font-size: .62rem; letter-spacing: .22em; text-transform: uppercase; color: var(--olive); }
+
+/* ---------- 11 · lenguaje ---------- */
+.gd-hooks { display: grid; gap: .1rem; }
+.gd-hook {
+  font-family: var(--serif); font-size: clamp(1.35rem, 4.2vw, 2.6rem);
+  line-height: 1.22; color: var(--ink); padding: .55em 0;
+  border-bottom: 1px solid var(--gd-hair-dark); position: relative;
+  display: flex; align-items: baseline; gap: .7em;
+}
+.gd-hook__i { font-family: var(--sans); font-size: .6rem; letter-spacing: .12em; color: var(--olive); flex: none; }
+
+.gd-caption { border-left: 2px solid var(--olive); padding-left: 1.3rem; }
+.gd-caption__t { font-size: .64rem; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); margin-bottom: .8rem; }
+.gd-caption__d { font-size: 1rem; line-height: 1.66; color: var(--text-muted); }
+
+/* ---------- 12 · material ---------- */
+.gd-mat { display: grid; gap: 0; }
+.gd-mat__row {
+  display: grid; grid-template-columns: 1fr auto; gap: 1rem 2rem; align-items: center;
+  padding: 1.6rem 0; border-top: 1px solid var(--gd-hair); text-decoration: none; color: inherit;
+  transition: opacity .3s var(--ease);
+}
+.gd-mat__row:hover { opacity: .62; }
+.gd-mat__t { font-family: var(--serif); font-size: var(--gd-h3); color: var(--cloud); }
+.gd-mat__d { font-size: .93rem; color: var(--gd-dim); margin-top: .3rem; max-width: 40ch; }
+.gd-mat__meta { font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; color: var(--olive); }
+
+/* ---------- 13 · contacto + cierre ---------- */
+.gd-contacto__mail {
+  font-family: var(--serif); font-size: clamp(1.6rem, 6vw, 4rem); line-height: 1.05;
+  color: var(--cloud); text-decoration: none; display: inline-block;
+  border-bottom: 1px solid var(--olive); word-break: break-word;
+}
+.gd-datos { display: grid; gap: 0; margin-top: clamp(2.5rem, 6vh, 4rem); }
+.gd-datos__row {
+  display: grid; grid-template-columns: 1fr; gap: .3rem;
+  padding: 1.2rem 0; border-top: 1px solid var(--gd-hair);
+}
+.gd-datos__k { font-size: .62rem; letter-spacing: .24em; text-transform: uppercase; color: var(--olive); }
+.gd-datos__v { font-family: var(--serif); font-size: 1.18rem; color: var(--cloud); }
+.gd-datos__v a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--olive); }
+
+.gd-cierre { min-height: 78svh; display: grid; place-items: center; text-align: center; }
+.gd-cierre__big { color: var(--cloud); max-width: 14ch; }
+.gd-cierre__mark {
+  margin-top: clamp(2.5rem, 7vh, 5rem); font-family: var(--serif);
+  font-size: clamp(1.6rem, 5vw, 3rem); color: var(--olive); letter-spacing: .02em;
+}
+
+/* ---------- media a sangre entre escenas ---------- */
+.gd-bleed { position: relative; min-height: 84svh; display: flex; align-items: flex-end; overflow: clip; margin: 0; }
+.gd-bleed__media { position: absolute; inset: -7% 0; z-index: 0; }
+.gd-bleed__media img { width: 100%; height: 100%; object-fit: cover; }
+.gd-bleed__veil {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, var(--gd-void) 0%, rgba(11,11,9,.4) 10%, rgba(11,11,9,0) 30%,
+              rgba(11,11,9,.36) 50%, rgba(11,11,9,.74) 68%, rgba(11,11,9,.94) 86%, var(--gd-void) 100%);
+}
+.gd-bleed__copy {
+  position: relative; z-index: 1; width: 100%; max-width: var(--maxw);
+  margin-inline: auto; padding: 0 var(--gutter) clamp(2.6rem, 7vh, 4.5rem);
+}
+.gd-bleed__copy .gd-h2 { color: var(--cloud); text-shadow: 0 1px 26px rgba(0,0,0,.55); }
+.gd-bleed__copy .gd-body { text-shadow: 0 1px 22px rgba(0,0,0,.5); }
+
+/* ============================================================
+   COMPOSICIÓN EN PANTALLA GRANDE
+   Aquí es donde la rejilla de 12 hace su trabajo: casi nada
+   empieza en la columna 1 y casi nada ocupa las 12.
+   ============================================================ */
+@media (min-width: 860px) {
+  .gd-scene { padding-inline: var(--gutter); }
+
+  .gd-open__title { max-width: 15ch; }
+
+  .gd-manifiesto { grid-column: 4 / 12; }
+  .gd-manifiesto p { max-width: 22ch; }
+  .gd-manifiesto p:nth-child(2) { margin-left: clamp(2rem, 8vw, 8rem); }
+
+  .gd-vision__head { grid-column: 1 / 7; }
+  .gd-vision__cuerpo { grid-column: 7 / 13; align-self: end; }
+  .gd-vision__dato { grid-column: 1 / 5; margin-top: clamp(3rem, 8vh, 6rem); }
+
+  .gd-head { grid-column: 1 / 6; position: sticky; top: clamp(4rem, 14vh, 9rem); align-self: start; }
+  .gd-cuerpo { grid-column: 6 / 13; }
+
+  .gd-list__item { grid-template-columns: minmax(3rem, 5%) minmax(0, 30%) 1fr; align-items: baseline; }
+
+  .gd-cards { grid-template-columns: repeat(2, 1fr); column-gap: clamp(2rem, 5vw, 4rem); }
+  .gd-cards--tres { grid-template-columns: repeat(3, 1fr); }
+  /* la asimetría: la segunda columna cae fuera de línea */
+  .gd-cards--desfase > *:nth-child(even) { margin-top: clamp(2.5rem, 7vh, 5rem); }
+
+  .gd-camara { grid-template-columns: 1fr 1fr; }
+  .gd-paleta { grid-template-columns: repeat(3, 1fr); }
+  .gd-tipo { grid-template-columns: 1fr; }
+
+  .gd-lenguaje__hooks { grid-column: 1 / 8; }
+  .gd-lenguaje__caps { grid-column: 9 / 13; display: grid; gap: 2.4rem; align-content: start; }
+
+  .gd-datos__row { grid-template-columns: minmax(140px, 22%) 1fr; gap: 1.5rem; align-items: baseline; }
+  .gd-contacto__head { grid-column: 1 / 8; }
+  .gd-contacto__datos { grid-column: 8 / 13; }
+}
+
+/* el índice lateral estorba en pantallas estrechas: sin sitio, fuera */
+@media (max-width: 859px) {
+  .gd-index, .gd-spine { display: none; }
+}

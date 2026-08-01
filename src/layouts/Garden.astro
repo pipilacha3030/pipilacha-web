@@ -1,0 +1,66 @@
+---
+/* ============================================================
+   GARDEN · envoltorio de /creator-garden/
+   Deliberadamente SIN cromo: no hay Nav, ni Footer, ni banner de
+   cookies, ni analítica. La página no debe leerse como una sección
+   del sitio sino como una pieza aparte, y cada elemento de chrome
+   que se añada rompe eso.
+
+   Sí comparte main.css: ahí viven los @font-face y los tokens de
+   marca. Duplicarlos en un CSS propio sería más ligero pero se
+   desincronizaría del sistema a la primera revisión de tokens.
+
+   El <script is:inline> de abajo es BYTE A BYTE el de Base.astro: su
+   sha256 ya está en la CSP de public/.htaccess. Si lo tocas, aunque
+   sea un espacio, cambia el hash y el navegador lo bloquea.
+   ============================================================ */
+import '../styles/main.css';
+import '../styles/garden.css';
+
+const {
+  title = 'Creator Garden · Pipilacha',
+  description = 'Para quien va a contar Pipilacha: cómo se piensa cada plato, qué merece la pena grabar y cómo se ve y se mueve la casa.',
+  ogImage = '/assets/img/cr-hero.jpg',
+} = Astro.props;
+
+const canonical = new URL('/creator-garden/', Astro.site ?? 'https://pipilacha.es').href;
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <script is:inline>document.documentElement.classList.add('js');window.addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='SCRIPT'&&t.src&&t.src.indexOf(location.origin+'/_assets/')===0)document.documentElement.classList.remove('js')},true)</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  {/* pieza que se pasa por DM a creadores concretos, no una página de captación */}
+  <meta name="robots" content="noindex, nofollow" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Pipilacha" />
+  <meta property="og:locale" content="es_ES" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={new URL(ogImage, 'https://pipilacha.es').href} />
+  <meta property="og:url" content={canonical} />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <meta name="theme-color" content="#0B0B09" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/marcellus-400-latin.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/hanken-grotesk-variable-latin.woff2" crossorigin />
+  {/* la portada es el LCP: que empiece a bajar antes de que el CSS resuelva */}
+  <link rel="preload" as="image" href="/assets/img/cr-hero-m.jpg" media="(max-width: 760px)" />
+  <link rel="preload" as="image" href="/assets/img/cr-hero.jpg" media="(min-width: 761px)" />
+
+  <script>import '../scripts/garden.js';</script>
+</head>
+<body class="gd">
+  <a class="gd-skip" href="#manifiesto">Saltar a la guía</a>
+  <slot />
+</body>
+</html>
