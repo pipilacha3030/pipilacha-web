@@ -13,14 +13,21 @@ import {
 
    Nada va en imperativo. El creador viene invitado y sin nada pactado a
    cambio, así que la página ofrece, no manda. */
-const pases = {
-  farolillo: { n: '05', t: 'Farolillo de atún y orégano', img: 'cr-farolillo',
-    d: 'La flor hace de recipiente y deja un fondo a higo bajo el tartar de atún. Se come el cuenco.',
-    alt: 'Farolillo de atún y orégano servido dentro de la propia flor' },
-  higo: { n: '10', t: 'Higo a la brasa con helado de saúco', img: 'cr-higo',
-    d: 'El higo llega negro de la brasa. El saúco entra frío, con un fondo avellanado.',
-    alt: 'Higo a la brasa con helado de saúco en plato negro' },
+const figuras = {
+  bosque: { img: 'cr-bosque', n: '03', t: 'Taco de tila y alisos',
+    d: 'El aliso huele a miel y sabe a mostaza. Va sobre una masa hecha con harina de flor de tilo.',
+    alt: 'Taco de tila y amapola sobre un soporte de mármol colgado de una rama' },
+  retiro: { img: 'cr-retiro', t: 'Arán y Noé',
+    d: 'La carta se rehace entera cada estación, y las flores salen de buscarlas.',
+    alt: 'Arán y Noé bajo un árbol del amor en flor' },
 };
+
+// tira corta: tres pases del Solsticio, para ver de qué se habla
+const tira = [
+  { img: 'cr-cuchara',  alt: 'Flor de melocotón anisada con pétalos de geranio en una cuchara de madera', pie: 'Pase 04 · flor de melocotón y geranio' },
+  { img: 'cr-borrajas', alt: 'Flores de borraja colocadas con pinza sobre granizado de lima', pie: 'Pase 06 · mojito entre borrajas' },
+  { img: 'cr-vieiras',  alt: 'Vieiras en salsa clara con flores blancas y aceite de shiso', pie: 'Pase 11 · vieiras shiso-dalias' },
+];
 
 const dmUrl = `https://ig.me/m/${contacto.ig}`;
 ---
@@ -43,11 +50,11 @@ const dmUrl = `https://ig.me/m/${contacto.ig}`;
     una marca clara obliga a velos oscuros, que es lo que sobra. */}
 <section class="gd-open" id="apertura">
   <div class="gd-open__media" data-gd-parallax="0.08">
-    <img src="/assets/img/cr-hero.jpg"
-         srcset="/assets/img/cr-hero-m.jpg 900w, /assets/img/cr-hero.jpg 1800w"
-         sizes="100vw" width="1800" height="2250"
+    <img src="/assets/img/cr-barra.jpg"
+         srcset="/assets/img/cr-barra-m.jpg 900w, /assets/img/cr-barra.jpg 1800w"
+         sizes="100vw" width="1800" height="1440"
          fetchpriority="high" decoding="async"
-         alt="Farolillo de atún y orégano: el tartar servido dentro de la propia flor" />
+         alt="Arán y Noé detrás de la barra de Pipilacha, con los platos montados delante" />
   </div>
   <div class="gd-open__inner">
     <div class="gd-open__titulo">
@@ -88,17 +95,27 @@ const dmUrl = `https://ig.me/m/${contacto.ig}`;
         </article>
       ))}
     </div>
+
+    {/* tres pases, para poner cara a lo de arriba. Se hojea con el pulgar. */}
+    <div class="gd-tira gd-reveal">
+      {tira.map((t) => (
+        <figure class="gd-tira__item">
+          <img src={`/assets/img/${t.img}.jpg`} width="1400" height="1750" loading="lazy" decoding="async" alt={t.alt} />
+          <figcaption>{t.pie}</figcaption>
+        </figure>
+      ))}
+    </div>
   </div>
 </section>
 
-{/* ─── figura · farolillo ────────────────────────────────────────── */}
+{/* ─── figura · el taco en el campo ──────────────────────────────── */}
 <figure class="gd-fig">
-  <div class="gd-fig__media"><img src={`/assets/img/${pases.farolillo.img}.jpg`} width="1600" height="2000" loading="lazy" decoding="async" alt={pases.farolillo.alt} /></div>
+  <div class="gd-fig__media"><img src={`/assets/img/${figuras.bosque.img}.jpg`} width="1600" height="2000" loading="lazy" decoding="async" alt={figuras.bosque.alt} /></div>
   <figcaption class="gd-reveal">
     <div class="gd-fig__texto">
-      <span class="gd-fig__n">Pase {pases.farolillo.n}</span>
-      <h2 class="gd-h2">{pases.farolillo.t}</h2>
-      <p class="gd-body" style="margin-top:.6rem">{pases.farolillo.d}</p>
+      <span class="gd-fig__n">Pase {figuras.bosque.n}</span>
+      <h2 class="gd-h2">{figuras.bosque.t}</h2>
+      <p class="gd-body" style="margin-top:.6rem">{figuras.bosque.d}</p>
     </div>
   </figcaption>
 </figure>
@@ -153,14 +170,13 @@ const dmUrl = `https://ig.me/m/${contacto.ig}`;
   </div>
 </section>
 
-{/* ─── figura · higo ─────────────────────────────────────────────── */}
+{/* ─── figura · Arán y Noé ───────────────────────────────────────── */}
 <figure class="gd-fig">
-  <div class="gd-fig__media"><img src={`/assets/img/${pases.higo.img}.jpg`} srcset="/assets/img/cr-higo-m.jpg 900w, /assets/img/cr-higo.jpg 1400w" sizes="100vw" width="1400" height="1750" loading="lazy" decoding="async" alt={pases.higo.alt} /></div>
+  <div class="gd-fig__media"><img src={`/assets/img/${figuras.retiro.img}.jpg`} width="1600" height="2000" loading="lazy" decoding="async" alt={figuras.retiro.alt} /></div>
   <figcaption class="gd-reveal">
     <div class="gd-fig__texto">
-      <span class="gd-fig__n">Pase {pases.higo.n}</span>
-      <h2 class="gd-h2">{pases.higo.t}</h2>
-      <p class="gd-body" style="margin-top:.6rem">{pases.higo.d}</p>
+      <h2 class="gd-h2">{figuras.retiro.t}</h2>
+      <p class="gd-body" style="margin-top:.6rem">{figuras.retiro.d}</p>
     </div>
   </figcaption>
 </figure>

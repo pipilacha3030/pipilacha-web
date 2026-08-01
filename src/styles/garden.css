@@ -146,8 +146,12 @@
 /* ============================================================
    01 · APERTURA
    ============================================================ */
+/* La portada es un plano de los dos cocineros en la barra, apaisado. En
+   móvil se respeta su proporción en vez de recortarlo a una altura fija:
+   con `cover` a 56svh el encuadre se comía a los dos por los lados y
+   dejaba en el centro justo lo que no importa, la estantería. */
 .gd-open__media {
-  position: relative; height: 56svh; min-height: 300px; overflow: hidden;
+  position: relative; aspect-ratio: 5 / 4; overflow: hidden;
   background: var(--gd-paper-2);
 }
 .gd-open__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -191,6 +195,23 @@
 }
 .gd-mesa__k { font-family: var(--serif); font-weight: 400; font-size: 1.2rem; line-height: 1.2; color: var(--ink); }
 .gd-mesa__d { font-size: .95rem; line-height: 1.62; color: var(--text-muted); max-width: 46ch; }
+
+/* tira de tres pases: se hojea con el pulgar y no come altura */
+.gd-tira {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 62%;
+  gap: .8rem; overflow-x: auto; scroll-snap-type: x mandatory;
+  margin: var(--gd-stack) calc(var(--gutter) * -1) 0;
+  padding-inline: var(--gutter); scrollbar-width: thin;
+}
+.gd-tira__item { margin: 0; scroll-snap-align: start; }
+.gd-tira__item img {
+  width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block;
+  border-radius: 2px; background: var(--gd-paper-2);
+}
+.gd-tira__item figcaption {
+  margin-top: .5rem; font-size: .6rem; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--text-subtle);
+}
 
 /* ============================================================
    FIGURAS A SANGRE — imagen ancho completo, pie debajo
@@ -341,7 +362,8 @@
   }
   .gd-nav__link.is-on { border-bottom-color: transparent; border-right-color: var(--olive); }
 
-  .gd-open__media { height: 74svh; }
+  .gd-open__media { aspect-ratio: auto; height: 74svh; }
+  .gd-tira { grid-auto-flow: row; grid-template-columns: repeat(3, 1fr); overflow: visible; margin-inline: 0; padding-inline: 0; gap: 1.4rem; }
   .gd-open__inner { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3rem; align-items: end; }
   .gd-open__titulo { grid-column: 1 / 8; }
   .gd-open__title { margin-bottom: 0; }

@@ -20,7 +20,7 @@ import '../styles/garden.css';
 const {
   title = 'Creator Garden · Pipilacha',
   description = 'Qué es Pipilacha, qué pasa en la mesa y a qué sabe cada flor de la carta. Para creadores que vienen a conocer la casa.',
-  ogImage = '/assets/img/cr-hero.jpg',
+  ogImage = '/assets/img/cr-og.jpg',
 } = Astro.props;
 
 const canonical = new URL('/creator-garden/', Astro.site ?? 'https://pipilacha.es').href;
@@ -54,8 +54,8 @@ const canonical = new URL('/creator-garden/', Astro.site ?? 'https://pipilacha.e
   <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/marcellus-400-latin.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/hanken-grotesk-variable-latin.woff2" crossorigin />
   {/* la portada es el LCP: que empiece a bajar antes de que el CSS resuelva */}
-  <link rel="preload" as="image" href="/assets/img/cr-hero-m.jpg" media="(max-width: 760px)" />
-  <link rel="preload" as="image" href="/assets/img/cr-hero.jpg" media="(min-width: 761px)" />
+  <link rel="preload" as="image" href="/assets/img/cr-barra-m.jpg" media="(max-width: 760px)" />
+  <link rel="preload" as="image" href="/assets/img/cr-barra.jpg" media="(min-width: 761px)" />
 
   <script>import '../scripts/garden.js';</script>
 </head>

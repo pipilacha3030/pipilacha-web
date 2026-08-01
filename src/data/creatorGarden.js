@@ -32,7 +32,7 @@ export const apertura = {
   eyebrow: 'Creator Garden',
   titulo: 'Quince platos, y en todos manda una flor.',
   sub: 'Esto es lo que hay dentro, por si te sirve para contarlo a tu manera.',
-  credito: 'Arriba, pase 05: farolillo de atún y orégano. El cuenco es la flor.',
+  credito: 'Arriba, Arán y Noé en la barra. Ocho de los dieciséis asientos están a ese lado.',
 };
 
 // ---- 02 · qué es la casa. Arriba, porque lo primero es entenderla ----
