@@ -18,8 +18,8 @@ import '../styles/main.css';
 import '../styles/garden.css';
 
 const {
-  title = 'Creator Playbook · Pipilacha',
-  description = 'Lo que hay que grabar en Pipilacha, en orden: la escaleta del servicio, los planos que funcionan y las flores con su sabor apuntado.',
+  title = 'Creator Garden · Pipilacha',
+  description = 'Qué es Pipilacha, qué pasa en la mesa y a qué sabe cada flor de la carta. Para creadores que vienen a conocer la casa.',
   ogImage = '/assets/img/cr-hero.jpg',
 } = Astro.props;
 
@@ -60,7 +60,7 @@ const canonical = new URL('/creator-garden/', Astro.site ?? 'https://pipilacha.e
   <script>import '../scripts/garden.js';</script>
 </head>
 <body class="gd">
-  <a class="gd-skip" href="#escaleta">Saltar a la escaleta</a>
+  <a class="gd-skip" href="#casa">Saltar al contenido</a>
   <slot />
 </body>
 </html>

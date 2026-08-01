@@ -2,43 +2,32 @@
 import Garden from '../layouts/Garden.astro';
 import { floresSabor, menuNombre } from '../data/menu.js';
 import {
-  saltos, apertura, expres, escaleta, reglaTres, planos, formatos, ideas,
-  hooks, captions, voz, diccionario, noFunciona, paseNadie, casa,
-  practico, cierre, contacto,
+  saltos, apertura, casa, mesa, flores, ideas, frases, practico, cierre, contacto,
 } from '../data/creatorGarden.js';
 
-/* Los pases y el diccionario de flores salen de src/data/menu.js: al cambiar
-   de carta esta página se actualiza sola. Aquí dentro no hay ni un nombre de
-   plato ni un sabor escrito a mano.
+/* Las flores y su sabor salen de src/data/menu.js: al cambiar de carta esta
+   página se actualiza sola. Aquí dentro no hay ni un sabor escrito a mano.
 
-   Orden: todo lo accionable antes de la primera pantalla. La casa habla en el
-   bloque 11 — un manifiesto en la pantalla 1 se lee como marca hablando de sí
-   misma; tres frases en la 11, después de haber sido útil, se leen como contexto.
+   Orden: primero qué es la casa (que es lo que hay que entender rápido),
+   después qué pasa en la mesa, y al final el material suelto por si sirve.
 
-   Antetítulos racionados: solo abren capítulo en apertura, planos, lenguaje y
-   flores. Uno por bloque convertía la página en una plantilla. */
+   Nada va en imperativo. El creador viene invitado y sin nada pactado a
+   cambio, así que la página ofrece, no manda. */
 const pases = {
   farolillo: { n: '05', t: 'Farolillo de atún y orégano', img: 'cr-farolillo',
-    d: 'La flor hace de recipiente y deja un fondo a higo bajo el tartar de atún. Te comes el cuenco.',
+    d: 'La flor hace de recipiente y deja un fondo a higo bajo el tartar de atún. Se come el cuenco.',
     alt: 'Farolillo de atún y orégano servido dentro de la propia flor' },
   higo: { n: '10', t: 'Higo a la brasa con helado de saúco', img: 'cr-higo',
     d: 'El higo llega negro de la brasa. El saúco entra frío, con un fondo avellanado.',
     alt: 'Higo a la brasa con helado de saúco en plato negro' },
-  vieiras: { n: '11', t: 'Vieiras shiso-dalias', img: 'cr-vieiras',
-    d: 'El shiso pica en verde; el pétalo de dalia cruje y refresca. Dos sabores tirando en direcciones opuestas.',
-    alt: 'Vieiras con shiso y pétalos de dalia' },
 };
 
 const dmUrl = `https://ig.me/m/${contacto.ig}`;
-const pasesConFlor = [...new Set(floresSabor.map((f) => f.pase))].sort((a, b) => a - b);
 ---
 
 <Garden>
 
-{/* Navegación fija. En móvil es lo único que orienta en una página larga:
-    la versión anterior la escondía por debajo de 760 px, justo en el
-    dispositivo donde se lee. Cinco saltos, no trece — un índice que no se
-    abarca de un vistazo no se usa. */}
+{/* Navegación fija, y presente EN MÓVIL: es donde se lee esta página. */}
 <nav class="gd-nav" aria-label="Secciones">
   <ul class="gd-nav__list">
     {saltos.map((s) => (
@@ -67,61 +56,38 @@ const pasesConFlor = [...new Set(floresSabor.map((f) => f.pase))].sort((a, b) =>
     </div>
     <div class="gd-open__textos">
       <p class="gd-lede gd-open__sub gd-reveal">{apertura.sub}</p>
-      {/* Dos salidas inmediatas: el creador con prisa no tiene que buscar. */}
-      <div class="gd-open__cta gd-reveal">
-        <a class="gd-btn" href="#expres">Tengo 20 minutos</a>
-        <a class="gd-btn gd-btn--ghost" href="#escaleta">La escaleta</a>
-      </div>
       <p class="gd-open__credit gd-reveal">{apertura.credito}</p>
     </div>
   </div>
 </section>
 
-{/* ─── 02 · MODO EXPRÉS · tres bloques numerados, una pantalla ──── */}
-<section class="gd-scene gd-scene--alt" id="expres">
-  <div class="gd-wrap">
-    <header class="gd-head-b">
-      <h2 class="gd-h1" data-gd-words>{expres.titulo}</h2>
-      <p class="gd-lede gd-reveal">{expres.sub}</p>
-    </header>
-    <div class="gd-expres" data-gd-stagger>
-      {expres.tomas.map((t) => (
-        <article class="gd-expres__item gd-item">
-          <span class="gd-expres__n">{t.n}</span>
-          <h3 class="gd-expres__t">{t.t}</h3>
-          <p class="gd-expres__d">{t.d}</p>
-        </article>
-      ))}
+{/* ─── 02 · QUÉ ES PIPILACHA · tres frases y nada más ───────────── */}
+<section class="gd-scene gd-scene--alt" id="casa">
+  <div class="gd-wrap gd-grid">
+    <div class="gd-casa">
+      <h2 class="gd-h1 gd-casa__t" data-gd-words>{casa.titulo}</h2>
+      {casa.frases.map((p) => <p data-gd-lines>{p}</p>)}
     </div>
-    <p class="gd-expres__pie gd-reveal">{expres.pie}</p>
   </div>
 </section>
 
-{/* ─── 03 · LA ESCALETA · lista marcable, en orden de servicio ────
-    El único bloque que se abre DENTRO del restaurante: casillas
-    grandes, estado persistente y la ventana del pase 01 destacada,
-    porque es el mejor plano del menú y dura tres segundos. */}
-<section class="gd-scene" id="escaleta">
+{/* ─── 03 · LO QUE PASA EN LA MESA · descriptivo, no una lista de
+     tareas: son cosas que ocurren solas durante el servicio ────── */}
+<section class="gd-scene" id="mesa">
   <div class="gd-wrap">
     <header class="gd-head-b">
-      <h2 class="gd-h1" data-gd-words>{escaleta.titulo}</h2>
-      <p class="gd-lede gd-reveal">{escaleta.sub}</p>
-      <p class="gd-cuenta gd-reveal" data-gd-cuenta aria-live="polite">
-        Marcado <span data-gd-cuenta-n>0</span> de {escaleta.momentos.length}
-      </p>
+      <h2 class="gd-h1" data-gd-words>{mesa.titulo}</h2>
+      <p class="gd-lede gd-reveal">{mesa.sub}</p>
     </header>
-    <ol class="gd-esc" data-gd-stagger>
-      {escaleta.momentos.map((m) => (
-        <li class={`gd-esc__row gd-item${m.urgente ? ' gd-esc__row--urg' : ''}`}>
-          <input class="gd-esc__box" type="checkbox" id={`esc-${m.id}`} data-gd-check={m.id} />
-          <label class="gd-esc__label" for={`esc-${m.id}`}>
-            <span class="gd-esc__k">{m.k}</span>
-            <span class="gd-esc__v">{m.v}</span>
-          </label>
-          <p class="gd-esc__d">{m.d}</p>
-        </li>
+    <div class="gd-mesa" data-gd-stagger>
+      {mesa.momentos.map((m) => (
+        <article class="gd-mesa__item gd-item">
+          <p class="gd-mesa__v">{m.v}</p>
+          <h3 class="gd-mesa__k">{m.k}</h3>
+          <p class="gd-mesa__d">{m.d}</p>
+        </article>
       ))}
-    </ol>
+    </div>
   </div>
 </section>
 
@@ -137,51 +103,53 @@ const pasesConFlor = [...new Set(floresSabor.map((f) => f.pase))].sort((a, b) =>
   </figcaption>
 </figure>
 
-{/* ─── 04 · LA REGLA DE TRES · columna centrada ───────────────────
-    Único sitio de la página donde aparece el negro. Si apareciera
-    dos veces dejaría de ser puntuación. */}
-<section class="gd-scene gd-scene--alt" id="regla">
-  <div class="gd-wrap gd-regla">
-    <h2 class="gd-h1" data-gd-words>{reglaTres.titulo}</h2>
-    <p class="gd-lede gd-reveal gd-regla__entrada">{reglaTres.entrada}</p>
-    <p class="gd-regla__lema" data-gd-words>{reglaTres.lema.join(' ')}</p>
-    <dl class="gd-regla__partes" data-gd-stagger>
-      {reglaTres.partes.map((p) => (
-        <div class="gd-item">
-          <dt>{p.t}</dt>
-          <dd>{p.d}</dd>
-        </div>
+{/* ─── 04 · LAS FLORES · la única escena musgo de la página ───────
+    Es el material que no está en ningún otro sitio: treinta y cuatro
+    flores con lo que aporta cada una. */}
+<section class="gd-scene gd-scene--moss" id="flores">
+  <div class="gd-wrap">
+    <header class="gd-head-b">
+      <p class="gd-eyebrow gd-reveal">{menuNombre}</p>
+      <h2 class="gd-h1" data-gd-words>{flores.titulo}</h2>
+      <p class="gd-lede gd-reveal">{flores.sub}</p>
+    </header>
+
+    <div class="gd-filtro gd-reveal">
+      <label class="sr-only" for="gd-buscar">Buscar flor</label>
+      <input class="gd-filtro__input" id="gd-buscar" type="search" placeholder="Buscar flor" autocomplete="off" data-gd-buscar />
+    </div>
+
+    <ul class="gd-dicc" data-gd-dicc>
+      {floresSabor.map((f) => (
+        <li class="gd-dicc__item gd-reveal" data-gd-flor={f.n}>
+          <p class="gd-dicc__n">{f.n}</p>
+          <p class="gd-dicc__s">{f.sabor}</p>
+          <p class="gd-dicc__pase">Pase {String(f.pase).padStart(2, '0')}</p>
+        </li>
       ))}
-    </dl>
-    <p class="gd-regla__corte gd-reveal">{reglaTres.corte}</p>
-    <p class="gd-regla__pie gd-reveal">{reglaTres.pie}</p>
+    </ul>
+    <p class="gd-dicc__vacio" data-gd-vacio hidden>{flores.vacio}</p>
+    <p class="gd-dicc__aviso gd-reveal">{flores.aviso}</p>
   </div>
 </section>
 
-{/* ─── 05 · PLANOS · tres columnas (foto · vídeo · sonido) ────────
-    El sonido tiene columna propia porque es lo que más diferencia y
-    lo que nadie escribe: dieciséis personas y los cocineros a dos
-    metros suenan distinto a cualquier sala grande. */}
-<section class="gd-scene" id="planos">
+{/* ─── 05 · IDEAS · puntos de partida, no un encargo ─────────────── */}
+<section class="gd-scene" id="ideas">
   <div class="gd-wrap">
     <header class="gd-head-b">
-      <p class="gd-eyebrow gd-reveal">Cámara</p>
-      <h2 class="gd-h1" data-gd-words>{planos.titulo}</h2>
-      <p class="gd-lede gd-reveal">{planos.sub}</p>
+      <h2 class="gd-h1" data-gd-words>{ideas.titulo}</h2>
+      <p class="gd-lede gd-reveal">{ideas.sub}</p>
     </header>
-    <div class="gd-planos">
-      {planos.grupos.map((g) => (
-        <div class="gd-reveal">
-          <h3 class="gd-planos__h">{g.h}</h3>
-          <div class="gd-planos__list">
-            {g.items.map((c) => (
-              <div><p class="gd-planos__t">{c.t}</p><p class="gd-planos__d">{c.d}</p></div>
-            ))}
-          </div>
-        </div>
+    <div class="gd-carril gd-reveal">
+      {ideas.lista.map((i) => (
+        <article class="gd-idea">
+          <span class="gd-idea__f">{i.f}</span>
+          <h3 class="gd-idea__t">{i.t}</h3>
+          <p class="gd-idea__d">{i.d}</p>
+        </article>
       ))}
     </div>
-    <p class="gd-broll gd-reveal"><span class="gd-broll__k">B-roll</span>{planos.broll}</p>
+    <p class="gd-idea__nota gd-reveal">{ideas.nota}</p>
   </div>
 </section>
 
@@ -197,78 +165,28 @@ const pasesConFlor = [...new Set(floresSabor.map((f) => f.pase))].sort((a, b) =>
   </figcaption>
 </figure>
 
-{/* ─── 06 · FORMATOS · tabla + carril de ideas ────────────────────
-    Una tabla en vez de cuatro secciones: trocear Reels/TikTok/Shorts
-    repetiría el mismo texto tres veces y alargaría el índice. */}
-<section class="gd-scene gd-scene--alt" id="formatos">
+{/* ─── 06 · FRASES · copiables de un toque ───────────────────────── */}
+<section class="gd-scene gd-scene--alt" id="frases">
   <div class="gd-wrap">
     <header class="gd-head-b">
-      <h2 class="gd-h1" data-gd-words>{formatos.titulo}</h2>
-      <p class="gd-lede gd-reveal">{formatos.sub}</p>
-    </header>
-
-    <div class="gd-tabla-wrap gd-reveal">
-      <table class="gd-tabla">
-        <thead>
-          <tr><td></td>{formatos.cols.map((c) => <th scope="col">{c}</th>)}</tr>
-        </thead>
-        <tbody>
-          {formatos.filas.map((f) => (
-            <tr>
-              <th scope="row">{f.k}</th>
-              {f.v.map((v) => <td>{v}</td>)}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-
-    <div class="gd-carril gd-reveal">
-      {ideas.map((i) => (
-        <article class="gd-idea">
-          <span class="gd-idea__f">{i.f}</span>
-          <h3 class="gd-idea__t">{i.t}</h3>
-          <p class="gd-idea__e">{i.e}</p>
-          <p class="gd-idea__p">{i.p}</p>
-        </article>
-      ))}
-    </div>
-  </div>
-</section>
-
-{/* ─── 07 · GANCHOS Y PIES · todo copiable de un toque ────────────
-    Un caption que no se puede copiar no es un caption: es una muestra. */}
-<section class="gd-scene" id="lenguaje">
-  <div class="gd-wrap">
-    <header class="gd-head-b">
-      <p class="gd-eyebrow gd-reveal">Lenguaje</p>
-      <h2 class="gd-h1" data-gd-words>Ganchos y pies</h2>
-      <p class="gd-lede gd-reveal">Cópialos y cámbialos. Están para tu voz, no para la nuestra.</p>
+      <h2 class="gd-h1" data-gd-words>{frases.titulo}</h2>
+      <p class="gd-lede gd-reveal">{frases.sub}</p>
     </header>
 
     <div class="gd-grid">
-      <div class="gd-lenguaje">
+      <div class="gd-frases">
         <div class="gd-hooks" data-gd-stagger>
-          {hooks.map((h) => (
+          {frases.hooks.map((h) => (
             <p class="gd-hook gd-item">
               <span>{h}</span>
               <button class="gd-copy" type="button" data-gd-copy={h} aria-label={`Copiar: ${h}`}>Copiar</button>
             </p>
           ))}
         </div>
-        <div class="gd-voz" data-gd-stagger>
-          {voz.map((v) => (
-            <div class="gd-item">
-              <p class="gd-voz__t">{v.t}</p>
-              <p class="gd-voz__d">{v.d}</p>
-            </div>
-          ))}
-        </div>
       </div>
-
-      <div class="gd-lenguaje-lat">
+      <div class="gd-frases-lat">
         <div class="gd-caps">
-          {captions.map((c) => (
+          {frases.pies.map((c) => (
             <div class="gd-caption gd-reveal">
               <p class="gd-caption__t">{c.t}</p>
               <p class="gd-caption__d">{c.d}</p>
@@ -281,96 +199,8 @@ const pasesConFlor = [...new Set(floresSabor.map((f) => f.pase))].sort((a, b) =>
   </div>
 </section>
 
-{/* ─── 08 · DICCIONARIO DE SABOR · la única escena musgo ──────────
-    El mejor material de la casa. En la versión anterior estas flores
-    eran una nube de palabras decorativa sin un solo dato al lado: se
-    gastaba el único pico visual de la página en adorno. */}
-<section class="gd-scene gd-scene--moss" id="flores">
-  <div class="gd-wrap">
-    <header class="gd-head-b">
-      <p class="gd-eyebrow gd-reveal">Flores</p>
-      <h2 class="gd-h1" data-gd-words>{floresSabor.length} flores, con su sabor apuntado</h2>
-      <p class="gd-lede gd-reveal">{menuNombre}, la carta de esta estación. {diccionario.sub}</p>
-    </header>
-
-    <div class="gd-filtro gd-reveal">
-      <label class="sr-only" for="gd-buscar">Buscar flor</label>
-      <input class="gd-filtro__input" id="gd-buscar" type="search" placeholder="Buscar flor" autocomplete="off" data-gd-buscar />
-      <div class="gd-filtro__pases" role="group" aria-label="Filtrar por pase">
-        <button class="gd-chip is-on" type="button" data-gd-pase="todos">Todos</button>
-        {pasesConFlor.map((p) => (
-          <button class="gd-chip" type="button" data-gd-pase={p}>{String(p).padStart(2, '0')}</button>
-        ))}
-      </div>
-    </div>
-
-    <ul class="gd-dicc" data-gd-dicc>
-      {floresSabor.map((f) => (
-        <li class="gd-dicc__item gd-reveal" data-gd-flor={f.n} data-gd-flor-pase={f.pase}>
-          <p class="gd-dicc__n">{f.n}</p>
-          <p class="gd-dicc__s">{f.sabor}</p>
-          <p class="gd-dicc__meta">
-            <span class="gd-dicc__pase">Pase {String(f.pase).padStart(2, '0')}</span>
-            {f.decir && <span class="gd-dicc__decir">«{f.decir}»</span>}
-          </p>
-          {f.decir && <button class="gd-copy gd-copy--dark" type="button" data-gd-copy={f.decir} aria-label={`Copiar frase de ${f.n}`}>Copiar</button>}
-        </li>
-      ))}
-    </ul>
-    <p class="gd-dicc__vacio" data-gd-vacio hidden>{diccionario.vacio}</p>
-    <p class="gd-dicc__aviso gd-reveal">{diccionario.aviso}</p>
-  </div>
-</section>
-
-{/* ─── figura · vieiras ──────────────────────────────────────────── */}
-<figure class="gd-fig">
-  <div class="gd-fig__media"><img src={`/assets/img/${pases.vieiras.img}.jpg`} srcset="/assets/img/cr-vieiras-m.jpg 900w, /assets/img/cr-vieiras.jpg 1600w" sizes="100vw" width="1600" height="2000" loading="lazy" decoding="async" alt={pases.vieiras.alt} /></div>
-  <figcaption class="gd-reveal">
-    <div class="gd-fig__texto">
-      <span class="gd-fig__n">Pase {pases.vieiras.n}</span>
-      <h2 class="gd-h2">{pases.vieiras.t}</h2>
-      <p class="gd-body" style="margin-top:.6rem">{pases.vieiras.d}</p>
-    </div>
-  </figcaption>
-</figure>
-
-{/* ─── 09 · LO QUE NO FUNCIONA · lista compacta, corta y tarde ──── */}
-<section class="gd-scene" id="no">
-  <div class="gd-wrap">
-    <header class="gd-head-b">
-      <h2 class="gd-h1" data-gd-words>Lo que no funciona</h2>
-    </header>
-    <ul class="gd-no" data-gd-stagger>
-      {noFunciona.map((n) => (
-        <li class="gd-item"><span class="gd-no__t">{n.t}.</span> <span class="gd-no__d">{n.d}</span></li>
-      ))}
-    </ul>
-  </div>
-</section>
-
-{/* ─── 10 · EL PASE QUE NADIE HA GRABADO · fechado ───────────────── */}
-<section class="gd-scene gd-scene--alt" id="pendiente">
-  <div class="gd-wrap gd-pendiente">
-    <p class="gd-eyebrow gd-reveal">{paseNadie.fecha}</p>
-    <h2 class="gd-h1" data-gd-words>{paseNadie.titulo}</h2>
-    <p class="gd-body gd-reveal gd-pendiente__d">{paseNadie.d}</p>
-  </div>
-</section>
-
-{/* ─── 11 · LA CASA, EN TRES FRASES ──────────────────────────────
-    La única parte que habla de Pipilacha, y llega cuando la página ya
-    se ha ganado el derecho. Antes eran once párrafos repartidos en
-    manifiesto, visión y filosofía. */}
-<section class="gd-scene" id="casa">
-  <div class="gd-wrap gd-grid">
-    <div class="gd-casa">
-      {casa.map((p) => <p data-gd-lines>{p}</p>)}
-    </div>
-  </div>
-</section>
-
-{/* ─── 12 · LO PRÁCTICO · incluye la invitación ──────────────────── */}
-<section class="gd-scene gd-scene--alt" id="practico">
+{/* ─── 07 · LO PRÁCTICO · incluye la invitación ──────────────────── */}
+<section class="gd-scene" id="practico">
   <div class="gd-wrap gd-grid">
     <div class="gd-practico__head">
       <h2 class="gd-h1" data-gd-words>{practico.titulo}</h2>
@@ -398,15 +228,10 @@ const pasesConFlor = [...new Set(floresSabor.map((f) => f.pase))].sort((a, b) =>
   </div>
 </section>
 
-{/* ─── 13 · CIERRE ÚTIL ──────────────────────────────────────────
-    La posición más memorable de la pieza, ocupada por algo que se
-    usa. Antes cerraba con la firma de marca, que ya está en el
-    <title>, en la OG y en el correo. */}
+{/* ─── 08 · CIERRE ───────────────────────────────────────────────── */}
 <section class="gd-scene gd-cierre">
   <h2 class="gd-h1 gd-cierre__big" data-gd-words>{cierre.titulo}</h2>
-  <p class="gd-cierre__cuenta gd-reveal" data-gd-resumen>{cierre.vacio}</p>
-  <a class="gd-btn gd-btn--big gd-reveal" href={dmUrl} target="_blank" rel="noopener" data-gd-dm>{cierre.cta}</a>
-  <p class="gd-cierre__guarda gd-reveal">{cierre.guarda}</p>
+  <a class="gd-btn gd-btn--big gd-reveal" href={dmUrl} target="_blank" rel="noopener">{cierre.cta}</a>
 </section>
 
 </main>

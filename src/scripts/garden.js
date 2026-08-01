@@ -1,5 +1,5 @@
 /* ============================================================
-   CREATOR PLAYBOOK · movimiento e interacción
+   CREATOR GARDEN · movimiento e interacción
    Punto de entrada propio. NO importa main.js a propósito: esta
    página no tiene nav de sitio, router, cookies, galería ni widget
    de reserva, así que arrastrar ese árbol solo costaría descarga y
@@ -15,8 +15,8 @@
    · con prefers-reduced-motion no se crea NINGÚN tween: el CSS ya
      deja todo visible, así que la página se lee igual y sin trabajo
 
-   La interacción (escaleta, copiar, filtro, navegación) va SIEMPRE,
-   con o sin movimiento: es la herramienta, no el adorno.
+   Lo que se puede usar (buscador, copiar, navegación) va SIEMPRE,
+   con o sin movimiento.
    ============================================================ */
 import { gsap, ScrollTrigger, SplitText } from './scroll/scrollTrigger.js';
 import { reduceMotion } from './utils/motion.js';
@@ -105,7 +105,7 @@ function parallax() {
 /* ─── interacción ────────────────────────────────────────────── */
 
 /* Navegación: marca el bloque en el que estás. Es orientación, no
-   adorno — y en móvil es lo ÚNICO que orienta en una página larga. */
+   adorno — y en móvil es lo único que orienta. */
 function navegacion() {
   const enlaces = new Map(
     [...document.querySelectorAll('[data-gd-nav]')].map((a) => [a.dataset.gdNav, a])
@@ -121,59 +121,10 @@ function navegacion() {
   });
 }
 
-/* La escaleta se marca DENTRO del restaurante y se consulta en varias
-   visitas: sin persistir, cada recarga borra el trabajo y el bloque deja
-   de tener sentido. localStorage puede fallar (modo privado en iOS con
-   la cuota llena), así que todo va envuelto: si falla, la escaleta sigue
-   funcionando, solo que sin memoria. */
-const CLAVE = 'pipilacha-escaleta';
-
-function leerEstado() {
-  try {
-    return new Set(JSON.parse(localStorage.getItem(CLAVE) || '[]'));
-  } catch { return new Set(); }
-}
-
-function guardarEstado(set) {
-  try { localStorage.setItem(CLAVE, JSON.stringify([...set])); } catch { /* sin memoria, pero usable */ }
-}
-
-function escaletaMarcable() {
-  const cajas = [...document.querySelectorAll('[data-gd-check]')];
-  if (!cajas.length) return;
-
-  const total = cajas.length;
-  const numero = document.querySelector('[data-gd-cuenta-n]');
-  const resumen = document.querySelector('[data-gd-resumen]');
-  const vacio = resumen ? resumen.textContent : '';
-  const marcados = leerEstado();
-
-  const pintar = () => {
-    const n = marcados.size;
-    if (numero) numero.textContent = String(n);
-    // el cierre cierra el bucle numérico que abre la portada
-    if (resumen) {
-      resumen.textContent = n === 0
-        ? vacio
-        : `${n} de ${total} momentos marcados.`;
-    }
-  };
-
-  cajas.forEach((caja) => {
-    const id = caja.dataset.gdCheck;
-    caja.checked = marcados.has(id);
-    caja.addEventListener('change', () => {
-      if (caja.checked) marcados.add(id); else marcados.delete(id);
-      guardarEstado(marcados);
-      pintar();
-    });
-  });
-
-  pintar();
-}
-
-/* Copiar al portapapeles: la interacción de mayor retorno de la página.
-   Recompensa inmediata y visible — es lo que crea el hábito de volver. */
+/* Copiar al portapapeles. La API exige contexto seguro y un gesto real
+   del usuario; si falla cualquiera de las dos cosas cae al textarea de
+   toda la vida y, si tampoco, se avisa en el propio botón en vez de
+   quedarse callado. */
 function copiar() {
   const botones = [...document.querySelectorAll('[data-gd-copy]')];
   if (!botones.length) return;
@@ -186,7 +137,6 @@ function copiar() {
       try {
         await navigator.clipboard.writeText(texto);
       } catch {
-        // navegadores sin permiso de portapapeles o contexto no seguro
         ok = respaldoCopia(texto);
       }
       b.textContent = ok ? 'Copiado' : 'Selecciona y copia';
@@ -213,50 +163,30 @@ function respaldoCopia(texto) {
   return ok;
 }
 
-/* Diccionario: buscador + filtro por pase. Es reconocimiento, no
-   memoria: en la sala nadie recuerda un párrafo leído hace tres días,
-   pero sí reconoce el nombre de la flor que le acaban de servir. */
-function diccionario() {
+/* Buscador de flores. Treinta y cuatro entradas se recorren mal con el
+   pulgar, y quien busca una flor concreta ya sabe su nombre. */
+function buscadorFlores() {
   const lista = document.querySelector('[data-gd-dicc]');
   if (!lista) return;
 
   const items = [...lista.querySelectorAll('[data-gd-flor]')];
   const buscador = document.querySelector('[data-gd-buscar]');
-  const chips = [...document.querySelectorAll('[data-gd-pase]')];
   const vacio = document.querySelector('[data-gd-vacio]');
+  if (!buscador) return;
 
-  let texto = '';
-  let pase = 'todos';
-
-  // sin acentos: quien busca "sauco" tiene que encontrar "saúco"
+  // sin acentos: quien escribe "sauco" tiene que encontrar "saúco"
   const plano = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
-  const filtrar = () => {
+  buscador.addEventListener('input', () => {
+    const q = plano(buscador.value.trim());
     let visibles = 0;
     items.forEach((li) => {
-      const coincideTexto = !texto || plano(li.dataset.gdFlor).includes(texto);
-      const coincidePase = pase === 'todos' || li.dataset.gdFlorPase === pase;
-      const ok = coincideTexto && coincidePase;
+      const ok = !q || plano(li.dataset.gdFlor).includes(q);
       li.hidden = !ok;
       if (ok) visibles++;
     });
     if (vacio) vacio.hidden = visibles > 0;
     ScrollTrigger.refresh();
-  };
-
-  if (buscador) {
-    buscador.addEventListener('input', () => {
-      texto = plano(buscador.value.trim());
-      filtrar();
-    });
-  }
-
-  chips.forEach((chip) => {
-    chip.addEventListener('click', () => {
-      pase = chip.dataset.gdPase;
-      chips.forEach((c) => c.classList.toggle('is-on', c === chip));
-      filtrar();
-    });
   });
 }
 
@@ -269,11 +199,9 @@ function init() {
     revelados();
     parallax();
   }
-  // la herramienta va siempre, haya movimiento o no
   navegacion();
-  escaletaMarcable();
   copiar();
-  diccionario();
+  buscadorFlores();
   ScrollTrigger.refresh();
 }
 
