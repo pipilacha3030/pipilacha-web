@@ -9,7 +9,11 @@ import {
 
 /* Los pases y las flores salen de src/data/menu.js. Al cambiar de carta
    esta página se actualiza sola: no hay ni un nombre de plato escrito
-   a mano aquí dentro. */
+   a mano aquí dentro.
+
+   Antetítulos racionados: solo abren capítulo en apertura, guía, cámara,
+   lenguaje y contacto. Uno por escena convertía la página en una plantilla
+   y era la causa principal de que se leyera desordenada. */
 const pases = {
   farolillo: { n: '05', t: 'Farolillo de atún y orégano', img: 'cr-farolillo',
     d: 'La flor hace de recipiente y suelta un ácido que corta la grasa del atún. Te comes el cuenco.',
@@ -21,18 +25,16 @@ const pases = {
     d: 'El shiso pica en verde; el pétalo de dalia endulza el yodo. Dos flores tirando en direcciones opuestas.',
     alt: 'Vieiras con shiso y pétalos de dalia' },
 };
+
+const escala = (i) => (i % 7 === 0 ? 'xl' : i % 3 === 0 ? 'lg' : i % 5 === 0 ? 'sm' : 'md');
 ---
 
 <Garden>
 
-{/* tallo: hilo continuo que cose las escenas, atado al progreso real */}
 <div class="gd-spine" aria-hidden="true">
-  <svg viewBox="0 0 2 100" preserveAspectRatio="none">
-    <path class="gd-spine__path" d="M1 0 L1 100" />
-  </svg>
+  <svg viewBox="0 0 2 100" preserveAspectRatio="none"><path class="gd-spine__path" d="M1 0 L1 100" /></svg>
 </div>
 
-{/* índice: en una página larga saber dónde estás es función, no adorno */}
 <nav class="gd-index" aria-label="Escenas">
   {escenas.map((e) => (
     <a class="gd-index__link" href={`#${e.id}`}>
@@ -45,26 +47,31 @@ const pases = {
 
 <main>
 
-{/* ─── 00 · APERTURA ─────────────────────────────────────────── */}
+{/* ─── 00 · APERTURA · foto a sangre, titular debajo ──────────── */}
 <section class="gd-open" id="apertura">
-  <div class="gd-open__media" data-gd-parallax="0.12">
+  <div class="gd-open__media" data-gd-parallax="0.08">
     <img src="/assets/img/cr-hero.jpg"
          srcset="/assets/img/cr-hero-m.jpg 900w, /assets/img/cr-hero.jpg 1800w"
          sizes="100vw" width="1800" height="2250"
          fetchpriority="high" decoding="async"
          alt="Farolillo de atún y orégano: el tartar servido dentro de la propia flor" />
-    <span class="gd-open__veil" aria-hidden="true"></span>
   </div>
   <div class="gd-open__inner">
-    <p class="gd-eyebrow gd-reveal">Creator Garden</p>
-    <h1 class="gd-display gd-open__title" data-gd-words>La flor no decora. Es el plato.</h1>
-    <p class="gd-lede gd-open__sub gd-reveal">Para quien va a contarlo antes de haberlo probado.</p>
-    <p class="gd-open__credit gd-reveal">Pase 05 · Farolillo de atún y orégano. El cuenco es la flor.</p>
+    {/* el antetítulo va ANTES del titular en el DOM: apilado en móvil, un
+        antetítulo por debajo del h1 se lee como un pie suelto */}
+    <div class="gd-open__titulo">
+      <p class="gd-eyebrow gd-reveal">Creator Garden</p>
+      <h1 class="gd-display gd-open__title" data-gd-words>La flor no decora. Es el plato.</h1>
+    </div>
+    <div class="gd-open__textos">
+      <p class="gd-lede gd-open__sub gd-reveal">Para quien va a contarlo antes de haberlo probado.</p>
+      <p class="gd-open__credit gd-reveal">Arriba, pase 05: farolillo de atún y orégano. El cuenco es la flor.</p>
+    </div>
   </div>
 </section>
 
-{/* ─── 01 · MANIFIESTO ───────────────────────────────────────── */}
-<section class="gd-scene" id="manifiesto">
+{/* ─── 01 · MANIFIESTO · tipografía grande, columna única ─────── */}
+<section class="gd-scene gd-scene--alt" id="manifiesto">
   <div class="gd-wrap gd-grid">
     <div class="gd-manifiesto">
       {manifiesto.map((p) => <p data-gd-lines>{p}</p>)}
@@ -72,12 +79,11 @@ const pases = {
   </div>
 </section>
 
-{/* ─── 02 · LA VISIÓN ────────────────────────────────────────── */}
-<section class="gd-scene gd-scene--cream" id="vision">
+{/* ─── 02 · VISIÓN · texto + cifra de contrapunto ─────────────── */}
+<section class="gd-scene" id="vision">
   <div class="gd-wrap gd-grid">
     <div class="gd-vision__head">
-      <p class="gd-eyebrow gd-reveal">{vision.eyebrow}</p>
-      <h2 class="gd-h1" data-gd-words style="margin-top:1.2rem">{vision.titulo}</h2>
+      <h2 class="gd-h1" data-gd-words>{vision.titulo}</h2>
     </div>
     <div class="gd-vision__cuerpo">
       {vision.cuerpo.map((p) => <p class="gd-body gd-reveal">{p}</p>)}
@@ -90,70 +96,77 @@ const pases = {
   </div>
 </section>
 
-{/* ─── plato a sangre · farolillo ─────────────────────────────── */}
-<figure class="gd-bleed">
-  <div class="gd-bleed__media" data-gd-parallax="0.1">
-    <img src={`/assets/img/${pases.farolillo.img}.jpg`} width="1600" height="2000"
-         loading="lazy" decoding="async" alt={pases.farolillo.alt} />
-    <span class="gd-bleed__veil" aria-hidden="true"></span>
-  </div>
-  <figcaption class="gd-bleed__copy gd-reveal">
-    <p class="gd-num">Pase {pases.farolillo.n}</p>
-    <h2 class="gd-h2" style="margin:.5rem 0 .7rem">{pases.farolillo.t}</h2>
-    <p class="gd-body">{pases.farolillo.d}</p>
+{/* ─── figura · farolillo ─────────────────────────────────────── */}
+<figure class="gd-fig">
+  <div class="gd-fig__media"><img src={`/assets/img/${pases.farolillo.img}.jpg`} width="1600" height="2000" loading="lazy" decoding="async" alt={pases.farolillo.alt} /></div>
+  <figcaption class="gd-reveal">
+    <div class="gd-fig__texto">
+      <span class="gd-fig__n">Pase {pases.farolillo.n}</span>
+      <h2 class="gd-h2">{pases.farolillo.t}</h2>
+      <p class="gd-body" style="margin-top:.6rem">{pases.farolillo.d}</p>
+    </div>
   </figcaption>
 </figure>
 
-{/* ─── 03 · FILOSOFÍA ────────────────────────────────────────── */}
-<section class="gd-scene" id="filosofia">
+{/* ─── 03 · FILOSOFÍA · única lista numerada ──────────────────── */}
+<section class="gd-scene gd-scene--alt" id="filosofia">
   <div class="gd-wrap gd-grid">
     <div class="gd-head">
-      <p class="gd-eyebrow gd-reveal">Filosofía</p>
-      <h2 class="gd-h1" data-gd-words style="margin-top:1.2rem">Cómo se piensa un plato</h2>
+      <h2 class="gd-h1" data-gd-words>Cómo se piensa un plato</h2>
     </div>
-    <div class="gd-cuerpo gd-list" data-gd-stagger>
+    <div class="gd-cuerpo gd-princ" data-gd-stagger>
       {filosofia.map((f) => (
-        <article class="gd-list__item gd-item">
-          <span class="gd-list__n">{f.n}</span>
-          <h3 class="gd-list__t">{f.t}</h3>
-          <p class="gd-list__d">{f.d}</p>
+        <article class="gd-princ__item gd-item">
+          <span class="gd-princ__n">{f.n}</span>
+          <h3 class="gd-h3">{f.t}</h3>
+          <p class="gd-princ__d">{f.d}</p>
         </article>
       ))}
     </div>
   </div>
 </section>
 
-{/* ─── 04 · GUÍA ─────────────────────────────────────────────── */}
-<section class="gd-scene gd-scene--moss" id="guia">
-  <div class="gd-wrap gd-grid">
-    <div class="gd-head">
-      <p class="gd-eyebrow gd-reveal">Guía</p>
-      <h2 class="gd-h1" data-gd-words style="margin-top:1.2rem">Los tres ángulos que funcionan</h2>
-    </div>
-    <div class="gd-cuerpo gd-list" data-gd-stagger>
-      {angulos.map((a) => (
-        <article class="gd-list__item gd-item">
-          <span class="gd-list__n">{a.n}</span>
-          <h3 class="gd-list__t">{a.t}</h3>
-          <p class="gd-list__d">{a.d}</p>
-        </article>
-      ))}
-    </div>
-  </div>
-</section>
-
-{/* ─── 05 · HISTORIAS ────────────────────────────────────────── */}
-<section class="gd-scene" id="historias">
+{/* ─── 04 · GUÍA · tres declaraciones, sin numerar ────────────── */}
+<section class="gd-scene" id="guia">
   <div class="gd-wrap">
-    <header style="margin-bottom:clamp(2.5rem,7vh,5rem)">
-      <p class="gd-eyebrow gd-reveal">Historias</p>
-      <h2 class="gd-h1" data-gd-words style="margin-top:1.2rem">Lo que hay que mirar</h2>
-      <p class="gd-lede gd-reveal" style="margin-top:1.4rem">Seis cosas que pasan en el servicio y casi nadie graba.</p>
+    <header style="margin-bottom:var(--gd-stack)">
+      <p class="gd-eyebrow gd-reveal">Guía</p>
+      <h2 class="gd-h1" data-gd-words>Los tres ángulos que funcionan</h2>
     </header>
-    <div class="gd-cards gd-cards--desfase" data-gd-stagger>
+    <div class="gd-angulos" data-gd-stagger>
+      {angulos.map((a) => (
+        <article class="gd-item">
+          <h3 class="gd-h2 gd-angulo__t">{a.t}</h3>
+          <p class="gd-angulo__d">{a.d}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+{/* ─── figura · higo ──────────────────────────────────────────── */}
+<figure class="gd-fig">
+  <div class="gd-fig__media"><img src={`/assets/img/${pases.higo.img}.jpg`} srcset="/assets/img/cr-higo-m.jpg 900w, /assets/img/cr-higo.jpg 1400w" sizes="100vw" width="1400" height="1750" loading="lazy" decoding="async" alt={pases.higo.alt} /></div>
+  <figcaption class="gd-reveal">
+    <div class="gd-fig__texto">
+      <span class="gd-fig__n">Pase {pases.higo.n}</span>
+      <h2 class="gd-h2">{pases.higo.t}</h2>
+      <p class="gd-body" style="margin-top:.6rem">{pases.higo.d}</p>
+    </div>
+  </figcaption>
+</figure>
+
+{/* ─── 05 · HISTORIAS · única rejilla de tarjetas ─────────────── */}
+<section class="gd-scene gd-scene--alt" id="historias">
+  <div class="gd-wrap">
+    <header style="margin-bottom:var(--gd-stack)">
+      <h2 class="gd-h1" data-gd-words>Lo que hay que mirar</h2>
+      <p class="gd-lede gd-reveal" style="margin-top:1rem">Seis cosas que pasan en el servicio y casi nadie graba.</p>
+    </header>
+    <div class="gd-cards" data-gd-stagger>
       {historias.map((h) => (
         <article class="gd-card gd-item">
-          <h3 class="gd-card__t">{h.t}</h3>
+          <h3 class="gd-h3 gd-card__t">{h.t}</h3>
           <p class="gd-card__d">{h.d}</p>
         </article>
       ))}
@@ -161,49 +174,27 @@ const pases = {
   </div>
 </section>
 
-{/* ─── plato a sangre · higo ──────────────────────────────────── */}
-<figure class="gd-bleed">
-  <div class="gd-bleed__media" data-gd-parallax="0.1">
-    <img src={`/assets/img/${pases.higo.img}.jpg`}
-         srcset="/assets/img/cr-higo-m.jpg 900w, /assets/img/cr-higo.jpg 1400w"
-         sizes="100vw" width="1400" height="1750"
-         loading="lazy" decoding="async" alt={pases.higo.alt} />
-    <span class="gd-bleed__veil" aria-hidden="true"></span>
-  </div>
-  <figcaption class="gd-bleed__copy gd-reveal">
-    <p class="gd-num">Pase {pases.higo.n}</p>
-    <h2 class="gd-h2" style="margin:.5rem 0 .7rem">{pases.higo.t}</h2>
-    <p class="gd-body">{pases.higo.d}</p>
-  </figcaption>
-</figure>
-
-{/* ─── 06 · CÁMARA ───────────────────────────────────────────── */}
-<section class="gd-scene gd-scene--cream" id="camara">
+{/* ─── 06 · CÁMARA · dos columnas contrapuestas ───────────────── */}
+<section class="gd-scene" id="camara">
   <div class="gd-wrap">
-    <header style="margin-bottom:clamp(2.5rem,7vh,5rem)">
+    <header style="margin-bottom:var(--gd-stack)">
       <p class="gd-eyebrow gd-reveal">Cámara</p>
-      <h2 class="gd-h1" data-gd-words style="margin-top:1.2rem">Cómo se fotografía esta cocina</h2>
+      <h2 class="gd-h1" data-gd-words>Cómo se fotografía esta cocina</h2>
     </header>
     <div class="gd-camara">
       <div class="gd-reveal">
-        <h3 class="gd-camara__h" style="color:var(--accent);border-color:var(--gd-hair-dark)">Foto</h3>
+        <h3 class="gd-camara__h">Foto</h3>
         <div class="gd-camara__list">
           {camara.foto.map((c) => (
-            <div>
-              <p class="gd-camara__t" style="color:var(--ink)">{c.t}</p>
-              <p class="gd-camara__d" style="color:var(--text-muted)">{c.d}</p>
-            </div>
+            <div><p class="gd-camara__t">{c.t}</p><p class="gd-camara__d">{c.d}</p></div>
           ))}
         </div>
       </div>
       <div class="gd-reveal">
-        <h3 class="gd-camara__h" style="color:var(--accent);border-color:var(--gd-hair-dark)">Vídeo</h3>
+        <h3 class="gd-camara__h">Vídeo</h3>
         <div class="gd-camara__list">
           {camara.video.map((c) => (
-            <div>
-              <p class="gd-camara__t" style="color:var(--ink)">{c.t}</p>
-              <p class="gd-camara__d" style="color:var(--text-muted)">{c.d}</p>
-            </div>
+            <div><p class="gd-camara__t">{c.t}</p><p class="gd-camara__d">{c.d}</p></div>
           ))}
         </div>
       </div>
@@ -211,50 +202,57 @@ const pases = {
   </div>
 </section>
 
-{/* ─── 07 · MOVIMIENTO ───────────────────────────────────────── */}
-<section class="gd-scene" id="movimiento">
+{/* ─── figura · vieiras ───────────────────────────────────────── */}
+<figure class="gd-fig">
+  <div class="gd-fig__media"><img src={`/assets/img/${pases.vieiras.img}.jpg`} srcset="/assets/img/cr-vieiras-m.jpg 900w, /assets/img/cr-vieiras.jpg 1600w" sizes="100vw" width="1600" height="2000" loading="lazy" decoding="async" alt={pases.vieiras.alt} /></div>
+  <figcaption class="gd-reveal">
+    <div class="gd-fig__texto">
+      <span class="gd-fig__n">Pase {pases.vieiras.n}</span>
+      <h2 class="gd-h2">{pases.vieiras.t}</h2>
+      <p class="gd-body" style="margin-top:.6rem">{pases.vieiras.d}</p>
+    </div>
+  </figcaption>
+</figure>
+
+{/* ─── 07 · MOVIMIENTO · rejilla 2x2 ──────────────────────────── */}
+<section class="gd-scene gd-scene--alt" id="movimiento">
   <div class="gd-wrap gd-grid">
     <div class="gd-head">
-      <p class="gd-eyebrow gd-reveal">Movimiento</p>
-      <h2 class="gd-h1" data-gd-words style="margin-top:1.2rem">Cómo se mueve la marca</h2>
-      <p class="gd-body gd-reveal" style="margin-top:1.4rem">Las mismas reglas que rigen esta página. Sirven igual para un montaje.</p>
+      <h2 class="gd-h1" data-gd-words>Cómo se mueve la marca</h2>
+      <p class="gd-body gd-reveal" style="margin-top:1rem">Las mismas reglas que rigen esta página. Sirven igual para un montaje.</p>
     </div>
-    <div class="gd-cuerpo gd-list" data-gd-stagger>
-      {movimiento.map((m, i) => (
-        <article class="gd-list__item gd-item">
-          <span class="gd-list__n">{String(i + 1).padStart(2, '0')}</span>
-          <h3 class="gd-list__t">{m.t}</h3>
-          <p class="gd-list__d">{m.d}</p>
-        </article>
+    <div class="gd-cuerpo gd-mov" data-gd-stagger>
+      {movimiento.map((m) => (
+        <div class="gd-mov__item gd-item">
+          <p class="gd-mov__t">{m.t}</p>
+          <p class="gd-mov__d">{m.d}</p>
+        </div>
       ))}
     </div>
   </div>
 </section>
 
-{/* ─── 08 · IDENTIDAD ────────────────────────────────────────── */}
+{/* ─── 08 · IDENTIDAD · muestrario ────────────────────────────── */}
 <section class="gd-scene" id="identidad">
   <div class="gd-wrap">
-    <header style="margin-bottom:clamp(2.5rem,7vh,5rem)">
-      <p class="gd-eyebrow gd-reveal">Identidad</p>
-      <h2 class="gd-h1" data-gd-words style="margin-top:1.2rem">Tipografía, color, materia</h2>
+    <header style="margin-bottom:var(--gd-stack)">
+      <h2 class="gd-h1" data-gd-words>Tipografía, color, materia</h2>
     </header>
 
-    <div class="gd-tipo gd-reveal" style="margin-bottom:clamp(3rem,8vh,6rem)">
+    <div class="gd-tipo gd-reveal">
       {tipografia.map((t, i) => (
         <div>
-          <p class={`gd-tipo__muestra${i === 1 ? ' gd-tipo__muestra--sans' : ''}`}>
-            Treinta y dos flores
-          </p>
+          <p class={`gd-tipo__muestra${i === 1 ? ' gd-tipo__muestra--sans' : ''}`}>Treinta y dos flores</p>
           <div class="gd-tipo__meta">
             <span class="gd-tipo__fam">{t.fam}</span>
             <span class="gd-tipo__rol">{t.rol}</span>
           </div>
-          <p class="gd-card__d" style="margin-top:.6rem;max-width:44ch">{t.d}</p>
+          <p class="gd-camara__d" style="margin-top:.5rem">{t.d}</p>
         </div>
       ))}
     </div>
 
-    <div class="gd-paleta gd-reveal" style="margin-bottom:clamp(3rem,8vh,6rem)">
+    <div class="gd-paleta gd-reveal">
       {paleta.map((c) => (
         <div class="gd-swatch">
           <span class="gd-swatch__chip" style={`background:${c.hex}`}></span>
@@ -265,157 +263,119 @@ const pases = {
       ))}
     </div>
 
-    <div class="gd-cards" data-gd-stagger>
+    <div class="gd-mat-list" data-gd-stagger>
       {materiales.map((m) => (
-        <article class="gd-card gd-item">
-          <h3 class="gd-card__t">{m.t}</h3>
-          <p class="gd-card__d">{m.d}</p>
-        </article>
+        <div class="gd-item">
+          <p class="gd-mat-list__t">{m.t}</p>
+          <p class="gd-mat-list__d">{m.d}</p>
+        </div>
       ))}
     </div>
   </div>
 </section>
 
-{/* ─── plato a sangre · vieiras ───────────────────────────────── */}
-<figure class="gd-bleed">
-  <div class="gd-bleed__media" data-gd-parallax="0.1">
-    <img src={`/assets/img/${pases.vieiras.img}.jpg`}
-         srcset="/assets/img/cr-vieiras-m.jpg 900w, /assets/img/cr-vieiras.jpg 1600w"
-         sizes="100vw" width="1600" height="2000"
-         loading="lazy" decoding="async" alt={pases.vieiras.alt} />
-    <span class="gd-bleed__veil" aria-hidden="true"></span>
-  </div>
-  <figcaption class="gd-bleed__copy gd-reveal">
-    <p class="gd-num">Pase {pases.vieiras.n}</p>
-    <h2 class="gd-h2" style="margin:.5rem 0 .7rem">{pases.vieiras.t}</h2>
-    <p class="gd-body">{pases.vieiras.d}</p>
-  </figcaption>
-</figure>
-
-{/* ─── 09 · DETALLES ─────────────────────────────────────────── */}
-<section class="gd-scene" id="detalles">
+{/* ─── 09 · DETALLES · lista de definición ────────────────────── */}
+<section class="gd-scene gd-scene--alt" id="detalles">
   <div class="gd-wrap">
-    <header style="margin-bottom:clamp(2.5rem,7vh,5rem)">
-      <p class="gd-eyebrow gd-reveal">Detalles</p>
-      <h2 class="gd-h1" data-gd-words style="margin-top:1.2rem">Lo que se recuerda</h2>
+    <header style="margin-bottom:var(--gd-stack)">
+      <h2 class="gd-h1" data-gd-words>Lo que se recuerda</h2>
     </header>
-    <div class="gd-cards gd-cards--desfase" data-gd-stagger>
+    <div class="gd-def" data-gd-stagger>
       {detalles.map((d) => (
-        <article class="gd-card gd-item">
-          <h3 class="gd-card__t">{d.t}</h3>
-          <p class="gd-card__d">{d.d}</p>
-        </article>
+        <div class="gd-item">
+          <p class="gd-def__t">{d.t}</p>
+          <p class="gd-def__d">{d.d}</p>
+        </div>
       ))}
     </div>
   </div>
 </section>
 
-{/* ─── el campo · las flores de la carta ──────────────────────── */}
-<section class="gd-scene gd-scene--moss">
+{/* ─── 10 · IDEAS · carril horizontal ─────────────────────────── */}
+<section class="gd-scene" id="ideas">
   <div class="gd-wrap">
-    <header style="margin-bottom:clamp(2rem,5vh,3.5rem)">
-      <p class="gd-eyebrow gd-reveal">{menuNombre}</p>
-      <h2 class="gd-h1" data-gd-words style="margin-top:1.2rem">{flores.length} flores en un solo menú</h2>
+    <header style="margin-bottom:var(--gd-stack)">
+      <h2 class="gd-h1" data-gd-words>Seis piezas que ya funcionan</h2>
+      <p class="gd-lede gd-reveal" style="margin-top:1rem">Formato, idea y por qué engancha. Cógelas y hazlas tuyas.</p>
     </header>
-    <ul class="gd-campo" data-gd-stagger>
-      {flores.map((f, i) => (
-        <li class={`gd-flor gd-item gd-flor--${i % 7 === 0 ? 'xl' : i % 3 === 0 ? 'lg' : i % 5 === 0 ? 'sm' : 'md'}`}>{f}</li>
-      ))}
-    </ul>
-  </div>
-</section>
-
-{/* ─── 10 · IDEAS ────────────────────────────────────────────── */}
-<section class="gd-scene gd-scene--cream" id="ideas">
-  <div class="gd-wrap">
-    <header style="margin-bottom:clamp(2.5rem,7vh,5rem)">
-      <p class="gd-eyebrow gd-reveal">Ideas</p>
-      <h2 class="gd-h1" data-gd-words style="margin-top:1.2rem">Seis piezas que ya funcionan</h2>
-      <p class="gd-lede gd-reveal" style="margin-top:1.4rem">Formato, idea y por qué engancha. Cógelas y hazlas tuyas.</p>
-    </header>
-    <div class="gd-cards gd-cards--tres" data-gd-stagger>
+    <div class="gd-carril gd-reveal">
       {ideas.map((i) => (
-        <article class="gd-card gd-item">
-          <span class="gd-card__f">{i.f}</span>
-          <h3 class="gd-card__t">{i.t}</h3>
-          <p class="gd-card__d">{i.d}</p>
+        <article class="gd-idea">
+          <span class="gd-idea__f">{i.f}</span>
+          <h3 class="gd-idea__t">{i.t}</h3>
+          <p class="gd-idea__d">{i.d}</p>
         </article>
       ))}
     </div>
   </div>
 </section>
 
-{/* ─── 11 · LENGUAJE ─────────────────────────────────────────── */}
-<section class="gd-scene gd-scene--cream gd-scene--tight" id="lenguaje">
+{/* ─── 11 · LENGUAJE · citas grandes + pies ───────────────────── */}
+<section class="gd-scene gd-scene--alt" id="lenguaje">
   <div class="gd-wrap">
-    <header style="margin-bottom:clamp(2.5rem,7vh,4rem)">
+    <header style="margin-bottom:var(--gd-stack)">
       <p class="gd-eyebrow gd-reveal">Lenguaje</p>
-      <h2 class="gd-h1" data-gd-words style="margin-top:1.2rem">Ganchos y pies</h2>
+      <h2 class="gd-h1" data-gd-words>Ganchos y pies</h2>
     </header>
     <div class="gd-grid">
-      <div class="gd-lenguaje__hooks">
+      <div class="gd-lenguaje">
         <div class="gd-hooks" data-gd-stagger>
-          {hooks.map((h, i) => (
-            <p class="gd-hook gd-item">
-              <span class="gd-hook__i">{String(i + 1).padStart(2, '0')}</span>{h}
-            </p>
-          ))}
+          {hooks.map((h) => <p class="gd-hook gd-item">{h}</p>)}
         </div>
-        <div style="margin-top:clamp(2.5rem,6vh,4rem)" data-gd-stagger>
+        <div class="gd-voz" data-gd-stagger>
           {voz.map((v) => (
-            <div class="gd-item" style="margin-bottom:1.2rem">
-              <p class="gd-camara__t" style="color:var(--ink)">{v.t}</p>
-              <p class="gd-camara__d" style="color:var(--text-muted)">{v.d}</p>
+            <div class="gd-item">
+              <p class="gd-voz__t">{v.t}</p>
+              <p class="gd-voz__d">{v.d}</p>
             </div>
           ))}
         </div>
       </div>
-      <div class="gd-lenguaje__caps">
-        {captions.map((c) => (
-          <div class="gd-caption gd-reveal">
-            <p class="gd-caption__t">{c.t}</p>
-            <p class="gd-caption__d">{c.d}</p>
-          </div>
-        ))}
+      <div class="gd-lenguaje-lat">
+        <div class="gd-caps">
+          {captions.map((c) => (
+            <div class="gd-caption gd-reveal">
+              <p class="gd-caption__t">{c.t}</p>
+              <p class="gd-caption__d">{c.d}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-{/* ─── 12 · MATERIAL ─────────────────────────────────────────── */}
-<section class="gd-scene" id="material">
-  <div class="gd-wrap gd-grid">
-    <div class="gd-head">
-      <p class="gd-eyebrow gd-reveal">Material</p>
-      <h2 class="gd-h1" data-gd-words style="margin-top:1.2rem">Para descargar</h2>
-    </div>
-    <div class="gd-cuerpo gd-mat" data-gd-stagger>
-      {material.map((m) => (
-        <a class="gd-mat__row gd-item" href={m.href} target="_blank" rel="noopener">
-          <span>
-            <span class="gd-mat__t">{m.t}</span>
-            <span class="gd-mat__d">{m.d}</span>
-          </span>
-          <span class="gd-mat__meta">{m.meta}</span>
-        </a>
-      ))}
-    </div>
+{/* ─── 12 · EL CAMPO · única escena oscura de la página ───────── */}
+<section class="gd-scene gd-scene--moss">
+  <div class="gd-wrap">
+    <header style="margin-bottom:var(--gd-stack)">
+      <h2 class="gd-h1" data-gd-words>{flores.length} flores en un solo menú</h2>
+      <p class="gd-body gd-reveal" style="margin-top:1rem">{menuNombre}, la carta de esta estación.</p>
+    </header>
+    <ul class="gd-campo" data-gd-stagger>
+      {flores.map((f, i) => <li class={`gd-flor gd-item gd-flor--${escala(i)}`}>{f}</li>)}
+    </ul>
   </div>
 </section>
 
-{/* ─── 13 · CONTACTO ─────────────────────────────────────────── */}
+{/* ─── 13 · CONTACTO · incluye el material descargable ────────── */}
 <section class="gd-scene" id="contacto">
   <div class="gd-wrap gd-grid">
     <div class="gd-contacto__head">
       <p class="gd-eyebrow gd-reveal">Contacto</p>
-      <h2 class="gd-h1" data-gd-words style="margin:1.2rem 0 2rem">Cuéntanos qué quieres grabar</h2>
+      <h2 class="gd-h1" data-gd-words style="margin-bottom:1.5rem">Cuéntanos qué quieres grabar</h2>
       <a class="gd-contacto__mail gd-reveal" href={`mailto:${contacto.email}`}>{contacto.email}</a>
-      <p class="gd-body gd-reveal" style="margin-top:1.6rem">
-        Escríbenos por aquí o por DM a <a href={`https://instagram.com/${contacto.ig}`} target="_blank" rel="noopener" style="color:var(--accent-soft)">@{contacto.ig}</a>. Cuadramos el servicio para que puedas grabar sin prisa.
+      <p class="gd-body gd-reveal" style="margin-top:1.4rem">
+        Escríbenos por aquí o por DM a <a href={`https://instagram.com/${contacto.ig}`} target="_blank" rel="noopener" style="color:var(--olive)">@{contacto.ig}</a>. Cuadramos el servicio para que puedas grabar sin prisa.
       </p>
+      {material.map((m) => (
+        <p class="gd-body gd-reveal" style="margin-top:1.2rem">
+          <a href={m.href} target="_blank" rel="noopener" style="color:var(--olive)">{m.t} ({m.meta})</a>. {m.d}
+        </p>
+      ))}
     </div>
     <div class="gd-contacto__datos gd-datos" data-gd-stagger>
-      <div class="gd-datos__row gd-item"><span class="gd-datos__k">Dónde</span><span class="gd-datos__v">{contacto.dir}<br /><span style="font-family:var(--sans);font-size:.86rem;color:var(--gd-dim)">{contacto.zona}</span></span></div>
+      <div class="gd-datos__row gd-item"><span class="gd-datos__k">Dónde</span><span class="gd-datos__v">{contacto.dir}<br /><span class="gd-datos__sub">{contacto.zona}</span></span></div>
       <div class="gd-datos__row gd-item"><span class="gd-datos__k">Cuándo</span><span class="gd-datos__v">{contacto.horario}</span></div>
       <div class="gd-datos__row gd-item"><span class="gd-datos__k">Formato</span><span class="gd-datos__v">{contacto.formato}</span></div>
       <div class="gd-datos__row gd-item"><span class="gd-datos__k">Teléfono</span><span class="gd-datos__v"><a href={`tel:${contacto.tel}`}>{contacto.telLabel}</a></span></div>
@@ -423,31 +383,11 @@ const pases = {
   </div>
 </section>
 
-{/* ─── CIERRE ────────────────────────────────────────────────── */}
+{/* ─── CIERRE ─────────────────────────────────────────────────── */}
 <section class="gd-scene gd-cierre">
-  <div>
-    <h2 class="gd-h1 gd-cierre__big" data-gd-words>Abre la cámara antes de venir.</h2>
-    <p class="gd-cierre__mark gd-reveal">Pipilacha</p>
-  </div>
+  <h2 class="gd-h1 gd-cierre__big" data-gd-words>Abre la cámara antes de venir.</h2>
+  <p class="gd-cierre__mark gd-reveal">Pipilacha</p>
 </section>
 
 </main>
 </Garden>
-
-<style>
-  /* el campo de flores: tamaños desiguales para que lea a jardín y no a lista */
-  .gd-campo {
-    list-style: none; padding: 0; margin: 0;
-    display: flex; flex-wrap: wrap; align-items: baseline;
-    gap: .2em .8em; font-family: var(--serif);
-    color: rgba(244, 239, 230, .5);
-  }
-  .gd-flor { line-height: 1.25; transition: color .45s var(--ease); }
-  .gd-flor--sm { font-size: clamp(.95rem, 2vw, 1.25rem); }
-  .gd-flor--md { font-size: clamp(1.15rem, 2.8vw, 1.75rem); }
-  .gd-flor--lg { font-size: clamp(1.4rem, 3.8vw, 2.5rem); color: rgba(244, 239, 230, .82); }
-  .gd-flor--xl { font-size: clamp(1.7rem, 5vw, 3.4rem); color: var(--cloud); }
-  @media (hover: hover) and (pointer: fine) {
-    .gd-flor:hover { color: var(--accent-soft); }
-  }
-</style>

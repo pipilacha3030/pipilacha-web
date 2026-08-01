@@ -5,7 +5,7 @@
    donde salen pases y flores) y la página se actualiza sola.
 
    Voz: directa, precisa, con carácter. La flor es un ingrediente, no
-   un símbolo — nada de lenguaje floral para hablar de flores.
+   un símbolo: nada de lenguaje floral para hablar de flores.
    ============================================================ */
 
 // ---- 00 · escenas, para el tallo lateral y el índice ----
@@ -145,19 +145,23 @@ export const ideas = [
 ];
 
 // ---- 11 · lenguaje: ganchos y pies ----
+/* Ganchos para los tres primeros segundos. Los buenos abren una pregunta
+   o prometen una sensación física; los que solo informan (un aforo, una
+   espera) no paran el scroll de nadie. */
 export const hooks = [
   'Aquí la flor no decora: es el plato.',
-  'Me comí el cuenco. Era una flor.',
   'Esta flor te duerme la lengua.',
+  'Adivina a qué sabe esta flor.',
+  'El cuenco también se come.',
   'Treinta y dos flores en un solo menú.',
-  'Dieciséis asientos. Reservé con semanas.',
+  'Quince platos y en todos manda una flor.',
   'No hay otro restaurante así en el mundo.',
 ];
 
 export const captions = [
   {
     t: 'Para el pase que sorprende',
-    d: 'El cuenco es la flor. El farolillo aguanta el tartar de atún y te lo comes entero — recipiente incluido. Pase 05 de quince, en @restaurante.pipilacha.',
+    d: 'El cuenco es la flor. El farolillo aguanta el tartar de atún y te lo comes entero, recipiente incluido. Pase 05 de quince, en @restaurante.pipilacha.',
   },
   {
     t: 'Para hablar de la casa',
@@ -179,7 +183,6 @@ export const voz = [
 // ---- 12 · material descargable (solo lo que existe de verdad) ----
 export const material = [
   { t: 'Dossier de prensa', d: 'La casa, los dos cocineros y la carta en un PDF.', href: '/assets/docs/pipilacha-dossier-prensa.pdf', meta: 'PDF' },
-  { t: 'Carta de vinos', d: 'La bodega completa, cada vino con su flor.', href: '/assets/docs/pipilacha-carta-vinos.pdf', meta: 'PDF' },
 ];
 
 // ---- 13 · contacto ----

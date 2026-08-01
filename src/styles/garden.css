@@ -1,96 +1,94 @@
 /* ============================================================
    CREATOR GARDEN · sistema visual
    Solo se carga en /creator-garden/. Hereda de main.css los
-   @font-face y los tokens de marca; aquí abajo únicamente lo que
-   esta pieza necesita y el sitio no tiene.
+   @font-face y los tokens de marca.
 
-   La composición se apoya en cuatro reglas, no en adornos:
-   · contraste de escala — display enorme contra pie diminuto
-   · alternancia de escena — oscuro / crema como respiración
-   · asimetría — la rejilla es de 12 y casi nada empieza en la 1
-   · aire — el vacío es material de trabajo, no espacio sobrante
+   TEMA CLARO, BLOQUEADO. La marca es luz, día y campo: el fondo
+   es crema y el color lo ponen las fotos. El musgo aparece UNA
+   sola vez en toda la página, como puntuación. No hay negro.
+   (La versión anterior invertía esto y era un error: #0B0B09 ni
+   siquiera es un token de marca.)
+
+   Composición, mobile-first:
+   · una familia de layout por escena, nunca repetida
+   · antetítulos racionados: marcan las cinco escenas de verdad
+   · las fotos van a sangre con el pie DEBAJO, nunca texto encima
+   · medida de lectura corta y ritmo vertical constante
    ============================================================ */
 
 .gd {
-  --gd-void: #0B0B09;
-  --gd-veil: rgba(11, 11, 9, .72);
-  --gd-hair: rgba(176, 167, 127, .22);   /* filete sobre oscuro */
-  --gd-hair-dark: rgba(49, 51, 31, .16); /* filete sobre crema  */
-  --gd-dim: rgba(244, 239, 230, .62);
-  --gd-dimmer: rgba(244, 239, 230, .42);
+  /* superficies claras: la alternancia es sutil a propósito */
+  --gd-paper: #F4EFE6;          /* crema, base */
+  --gd-paper-2: #FBFAF5;        /* nube, alternancia */
+  --gd-hair: rgba(49, 51, 31, .14);
+  --gd-hair-soft: rgba(49, 51, 31, .08);
 
-  --gd-display: clamp(2.9rem, 10.5vw, 10rem);
-  --gd-h1: clamp(2.2rem, 6.4vw, 5.4rem);
-  --gd-h2: clamp(1.7rem, 4vw, 3.1rem);
-  --gd-h3: clamp(1.2rem, 2.4vw, 1.72rem);
-  --gd-body: clamp(1rem, 1.5vw, 1.16rem);
-  --gd-lede: clamp(1.1rem, 2.2vw, 1.5rem);
+  /* escala tipográfica contenida: el titular jerarquiza, no grita */
+  --gd-display: clamp(2.05rem, 7.6vw, 5.2rem);
+  --gd-h1: clamp(1.65rem, 5.4vw, 3.4rem);
+  --gd-h2: clamp(1.3rem, 4vw, 2.2rem);
+  --gd-h3: clamp(1.08rem, 2.6vw, 1.45rem);
+  --gd-body: clamp(.98rem, 1.5vw, 1.1rem);
+  --gd-lede: clamp(1.08rem, 2.4vw, 1.4rem);
 
-  --gd-scene-y: clamp(5rem, 16vh, 12rem);
+  /* ritmo vertical único: todas las escenas respiran igual */
+  --gd-scene-y: clamp(3.6rem, 11vh, 8.5rem);
+  --gd-stack: clamp(1.6rem, 4.5vh, 3rem);
 
-  background: var(--gd-void);
-  color: var(--cream);
+  background: var(--gd-paper);
+  color: var(--ink);
   font-family: var(--sans);
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 
-.gd ::selection { background: var(--olive); color: var(--cloud); }
+.gd ::selection { background: var(--accent-soft); color: var(--moss); }
 
 .gd-skip {
   position: absolute; left: -9999px; top: 0; z-index: 100;
-  background: var(--cream); color: var(--ink); padding: .9em 1.4em;
+  background: var(--moss); color: var(--cream); padding: .9em 1.4em;
   font-size: .8rem; letter-spacing: .1em; text-transform: uppercase;
 }
 .gd-skip:focus { left: 1rem; top: 1rem; }
-.gd :focus-visible { outline: 2px solid var(--accent-soft); outline-offset: 4px; }
+.gd :focus-visible { outline: 2px solid var(--olive); outline-offset: 4px; }
 
 /* ---------- escenas ---------- */
 .gd-scene { position: relative; padding: var(--gd-scene-y) var(--gutter); }
-.gd-scene--cream { background: var(--cream); color: var(--ink); }
-.gd-scene--moss  { background: var(--moss); }
-.gd-scene--tight { padding-top: clamp(3rem, 8vh, 6rem); }
+.gd-scene--alt { background: var(--gd-paper-2); }
+/* la ÚNICA escena oscura de la página */
+.gd-scene--moss { background: var(--moss); color: var(--cream); }
 .gd-wrap { max-width: var(--maxw); margin-inline: auto; width: 100%; }
-
-/* rejilla editorial: 12 columnas de verdad, para poder desalinear */
-.gd-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(1.5rem, 3vw, 3rem); }
 
 /* ---------- tipografía ---------- */
 .gd-display, .gd-h1, .gd-h2, .gd-h3 {
-  font-family: var(--serif); font-weight: 400; letter-spacing: -.02em;
+  font-family: var(--serif); font-weight: 400; letter-spacing: -.018em;
+  color: var(--ink); text-wrap: balance;
 }
-.gd-display { font-size: var(--gd-display); line-height: .93; }
-.gd-h1 { font-size: var(--gd-h1); line-height: .99; }
-.gd-h2 { font-size: var(--gd-h2); line-height: 1.06; letter-spacing: -.015em; }
-.gd-h3 { font-size: var(--gd-h3); line-height: 1.16; letter-spacing: -.01em; }
-.gd-lede { font-size: var(--gd-lede); line-height: 1.5; color: var(--gd-dim); max-width: 34ch; }
-.gd-scene--cream .gd-lede { color: var(--text-muted); }
-.gd-body { font-size: var(--gd-body); line-height: 1.68; color: var(--gd-dim); max-width: 46ch; }
-.gd-scene--cream .gd-body { color: var(--text-muted); }
+.gd-display { font-size: var(--gd-display); line-height: 1.02; }
+.gd-h1 { font-size: var(--gd-h1); line-height: 1.06; }
+.gd-h2 { font-size: var(--gd-h2); line-height: 1.12; }
+.gd-h3 { font-size: var(--gd-h3); line-height: 1.2; letter-spacing: -.008em; }
+.gd-scene--moss :is(.gd-display, .gd-h1, .gd-h2, .gd-h3) { color: var(--cloud); }
 
-/* cabecera de escena: número diminuto contra titular enorme */
+.gd-lede { font-size: var(--gd-lede); line-height: 1.48; color: var(--text-muted); max-width: 30ch; }
+.gd-body { font-size: var(--gd-body); line-height: 1.66; color: var(--text-muted); max-width: 38ch; }
+.gd-scene--moss :is(.gd-lede, .gd-body) { color: rgba(244, 239, 230, .72); }
+
+/* antetítulo: racionado, solo en las escenas que abren capítulo */
 .gd-eyebrow {
   display: inline-flex; align-items: center; gap: .8em;
-  font-size: .68rem; letter-spacing: .3em; text-transform: uppercase;
-  color: var(--accent-soft);
+  font-size: .66rem; letter-spacing: .26em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 1rem;
 }
-.gd-eyebrow::before { content: ""; width: 2.2em; height: 1px; background: currentColor; opacity: .55; }
-.gd-scene--cream .gd-eyebrow { color: var(--accent); }
-.gd-num {
-  font-family: var(--serif); font-size: .8rem; letter-spacing: .12em;
-  color: var(--olive); font-variant-numeric: tabular-nums;
-}
+.gd-eyebrow::before { content: ""; width: 2em; height: 1px; background: currentColor; opacity: .5; }
+.gd-scene--moss .gd-eyebrow { color: var(--accent-soft); }
 
-/* ---------- estados de entrada (gated en .js, como el sitio) ----------
-   Sin JS o si el bundle no baja, todo se ve: el contenido no depende
-   de que una animación lo destape. */
-.js .gd .gd-reveal { opacity: 0; transform: translateY(22px); }
-.js .gd [data-gd-stagger] .gd-item { opacity: 0; transform: translateY(22px); }
+/* ---------- estados de entrada (gated en .js, como el sitio) ---------- */
+.js .gd .gd-reveal { opacity: 0; transform: translateY(20px); }
+.js .gd [data-gd-stagger] .gd-item { opacity: 0; transform: translateY(20px); }
 .js .gd [data-gd-words], .js .gd [data-gd-lines] { opacity: 0; }
-/* SplitText envuelve cada línea en .gd-line; el clip es lo que permite
-   que las palabras suban desde detrás de su propia línea */
-.gd .gd-line { overflow: hidden; padding-bottom: .08em; }
+.gd .gd-line { overflow: hidden; padding-bottom: .09em; }
 
 @media (prefers-reduced-motion: reduce) {
   .js .gd .gd-reveal,
@@ -99,248 +97,309 @@
   .js .gd [data-gd-lines] { opacity: 1 !important; transform: none !important; }
 }
 
-/* ---------- tallo + índice ---------- */
-.gd-spine {
-  position: fixed; left: max(1rem, calc((100vw - var(--maxw)) / 2 - 2.4rem));
-  top: 0; height: 100vh; width: 2px; z-index: 3; pointer-events: none;
-}
-.gd-spine svg { width: 100%; height: 100%; overflow: visible; }
-.gd-spine__path { fill: none; stroke: var(--olive); stroke-width: 1.4; vector-effect: non-scaling-stroke; }
-
-.gd-index {
-  position: fixed; right: clamp(.9rem, 2.2vw, 2rem); top: 50%; z-index: 4;
-  transform: translateY(-50%); display: grid; gap: .55rem;
-}
-.gd-index__link {
-  display: flex; align-items: center; gap: .6rem; justify-content: flex-end;
-  text-decoration: none; color: var(--gd-dimmer);
-  font-size: .58rem; letter-spacing: .18em; text-transform: uppercase;
-  transition: color .35s var(--ease);
-}
-.gd-index__label {
-  opacity: 0; transform: translateX(6px);
-  transition: opacity .35s var(--ease), transform .35s var(--ease);
-}
-.gd-index__dot {
-  width: 5px; height: 5px; border-radius: 50%; flex: none;
-  background: currentColor; transition: scale .35s var(--ease);
-}
-.gd-index__link.is-on { color: var(--accent-soft); }
-.gd-index__link.is-on .gd-index__dot { scale: 1.9; }
-.gd-index__link.is-on .gd-index__label,
-.gd-index__link:hover .gd-index__label,
-.gd-index__link:focus-visible .gd-index__label { opacity: 1; transform: none; }
-
-/* ---------- 00 · apertura ---------- */
-.gd-open { position: relative; min-height: 100svh; display: flex; align-items: flex-end; overflow: clip; }
-.gd-open__media { position: absolute; inset: -8% 0; z-index: 0; }
-.gd-open__media img { width: 100%; height: 100%; object-fit: cover; }
-/* la portada es una foto CLARA y el texto va en crema: la rampa tiene que
-   cubrir todo el bloque de texto, no solo el último tercio */
-.gd-open__veil {
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(11,11,9,.52) 0%, rgba(11,11,9,.12) 18%,
-              rgba(11,11,9,0) 30%, rgba(11,11,9,.34) 44%, rgba(11,11,9,.66) 58%,
-              rgba(11,11,9,.86) 72%, rgba(11,11,9,.96) 88%, var(--gd-void) 100%);
-}
-.gd-open__inner {
-  position: relative; z-index: 1; width: 100%; max-width: var(--maxw);
-  margin-inline: auto; padding: 0 var(--gutter) clamp(2.6rem, 7vh, 5rem);
-}
-/* por debajo del display general: a 10rem el titular subía hasta la franja
-   limpia del velo y peleaba con el cuenco */
-.gd-open__title {
-  font-size: clamp(2.5rem, 7.4vw, 7rem);
-  color: var(--cloud); margin: .34em 0 .46em;
-  text-shadow: 0 2px 44px rgba(0,0,0,.5);
-}
-.gd-open__sub { color: var(--cloud); max-width: 30ch; text-shadow: 0 1px 24px rgba(0,0,0,.5); }
-.gd-open .gd-eyebrow { color: var(--cloud); text-shadow: 0 1px 20px rgba(0,0,0,.6); }
-.gd-open__credit {
-  margin-top: 1.6rem; font-size: .66rem; letter-spacing: .18em;
-  text-transform: uppercase; color: var(--accent-soft); opacity: .85;
-}
-
-/* ---------- 01 · manifiesto ---------- */
-.gd-manifiesto p {
-  font-family: var(--serif); font-weight: 400;
-  font-size: clamp(1.35rem, 3.6vw, 2.4rem); line-height: 1.3;
-  letter-spacing: -.012em; max-width: 24ch;
-}
-.gd-manifiesto p + p { margin-top: 1.1em; }
-.gd-manifiesto p:last-child { color: var(--olive); }
-
-/* ---------- 02 · visión ---------- */
-.gd-vision__cuerpo { display: grid; gap: 1.3em; }
-.gd-dato { border-top: 1px solid var(--gd-hair-dark); padding-top: 1.6rem; }
-.gd-dato__n {
-  font-family: var(--serif); font-size: clamp(4rem, 12vw, 8.5rem);
-  line-height: .82; color: var(--ink); font-variant-numeric: tabular-nums; display: block;
-}
-.gd-dato__t {
-  display: block; margin-top: .7rem; font-size: .7rem; letter-spacing: .22em;
-  text-transform: uppercase; color: var(--accent);
-}
-.gd-dato__pie { margin-top: .9rem; font-size: .95rem; line-height: 1.55; color: var(--text-muted); max-width: 26ch; }
-
-/* ---------- listas numeradas (filosofía, ángulos, movimiento) ---------- */
-.gd-list { display: grid; gap: 0; }
-.gd-list__item {
-  display: grid; gap: .55rem 2rem; padding: clamp(1.6rem, 3.5vh, 2.6rem) 0;
-  border-top: 1px solid var(--gd-hair);
-  grid-template-columns: 1fr;
-}
-.gd-scene--cream .gd-list__item { border-top-color: var(--gd-hair-dark); }
-.gd-list__n { font-family: var(--serif); font-size: .78rem; color: var(--olive); letter-spacing: .1em; }
-.gd-list__t { font-family: var(--serif); font-size: var(--gd-h3); line-height: 1.15; color: var(--cloud); }
-.gd-scene--cream .gd-list__t { color: var(--ink); }
-.gd-list__d { font-size: var(--gd-body); line-height: 1.62; color: var(--gd-dim); max-width: 48ch; }
-.gd-scene--cream .gd-list__d { color: var(--text-muted); }
-
-/* ---------- tarjetas sin caja (historias, ideas, detalles) ---------- */
-.gd-cards { display: grid; gap: clamp(1.8rem, 4vw, 3.2rem); }
-.gd-card { border-top: 1px solid var(--gd-hair); padding-top: 1.4rem; }
-.gd-scene--cream .gd-card { border-top-color: var(--gd-hair-dark); }
-.gd-card__f {
-  font-size: .62rem; letter-spacing: .22em; text-transform: uppercase;
-  color: var(--olive); display: block; margin-bottom: .8rem;
-}
-.gd-card__t { font-family: var(--serif); font-size: var(--gd-h3); line-height: 1.14; margin-bottom: .55rem; color: var(--cloud); }
-.gd-scene--cream .gd-card__t { color: var(--ink); }
-.gd-card__d { font-size: .99rem; line-height: 1.62; color: var(--gd-dim); }
-.gd-scene--cream .gd-card__d { color: var(--text-muted); }
-
-/* ---------- 06 · cámara: dos columnas contrapuestas ---------- */
-.gd-camara { display: grid; gap: clamp(2.5rem, 6vw, 5rem); }
-.gd-camara__h {
-  font-size: .68rem; letter-spacing: .26em; text-transform: uppercase;
-  color: var(--accent-soft); margin-bottom: 1.6rem;
-  padding-bottom: .9rem; border-bottom: 1px solid var(--gd-hair);
-}
-.gd-camara__list { display: grid; gap: 1.5rem; }
-.gd-camara__t { font-family: var(--serif); font-size: 1.16rem; color: var(--cloud); margin-bottom: .3rem; }
-.gd-camara__d { font-size: .97rem; line-height: 1.6; color: var(--gd-dim); max-width: 40ch; }
-
-/* ---------- 08 · identidad ---------- */
-.gd-paleta { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--gd-hair); }
-.gd-swatch { background: var(--gd-void); padding: 1.3rem 1.1rem; display: grid; gap: .5rem; }
-.gd-swatch__chip { width: 100%; aspect-ratio: 2.4/1; border-radius: 2px; }
-.gd-swatch__n { font-size: .78rem; color: var(--cloud); }
-.gd-swatch__hex { font-size: .62rem; letter-spacing: .12em; color: var(--olive); font-variant-numeric: tabular-nums; }
-.gd-swatch__u { font-size: .66rem; line-height: 1.45; color: var(--gd-dimmer); }
-
-.gd-tipo { display: grid; gap: 2rem; }
-.gd-tipo__muestra { font-family: var(--serif); font-size: clamp(2.6rem, 8vw, 5rem); line-height: 1; color: var(--cloud); }
-.gd-tipo__muestra--sans { font-family: var(--sans); font-weight: 300; font-size: clamp(1.8rem, 5vw, 3.2rem); }
-.gd-tipo__meta { display: flex; flex-wrap: wrap; gap: .5rem 1.4rem; margin-top: .9rem; align-items: baseline; }
-.gd-tipo__fam { font-size: .82rem; color: var(--accent-soft); }
-.gd-tipo__rol { font-size: .62rem; letter-spacing: .22em; text-transform: uppercase; color: var(--olive); }
-
-/* ---------- 11 · lenguaje ---------- */
-.gd-hooks { display: grid; gap: .1rem; }
-.gd-hook {
-  font-family: var(--serif); font-size: clamp(1.35rem, 4.2vw, 2.6rem);
-  line-height: 1.22; color: var(--ink); padding: .55em 0;
-  border-bottom: 1px solid var(--gd-hair-dark); position: relative;
-  display: flex; align-items: baseline; gap: .7em;
-}
-.gd-hook__i { font-family: var(--sans); font-size: .6rem; letter-spacing: .12em; color: var(--olive); flex: none; }
-
-.gd-caption { border-left: 2px solid var(--olive); padding-left: 1.3rem; }
-.gd-caption__t { font-size: .64rem; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); margin-bottom: .8rem; }
-.gd-caption__d { font-size: 1rem; line-height: 1.66; color: var(--text-muted); }
-
-/* ---------- 12 · material ---------- */
-.gd-mat { display: grid; gap: 0; }
-.gd-mat__row {
-  display: grid; grid-template-columns: 1fr auto; gap: 1rem 2rem; align-items: center;
-  padding: 1.6rem 0; border-top: 1px solid var(--gd-hair); text-decoration: none; color: inherit;
-  transition: opacity .3s var(--ease);
-}
-.gd-mat__row:hover { opacity: .62; }
-.gd-mat__t { font-family: var(--serif); font-size: var(--gd-h3); color: var(--cloud); }
-.gd-mat__d { font-size: .93rem; color: var(--gd-dim); margin-top: .3rem; max-width: 40ch; }
-.gd-mat__meta { font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; color: var(--olive); }
-
-/* ---------- 13 · contacto + cierre ---------- */
-.gd-contacto__mail {
-  font-family: var(--serif); font-size: clamp(1.6rem, 6vw, 4rem); line-height: 1.05;
-  color: var(--cloud); text-decoration: none; display: inline-block;
-  border-bottom: 1px solid var(--olive); word-break: break-word;
-}
-.gd-datos { display: grid; gap: 0; margin-top: clamp(2.5rem, 6vh, 4rem); }
-.gd-datos__row {
-  display: grid; grid-template-columns: 1fr; gap: .3rem;
-  padding: 1.2rem 0; border-top: 1px solid var(--gd-hair);
-}
-.gd-datos__k { font-size: .62rem; letter-spacing: .24em; text-transform: uppercase; color: var(--olive); }
-.gd-datos__v { font-family: var(--serif); font-size: 1.18rem; color: var(--cloud); }
-.gd-datos__v a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--olive); }
-
-.gd-cierre { min-height: 78svh; display: grid; place-items: center; text-align: center; }
-.gd-cierre__big { color: var(--cloud); max-width: 14ch; }
-.gd-cierre__mark {
-  margin-top: clamp(2.5rem, 7vh, 5rem); font-family: var(--serif);
-  font-size: clamp(1.6rem, 5vw, 3rem); color: var(--olive); letter-spacing: .02em;
-}
-
-/* ---------- media a sangre entre escenas ---------- */
-.gd-bleed { position: relative; min-height: 84svh; display: flex; align-items: flex-end; overflow: clip; margin: 0; }
-.gd-bleed__media { position: absolute; inset: -7% 0; z-index: 0; }
-.gd-bleed__media img { width: 100%; height: 100%; object-fit: cover; }
-.gd-bleed__veil {
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, var(--gd-void) 0%, rgba(11,11,9,.4) 10%, rgba(11,11,9,0) 30%,
-              rgba(11,11,9,.36) 50%, rgba(11,11,9,.74) 68%, rgba(11,11,9,.94) 86%, var(--gd-void) 100%);
-}
-.gd-bleed__copy {
-  position: relative; z-index: 1; width: 100%; max-width: var(--maxw);
-  margin-inline: auto; padding: 0 var(--gutter) clamp(2.6rem, 7vh, 4.5rem);
-}
-.gd-bleed__copy .gd-h2 { color: var(--cloud); text-shadow: 0 1px 26px rgba(0,0,0,.55); }
-.gd-bleed__copy .gd-body { text-shadow: 0 1px 22px rgba(0,0,0,.5); }
+/* ---------- tallo + índice (solo escritorio) ---------- */
+.gd-spine { display: none; }
+.gd-index { display: none; }
 
 /* ============================================================
-   COMPOSICIÓN EN PANTALLA GRANDE
-   Aquí es donde la rejilla de 12 hace su trabajo: casi nada
-   empieza en la columna 1 y casi nada ocupa las 12.
+   00 · APERTURA
+   Foto a sangre arriba, titular debajo sobre crema. Nada de texto
+   sobre la imagen: en una marca clara el texto encima obliga a
+   velos oscuros, que es justo lo que sobra aquí.
    ============================================================ */
-@media (min-width: 860px) {
-  .gd-scene { padding-inline: var(--gutter); }
-
-  .gd-open__title { max-width: 15ch; }
-
-  .gd-manifiesto { grid-column: 4 / 12; }
-  .gd-manifiesto p { max-width: 22ch; }
-  .gd-manifiesto p:nth-child(2) { margin-left: clamp(2rem, 8vw, 8rem); }
-
-  .gd-vision__head { grid-column: 1 / 7; }
-  .gd-vision__cuerpo { grid-column: 7 / 13; align-self: end; }
-  .gd-vision__dato { grid-column: 1 / 5; margin-top: clamp(3rem, 8vh, 6rem); }
-
-  .gd-head { grid-column: 1 / 6; position: sticky; top: clamp(4rem, 14vh, 9rem); align-self: start; }
-  .gd-cuerpo { grid-column: 6 / 13; }
-
-  .gd-list__item { grid-template-columns: minmax(3rem, 5%) minmax(0, 30%) 1fr; align-items: baseline; }
-
-  .gd-cards { grid-template-columns: repeat(2, 1fr); column-gap: clamp(2rem, 5vw, 4rem); }
-  .gd-cards--tres { grid-template-columns: repeat(3, 1fr); }
-  /* la asimetría: la segunda columna cae fuera de línea */
-  .gd-cards--desfase > *:nth-child(even) { margin-top: clamp(2.5rem, 7vh, 5rem); }
-
-  .gd-camara { grid-template-columns: 1fr 1fr; }
-  .gd-paleta { grid-template-columns: repeat(3, 1fr); }
-  .gd-tipo { grid-template-columns: 1fr; }
-
-  .gd-lenguaje__hooks { grid-column: 1 / 8; }
-  .gd-lenguaje__caps { grid-column: 9 / 13; display: grid; gap: 2.4rem; align-content: start; }
-
-  .gd-datos__row { grid-template-columns: minmax(140px, 22%) 1fr; gap: 1.5rem; align-items: baseline; }
-  .gd-contacto__head { grid-column: 1 / 8; }
-  .gd-contacto__datos { grid-column: 8 / 13; }
+.gd-open__media {
+  position: relative; height: 56svh; min-height: 300px; overflow: hidden;
+  background: var(--gd-paper-2);
+}
+.gd-open__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gd-open__inner {
+  max-width: var(--maxw); margin-inline: auto;
+  padding: clamp(2rem, 6vh, 3.5rem) var(--gutter) clamp(2.5rem, 7vh, 4rem);
+}
+.gd-open__title { margin-bottom: .5em; }
+.gd-open__sub { color: var(--text-muted); }
+.gd-open__credit {
+  margin-top: 1.8rem; padding-top: 1rem; border-top: 1px solid var(--gd-hair);
+  font-size: .66rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--text-subtle); max-width: 34ch;
 }
 
-/* el índice lateral estorba en pantallas estrechas: sin sitio, fuera */
-@media (max-width: 859px) {
-  .gd-index, .gd-spine { display: none; }
+/* ============================================================
+   01 · MANIFIESTO — tipografía grande, columna única, mucho aire
+   ============================================================ */
+.gd-manifiesto p {
+  font-family: var(--serif); font-weight: 400; color: var(--ink);
+  font-size: clamp(1.25rem, 4.4vw, 2.05rem); line-height: 1.32;
+  letter-spacing: -.012em; max-width: 20ch;
+}
+.gd-manifiesto p + p { margin-top: .9em; }
+.gd-manifiesto p:last-child { color: var(--olive); }
+
+/* ============================================================
+   02 · VISIÓN — texto con una cifra grande de contrapunto
+   ============================================================ */
+.gd-vision__cuerpo { display: grid; gap: 1.1em; }
+.gd-dato {
+  margin-top: var(--gd-stack); padding-top: 1.4rem;
+  border-top: 1px solid var(--gd-hair);
+}
+.gd-dato__n {
+  font-family: var(--serif); font-size: clamp(3.2rem, 15vw, 6.5rem);
+  line-height: .84; color: var(--olive); display: block;
+  font-variant-numeric: tabular-nums;
+}
+.gd-dato__t {
+  display: block; margin-top: .6rem; font-size: .68rem; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--accent);
+}
+.gd-dato__pie { margin-top: .7rem; font-size: .94rem; line-height: 1.55; color: var(--text-muted); max-width: 26ch; }
+
+/* ============================================================
+   FIGURAS A SANGRE — imagen ancho completo, pie debajo
+   ============================================================ */
+.gd-fig { margin: 0; }
+.gd-fig__media { width: 100%; aspect-ratio: 4 / 5; overflow: hidden; background: var(--gd-paper-2); }
+.gd-fig__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gd-fig figcaption {
+  max-width: var(--maxw); margin-inline: auto;
+  padding: clamp(1.2rem, 4vh, 2rem) var(--gutter) clamp(2rem, 6vh, 3rem);
+}
+.gd-fig__n {
+  font-size: .64rem; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--accent); display: block; margin-bottom: .6rem;
+}
+
+/* ============================================================
+   03 · FILOSOFÍA — única lista numerada de la página
+   ============================================================ */
+.gd-princ { display: grid; }
+.gd-princ__item {
+  display: grid; gap: .4rem; padding: 1.4rem 0;
+  border-top: 1px solid var(--gd-hair);
+}
+.gd-princ__item:first-child { border-top: none; padding-top: 0; }
+.gd-princ__n {
+  font-family: var(--serif); font-size: .8rem; color: var(--olive);
+  font-variant-numeric: tabular-nums;
+}
+.gd-princ__d { font-size: var(--gd-body); line-height: 1.62; color: var(--text-muted); max-width: 42ch; }
+
+/* ============================================================
+   04 · GUÍA — tres declaraciones grandes, sin numerar, mucho aire.
+   Familia distinta a la lista numerada de arriba a propósito.
+   ============================================================ */
+.gd-angulos { display: grid; gap: clamp(2.2rem, 6vh, 3.6rem); }
+.gd-angulo__t { margin-bottom: .5rem; }
+.gd-angulo__d { font-size: var(--gd-body); line-height: 1.66; color: var(--text-muted); max-width: 40ch; }
+
+/* ============================================================
+   05 · HISTORIAS — única rejilla de tarjetas de la página
+   ============================================================ */
+.gd-cards { display: grid; gap: clamp(1.6rem, 4vw, 2.6rem); }
+.gd-card { padding-top: 1.1rem; border-top: 1px solid var(--gd-hair); }
+.gd-card__t { margin-bottom: .45rem; }
+.gd-card__d { font-size: .96rem; line-height: 1.6; color: var(--text-muted); }
+
+/* ============================================================
+   06 · CÁMARA — dos columnas contrapuestas (foto / vídeo)
+   ============================================================ */
+.gd-camara { display: grid; gap: clamp(2.2rem, 6vh, 3.4rem); }
+.gd-camara__h {
+  font-size: .66rem; letter-spacing: .24em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 1.2rem;
+  padding-bottom: .8rem; border-bottom: 1px solid var(--gd-hair);
+}
+.gd-camara__list { display: grid; gap: 1.2rem; }
+.gd-camara__t { font-family: var(--serif); font-size: 1.08rem; color: var(--ink); margin-bottom: .25rem; }
+.gd-camara__d { font-size: .94rem; line-height: 1.58; color: var(--text-muted); max-width: 38ch; }
+
+/* ============================================================
+   07 · MOVIMIENTO — rejilla 2x2 de principios cortos
+   ============================================================ */
+.gd-mov { display: grid; gap: 1.6rem; }
+.gd-mov__item { padding: 1.2rem; background: var(--gd-paper-2); border-radius: 2px; }
+.gd-scene--alt .gd-mov__item { background: var(--gd-paper); }
+.gd-mov__t { font-family: var(--serif); font-size: 1.05rem; color: var(--ink); margin-bottom: .4rem; line-height: 1.2; }
+.gd-mov__d { font-size: .92rem; line-height: 1.55; color: var(--text-muted); }
+
+/* ============================================================
+   08 · IDENTIDAD — muestrario: tipo + color + materia
+   ============================================================ */
+.gd-tipo { display: grid; gap: 1.8rem; margin-bottom: var(--gd-stack); }
+.gd-tipo__muestra { font-family: var(--serif); font-size: clamp(2rem, 9vw, 3.6rem); line-height: 1; color: var(--ink); }
+.gd-tipo__muestra--sans { font-family: var(--sans); font-weight: 300; font-size: clamp(1.5rem, 6.5vw, 2.6rem); }
+.gd-tipo__meta { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin-top: .7rem; align-items: baseline; }
+.gd-tipo__fam { font-size: .8rem; color: var(--ink); }
+.gd-tipo__rol { font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
+
+.gd-paleta { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: var(--gd-stack); }
+.gd-swatch { display: grid; gap: .4rem; }
+.gd-swatch__chip { width: 100%; aspect-ratio: 3/2; border-radius: 2px; border: 1px solid var(--gd-hair-soft); }
+.gd-swatch__n { font-size: .78rem; color: var(--ink); }
+.gd-swatch__hex { font-size: .6rem; letter-spacing: .1em; color: var(--olive); font-variant-numeric: tabular-nums; }
+.gd-swatch__u { font-size: .64rem; line-height: 1.4; color: var(--text-subtle); }
+
+.gd-mat-list { display: grid; gap: 1.1rem; }
+.gd-mat-list__t { font-family: var(--serif); font-size: 1.05rem; color: var(--ink); margin-bottom: .25rem; }
+.gd-mat-list__d { font-size: .92rem; line-height: 1.55; color: var(--text-muted); max-width: 38ch; }
+
+/* ============================================================
+   09 · DETALLES — lista de definición compacta
+   ============================================================ */
+.gd-def { display: grid; gap: 1.3rem; }
+.gd-def__t { font-family: var(--serif); font-size: 1.08rem; color: var(--ink); }
+.gd-def__d { font-size: .94rem; line-height: 1.58; color: var(--text-muted); max-width: 40ch; margin-top: .2rem; }
+
+/* ============================================================
+   10 · IDEAS — carril con arrastre horizontal. En móvil se hojea
+   con el pulgar en vez de convertirse en una columna larguísima.
+   ============================================================ */
+.gd-carril {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 78%;
+  gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory;
+  padding-bottom: 1rem; margin-inline: calc(var(--gutter) * -1);
+  padding-inline: var(--gutter);
+  scrollbar-width: thin;
+}
+.gd-idea {
+  scroll-snap-align: start; background: var(--gd-paper-2);
+  padding: 1.4rem 1.2rem; border-radius: 2px; border: 1px solid var(--gd-hair-soft);
+}
+.gd-scene--alt .gd-idea { background: var(--gd-paper); }
+.gd-idea__f { font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: .7rem; }
+.gd-idea__t { font-family: var(--serif); font-size: 1.1rem; color: var(--ink); margin-bottom: .4rem; line-height: 1.2; }
+.gd-idea__d { font-size: .92rem; line-height: 1.55; color: var(--text-muted); }
+
+/* ============================================================
+   11 · LENGUAJE — ganchos como citas grandes + pies de ejemplo
+   ============================================================ */
+.gd-hooks { display: grid; }
+.gd-hook {
+  font-family: var(--serif); font-size: clamp(1.2rem, 4.6vw, 1.9rem);
+  line-height: 1.24; color: var(--ink); padding: .7em 0;
+  border-bottom: 1px solid var(--gd-hair);
+}
+.gd-hook:first-child { padding-top: 0; }
+
+.gd-caps { display: grid; gap: 1.6rem; margin-top: var(--gd-stack); }
+.gd-caption { border-left: 2px solid var(--accent-soft); padding-left: 1.1rem; }
+.gd-caption__t { font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); margin-bottom: .6rem; }
+.gd-caption__d { font-size: .96rem; line-height: 1.62; color: var(--text-muted); }
+
+.gd-voz { display: grid; gap: 1rem; margin-top: var(--gd-stack); }
+.gd-voz__t { font-family: var(--serif); font-size: 1.02rem; color: var(--ink); margin-bottom: .2rem; }
+.gd-voz__d { font-size: .92rem; line-height: 1.55; color: var(--text-muted); max-width: 40ch; }
+
+/* ============================================================
+   12 · CAMPO DE FLORES — la única escena musgo de la página
+   ============================================================ */
+.gd-campo {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  gap: .18em .7em; font-family: var(--serif);
+  color: rgba(244, 239, 230, .55);
+}
+.gd-flor { line-height: 1.28; transition: color .4s var(--ease); }
+.gd-flor--sm { font-size: clamp(.9rem, 3.4vw, 1.15rem); }
+.gd-flor--md { font-size: clamp(1.05rem, 4.4vw, 1.55rem); }
+.gd-flor--lg { font-size: clamp(1.3rem, 5.6vw, 2.1rem); color: rgba(244, 239, 230, .85); }
+.gd-flor--xl { font-size: clamp(1.55rem, 7vw, 2.9rem); color: var(--cloud); }
+@media (hover: hover) and (pointer: fine) { .gd-flor:hover { color: var(--accent-soft); } }
+
+/* ============================================================
+   13 · CONTACTO + CIERRE
+   ============================================================ */
+.gd-contacto__mail {
+  font-family: var(--serif); font-size: clamp(1.35rem, 6vw, 2.6rem); line-height: 1.1;
+  color: var(--ink); text-decoration: none; display: inline-block;
+  border-bottom: 1px solid var(--olive); word-break: break-word;
+  transition: color .3s var(--ease);
+}
+.gd-contacto__mail:hover { color: var(--olive); }
+
+.gd-datos { display: grid; margin-top: var(--gd-stack); }
+.gd-datos__row { display: grid; gap: .25rem; padding: 1rem 0; border-top: 1px solid var(--gd-hair); }
+.gd-datos__k { font-size: .6rem; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); }
+.gd-datos__v { font-family: var(--serif); font-size: 1.08rem; color: var(--ink); line-height: 1.35; }
+.gd-datos__v a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--olive); }
+.gd-datos__sub { font-family: var(--sans); font-size: .84rem; color: var(--text-subtle); }
+
+.gd-cierre { text-align: center; padding-block: clamp(4.5rem, 14vh, 9rem); }
+.gd-cierre__big { max-width: 16ch; margin-inline: auto; }
+.gd-cierre__mark {
+  margin-top: clamp(2rem, 6vh, 3.5rem); font-family: var(--serif);
+  font-size: clamp(1.3rem, 5vw, 2.2rem); color: var(--olive); letter-spacing: .02em;
+}
+
+/* ============================================================
+   ESCRITORIO — la rejilla de 12 entra aquí. Hasta 760px todo es
+   una columna: es donde se va a ver esta página.
+   ============================================================ */
+@media (min-width: 760px) {
+  .gd-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(1.5rem, 3vw, 3rem); }
+
+  .gd-open__media { height: 74svh; }
+  .gd-open__inner { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3rem; align-items: end; }
+  .gd-open__titulo { grid-column: 1 / 8; }
+  .gd-open__title { margin-bottom: 0; }
+  .gd-open__textos { grid-column: 8 / 13; }
+  .gd-open__credit { margin-top: 1.2rem; }
+
+  .gd-manifiesto { grid-column: 3 / 11; }
+  .gd-manifiesto p { max-width: 24ch; }
+  .gd-manifiesto p:nth-child(2) { margin-left: clamp(2rem, 9vw, 9rem); }
+
+  .gd-vision__head { grid-column: 1 / 7; }
+  .gd-vision__cuerpo { grid-column: 7 / 13; }
+  .gd-vision__dato { grid-column: 1 / 5; }
+
+  .gd-head { grid-column: 1 / 5; position: sticky; top: clamp(3rem, 12vh, 7rem); align-self: start; }
+  .gd-cuerpo { grid-column: 6 / 13; }
+
+  .gd-fig__media { aspect-ratio: 16 / 9; }
+  .gd-fig figcaption { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3rem; }
+  .gd-fig__texto { grid-column: 6 / 12; }
+
+  .gd-angulos { grid-template-columns: repeat(3, 1fr); gap: clamp(2rem, 4vw, 3.4rem); }
+  .gd-cards { grid-template-columns: repeat(3, 1fr); }
+  .gd-camara { grid-template-columns: 1fr 1fr; gap: clamp(3rem, 6vw, 5rem); }
+  .gd-mov { grid-template-columns: repeat(2, 1fr); gap: 1.4rem; }
+  .gd-paleta { grid-template-columns: repeat(6, 1fr); }
+  .gd-def { grid-template-columns: repeat(2, 1fr); gap: 2rem 3rem; }
+  .gd-carril { grid-auto-columns: minmax(0, 30%); }
+
+  .gd-lenguaje { grid-column: 1 / 8; }
+  .gd-lenguaje-lat { grid-column: 9 / 13; }
+  .gd-caps, .gd-voz { margin-top: 0; }
+
+  .gd-contacto__head { grid-column: 1 / 7; }
+  .gd-contacto__datos { grid-column: 8 / 13; margin-top: 0; }
+  .gd-datos__row { grid-template-columns: minmax(120px, 34%) 1fr; gap: 1.2rem; align-items: baseline; }
+
+  /* el tallo y el índice solo aparecen cuando hay margen para ellos */
+  .gd-spine {
+    display: block; position: fixed;
+    left: max(1rem, calc((100vw - var(--maxw)) / 2 - 2rem));
+    top: 0; height: 100vh; width: 2px; z-index: 3; pointer-events: none;
+  }
+  .gd-spine svg { width: 100%; height: 100%; overflow: visible; }
+  .gd-spine__path { fill: none; stroke: var(--olive); stroke-width: 1.2; opacity: .5; vector-effect: non-scaling-stroke; }
+
+  .gd-index {
+    display: grid; position: fixed; right: clamp(.9rem, 2vw, 1.8rem); top: 50%;
+    z-index: 4; transform: translateY(-50%); gap: .5rem;
+  }
+  .gd-index__link {
+    display: flex; align-items: center; gap: .55rem; justify-content: flex-end;
+    text-decoration: none; color: var(--text-subtle);
+    font-size: .56rem; letter-spacing: .16em; text-transform: uppercase;
+    transition: color .35s var(--ease);
+  }
+  .gd-index__label { opacity: 0; transform: translateX(5px); transition: opacity .35s var(--ease), transform .35s var(--ease); }
+  .gd-index__dot { width: 4px; height: 4px; border-radius: 50%; flex: none; background: currentColor; transition: scale .35s var(--ease); }
+  .gd-index__link.is-on { color: var(--olive); }
+  .gd-index__link.is-on .gd-index__dot { scale: 2; }
+  .gd-index__link.is-on .gd-index__label,
+  .gd-index__link:hover .gd-index__label,
+  .gd-index__link:focus-visible .gd-index__label { opacity: 1; transform: none; }
 }
