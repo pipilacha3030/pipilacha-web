@@ -13,6 +13,7 @@ const {
   description,
   ogImage = '/assets/img/og.jpg', // imagen al compartir el enlace: los dos chefs en El Retiro
   schema,          // JSON-LD opcional por página (string ya serializado)
+  noindex = false, // páginas privadas (dossieres que se pasan por DM): fuera del índice
 } = Astro.props;
 
 // Idioma y ruta canónica ES se deducen de la URL (las páginas /en/ no pasan nada)
@@ -205,7 +206,7 @@ const graphJson = JSON.stringify({ "@context": "https://schema.org", "@graph": g
   <meta property="og:url" content={canonical} />
   <!-- max-image-preview:large: Google Discover y resultados de imagen pueden usar
        las fotos a tamaño completo — la galería y los platos son el gancho visual -->
-  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
   <meta name="theme-color" content="#F4EFE6" />
 
   <meta name="twitter:card" content="summary_large_image" />

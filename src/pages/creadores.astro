@@ -1,366 +1,518 @@
 ---
 import Base from '../layouts/Base.astro';
-import { getImage } from 'astro:assets';
+import { flores, menuNombre } from '../data/menu.js';
 
-const title = 'Pipilacha · Dossier para creadores';
-const description = 'Guía para crear contenido sobre la cocina de flores. 32 flores, 15 pases, una sola investigación.';
+/* Dossier privado que Arán y Noé pasan por DM a creadores antes de que vengan.
+   Los pases y las flores salen de src/data/menu.js: al cambiar de carta, esta
+   página se actualiza sola y no puede discrepar del menú real. */
+
+// Los pases que mejor se cuentan en vídeo. El orden es el del menú.
+const bleed = {
+  higo: {
+    n: '10', name: 'Higo a la brasa con helado de saúco',
+    hook: 'El higo se marca a la brasa y llega negro. El saúco entra frío, floral y ligeramente vinoso. Te lo comes antes de que te expliquen qué es.',
+    img: 'cr-higo', alt: 'Higo a la brasa con helado de saúco, servido en plato negro',
+  },
+  vieiras: {
+    n: '11', name: 'Vieiras shiso-dalias',
+    hook: 'El shiso pica en verde; el pétalo de dalia endulza el yodo de la vieira. Dos flores tirando en direcciones opuestas dentro del mismo plato.',
+    img: 'cr-vieiras', alt: 'Vieiras con shiso y pétalos de dalia',
+  },
+};
+
+const duoA = [
+  { n: '06', name: 'Mojito entre borrajas', hook: 'La flor de borraja lleva menta y lima a un bocado que recuerda al mojito sin serlo. Llega con pinzas, flor a flor.', img: 'cr-mojito', alt: 'Mojito entre borrajas, con la flor colocada con pinzas' },
+  { n: '08', name: 'Ajoblanco con capuchinas', hook: 'La capuchina pica como un rábano suave. Cae sobre el ajoblanco frío y lo despierta entero.', img: 'cr-ajoblanco', alt: 'Ajoblanco con capuchinas y hojas de capuchina' },
+];
+
+const duoB = [
+  { n: '09', name: 'Fusión tomate-hinojo', hook: 'Tomate maduro y flor de hinojo cruzan el anís con el dulzor en el mismo bocado. Servido sobre piedra.', img: 'cr-tomate', alt: 'Fusión de tomate y flor de hinojo sobre piedra' },
+  { n: '13', name: 'Codorniz y flores ácidas', hook: 'Las flores ácidas cortan la grasa de la codorniz sin que haga falta una gota de vinagre.', img: 'cr-codorniz', alt: 'Codorniz con flores ácidas sobre jugo reducido' },
+];
+
+// Campo tipográfico de las 32 flores: el tamaño varía de forma determinista
+// (no aleatoria: si no, cada build cambiaría el HTML) para que lea a jardín
+// y no a lista.
+const escala = (i) => (i % 7 === 0 ? 'xl' : i % 3 === 0 ? 'lg' : i % 5 === 0 ? 'sm' : 'md');
 ---
 
-<Base title={title} description={description}>
-<style>
-  .hero-creadores { min-height: 80svh; display: flex; flex-direction: column; justify-content: center; padding-top: clamp(3.5rem, 12vh, 6rem); padding-bottom: 3.2rem; position: relative; overflow: hidden; }
-  .hero-creadores__bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-  .hero-creadores__bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 90% at 78% 12%, rgba(100, 93, 59, 0.22), transparent 55%), radial-gradient(90% 70% at 8% 100%, rgba(49, 51, 31, 0.5), transparent 60%); }
-  .hero-creadores__inner { position: relative; z-index: 2; max-width: 1180px; margin: 0 auto; width: 100%; padding: 0 var(--pad); }
-  .hero-creadores .eyebrow { opacity: 0; transform: translateY(14px); transition: opacity 0.9s var(--ease) 0.1s, transform 0.9s var(--ease) 0.1s; }
-  .hero-creadores__title { font-family: var(--serif); font-size: clamp(3.4rem, 15vw, 12rem); line-height: 0.9; letter-spacing: -0.02em; margin: 0.45em 0 0.32em; color: var(--cloud); opacity: 0; transform: translateY(30px); transition: opacity 1.1s var(--ease) 0.28s, transform 1.1s var(--ease) 0.28s; }
-  .hero-creadores__sub { font-size: clamp(1.05rem, 2.6vw, 1.6rem); color: var(--cream-dim); font-weight: 300; max-width: 34ch; line-height: 1.45; opacity: 0; transform: translateY(18px); transition: opacity 1s var(--ease) 0.5s, transform 1s var(--ease) 0.5s; }
-  .hero-creadores__sub b { color: var(--cream); font-weight: 400; }
-  .loaded .hero-creadores .eyebrow, .loaded .hero-creadores__title, .loaded .hero-creadores__sub { opacity: 1; transform: none; }
+<Base
+  title="Pipilacha · Dossier para creadores"
+  description="Lo que hay que saber antes de contar Pipilacha: los pases que se cuentan solos, las 32 flores de la carta y cómo se ve la casa."
+  ogImage="/assets/img/cr-hero.jpg"
+  noindex={true}
+>
 
-  .stmt-creadores { padding-top: clamp(5rem, 15vh, 11rem); padding-bottom: clamp(5rem, 15vh, 11rem); }
-  .stmt-creadores__wrap { max-width: 1180px; margin: 0 auto; padding: 0 var(--pad); }
-  .stmt-creadores__big { font-family: var(--serif); font-size: clamp(1.8rem, 6vw, 6rem); line-height: 1.05; letter-spacing: -0.015em; margin: 1.6rem 0 1.8rem; max-width: 16ch; color: var(--cloud); font-weight: 400; }
-  .stmt-creadores__big em { font-style: normal; color: var(--oat); font-weight: 400; }
-  .stmt-creadores__body { max-width: 52ch; font-size: clamp(1.02rem, 2.2vw, 1.3rem); color: var(--cream-dim); line-height: 1.65; }
-
-  .numbers-creadores { border-top: 1px solid var(--olive-line); }
-  .numbers-creadores__head { max-width: 1180px; margin: 0 auto 3rem; padding: 0 var(--pad); }
-  .numbers-creadores__grid { max-width: 1180px; margin: 0 auto; padding: 0 var(--pad); display: grid; grid-template-columns: 1fr; gap: 0; }
-  .stat-creadores { padding: 1.8rem 0; border-top: 1px solid var(--olive-line); display: grid; grid-template-columns: auto 1fr; gap: 1.2rem; align-items: baseline; }
-  .stat-creadores:first-child { border-top: none; }
-  .stat-creadores__num { font-family: var(--serif); font-size: clamp(2.4rem, 11vw, 6.5rem); line-height: 0.9; color: var(--cloud); font-variant-numeric: tabular-nums; min-width: max-content; }
-  .stat-creadores__num .unit { font-size: 0.32em; color: var(--oat); margin-left: 0.1em; }
-  .stat-creadores__txt { padding-top: 0.4rem; }
-  .stat-creadores__txt b { font-family: var(--serif); font-size: 1.15rem; color: var(--cream); display: block; margin-bottom: 0.25rem; font-weight: 400; }
-  .stat-creadores__txt span { color: var(--cream-dim); font-size: 0.98rem; }
-
-  .founders-creadores { background: var(--cream); color: var(--moss); padding: clamp(4.5rem, 12vh, 9rem) var(--pad); }
-  .founders-creadores .eyebrow { color: var(--olive); }
-  .founders-creadores .eyebrow::before { background: var(--olive); }
-  .founders-creadores__wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 2.6rem; align-items: center; }
-  .founders-creadores__title { font-family: var(--serif); font-size: clamp(2.6rem, 8vw, 5rem); color: var(--obsidian); margin: 1.1rem 0 0.2rem; line-height: 1.04; }
-  .founders-creadores__body { max-width: 44ch; font-size: clamp(1.05rem, 2.3vw, 1.35rem); color: #4a4733; line-height: 1.65; }
-  .founders-creadores__body b { color: var(--moss); font-weight: 600; }
-  .founders-creadores__photo { aspect-ratio: 4 / 5; position: relative; overflow: hidden; background: radial-gradient(120% 120% at 30% 20%, rgba(213, 205, 188, 0.5), transparent 60%), linear-gradient(160deg, #ece5d6, #ded4c1); border: 1px solid rgba(100, 93, 59, 0.25); border-radius: 2px; }
-  .founders-creadores__photo img { width: 100%; height: 100%; object-fit: cover; }
-
-  .dishes-creadores { padding: clamp(4.5rem, 12vh, 9rem) var(--pad); }
-  .dishes-creadores__head { max-width: 1180px; margin: 0 auto 3.4rem; }
-  .dishes-creadores__intro { margin-top: 1.3rem; }
-  .dishlist-creadores { max-width: 1180px; margin: 0 auto; display: grid; gap: clamp(2.2rem, 5vw, 4rem); }
-  .dish-creadores { display: grid; gap: 1.3rem; }
-  .dish-creadores__photo { aspect-ratio: 4 / 5; position: relative; overflow: hidden; background: linear-gradient(180deg, #16160f, #0a0a06); border: 1px solid var(--olive-line); border-radius: 2px; }
-  .dish-creadores__photo img { width: 100%; height: 100%; object-fit: cover; }
-  .dish-creadores__meta { display: flex; flex-direction: column; gap: 0.55rem; }
-  .dish-creadores__idx { font-size: 0.72rem; letter-spacing: 0.28em; color: var(--olive); text-transform: uppercase; }
-  .dish-creadores__name { font-family: var(--serif); font-size: clamp(1.5rem, 4.5vw, 2.15rem); color: var(--cloud); line-height: 1.05; }
-  .dish-creadores__hook { color: var(--cream-dim); font-size: 1.02rem; max-width: 36ch; }
-
-  .field-creadores { padding-top: clamp(5rem, 14vh, 10rem); padding-bottom: clamp(5rem, 14vh, 10rem); padding-left: var(--pad); padding-right: var(--pad); overflow: hidden; }
-  .field-creadores__head { max-width: 1180px; margin: 0 auto 3.2rem; }
-  .field-creadores__big { font-family: var(--serif); font-size: clamp(2.4rem, 8vw, 5.6rem); color: var(--cloud); margin-top: 1rem; }
-  .field-creadores__big span { color: var(--oat); }
-  .flowers-creadores { max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 0.35em 1.1em; font-family: var(--serif); font-size: clamp(1.15rem, 3.4vw, 2.35rem); line-height: 1.35; color: var(--cream-dim); }
-  .flowers-creadores b { font-weight: 400; color: var(--cream); position: relative; white-space: nowrap; transition: color 0.4s var(--ease); }
-  .flowers-creadores b::after { content: "·"; color: var(--olive); margin-left: 1.1em; }
-  .flowers-creadores b:last-child::after { content: ""; }
-  .flowers-creadores b:hover { color: var(--oat); }
-
-  .howto-creadores { background: var(--cream); color: var(--moss); padding: clamp(4.5rem, 12vh, 9rem) var(--pad); }
-  .howto-creadores__head { max-width: 1180px; margin: 0 auto 3rem; }
-  .howto-creadores__title { font-family: var(--serif); font-size: clamp(2.6rem, 8vw, 5rem); color: var(--obsidian); margin: 1.1rem 0; line-height: 1.04; }
-  .angles-creadores { max-width: 1180px; margin: 0 auto 3.6rem; display: grid; gap: 1.4rem; }
-  .angle-creadores { border-top: 1px solid rgba(100, 93, 59, 0.3); padding-top: 1.4rem; }
-  .angle-creadores h3 { font-family: var(--serif); font-size: 1.5rem; color: var(--obsidian); margin-bottom: 0.5rem; }
-  .angle-creadores p { color: #4a4733; max-width: 52ch; font-size: 1.02rem; line-height: 1.6; }
-
-  .sayblock-creadores { max-width: 1180px; margin: 0 auto; display: grid; gap: 2.4rem; }
-  .say-creadores h4, .voice-creadores h4 { font-family: var(--sans); font-weight: 600; font-size: 0.72rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--olive); margin-bottom: 1.1rem; }
-  .say-creadores ul { list-style: none; display: grid; gap: 0.7rem; }
-  .say-creadores li { font-family: var(--serif); font-size: clamp(1.2rem, 3.4vw, 1.8rem); color: var(--obsidian); line-height: 1.15; padding-left: 1.4rem; position: relative; }
-  .say-creadores li::before { content: "\201C"; position: absolute; left: 0; top: 0.05em; color: var(--olive); font-size: 1.4em; }
-
-  .voice-creadores ul { list-style: none; display: grid; gap: 1rem; }
-  .voice-creadores li { color: #4a4733; font-size: 1.05rem; padding-left: 1.3rem; position: relative; max-width: 52ch; }
-  .voice-creadores li::before { content: "\2192"; position: absolute; left: 0; color: var(--olive); }
-  .voice-creadores li b { color: var(--moss); font-weight: 600; }
-
-  .aes-creadores { padding: clamp(4.5rem, 12vh, 9rem) var(--pad); }
-  .aes-creadores__head { max-width: 1180px; margin: 0 auto 2.8rem; }
-  .swatches-creadores { max-width: 1180px; margin: 0 auto 3.4rem; display: flex; flex-wrap: wrap; gap: 0.9rem; }
-  .sw { display: flex; flex-direction: column; gap: 0.5rem; }
-  .sw i { width: clamp(58px, 15vw, 96px); height: clamp(58px, 15vw, 96px); display: block; border-radius: 2px; border: 1px solid rgba(213, 205, 188, 0.18); }
-  .sw small { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--oat); }
-  .sw em { font-style: normal; font-size: 0.66rem; color: var(--olive); letter-spacing: 0.06em; }
-
-  .shots-creadores { max-width: 1180px; margin: 0 auto; display: grid; gap: 0.9rem; }
-  .shots-creadores li { list-style: none; padding-left: 1.5rem; position: relative; color: var(--cream-dim); font-size: 1.05rem; }
-  .shots-creadores li::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 8px; height: 8px; border: 1px solid var(--olive); border-radius: 50%; }
-  .shots-creadores li b { color: var(--cream); font-weight: 400; }
-
-  .tagline-creadores { max-width: 1180px; margin: 2.6rem auto 0; font-family: var(--serif); font-size: clamp(1.3rem, 4vw, 2rem); color: var(--oat); }
-
-  .practical-creadores { border-top: 1px solid var(--olive-line); padding: clamp(4.5rem, 12vh, 9rem) var(--pad); }
-  .pcard-creadores { max-width: 1180px; margin: 0 auto; }
-  .prow-creadores { display: grid; grid-template-columns: auto 1fr; gap: 1.4rem; align-items: baseline; padding: 1.5rem 0; border-top: 1px solid var(--olive-line); }
-  .prow-creadores:first-child { border-top: none; }
-  .prow-creadores dt { font-size: 0.72rem; letter-spacing: 0.26em; text-transform: uppercase; color: var(--olive); padding-top: 0.35rem; }
-  .prow-creadores dd { font-family: var(--serif); font-size: clamp(1.2rem, 3.6vw, 1.7rem); color: var(--cloud); line-height: 1.2; }
-  .prow-creadores dd span { display: block; font-family: var(--sans); font-size: 0.9rem; color: var(--cream-dim); margin-top: 0.3rem; letter-spacing: 0; }
-  .prow-creadores a { text-decoration: none; border-bottom: 1px solid var(--olive); }
-
-  .closing-creadores { min-height: 82vh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; position: relative; padding: 0 var(--pad); }
-  .closing-creadores__bg { position: absolute; inset: 0; z-index: 0; opacity: 0.35; pointer-events: none; }
-  .closing-creadores__bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(90% 80% at 80% 40%, rgba(100, 93, 59, 0.25), transparent 60%); }
-  .closing-creadores__inner { position: relative; z-index: 2; max-width: 1180px; margin: 0 auto; width: 100%; }
-  .closing-creadores__big { font-family: var(--serif); font-size: clamp(2.6rem, 9vw, 7rem); line-height: 0.98; color: var(--cloud); max-width: 16ch; letter-spacing: -0.015em; }
-  .closing-creadores__sub { margin-top: 1.3rem; font-size: clamp(1.1rem, 2.6vw, 1.5rem); color: var(--oat); }
-  .closing-creadores__mark { font-family: var(--serif); font-size: clamp(2rem, 7vw, 4rem); color: var(--olive); margin-top: 3.5rem; letter-spacing: 0.02em; }
-
-  @media (min-width: 720px) {
-    .stat-creadores { grid-template-columns: minmax(180px, 26%) 1fr; gap: 2.4rem; }
-    .founders-creadores__wrap { grid-template-columns: 1.1fr 1fr; gap: 4rem; }
-    .dish-creadores { grid-template-columns: 1fr 1fr; align-items: center; gap: 3rem; }
-    .dish-creadores:nth-child(even) .dish-creadores__photo { order: 2; }
-    .angles-creadores { grid-template-columns: repeat(3, 1fr); gap: 2.4rem; }
-    .sayblock-creadores { grid-template-columns: 1.1fr 1fr; gap: 4rem; align-items: start; }
-    .prow-creadores { grid-template-columns: minmax(160px, 22%) 1fr; }
-  }
-  @media (min-width: 1024px) {
-    .numbers-creadores__grid { grid-template-columns: repeat(2, 1fr); column-gap: 4.5rem; }
-    .stat-creadores, .stat-creadores:nth-child(2) { border-top: 1px solid var(--olive-line); }
-  }
-</style>
-
-<!-- HERO -->
-<header class="hero-creadores">
-  <div class="hero-creadores__bg"></div>
-  <div class="hero-creadores__inner">
-    <span class="eyebrow" data-reveal>Dossier para creadores · Madrid</span>
-    <h1 class="hero-creadores__title" data-reveal>Pipilacha</h1>
-    <p class="hero-creadores__sub" data-reveal>El jardín que no para de moverse. Cocina donde la flor está <b>en el centro del plato</b>, no en el borde.</p>
+<!-- 1 · APERTURA A SANGRE — el plato más oscuro de la carta ocupa la pantalla
+     entera. El titular entra con cortina; la foto lleva parallax. La página
+     empieza dentro de un plato, no dentro de una portada. -->
+<section class="cr-open">
+  <div class="cr-open__media" data-parallax="0.12">
+    <!-- dirección de arte: en móvil el recorte 0.46 ya viene hecho (cr-hero-m),
+         si no el navegador recortaría el 4:5 a una tira vertical y la flor-cuenco
+         dejaría de leerse -->
+    <img src="/assets/img/cr-hero.jpg"
+         srcset="/assets/img/cr-hero-m.jpg 900w, /assets/img/cr-hero.jpg 1800w"
+         sizes="100vw" width="1800" height="2250"
+         fetchpriority="high" decoding="async"
+         alt="Farolillo de atún y orégano: el tartar servido dentro de la propia flor" />
+    <span class="cr-open__veil" aria-hidden="true"></span>
   </div>
-</header>
-
-<!-- NOMBRE -->
-<section class="stmt-creadores">
-  <div class="stmt-creadores__wrap">
-    <span class="eyebrow" data-reveal>El nombre</span>
-    <h2 class="stmt-creadores__big" data-reveal>Pipilacha es <em>la libélula.</em></h2>
-    <p class="stmt-creadores__body" data-reveal>Así la llaman en Centroamérica. El insecto que vuela sin parar — como la cocina, que muta cada semana de menú. El primer bocado es la libélula: alas de flor de guisante mariposa, azul intenso, y flor eléctrica que hace cosquillas en la lengua. Antes de probar el segundo pase, ya entendiste de qué va.</p>
+  <div class="cr-open__content">
+    <p class="eyebrow reveal">Dossier para creadores</p>
+    <h1 class="cr-open__title reveal-head">La flor no decora.<br>Es el plato.</h1>
+    <p class="cr-open__sub reveal">Todo lo que necesitas saber antes de contarlo.</p>
+    <p class="cr-open__credit reveal">Arriba · Pase 05, farolillo de atún y orégano. El cuenco es la flor.</p>
   </div>
 </section>
 
-<!-- IDEA -->
-<section class="stmt-creadores">
-  <div class="stmt-creadores__wrap">
-    <span class="eyebrow" data-reveal>La idea</span>
-    <h2 class="stmt-creadores__big" data-reveal>La flor no es un adorno. Es <em>el ingrediente.</em></h2>
-    <p class="stmt-creadores__body" data-reveal>Cada plato se construye sobre una flor: su sabor, su textura, lo que sucede cuando la cocinas. La capuchina sabe a mostaza. La flor de tila es verde y crujiente. La del hibisco es ácida. No investigas flores porque sean bonitas — investigas porque no sabes qué pueden hacer adentro de un plato. No hay otro restaurante en el mundo construido entero sobre esto.</p>
+<!-- 2 · MANIFIESTO — crema, texto solo. Después de la imagen a sangre, aire.
+     Entra línea a línea (SplitText). -->
+<section class="cr-manifesto">
+  <div class="cr-manifesto__inner">
+    <p class="cr-manifesto__p" data-split-lines>Pipilacha es la libélula: así la llaman en Centroamérica. El insecto que no para de volar, como una carta que se rehace entera cada estación.</p>
+    <p class="cr-manifesto__p" data-split-lines>Cada plato se levanta sobre una flor. Su sabor, su textura, lo que hace al cocinarla. La capuchina pica como un rábano. La flor eléctrica duerme la lengua. El farolillo es ácido y sirve de cuenco.</p>
+    <p class="cr-manifesto__p" data-split-lines>No es un restaurante con flores encima. Es el único construido entero sobre ellas.</p>
   </div>
 </section>
 
-<!-- NÚMEROS -->
-<section class="numbers-creadores">
-  <div class="numbers-creadores__head"><span class="eyebrow" data-reveal>Lo que puedes contar</span></div>
-  <div class="numbers-creadores__grid">
-    <div class="stat-creadores" data-reveal>
-      <div class="stat-creadores__num" data-count="16">16</div>
-      <div class="stat-creadores__txt"><b>asientos por servicio</b><span>Entrar aquí es difícil, y es a propósito.</span></div>
-    </div>
-    <div class="stat-creadores" data-reveal>
-      <div class="stat-creadores__num" data-count="15">15</div>
-      <div class="stat-creadores__txt"><b>pases</b><span>Un menú que se rehace entero cada estación.</span></div>
-    </div>
-    <div class="stat-creadores" data-reveal>
-      <div class="stat-creadores__num" data-count="32">32</div>
-      <div class="stat-creadores__txt"><b>flores</b><span>En el menú de verano solo. Cada una con su técnica.</span></div>
-    </div>
-    <div class="stat-creadores" data-reveal>
-      <div class="stat-creadores__num"><span>85</span><span class="unit">€</span></div>
-      <div class="stat-creadores__txt"><b>el menú completo</b><span>Quince pases. Sorprende el precio cuando pruebas.</span></div>
-    </div>
+<!-- 3 · CIFRAS — banda oscura, compacta y tabular. Corte de ritmo entre dos
+     bloques grandes: aquí todo es pequeño y denso a propósito. -->
+<section class="cr-cifras" data-reveal-stagger>
+  <div class="cr-cifras__grid">
+    <div class="cr-cifra reveal"><span class="cr-cifra__n">16</span><span class="cr-cifra__t">asientos por servicio</span></div>
+    <div class="cr-cifra reveal"><span class="cr-cifra__n">15</span><span class="cr-cifra__t">pases</span></div>
+    <div class="cr-cifra reveal"><span class="cr-cifra__n">{flores.length}</span><span class="cr-cifra__t">flores en la carta</span></div>
+    <div class="cr-cifra reveal"><span class="cr-cifra__n">85<i>€</i></span><span class="cr-cifra__t">menú completo</span></div>
   </div>
 </section>
 
-<!-- CREADORES: ARÁN Y NOÉ -->
-<section class="founders-creadores">
-  <div class="founders-creadores__wrap">
-    <div>
-      <span class="eyebrow" data-reveal>Quiénes están detrás</span>
-      <h2 class="founders-creadores__title" data-reveal>Arán y Noé</h2>
-      <p class="founders-creadores__body" data-reveal>Cocineros formados en <b>Ramón Freixa, dos estrellas</b>, donde aprendieron a construir cada plato como si fuera un experimento. Abrieron Pipilacha para investigar una sola pregunta: qué puede hacer el sabor de una flor dentro de un plato. Dieciséis asientos. Dos servicios. Lo mínimo para que sea posible cocinar con atención.</p>
-    </div>
-    <div class="founders-creadores__photo" data-reveal>
-      <picture>
-        <source media="(max-width: 720px)" srcset="/assets/img/chef-1.webp" type="image/webp">
-        <source media="(max-width: 720px)" srcset="/assets/img/chef-1.jpg">
-        <source srcset="/assets/img/barra-aran-noe.webp" type="image/webp">
-        <img src="/assets/img/barra-aran-noe.jpg" alt="Arán y Noé, cocineros de Pipilacha" />
-      </picture>
-    </div>
-  </div>
+<!-- 4 · LOS PASES — alterna plato a sangre (inmersión) con pares desalineados
+     (respiro). La segunda pieza de cada par baja para romper la retícula: es lo
+     que separa una composición editorial de una cuadrícula. -->
+<section class="cr-pases">
+  <header class="cr-pases__head">
+    <p class="eyebrow reveal">Lo que vas a probar</p>
+    <h2 class="cr-h2 reveal-head">{menuNombre}</h2>
+    <p class="cr-pases__lede reveal">Quince pases. Estos seis se cuentan solos.</p>
+  </header>
 </section>
 
-<!-- PLATOS DESTACADOS -->
-<section class="dishes-creadores">
-  <div class="dishes-creadores__head">
-    <span class="eyebrow" data-reveal>Lo que vas a probar</span>
-    <p class="dishes-creadores__intro lede" data-reveal>Menú de verano, "Solsticio Floral". Quince pases. Estos son los que se cuentan solos — la sorpresa y la exactitud en cada bocado.</p>
+<figure class="cr-bleed">
+  <div class="cr-bleed__media" data-parallax="0.10">
+    <img src={`/assets/img/${bleed.higo.img}.jpg`}
+         srcset="/assets/img/cr-higo-m.jpg 900w, /assets/img/cr-higo.jpg 1400w"
+         sizes="100vw" width="1400" height="1750"
+         loading="lazy" decoding="async" alt={bleed.higo.alt} />
+    <span class="cr-bleed__veil" aria-hidden="true"></span>
   </div>
-  <div class="dishlist-creadores">
-    <article class="dish-creadores" data-reveal>
-      <div class="dish-creadores__photo">
-        <img src="/assets/img/df-guisante.jpg" alt="Flor de guisante mariposa" />
+  <figcaption class="cr-bleed__copy reveal">
+    <span class="cr-pase__n">Pase {bleed.higo.n}</span>
+    <h3 class="cr-pase__name">{bleed.higo.name}</h3>
+    <p class="cr-pase__hook">{bleed.higo.hook}</p>
+  </figcaption>
+</figure>
+
+<section class="cr-duo">
+  {duoA.map((p) => (
+    <article class="cr-duo__item reveal">
+      <div class="cr-duo__media">
+        <img src={`/assets/img/${p.img}.jpg`} sizes="(min-width:760px) 50vw, 100vw" width="1600" height="2000" loading="lazy" decoding="async" alt={p.alt} />
       </div>
-      <div class="dish-creadores__meta">
-        <span class="dish-creadores__idx">Pase 01 · Entrada</span>
-        <h3 class="dish-creadores__name">La libélula</h3>
-        <p class="dish-creadores__hook">Flor de guisante mariposa con alas de flor eléctrica. Te las comes con pinzas. Azul intenso y sabor que hace cosquillas — es el primer impacto, la promesa de todo lo que viene.</p>
+      <span class="cr-pase__n">Pase {p.n}</span>
+      <h3 class="cr-pase__name">{p.name}</h3>
+      <p class="cr-pase__hook">{p.hook}</p>
+    </article>
+  ))}
+</section>
+
+<figure class="cr-bleed cr-bleed--right">
+  <div class="cr-bleed__media" data-parallax="0.10">
+    <img src={`/assets/img/${bleed.vieiras.img}.jpg`}
+         srcset="/assets/img/cr-vieiras-m.jpg 900w, /assets/img/cr-vieiras.jpg 1600w"
+         sizes="100vw" width="1600" height="2000"
+         loading="lazy" decoding="async" alt={bleed.vieiras.alt} />
+    <span class="cr-bleed__veil" aria-hidden="true"></span>
+  </div>
+  <figcaption class="cr-bleed__copy reveal">
+    <span class="cr-pase__n">Pase {bleed.vieiras.n}</span>
+    <h3 class="cr-pase__name">{bleed.vieiras.name}</h3>
+    <p class="cr-pase__hook">{bleed.vieiras.hook}</p>
+  </figcaption>
+</figure>
+
+<section class="cr-duo">
+  {duoB.map((p) => (
+    <article class="cr-duo__item reveal">
+      <div class="cr-duo__media">
+        <img src={`/assets/img/${p.img}.jpg`} sizes="(min-width:760px) 50vw, 100vw" width="1600" height="2000" loading="lazy" decoding="async" alt={p.alt} />
+      </div>
+      <span class="cr-pase__n">Pase {p.n}</span>
+      <h3 class="cr-pase__name">{p.name}</h3>
+      <p class="cr-pase__hook">{p.hook}</p>
+    </article>
+  ))}
+</section>
+
+<!-- 5 · TEXTURA — banda de atmósfera pura: un detalle a sangre y una sola
+     línea encima. Sirve de respiración entre los platos y los dos chefs. -->
+<section class="cr-textura">
+  <div class="cr-textura__media" data-parallax="0.14">
+    <img src="/assets/img/cr-textura.jpg"
+         srcset="/assets/img/cr-textura-m.jpg 900w, /assets/img/cr-textura.jpg 1800w"
+         sizes="100vw" width="1800" height="2250" loading="lazy" decoding="async"
+         alt="Pétalos de capuchina y hojas sobre crema de ajoblanco" />
+    <span class="cr-textura__veil" aria-hidden="true"></span>
+  </div>
+  <p class="cr-textura__line reveal">Ninguna flor está ahí para la foto.<br>Todas se comen.</p>
+</section>
+
+<!-- 6 · LOS DOS — díptico. Retratos de julio de 2026 en la propia barra.
+     Reacciona al hover/foco como el díptico de Conócenos. -->
+<section class="cr-duo-chefs" aria-label="Arán y Noé, los dos fundadores">
+  <header class="cr-duo-chefs__head">
+    <p class="eyebrow reveal">Quiénes están detrás</p>
+    <h2 class="cr-h2 cr-h2--dark reveal-head">Arán y Noé</h2>
+    <p class="cr-duo-chefs__lede reveal">Se formaron en <b>Ramón Freixa, dos estrellas</b>. Montaron Pipilacha para investigar una sola cosa: qué puede hacer el sabor de una flor dentro de un plato. Dieciséis asientos son los que caben si quieres cocinar mirando a quien come.</p>
+  </header>
+  <div class="cr-duo-chefs__grid">
+    <article class="cr-chef reveal" tabindex="0">
+      <img src="/assets/img/cr-aran.jpg" width="1200" height="1600" loading="lazy" decoding="async" alt="Arán Rodrigo, cofundador y chef, en la barra de Pipilacha" />
+      <div class="cr-chef__copy">
+        <p class="cr-chef__name">Arán Rodrigo</p>
+        <p class="cr-chef__line">Cofundador &amp; chef</p>
       </div>
     </article>
-
-    <article class="dish-creadores" data-reveal>
-      <div class="dish-creadores__photo">
-        <img src="/assets/img/df-esparrago.jpg" alt="Espárrago y flores" />
-      </div>
-      <div class="dish-creadores__meta">
-        <span class="dish-creadores__idx">Pase 05 · Luz</span>
-        <h3 class="dish-creadores__name">Espárrago blanco y flor de hinojo</h3>
-        <p class="dish-creadores__hook">La cocción es lo que importa. Espárrago tierno, emulsionado con flor de hinojo. Delicadeza pura — aquí ya supiste que cada ingrediente en el menú está ahí por una razón.</p>
-      </div>
-    </article>
-
-    <article class="dish-creadores" data-reveal>
-      <div class="dish-creadores__photo">
-        <img src="/assets/img/df-mandarina.jpg" alt="Mandarina y flor de tagete" />
-      </div>
-      <div class="dish-creadores__meta">
-        <span class="dish-creadores__idx">Pase 08 · Cambio</span>
-        <h3 class="dish-creadores__name">Mandarina y flor de tagete</h3>
-        <p class="dish-creadores__hook">Ácido amargo de la flor contra la dulzura del cítrico. La mandarina se cocina con la flor: no es suma, es transformación. Un solo bocado que explica todo sobre cómo cocinar flores.</p>
-      </div>
-    </article>
-
-    <article class="dish-creadores" data-reveal>
-      <div class="dish-creadores__photo">
-        <picture>
-          <source media="(max-width: 720px)" srcset="/assets/img/df-vieira.webp" type="image/webp">
-          <source media="(max-width: 720px)" srcset="/assets/img/df-vieira.jpg">
-          <img src="/assets/img/df-vieira.jpg" alt="Vieira y flores" />
-        </picture>
-      </div>
-      <div class="dish-creadores__meta">
-        <span class="dish-creadores__idx">Pase 11 · Centro</span>
-        <h3 class="dish-creadores__name">Vieira y flor de caléndula</h3>
-        <p class="dish-creadores__hook">La flor de caléndula tiene sabor a pólvora amarga. La vieira, ternura pura. Juntas, crean un plato sobre la tensión — qué pasa cuando lo delicado choca con lo amargo. Esa es la cocina de Pipilacha.</p>
+    <article class="cr-chef reveal" tabindex="0">
+      <img src="/assets/img/cr-noe.jpg" width="1200" height="1600" loading="lazy" decoding="async" alt="Noé David, cofundador y chef, en la barra de Pipilacha" />
+      <div class="cr-chef__copy">
+        <p class="cr-chef__name">Noé David</p>
+        <p class="cr-chef__line">Cofundador &amp; chef</p>
       </div>
     </article>
   </div>
 </section>
 
-<!-- 32 FLORES -->
-<section class="field-creadores">
-  <div class="field-creadores__head">
-    <span class="eyebrow" data-reveal>El menú, en flores</span>
-    <h2 class="field-creadores__big" data-reveal>Un solo menú. <span>32 flores.</span></h2>
-  </div>
-  <div class="flowers-creadores" id="flowers" data-reveal>
-    <b>guisante mariposa</b><b>flor eléctrica</b><b>margarita</b><b>hisopo</b><b>albahaca</b><b>ajo</b><b>oxalis</b><b>tilo</b><b>aliso</b><b>anís estrellado</b><b>geranio</b><b>farolillo</b><b>orégano</b><b>kalanchoe</b><b>hierbabuena</b><b>borraja</b><b>lavanda</b><b>aciano</b><b>amapola</b><b>capuchina</b><b>hinojo</b><b>lantana</b><b>saúco</b><b>dalia</b><b>phlox estrellado</b><b>tagete</b><b>caléndula</b><b>hibisco</b><b>begonia</b><b>crisantemo</b><b>regaliz azteca</b><b>cosmos</b>
-  </div>
-</section>
-
-<!-- CÓMO CONTARLO -->
-<section class="howto-creadores">
-  <div class="howto-creadores__head">
-    <span class="eyebrow" data-reveal>Cómo contarlo bien</span>
-    <h2 class="howto-creadores__title" data-reveal>Para tu vídeo o foto</h2>
-  </div>
-
-  <div class="angles-creadores">
-    <div class="angle-creadores" data-reveal>
-      <h3>La flor como ingrediente</h3>
-      <p>Muestra cómo la flor se cocina — no cómo se ve. La capuchina que sabe a mostaza, la flor eléctrica que pica. El sabor sorprende. Di eso primero, la belleza viene después.</p>
-    </div>
-    <div class="angle-creadores" data-reveal>
-      <h3>Dieciséis asientos</h3>
-      <p>Esto no es un número casual. Significa que eres uno de dieciséis, no de cincuenta. Que los cocineros te ven comer. Que la cocina es pequeña y exacta. Es un lujo silencioso.</p>
-    </div>
-    <div class="angle-creadores" data-reveal>
-      <h3>La investigación nunca termina</h3>
-      <p>El menú cambia cada estación, a veces cada mes. No porque sea un concepto de restaurante cool — porque están constantemente experimentando qué más pueden hacer con flores. Eso es genuino.</p>
-    </div>
-  </div>
-
-  <div class="sayblock-creadores">
-    <div class="say-creadores" data-reveal>
-      <h4>Frases que enganchen</h4>
-      <ul>
-        <li>Aquí la flor no decora: es el plato.</li>
-        <li>32 flores en un solo menú.</li>
-        <li>La flor eléctrica hace cosquillas en la lengua.</li>
-        <li>Dieciséis asientos. Reservé con dos meses de antelación.</li>
-        <li>Cada flor tiene su sabor: la capuchina sabe a mostaza.</li>
-      </ul>
-    </div>
-    <div class="voice-creadores" data-reveal>
-      <h4>Habla como Pipilacha</h4>
-      <ul>
-        <li><b>Sé preciso:</b> di la flor y el plato — "capuchina con carne cruda", no "cocina botánica".</li>
-        <li><b>Cuenta lo que probaste,</b> no lo que imaginaste. El sabor es la noticia.</li>
-        <li><b>Nombra a Arán y Noé.</b> No es un restaurante, es lo que dos cocineros hacen. Se nota en cada plato.</li>
-        <li><b>No uses la palabra "experiencia".</b> Probaste una comida. Aprendiste sobre flores. Eso es todo.</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- ESTÉTICA -->
-<section class="aes-creadores">
-  <div class="aes-creadores__head">
-    <span class="eyebrow" data-reveal>La estética</span>
-    <h2 class="field-creadores__big" data-reveal>Cómo se ve Pipilacha</h2>
-  </div>
-
-  <div class="swatches-creadores" data-reveal>
-    <div class="sw"><i style="background:#0D0D0D"></i><small>Obsidiana</small><em>#0D0D0D</em></div>
-    <div class="sw"><i style="background:#31331F"></i><small>Musgo</small><em>#31331F</em></div>
-    <div class="sw"><i style="background:#645D3B"></i><small>Oliva</small><em>#645D3B</em></div>
-    <div class="sw"><i style="background:#D5CDBC"></i><small>Avena</small><em>#D5CDBC</em></div>
-    <div class="sw"><i style="background:#F4EFE6"></i><small>Crema</small><em>#F4EFE6</em></div>
-  </div>
-
-  <ul class="shots-creadores" data-reveal>
-    <li><b>Luz natural o tenue.</b> Nada de flash duro que borre los colores.</li>
-    <li><b>Primer plano del plato.</b> El color de la flor y su textura mandan.</li>
-    <li><b>Fondo oscuro — madera, piedra, mesa.</b> Deja respirar al plato.</li>
-    <li><b>Sin filtros saturados.</b> Los colores ya están ahí, son reales.</li>
-    <li><b>Si hay gente:</b> en acción comiendo, no posando. La naturalidad es el filtro.</li>
+<!-- 7 · EL CAMPO DE FLORES — las 32 de la carta como campo tipográfico de
+     tamaños desiguales. Sale de src/data/menu.js: no puede desincronizarse. -->
+<section class="cr-campo">
+  <header class="cr-campo__head">
+    <p class="eyebrow reveal">La carta, en flores</p>
+    <h2 class="cr-h2 reveal-head">{flores.length} en un solo menú</h2>
+  </header>
+  <!-- el contenedor NO lleva .reveal: reveal.js salta todo lo que esté dentro de
+       un [data-reveal-stagger] (closest() se incluye a sí mismo) y se quedaría
+       en opacity:0 para siempre. Anima solo a los hijos. -->
+  <ul class="cr-campo__list" data-reveal-stagger>
+    {flores.map((f, i) => <li class={`cr-flor cr-flor--${escala(i)} reveal`}>{f}</li>)}
   </ul>
-
-  <p class="tagline-creadores" data-reveal>Etiqueta @restaurante.pipilacha · Escríbeles directamente por DM.</p>
 </section>
 
-<!-- PRÁCTICO -->
-<section class="practical-creadores">
-  <dl class="pcard-creadores">
-    <div class="prow-creadores" data-reveal><dt>Dónde</dt><dd>C. del Azulejo, 2<span>Fuente del Berro, Madrid</span></dd></div>
-    <div class="prow-creadores" data-reveal><dt>Cuándo</dt><dd>Jueves a domingo<span>Dos servicios · 14:00 y 21:00</span></dd></div>
-    <div class="prow-creadores" data-reveal><dt>Formato</dt><dd>Menú de 15 pases · 85€<span>Vinos a maridaje, +60€</span></dd></div>
-    <div class="prow-creadores" data-reveal><dt>Aforo</dt><dd>16 por servicio<span>Barra de 8, mesas de 2 y 4</span></dd></div>
-    <div class="prow-creadores" data-reveal><dt>Tu reserva</dt><dd>Contacta por DM @restaurante.pipilacha<span>Diles que vienes a crear contenido</span></dd></div>
-    <div class="prow-creadores" data-reveal><dt>Instagram</dt><dd><a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">@restaurante.pipilacha</a></dd></div>
+<!-- 8 · CÓMO CONTARLO — la parte útil. Denso y pequeño a propósito: contrasta
+     con toda la imagen grande de arriba y se lee como una ficha de trabajo. -->
+<section class="cr-guia">
+  <header class="cr-guia__head">
+    <p class="eyebrow reveal">Cómo contarlo</p>
+    <h2 class="cr-h2 cr-h2--dark reveal-head">Para tu vídeo</h2>
+  </header>
+
+  <div class="cr-guia__cols">
+    <div class="cr-guia__col reveal">
+      <h3 class="cr-guia__h">Los tres ángulos</h3>
+      <dl class="cr-guia__dl">
+        <dt>El plato que no esperas</dt>
+        <dd>Enseña la forma antes que el nombre. Un cuenco que es una flor. Un higo que te comes antes de que te expliquen qué es.</dd>
+        <dt>Solo dieciséis</dt>
+        <dd>Dos servicios, dieciséis asientos. Es de los sitios de los que se presume por haber entrado.</dd>
+        <dt>Flores que saben</dt>
+        <dd>Di a qué sabe cada una. Que la capuchina pique a rábano sorprende mucho más que decir «lleva flores».</dd>
+      </dl>
+    </div>
+
+    <div class="cr-guia__col reveal">
+      <h3 class="cr-guia__h">Frases que enganchan</h3>
+      <ul class="cr-frases">
+        <li>Aquí la flor no decora: es el plato.</li>
+        <li>{flores.length} flores en un solo menú.</li>
+        <li>La flor eléctrica te duerme la lengua.</li>
+        <li>El cuenco era la flor. Me lo comí entero.</li>
+        <li>Dieciséis asientos. Reservé con semanas.</li>
+      </ul>
+
+      <h3 class="cr-guia__h cr-guia__h--sep">Habla como la casa</h3>
+      <ul class="cr-voz">
+        <li><b>Di la flor y el plato.</b> «Ajoblanco con capuchinas» dice más que «cocina botánica».</li>
+        <li><b>Cuenta lo que pasó en la mesa</b>, no «la experiencia».</li>
+        <li><b>Nombra a Arán y Noé.</b> Es una casa de dos personas y se nota en cada pase.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cr-mirada reveal">
+    <h3 class="cr-guia__h">Cómo se ve</h3>
+    <ul class="cr-mirada__list">
+      <li><b>Luz natural o tenue.</b> Nada de flash duro.</li>
+      <li><b>Primer plano cenital.</b> Casi todo se emplata para verse desde arriba.</li>
+      <li><b>Fondo de piedra o madera.</b> Deja respirar al plato.</li>
+      <li><b>Sin filtros saturados.</b> El color ya está ahí.</li>
+    </ul>
+    <ul class="cr-paleta" aria-label="Paleta de la casa">
+      <li><i style="background:#0D0D0D"></i><span>Obsidiana</span></li>
+      <li><i style="background:#31331F"></i><span>Musgo</span></li>
+      <li><i style="background:#645D3B"></i><span>Oliva</span></li>
+      <li><i style="background:#D5CDBC"></i><span>Avena</span></li>
+      <li><i style="background:#F4EFE6"></i><span>Crema</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- 9 · PRÁCTICO + CIERRE — ficha compacta y salida a sangre. -->
+<section class="cr-practico">
+  <dl class="cr-practico__dl" data-reveal-stagger>
+    <div class="cr-row reveal"><dt>Dónde</dt><dd>C. del Azulejo, 2<span>Fuente del Berro, Madrid</span></dd></div>
+    <div class="cr-row reveal"><dt>Cuándo</dt><dd>Jueves a domingo<span>Dos servicios · 14:00 y 21:00</span></dd></div>
+    <div class="cr-row reveal"><dt>Formato</dt><dd>15 pases · 85 €<span>Maridaje, +60 €</span></dd></div>
+    <div class="cr-row reveal"><dt>Aforo</dt><dd>16 por servicio<span>Barra, una mesa de cuatro y dos de dos</span></dd></div>
+    <div class="cr-row reveal"><dt>Escríbenos</dt><dd><a href="https://instagram.com/restaurante.pipilacha" target="_blank" rel="noopener">@restaurante.pipilacha</a><span>Cuéntanos qué quieres grabar y te cuadramos el servicio</span></dd></div>
   </dl>
 </section>
 
-<!-- CIERRE -->
-<section class="closing-creadores">
-  <div class="closing-creadores__bg"></div>
-  <div class="closing-creadores__inner">
-    <h2 class="closing-creadores__big" data-reveal>Antes de entrar, ya sabes de qué va.</h2>
-    <p class="closing-creadores__sub" data-reveal>Ahora ven a probarlo — y cuentaselo bien.</p>
-    <div class="closing-creadores__mark" data-reveal>Pipilacha</div>
-  </div>
+<section class="cr-cierre">
+  <p class="cr-cierre__big reveal-head">Antes de entrar,<br>ya sabes de qué va.</p>
+  <p class="cr-cierre__sub reveal">Ahora ven a probarlo.</p>
 </section>
+
+<style>
+  /* ============================================================
+     DOSSIER CREADORES · composición editorial
+     Reglas que la sostienen:
+     · contraste de escala — un titular enorme, pies de foto diminutos
+     · alternancia sangre / columna estrecha — inmersión y respiro
+     · asimetría — la segunda pieza de cada par baja, nunca se alinea
+     · densidad por bloques — imagen grande junto a ficha densa
+     Reutiliza el sistema del sitio: .reveal, .reveal-head, data-split-lines,
+     data-parallax, .eyebrow. Nada de animación propia.
+     ============================================================ */
+
+  .cr-h2{font-family:var(--serif);font-weight:400;line-height:1.02;letter-spacing:-.015em;
+         font-size:clamp(2.2rem,6.5vw,4.6rem);color:var(--cloud)}
+  .cr-h2--dark{color:var(--ink)}
+
+  /* pies de pase: diminutos frente al titular — el contraste de escala es
+     lo que hace que la foto mande */
+  .cr-pase__n{display:block;font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;
+              color:var(--accent-soft);margin-bottom:.75rem}
+  .cr-pase__name{font-family:var(--serif);font-weight:400;line-height:1.08;
+                 font-size:clamp(1.45rem,3.2vw,2.1rem);color:var(--cloud);margin-bottom:.6rem}
+  .cr-pase__hook{color:rgba(244,239,230,.72);font-size:1rem;line-height:1.6;max-width:34ch}
+
+  /* ---------- 1 · apertura a sangre ---------- */
+  .cr-open{position:relative;min-height:100svh;display:flex;align-items:flex-end;
+           overflow:clip;background:#0D0D0D}
+  .cr-open__media{position:absolute;inset:-8% 0;z-index:0}
+  .cr-open__media img{width:100%;height:100%;object-fit:cover;object-position:50% 46%}
+  /* el velo solo oscurece donde hay letra: arriba lo justo para la nav, abajo
+     una rampa que muere en el fondo de la sección. En medio, la foto limpia. */
+  /* la portada es una foto CLARA (cuenco blanco, piedra pálida) y el texto va en
+     crema: la rampa de abajo tiene que ser franca o el titular no se lee */
+  .cr-open__veil{position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(13,13,13,.5) 0%,rgba(13,13,13,.1) 22%,
+               rgba(13,13,13,0) 38%,rgba(13,13,13,.38) 56%,rgba(13,13,13,.74) 72%,
+               rgba(13,13,13,.94) 88%,#0D0D0D 100%)}
+  .cr-open__content{position:relative;z-index:1;width:100%;
+                    padding:0 var(--gutter) clamp(2.6rem,6vh,4.5rem)}
+  .cr-open__content .eyebrow{color:var(--accent-soft)}
+  .cr-open__title{font-family:var(--serif);font-weight:400;color:var(--cloud);
+    font-size:clamp(2.5rem,7.6vw,6.4rem);line-height:.96;letter-spacing:-.03em;
+    margin:.3em 0 .38em;text-shadow:0 2px 40px rgba(0,0,0,.45)}
+  .cr-open__sub{color:var(--cloud);font-size:clamp(1rem,2vw,1.2rem);max-width:30ch}
+  .cr-open__credit{margin-top:1.5rem;font-size:.7rem;letter-spacing:.17em;
+                   text-transform:uppercase;color:var(--accent-soft);opacity:.85}
+
+  /* ---------- 2 · manifiesto ---------- */
+  .cr-manifesto{background:var(--cream);color:var(--ink);
+                padding:clamp(5rem,15vh,11rem) var(--gutter)}
+  .cr-manifesto__inner{max-width:60ch;margin:0 auto;display:grid;gap:1.6em}
+  .cr-manifesto__p{font-family:var(--serif);font-weight:400;
+    font-size:clamp(1.35rem,3.4vw,2.15rem);line-height:1.32;letter-spacing:-.01em}
+  .cr-manifesto__p:last-child{color:var(--olive)}
+
+  /* ---------- 3 · cifras ---------- */
+  .cr-cifras{background:var(--moss);padding:clamp(2.6rem,6vh,4rem) var(--gutter)}
+  .cr-cifras__grid{max-width:var(--maxw);margin:0 auto;display:grid;gap:2rem 1.5rem;
+                   grid-template-columns:repeat(2,1fr)}
+  .cr-cifra{display:flex;flex-direction:column;gap:.35rem}
+  .cr-cifra__n{font-family:var(--serif);font-size:clamp(2.4rem,7vw,3.6rem);line-height:.9;
+               color:var(--cloud);font-variant-numeric:tabular-nums}
+  .cr-cifra__n i{font-style:normal;font-size:.42em;color:var(--accent-soft);margin-left:.08em}
+  .cr-cifra__t{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+               color:rgba(244,239,230,.6);line-height:1.4}
+
+  /* ---------- 4 · pases ---------- */
+  .cr-pases{background:#0D0D0D;padding:clamp(4.5rem,12vh,8rem) var(--gutter) clamp(2.5rem,6vh,4rem)}
+  .cr-pases__head{max-width:var(--maxw);margin:0 auto}
+  .cr-pases__head .eyebrow{color:var(--accent-soft)}
+  .cr-pases__lede{margin-top:1.1rem;color:rgba(244,239,230,.66);
+                  font-size:clamp(1rem,2.2vw,1.22rem);max-width:36ch}
+
+  /* plato a sangre: la foto ocupa el ancho entero y el pie se apoya encima */
+  .cr-bleed{position:relative;min-height:86svh;display:flex;align-items:flex-end;
+            overflow:clip;background:#0D0D0D;margin:0}
+  .cr-bleed__media{position:absolute;inset:-7% 0;z-index:0}
+  .cr-bleed__media img{width:100%;height:100%;object-fit:cover}
+  /* la rampa tiene que empezar por encima del pie: hay platos claros (vieiras,
+     tomate) donde el titular en crema se perdía sobre la piedra pálida */
+  .cr-bleed__veil{position:absolute;inset:0;
+    background:linear-gradient(180deg,#0D0D0D 0%,rgba(13,13,13,.4) 10%,rgba(13,13,13,0) 30%,
+               rgba(13,13,13,.34) 50%,rgba(13,13,13,.72) 68%,rgba(13,13,13,.93) 86%,#0D0D0D 100%)}
+  .cr-bleed .cr-pase__name,.cr-bleed .cr-pase__hook{text-shadow:0 1px 24px rgba(0,0,0,.55)}
+  .cr-bleed__copy{position:relative;z-index:1;width:100%;
+                  padding:0 var(--gutter) clamp(2.8rem,7vh,5rem)}
+
+  /* par desalineado: la segunda pieza baja. Esto es lo que rompe la retícula */
+  .cr-duo{background:#0D0D0D;padding:clamp(3rem,8vh,6rem) var(--gutter);
+          display:grid;gap:clamp(2.5rem,6vw,4rem);grid-template-columns:1fr;
+          max-width:var(--maxw);margin:0 auto}
+  .cr-duo__media{aspect-ratio:4/5;overflow:hidden;margin-bottom:1.4rem;
+                 background:#16160f;border-radius:2px}
+  .cr-duo__media img{width:100%;height:100%;object-fit:cover;
+                     transition:scale .9s var(--ease)}
+  @media (hover:hover) and (pointer:fine){
+    .cr-duo__item:hover .cr-duo__media img{scale:1.03}
+  }
+
+  /* ---------- 5 · textura ---------- */
+  .cr-textura{position:relative;min-height:70svh;display:grid;place-items:center;
+              overflow:clip;background:#0D0D0D;text-align:center}
+  .cr-textura__media{position:absolute;inset:-9% 0;z-index:0}
+  .cr-textura__media img{width:100%;height:100%;object-fit:cover}
+  .cr-textura__veil{position:absolute;inset:0;background:rgba(13,13,13,.52)}
+  .cr-textura__line{position:relative;z-index:1;padding:0 var(--gutter);
+    font-family:var(--serif);font-weight:400;color:var(--cloud);
+    font-size:clamp(1.6rem,5vw,3.4rem);line-height:1.2;letter-spacing:-.015em;
+    text-shadow:0 2px 30px rgba(0,0,0,.4)}
+
+  /* ---------- 6 · los dos ---------- */
+  .cr-duo-chefs{background:var(--cream);color:var(--ink);
+                padding:clamp(4.5rem,12vh,9rem) var(--gutter)}
+  .cr-duo-chefs__head{max-width:var(--maxw);margin:0 auto 3.2rem}
+  .cr-duo-chefs__head .eyebrow{color:var(--accent)}
+  .cr-duo-chefs__lede{margin-top:1.4rem;max-width:52ch;color:var(--text-muted);
+                      font-size:clamp(1rem,2.2vw,1.18rem);line-height:1.65}
+  .cr-duo-chefs__lede b{color:var(--ink);font-weight:600}
+  .cr-duo-chefs__grid{max-width:var(--maxw);margin:0 auto;display:grid;gap:1.2rem;
+                      grid-template-columns:1fr}
+  .cr-chef{position:relative;overflow:hidden;border-radius:2px;background:#e6dece}
+  .cr-chef img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;
+               transition:scale .9s var(--ease)}
+  .cr-chef__copy{position:absolute;left:0;bottom:0;width:100%;padding:2.2rem 1.4rem 1.2rem;
+    background:linear-gradient(180deg,transparent,rgba(13,13,13,.72))}
+  .cr-chef__name{font-family:var(--serif);font-size:1.25rem;color:var(--cloud);line-height:1.1}
+  .cr-chef__line{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;
+                 color:var(--accent-soft);margin-top:.3rem}
+  @media (hover:hover) and (pointer:fine){
+    .cr-chef:hover img,.cr-chef:focus-visible img{scale:1.04}
+  }
+
+  /* ---------- 7 · campo de flores ---------- */
+  .cr-campo{background:#0D0D0D;padding:clamp(4.5rem,12vh,9rem) var(--gutter)}
+  .cr-campo__head{max-width:var(--maxw);margin:0 auto 3rem}
+  .cr-campo__head .eyebrow{color:var(--accent-soft)}
+  .cr-campo__list{max-width:var(--maxw);margin:0 auto;list-style:none;padding:0;
+    display:flex;flex-wrap:wrap;align-items:baseline;gap:.2em .8em;
+    font-family:var(--serif);color:rgba(244,239,230,.5)}
+  .cr-flor{line-height:1.25;transition:color .45s var(--ease)}
+  .cr-flor--sm{font-size:clamp(.95rem,2vw,1.25rem)}
+  .cr-flor--md{font-size:clamp(1.15rem,2.8vw,1.75rem)}
+  .cr-flor--lg{font-size:clamp(1.4rem,3.8vw,2.5rem);color:rgba(244,239,230,.82)}
+  .cr-flor--xl{font-size:clamp(1.7rem,5vw,3.4rem);color:var(--cloud)}
+  @media (hover:hover) and (pointer:fine){
+    .cr-flor:hover{color:var(--accent-soft)}
+  }
+
+  /* ---------- 8 · guía ---------- */
+  .cr-guia{background:var(--cream);color:var(--ink);
+           padding:clamp(4.5rem,12vh,9rem) var(--gutter)}
+  .cr-guia__head{max-width:var(--maxw);margin:0 auto 3rem}
+  .cr-guia__head .eyebrow{color:var(--accent)}
+  .cr-guia__cols{max-width:var(--maxw);margin:0 auto;display:grid;gap:3rem;grid-template-columns:1fr}
+  .cr-guia__h{font-family:var(--sans);font-weight:600;font-size:.7rem;letter-spacing:.26em;
+              text-transform:uppercase;color:var(--accent);margin-bottom:1.3rem}
+  .cr-guia__h--sep{margin-top:2.6rem}
+
+  .cr-guia__dl dt{font-family:var(--serif);font-size:1.2rem;color:var(--ink);margin-bottom:.35rem}
+  .cr-guia__dl dd{margin:0 0 1.5rem;color:var(--text-muted);font-size:.98rem;
+                  line-height:1.6;max-width:46ch}
+  .cr-guia__dl dd:last-child{margin-bottom:0}
+
+  .cr-frases{list-style:none;padding:0;display:grid;gap:.65rem}
+  .cr-frases li{font-family:var(--serif);font-size:clamp(1.1rem,2.6vw,1.5rem);
+    line-height:1.2;color:var(--ink);padding-left:1.15em;position:relative}
+  .cr-frases li::before{content:"\201C";position:absolute;left:0;top:.06em;
+    color:var(--accent);font-size:1.5em;line-height:1}
+
+  .cr-voz{list-style:none;padding:0;display:grid;gap:.9rem}
+  .cr-voz li{color:var(--text-muted);font-size:.98rem;line-height:1.6;
+             padding-left:1.2em;position:relative;max-width:46ch}
+  .cr-voz li::before{content:"\2192";position:absolute;left:0;color:var(--accent)}
+  .cr-voz b{color:var(--ink);font-weight:600}
+
+  .cr-mirada{max-width:var(--maxw);margin:3.5rem auto 0;padding-top:2.5rem;
+             border-top:1px solid var(--border-subtle);
+             display:grid;gap:2.2rem;grid-template-columns:1fr}
+  .cr-mirada__list{list-style:none;padding:0;display:grid;gap:.7rem}
+  .cr-mirada__list li{color:var(--text-muted);font-size:.98rem;line-height:1.55;
+                      padding-left:1.2em;position:relative}
+  .cr-mirada__list li::before{content:"";position:absolute;left:0;top:.55em;
+    width:7px;height:7px;border:1px solid var(--accent);border-radius:50%}
+  .cr-mirada__list b{color:var(--ink);font-weight:600}
+  .cr-paleta{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:.7rem}
+  .cr-paleta li{display:flex;flex-direction:column;gap:.45rem}
+  .cr-paleta i{display:block;width:clamp(46px,11vw,66px);height:clamp(46px,11vw,66px);
+               border-radius:2px;border:1px solid var(--border-subtle)}
+  .cr-paleta span{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
+                  color:var(--text-subtle)}
+
+  /* ---------- 9 · práctico + cierre ---------- */
+  .cr-practico{background:#0D0D0D;padding:clamp(4rem,10vh,7rem) var(--gutter)}
+  .cr-practico__dl{max-width:var(--maxw);margin:0 auto}
+  .cr-row{display:grid;grid-template-columns:1fr;gap:.4rem;padding:1.4rem 0;
+          border-top:1px solid rgba(100,93,59,.32)}
+  .cr-row:first-child{border-top:none}
+  .cr-row dt{font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;color:var(--accent-soft)}
+  .cr-row dd{margin:0;font-family:var(--serif);font-size:clamp(1.15rem,3vw,1.5rem);
+             color:var(--cloud);line-height:1.25}
+  .cr-row dd span{display:block;font-family:var(--sans);font-size:.86rem;
+                  color:rgba(244,239,230,.6);margin-top:.35rem;letter-spacing:0}
+  .cr-row a{color:inherit;text-decoration:none;border-bottom:1px solid var(--olive)}
+
+  .cr-cierre{background:#0D0D0D;padding:clamp(5rem,16vh,11rem) var(--gutter);
+             display:grid;gap:1.2rem}
+  .cr-cierre__big{font-family:var(--serif);font-weight:400;color:var(--cloud);
+    font-size:clamp(2.1rem,7.5vw,5.5rem);line-height:1;letter-spacing:-.02em}
+  .cr-cierre__sub{color:var(--accent-soft);font-size:clamp(1rem,2.2vw,1.35rem)}
+
+  /* ---------- composición en pantallas grandes ---------- */
+  @media (min-width:760px){
+    .cr-cifras__grid{grid-template-columns:repeat(4,1fr)}
+    .cr-duo{grid-template-columns:1fr 1fr;align-items:start}
+    /* la asimetría: la segunda pieza cae fuera de línea */
+    .cr-duo__item:nth-child(2){margin-top:clamp(3rem,10vh,8rem)}
+    .cr-duo-chefs__grid{grid-template-columns:1fr 1fr;gap:1.6rem}
+    .cr-guia__cols{grid-template-columns:1fr 1fr;gap:4rem}
+    .cr-mirada{grid-template-columns:1.3fr 1fr;gap:3rem;align-items:start}
+    .cr-row{grid-template-columns:minmax(150px,20%) 1fr;gap:1.5rem;align-items:baseline}
+    .cr-bleed__copy,.cr-open__content{max-width:var(--maxw);margin:0 auto}
+    /* el pie del segundo plato a sangre se va a la derecha: la página no
+       repite el mismo eje dos veces */
+    .cr-bleed--right .cr-bleed__copy{display:flex;justify-content:flex-end}
+    .cr-bleed--right .cr-bleed__copy > *{max-width:38ch}
+    .cr-bleed--right .cr-bleed__copy{flex-direction:column;align-items:flex-end;text-align:right}
+    .cr-bleed--right .cr-pase__hook{margin-left:auto}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .cr-duo__media img,.cr-chef img{transition:none}
+  }
+</style>
 </Base>
