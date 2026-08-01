@@ -1,19 +1,22 @@
 /* ============================================================
-   CREATOR GARDEN · sistema visual
+   CREATOR PLAYBOOK · sistema visual
    Solo se carga en /creator-garden/. Hereda de main.css los
    @font-face y los tokens de marca.
 
-   TEMA CLARO, BLOQUEADO. La marca es luz, día y campo: el fondo
-   es crema y el color lo ponen las fotos. El musgo aparece UNA
-   sola vez en toda la página, como puntuación. No hay negro.
-   (La versión anterior invertía esto y era un error: #0B0B09 ni
-   siquiera es un token de marca.)
+   TEMA CLARO. La marca es luz, día y campo: el fondo es crema y el
+   color lo ponen las fotos. El musgo aparece UNA sola vez (el
+   diccionario) y el negro UNA sola vez (el lema de la regla de
+   tres). Si cualquiera de los dos apareciera más, dejaría de ser
+   puntuación y pasaría a ser fondo.
 
    Composición, mobile-first:
-   · una familia de layout por escena, nunca repetida
-   · antetítulos racionados: marcan las cinco escenas de verdad
+   · una familia de layout por bloque, nunca repetida
+   · antetítulos racionados: apertura, planos, lenguaje y flores
    · las fotos van a sangre con el pie DEBAJO, nunca texto encima
    · medida de lectura corta y ritmo vertical constante
+   · objetivos táctiles de 44 px en todo lo que se usa "durante":
+     la escaleta y los botones de copiar se manejan con una mano,
+     en la sala, con poca luz
    ============================================================ */
 
 .gd {
@@ -22,6 +25,8 @@
   --gd-paper-2: #FBFAF5;        /* nube, alternancia */
   --gd-hair: rgba(49, 51, 31, .14);
   --gd-hair-soft: rgba(49, 51, 31, .08);
+  /* tinta escasa: SOLO el lema del bloque 04 */
+  --gd-tinta: #14150E;
 
   /* escala tipográfica contenida: el titular jerarquiza, no grita */
   --gd-display: clamp(2.05rem, 7.6vw, 5.2rem);
@@ -31,7 +36,7 @@
   --gd-body: clamp(.98rem, 1.5vw, 1.1rem);
   --gd-lede: clamp(1.08rem, 2.4vw, 1.4rem);
 
-  /* ritmo vertical único: todas las escenas respiran igual */
+  /* ritmo vertical único: todos los bloques respiran igual */
   --gd-scene-y: clamp(3.6rem, 11vh, 8.5rem);
   --gd-stack: clamp(1.6rem, 4.5vh, 3rem);
 
@@ -53,7 +58,7 @@
 .gd-skip:focus { left: 1rem; top: 1rem; }
 .gd :focus-visible { outline: 2px solid var(--olive); outline-offset: 4px; }
 
-/* ---------- escenas ---------- */
+/* ---------- bloques ---------- */
 .gd-scene { position: relative; padding: var(--gd-scene-y) var(--gutter); }
 .gd-scene--alt { background: var(--gd-paper-2); }
 /* la ÚNICA escena oscura de la página */
@@ -71,20 +76,53 @@
 .gd-h3 { font-size: var(--gd-h3); line-height: 1.2; letter-spacing: -.008em; }
 .gd-scene--moss :is(.gd-display, .gd-h1, .gd-h2, .gd-h3) { color: var(--cloud); }
 
-.gd-lede { font-size: var(--gd-lede); line-height: 1.48; color: var(--text-muted); max-width: 30ch; }
+.gd-lede { font-size: var(--gd-lede); line-height: 1.48; color: var(--text-muted); max-width: 34ch; }
 .gd-body { font-size: var(--gd-body); line-height: 1.66; color: var(--text-muted); max-width: 38ch; }
-.gd-scene--moss :is(.gd-lede, .gd-body) { color: rgba(244, 239, 230, .72); }
+.gd-scene--moss :is(.gd-lede, .gd-body) { color: rgba(244, 239, 230, .74); }
 
-/* antetítulo: racionado, solo en las escenas que abren capítulo */
+/* cabecera de bloque: un solo patrón para los trece */
+.gd-head-b { margin-bottom: var(--gd-stack); display: grid; gap: 1rem; }
+
+/* antetítulo: racionado, solo en los bloques que abren capítulo */
 .gd-eyebrow {
   display: inline-flex; align-items: center; gap: .8em;
   font-size: .66rem; letter-spacing: .26em; text-transform: uppercase;
-  color: var(--accent); margin-bottom: 1rem;
+  color: var(--accent); margin: 0;
 }
 .gd-eyebrow::before { content: ""; width: 2em; height: 1px; background: currentColor; opacity: .5; }
 .gd-scene--moss .gd-eyebrow { color: var(--accent-soft); }
 
-/* ---------- estados de entrada (gated en .js, como el sitio) ---------- */
+/* ---------- botones ---------- */
+.gd-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 44px; padding: .8em 1.5em;
+  background: var(--moss); color: var(--cream);
+  font-size: .82rem; letter-spacing: .06em; text-decoration: none;
+  border: 1px solid var(--moss); border-radius: 2px;
+  transition: background .25s var(--ease), color .25s var(--ease);
+}
+.gd-btn:hover { background: var(--olive); border-color: var(--olive); }
+.gd-btn--ghost { background: transparent; color: var(--moss); }
+.gd-btn--ghost:hover { background: var(--moss); color: var(--cream); }
+.gd-btn--big { min-height: 52px; padding: 1em 2.2em; font-size: .92rem; }
+
+/* copiar: la interacción de mayor retorno de la página. Un pie que no
+   se puede copiar no es un pie, es una muestra. */
+.gd-copy {
+  appearance: none; background: transparent; cursor: pointer;
+  min-height: 34px; padding: .35em .9em;
+  border: 1px solid var(--gd-hair); border-radius: 999px;
+  font-family: var(--sans); font-size: .62rem; font-weight: 400;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--accent);
+  transition: background .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
+  flex: none;
+}
+.gd-copy:hover { background: var(--moss); border-color: var(--moss); color: var(--cream); }
+.gd-copy.is-ok { background: var(--olive); border-color: var(--olive); color: var(--cream); }
+.gd-copy--dark { border-color: rgba(244, 239, 230, .3); color: var(--accent-soft); }
+.gd-copy--dark:hover, .gd-copy--dark.is-ok { background: var(--accent-soft); border-color: var(--accent-soft); color: var(--moss); }
+
+/* ---------- estados de entrada (gated en .js, como el resto del sitio) ---------- */
 .js .gd .gd-reveal { opacity: 0; transform: translateY(20px); }
 .js .gd [data-gd-stagger] .gd-item { opacity: 0; transform: translateY(20px); }
 .js .gd [data-gd-words], .js .gd [data-gd-lines] { opacity: 0; }
@@ -97,15 +135,35 @@
   .js .gd [data-gd-lines] { opacity: 1 !important; transform: none !important; }
 }
 
-/* ---------- tallo + índice (solo escritorio) ---------- */
-.gd-spine { display: none; }
-.gd-index { display: none; }
+/* ============================================================
+   NAVEGACIÓN — fija, y presente EN MÓVIL. La versión anterior la
+   escondía por debajo de 760 px: dieciocho pantallas sin un solo
+   punto de orientación, justo en el dispositivo donde se lee.
+   ============================================================ */
+.gd-nav {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  background: rgba(244, 239, 230, .93);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid var(--gd-hair);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.gd-nav__list {
+  display: flex; list-style: none; margin: 0; padding: 0;
+  overflow-x: auto; scrollbar-width: none;
+}
+.gd-nav__list::-webkit-scrollbar { display: none; }
+.gd-nav__link {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 46px; padding: 0 1.1em; white-space: nowrap;
+  font-size: .64rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--text-subtle); text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: color .3s var(--ease), border-color .3s var(--ease);
+}
+.gd-nav__link.is-on { color: var(--olive); border-bottom-color: var(--olive); }
 
 /* ============================================================
-   00 · APERTURA
-   Foto a sangre arriba, titular debajo sobre crema. Nada de texto
-   sobre la imagen: en una marca clara el texto encima obliga a
-   velos oscuros, que es justo lo que sobra aquí.
+   01 · APERTURA
    ============================================================ */
 .gd-open__media {
   position: relative; height: 56svh; min-height: 300px; overflow: hidden;
@@ -116,8 +174,10 @@
   max-width: var(--maxw); margin-inline: auto;
   padding: clamp(2rem, 6vh, 3.5rem) var(--gutter) clamp(2.5rem, 7vh, 4rem);
 }
+.gd-open__titulo .gd-eyebrow { margin-bottom: 1rem; }
 .gd-open__title { margin-bottom: .5em; }
 .gd-open__sub { color: var(--text-muted); }
+.gd-open__cta { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.6rem; }
 .gd-open__credit {
   margin-top: 1.8rem; padding-top: 1rem; border-top: 1px solid var(--gd-hair);
   font-size: .66rem; letter-spacing: .16em; text-transform: uppercase;
@@ -125,34 +185,68 @@
 }
 
 /* ============================================================
-   01 · MANIFIESTO — tipografía grande, columna única, mucho aire
+   02 · MODO EXPRÉS — tres bloques numerados, una pantalla
    ============================================================ */
-.gd-manifiesto p {
-  font-family: var(--serif); font-weight: 400; color: var(--ink);
-  font-size: clamp(1.25rem, 4.4vw, 2.05rem); line-height: 1.32;
-  letter-spacing: -.012em; max-width: 20ch;
+.gd-expres { display: grid; gap: 1.6rem; }
+.gd-expres__item { display: grid; gap: .3rem; }
+.gd-expres__n {
+  font-family: var(--serif); font-size: 1.6rem; line-height: 1;
+  color: var(--accent-soft); font-variant-numeric: tabular-nums;
 }
-.gd-manifiesto p + p { margin-top: .9em; }
-.gd-manifiesto p:last-child { color: var(--olive); }
+.gd-expres__t { font-family: var(--serif); font-weight: 400; font-size: 1.2rem; line-height: 1.2; color: var(--ink); }
+.gd-expres__d { font-size: .95rem; line-height: 1.6; color: var(--text-muted); max-width: 40ch; }
+.gd-expres__pie {
+  margin-top: var(--gd-stack); padding-top: 1.2rem;
+  border-top: 1px solid var(--gd-hair);
+  font-family: var(--serif); font-size: 1.05rem; color: var(--olive); max-width: 40ch;
+}
 
 /* ============================================================
-   02 · VISIÓN — texto con una cifra grande de contrapunto
+   03 · LA ESCALETA — lista marcable. Se usa DENTRO del restaurante:
+   casillas grandes, una mano, poca luz.
    ============================================================ */
-.gd-vision__cuerpo { display: grid; gap: 1.1em; }
-.gd-dato {
-  margin-top: var(--gd-stack); padding-top: 1.4rem;
+.gd-cuenta {
+  font-size: .64rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--accent); font-variant-numeric: tabular-nums;
+}
+.gd-esc { list-style: none; margin: 0; padding: 0; display: grid; }
+.gd-esc__row {
+  display: grid; grid-template-columns: auto 1fr; gap: .3rem .9rem;
+  align-items: start; padding: 1.2rem 0;
   border-top: 1px solid var(--gd-hair);
 }
-.gd-dato__n {
-  font-family: var(--serif); font-size: clamp(3.2rem, 15vw, 6.5rem);
-  line-height: .84; color: var(--olive); display: block;
-  font-variant-numeric: tabular-nums;
+.gd-esc__row:first-child { border-top: none; padding-top: 0; }
+.gd-esc__box {
+  appearance: none; width: 24px; height: 24px; margin: 0;
+  border: 1.5px solid var(--olive); border-radius: 2px;
+  background: transparent; cursor: pointer; flex: none;
+  transition: background .2s var(--ease);
+  /* el área táctil real es de 44 px aunque la casilla se vea de 24 */
+  outline-offset: 3px;
 }
-.gd-dato__t {
-  display: block; margin-top: .6rem; font-size: .68rem; letter-spacing: .2em;
-  text-transform: uppercase; color: var(--accent);
+.gd-esc__box::before {
+  content: ""; position: absolute; width: 44px; height: 44px;
+  transform: translate(-11px, -11px);
 }
-.gd-dato__pie { margin-top: .7rem; font-size: .94rem; line-height: 1.55; color: var(--text-muted); max-width: 26ch; }
+.gd-esc__box { position: relative; }
+.gd-esc__box:checked { background: var(--olive); }
+.gd-esc__box:checked::after {
+  content: ""; position: absolute; inset: 0;
+  background: var(--cream);
+  clip-path: polygon(20% 52%, 42% 72%, 80% 26%, 88% 36%, 43% 88%, 12% 60%);
+}
+.gd-esc__label { cursor: pointer; display: grid; gap: .25rem; align-self: center; }
+.gd-esc__k { font-family: var(--serif); font-size: 1.1rem; line-height: 1.2; color: var(--ink); }
+.gd-esc__v {
+  font-size: .62rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--text-subtle);
+}
+.gd-esc__row--urg .gd-esc__v { color: var(--olive); font-weight: 500; }
+.gd-esc__d {
+  grid-column: 2; font-size: .94rem; line-height: 1.6;
+  color: var(--text-muted); max-width: 46ch; margin-top: .35rem;
+}
+.gd-esc__row:has(.gd-esc__box:checked) .gd-esc__k { color: var(--text-subtle); }
 
 /* ============================================================
    FIGURAS A SANGRE — imagen ancho completo, pie debajo
@@ -170,120 +264,107 @@
 }
 
 /* ============================================================
-   03 · FILOSOFÍA — única lista numerada de la página
+   04 · LA REGLA DE TRES — columna centrada. ÚNICO negro de la página.
    ============================================================ */
-.gd-princ { display: grid; }
-.gd-princ__item {
-  display: grid; gap: .4rem; padding: 1.4rem 0;
+.gd-regla { text-align: center; max-width: 46rem; }
+.gd-regla .gd-h1 { margin-inline: auto; max-width: 18ch; }
+.gd-regla__entrada { margin: 1.2rem auto 0; max-width: 30ch; }
+.gd-regla__lema {
+  margin: clamp(2rem, 6vh, 3.4rem) auto clamp(1.6rem, 5vh, 2.6rem);
+  font-family: var(--serif); font-size: clamp(1.5rem, 6.4vw, 3rem);
+  line-height: 1.08; letter-spacing: -.02em;
+  color: var(--gd-tinta); max-width: 14ch;
+}
+.gd-regla__partes { display: grid; gap: .7rem; margin: 0; text-align: left; max-width: 34ch; margin-inline: auto; }
+.gd-regla__partes dt { display: inline; font-family: var(--serif); font-size: 1.02rem; color: var(--ink); }
+.gd-regla__partes dt::after { content: " — "; color: var(--text-subtle); }
+.gd-regla__partes dd { display: inline; margin: 0; font-size: .95rem; line-height: 1.6; color: var(--text-muted); }
+.gd-regla__corte {
+  margin-top: 1.6rem; font-family: var(--serif); font-size: 1.05rem; color: var(--olive);
+}
+.gd-regla__pie {
+  margin: var(--gd-stack) auto 0; padding-top: 1.2rem;
   border-top: 1px solid var(--gd-hair);
+  font-size: .95rem; line-height: 1.66; color: var(--text-muted); max-width: 44ch;
 }
-.gd-princ__item:first-child { border-top: none; padding-top: 0; }
-.gd-princ__n {
-  font-family: var(--serif); font-size: .8rem; color: var(--olive);
-  font-variant-numeric: tabular-nums;
-}
-.gd-princ__d { font-size: var(--gd-body); line-height: 1.62; color: var(--text-muted); max-width: 42ch; }
 
 /* ============================================================
-   04 · GUÍA — tres declaraciones grandes, sin numerar, mucho aire.
-   Familia distinta a la lista numerada de arriba a propósito.
+   05 · PLANOS — tres columnas (foto · vídeo · sonido)
    ============================================================ */
-.gd-angulos { display: grid; gap: clamp(2.2rem, 6vh, 3.6rem); }
-.gd-angulo__t { margin-bottom: .5rem; }
-.gd-angulo__d { font-size: var(--gd-body); line-height: 1.66; color: var(--text-muted); max-width: 40ch; }
-
-/* ============================================================
-   05 · HISTORIAS — única rejilla de tarjetas de la página
-   ============================================================ */
-.gd-cards { display: grid; gap: clamp(1.6rem, 4vw, 2.6rem); }
-.gd-card { padding-top: 1.1rem; border-top: 1px solid var(--gd-hair); }
-.gd-card__t { margin-bottom: .45rem; }
-.gd-card__d { font-size: .96rem; line-height: 1.6; color: var(--text-muted); }
-
-/* ============================================================
-   06 · CÁMARA — dos columnas contrapuestas (foto / vídeo)
-   ============================================================ */
-.gd-camara { display: grid; gap: clamp(2.2rem, 6vh, 3.4rem); }
-.gd-camara__h {
+.gd-planos { display: grid; gap: clamp(2.2rem, 6vh, 3.4rem); }
+.gd-planos__h {
   font-size: .66rem; letter-spacing: .24em; text-transform: uppercase;
   color: var(--accent); margin-bottom: 1.2rem;
   padding-bottom: .8rem; border-bottom: 1px solid var(--gd-hair);
 }
-.gd-camara__list { display: grid; gap: 1.2rem; }
-.gd-camara__t { font-family: var(--serif); font-size: 1.08rem; color: var(--ink); margin-bottom: .25rem; }
-.gd-camara__d { font-size: .94rem; line-height: 1.58; color: var(--text-muted); max-width: 38ch; }
+.gd-planos__list { display: grid; gap: 1.2rem; }
+.gd-planos__t { font-family: var(--serif); font-size: 1.08rem; color: var(--ink); margin-bottom: .25rem; }
+.gd-planos__d { font-size: .94rem; line-height: 1.58; color: var(--text-muted); max-width: 38ch; }
+.gd-broll {
+  margin-top: var(--gd-stack); padding-top: 1.2rem;
+  border-top: 1px solid var(--gd-hair);
+  font-size: .92rem; line-height: 1.7; color: var(--text-muted);
+}
+.gd-broll__k {
+  display: block; font-size: .62rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: .5rem;
+}
 
 /* ============================================================
-   07 · MOVIMIENTO — rejilla 2x2 de principios cortos
+   06 · FORMATOS — tabla comparativa + carril de ideas
    ============================================================ */
-.gd-mov { display: grid; gap: 1.6rem; }
-.gd-mov__item { padding: 1.2rem; background: var(--gd-paper-2); border-radius: 2px; }
-.gd-scene--alt .gd-mov__item { background: var(--gd-paper); }
-.gd-mov__t { font-family: var(--serif); font-size: 1.05rem; color: var(--ink); margin-bottom: .4rem; line-height: 1.2; }
-.gd-mov__d { font-size: .92rem; line-height: 1.55; color: var(--text-muted); }
+.gd-tabla-wrap { overflow-x: auto; margin-bottom: var(--gd-stack); scrollbar-width: thin; }
+.gd-tabla { border-collapse: collapse; width: 100%; min-width: 34rem; font-size: .88rem; }
+.gd-tabla :is(th, td) {
+  padding: .8rem .9rem; text-align: left; vertical-align: top;
+  border-bottom: 1px solid var(--gd-hair); font-weight: 400;
+}
+.gd-tabla thead th {
+  font-family: var(--serif); font-size: 1rem; color: var(--ink);
+  border-bottom-color: var(--olive);
+}
+.gd-tabla tbody th {
+  font-size: .62rem; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent); white-space: nowrap;
+}
+.gd-tabla tbody td { color: var(--text-muted); }
+.gd-tabla tr:last-child :is(th, td) { border-bottom: none; }
 
-/* ============================================================
-   08 · IDENTIDAD — muestrario: tipo + color + materia
-   ============================================================ */
-.gd-tipo { display: grid; gap: 1.8rem; margin-bottom: var(--gd-stack); }
-.gd-tipo__muestra { font-family: var(--serif); font-size: clamp(2rem, 9vw, 3.6rem); line-height: 1; color: var(--ink); }
-.gd-tipo__muestra--sans { font-family: var(--sans); font-weight: 300; font-size: clamp(1.5rem, 6.5vw, 2.6rem); }
-.gd-tipo__meta { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin-top: .7rem; align-items: baseline; }
-.gd-tipo__fam { font-size: .8rem; color: var(--ink); }
-.gd-tipo__rol { font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
-
-.gd-paleta { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: var(--gd-stack); }
-.gd-swatch { display: grid; gap: .4rem; }
-.gd-swatch__chip { width: 100%; aspect-ratio: 3/2; border-radius: 2px; border: 1px solid var(--gd-hair-soft); }
-.gd-swatch__n { font-size: .78rem; color: var(--ink); }
-.gd-swatch__hex { font-size: .6rem; letter-spacing: .1em; color: var(--olive); font-variant-numeric: tabular-nums; }
-.gd-swatch__u { font-size: .64rem; line-height: 1.4; color: var(--text-subtle); }
-
-.gd-mat-list { display: grid; gap: 1.1rem; }
-.gd-mat-list__t { font-family: var(--serif); font-size: 1.05rem; color: var(--ink); margin-bottom: .25rem; }
-.gd-mat-list__d { font-size: .92rem; line-height: 1.55; color: var(--text-muted); max-width: 38ch; }
-
-/* ============================================================
-   09 · DETALLES — lista de definición compacta
-   ============================================================ */
-.gd-def { display: grid; gap: 1.3rem; }
-.gd-def__t { font-family: var(--serif); font-size: 1.08rem; color: var(--ink); }
-.gd-def__d { font-size: .94rem; line-height: 1.58; color: var(--text-muted); max-width: 40ch; margin-top: .2rem; }
-
-/* ============================================================
-   10 · IDEAS — carril con arrastre horizontal. En móvil se hojea
-   con el pulgar en vez de convertirse en una columna larguísima.
-   ============================================================ */
 .gd-carril {
   display: grid; grid-auto-flow: column; grid-auto-columns: 78%;
   gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory;
   padding-bottom: 1rem; margin-inline: calc(var(--gutter) * -1);
-  padding-inline: var(--gutter);
-  scrollbar-width: thin;
+  padding-inline: var(--gutter); scrollbar-width: thin;
 }
 .gd-idea {
   scroll-snap-align: start; background: var(--gd-paper-2);
   padding: 1.4rem 1.2rem; border-radius: 2px; border: 1px solid var(--gd-hair-soft);
+  display: grid; align-content: start; gap: .45rem;
 }
 .gd-scene--alt .gd-idea { background: var(--gd-paper); }
-.gd-idea__f { font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: .7rem; }
-.gd-idea__t { font-family: var(--serif); font-size: 1.1rem; color: var(--ink); margin-bottom: .4rem; line-height: 1.2; }
-.gd-idea__d { font-size: .92rem; line-height: 1.55; color: var(--text-muted); }
+.gd-idea__f { font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
+.gd-idea__t { font-family: var(--serif); font-weight: 400; font-size: 1.12rem; color: var(--ink); line-height: 1.2; }
+.gd-idea__e { font-size: .9rem; line-height: 1.58; color: var(--text-muted); }
+.gd-idea__p {
+  font-size: .86rem; line-height: 1.5; color: var(--text-subtle);
+  font-style: italic; padding-top: .5rem; border-top: 1px solid var(--gd-hair-soft);
+}
 
 /* ============================================================
-   11 · LENGUAJE — ganchos como citas grandes + pies de ejemplo
+   07 · GANCHOS Y PIES — citas grandes + pies copiables
    ============================================================ */
 .gd-hooks { display: grid; }
 .gd-hook {
-  font-family: var(--serif); font-size: clamp(1.2rem, 4.6vw, 1.9rem);
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  font-family: var(--serif); font-size: clamp(1.15rem, 4.2vw, 1.7rem);
   line-height: 1.24; color: var(--ink); padding: .7em 0;
   border-bottom: 1px solid var(--gd-hair);
 }
 .gd-hook:first-child { padding-top: 0; }
 
 .gd-caps { display: grid; gap: 1.6rem; margin-top: var(--gd-stack); }
-.gd-caption { border-left: 2px solid var(--accent-soft); padding-left: 1.1rem; }
-.gd-caption__t { font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); margin-bottom: .6rem; }
+.gd-caption { border-left: 2px solid var(--accent-soft); padding-left: 1.1rem; display: grid; gap: .6rem; justify-items: start; }
+.gd-caption__t { font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
 .gd-caption__d { font-size: .96rem; line-height: 1.62; color: var(--text-muted); }
 
 .gd-voz { display: grid; gap: 1rem; margin-top: var(--gd-stack); }
@@ -291,52 +372,155 @@
 .gd-voz__d { font-size: .92rem; line-height: 1.55; color: var(--text-muted); max-width: 40ch; }
 
 /* ============================================================
-   12 · CAMPO DE FLORES — la única escena musgo de la página
+   08 · DICCIONARIO DE SABOR — la única escena musgo de la página
    ============================================================ */
-.gd-campo {
-  list-style: none; padding: 0; margin: 0;
-  display: flex; flex-wrap: wrap; align-items: baseline;
-  gap: .18em .7em; font-family: var(--serif);
-  color: rgba(244, 239, 230, .55);
+.gd-filtro { display: grid; gap: .9rem; margin-bottom: var(--gd-stack); }
+.gd-filtro__input {
+  appearance: none; width: 100%; min-height: 46px;
+  padding: .7em 1em; border-radius: 2px;
+  background: rgba(244, 239, 230, .07);
+  border: 1px solid rgba(244, 239, 230, .24);
+  color: var(--cream); font-family: var(--sans); font-size: .95rem;
 }
-.gd-flor { line-height: 1.28; transition: color .4s var(--ease); }
-.gd-flor--sm { font-size: clamp(.9rem, 3.4vw, 1.15rem); }
-.gd-flor--md { font-size: clamp(1.05rem, 4.4vw, 1.55rem); }
-.gd-flor--lg { font-size: clamp(1.3rem, 5.6vw, 2.1rem); color: rgba(244, 239, 230, .85); }
-.gd-flor--xl { font-size: clamp(1.55rem, 7vw, 2.9rem); color: var(--cloud); }
-@media (hover: hover) and (pointer: fine) { .gd-flor:hover { color: var(--accent-soft); } }
+.gd-filtro__input::placeholder { color: rgba(244, 239, 230, .45); }
+.gd-filtro__pases { display: flex; flex-wrap: wrap; gap: .4rem; }
+.gd-chip {
+  appearance: none; cursor: pointer; min-height: 34px; padding: .3em .85em;
+  background: transparent; border: 1px solid rgba(244, 239, 230, .24);
+  border-radius: 999px; color: rgba(244, 239, 230, .7);
+  font-family: var(--sans); font-size: .68rem; letter-spacing: .1em;
+  font-variant-numeric: tabular-nums;
+  transition: background .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
+}
+.gd-chip:hover { border-color: var(--accent-soft); color: var(--cream); }
+.gd-chip.is-on { background: var(--accent-soft); border-color: var(--accent-soft); color: var(--moss); }
+
+/* Entrada compacta a propósito. Es un bloque de CONSULTA, no de lectura
+   seguida: se busca una flor concreta, no se leen las treinta y cuatro.
+   Con la maqueta holgada ocupaba 6,8 pantallas de móvil él solo — más
+   que toda la página anterior de la mitad hacia abajo. */
+.gd-dicc { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
+.gd-dicc__item {
+  display: grid; grid-template-columns: 1fr auto; gap: .15rem .8rem;
+  align-items: baseline;
+  padding-top: .65rem; border-top: 1px solid rgba(244, 239, 230, .16);
+}
+.gd-dicc__item[hidden] { display: none; }
+.gd-dicc__n {
+  font-family: var(--serif); font-size: 1.05rem; line-height: 1.15; color: var(--cloud);
+}
+.gd-dicc__s {
+  grid-column: 1 / -1;
+  font-size: .88rem; line-height: 1.45; color: rgba(244, 239, 230, .74); max-width: 44ch;
+}
+.gd-dicc__meta {
+  grid-column: 1 / -1;
+  display: flex; flex-wrap: wrap; gap: .2rem .7rem; align-items: baseline; margin-top: .1rem;
+}
+.gd-dicc__pase {
+  font-size: .58rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--accent-soft); font-variant-numeric: tabular-nums;
+}
+.gd-dicc__decir { font-family: var(--serif); font-size: .88rem; color: rgba(244, 239, 230, .58); }
+/* el botón de copiar comparte fila con el nombre: en vertical añadía
+   34 filas de altura muerta */
+.gd-dicc__item .gd-copy { grid-row: 1; grid-column: 2; }
+.gd-dicc__vacio { margin-top: 1.5rem; font-size: .95rem; color: rgba(244, 239, 230, .6); }
+.gd-dicc__aviso {
+  margin-top: var(--gd-stack); padding-top: 1.3rem;
+  border-top: 1px solid rgba(244, 239, 230, .16);
+  font-size: .92rem; line-height: 1.7; color: rgba(244, 239, 230, .68); max-width: 52ch;
+}
 
 /* ============================================================
-   13 · CONTACTO + CIERRE
+   09 · LO QUE NO FUNCIONA — lista compacta
    ============================================================ */
-.gd-contacto__mail {
-  font-family: var(--serif); font-size: clamp(1.35rem, 6vw, 2.6rem); line-height: 1.1;
-  color: var(--ink); text-decoration: none; display: inline-block;
-  border-bottom: 1px solid var(--olive); word-break: break-word;
-  transition: color .3s var(--ease);
-}
-.gd-contacto__mail:hover { color: var(--olive); }
+.gd-no { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+.gd-no li { font-size: .95rem; line-height: 1.6; max-width: 44ch; }
+.gd-no__t { font-family: var(--serif); color: var(--ink); }
+.gd-no__d { color: var(--text-muted); }
 
-.gd-datos { display: grid; margin-top: var(--gd-stack); }
+/* ============================================================
+   10 · EL PASE QUE NADIE HA GRABADO
+   ============================================================ */
+.gd-pendiente { max-width: 40rem; }
+.gd-pendiente .gd-eyebrow { margin-bottom: 1rem; }
+.gd-pendiente__d { margin-top: 1.2rem; max-width: 44ch; }
+
+/* ============================================================
+   11 · LA CASA, EN TRES FRASES
+   ============================================================ */
+.gd-casa p {
+  font-family: var(--serif); font-weight: 400; color: var(--ink);
+  font-size: clamp(1.2rem, 4.2vw, 1.9rem); line-height: 1.32;
+  letter-spacing: -.012em; max-width: 22ch;
+}
+.gd-casa p + p { margin-top: .9em; }
+.gd-casa p:last-child { color: var(--olive); }
+
+/* ============================================================
+   12 · LO PRÁCTICO — filas clave/valor + la invitación
+   ============================================================ */
+.gd-datos { display: grid; }
 .gd-datos__row { display: grid; gap: .25rem; padding: 1rem 0; border-top: 1px solid var(--gd-hair); }
+.gd-datos__row:first-child { border-top: none; padding-top: 0; }
 .gd-datos__k { font-size: .6rem; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); }
 .gd-datos__v { font-family: var(--serif); font-size: 1.08rem; color: var(--ink); line-height: 1.35; }
-.gd-datos__v a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--olive); }
-.gd-datos__sub { font-family: var(--sans); font-size: .84rem; color: var(--text-subtle); }
+.gd-datos__sub { font-family: var(--sans); font-size: .88rem; line-height: 1.55; color: var(--text-subtle); }
 
-.gd-cierre { text-align: center; padding-block: clamp(4.5rem, 14vh, 9rem); }
+.gd-invita {
+  margin-top: var(--gd-stack); padding: 1.4rem 1.3rem;
+  background: var(--gd-paper); border-left: 2px solid var(--olive); border-radius: 2px;
+}
+.gd-scene--alt .gd-invita { background: var(--cream); }
+.gd-invita__k { font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); margin-bottom: .7rem; }
+.gd-invita__d { font-size: .96rem; line-height: 1.62; color: var(--text-muted); }
+.gd-invita__libre {
+  margin-top: .9rem; font-family: var(--serif); font-size: 1.05rem;
+  line-height: 1.4; color: var(--ink);
+}
+.gd-practico__tel { margin-top: 1.4rem; font-size: .92rem; color: var(--text-subtle); }
+.gd-practico__tel a { color: var(--olive); text-decoration: none; border-bottom: 1px solid currentColor; }
+
+/* ============================================================
+   13 · CIERRE ÚTIL
+   ============================================================ */
+.gd-cierre {
+  text-align: center;
+  padding-block: clamp(4rem, 12vh, 8rem) clamp(6rem, 14vh, 9rem);
+}
 .gd-cierre__big { max-width: 16ch; margin-inline: auto; }
-.gd-cierre__mark {
-  margin-top: clamp(2rem, 6vh, 3.5rem); font-family: var(--serif);
-  font-size: clamp(1.3rem, 5vw, 2.2rem); color: var(--olive); letter-spacing: .02em;
+.gd-cierre__cuenta {
+  margin-top: 1rem; font-size: .95rem; color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.gd-cierre .gd-btn { margin-top: clamp(1.6rem, 5vh, 2.4rem); }
+.gd-cierre__guarda {
+  margin-top: clamp(1.6rem, 5vh, 2.4rem);
+  font-size: .84rem; line-height: 1.6; color: var(--text-subtle);
+  max-width: 32ch; margin-inline: auto;
 }
 
 /* ============================================================
-   ESCRITORIO — la rejilla de 12 entra aquí. Hasta 760px todo es
+   ESCRITORIO — la rejilla de 12 entra aquí. Hasta 760 px todo es
    una columna: es donde se va a ver esta página.
    ============================================================ */
 @media (min-width: 760px) {
   .gd-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(1.5rem, 3vw, 3rem); }
+
+  /* la navegación sube al lateral cuando hay sitio */
+  .gd-nav {
+    left: auto; right: clamp(.9rem, 2vw, 1.8rem); bottom: auto; top: 50%;
+    transform: translateY(-50%);
+    background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none;
+    border-top: none;
+  }
+  .gd-nav__list { flex-direction: column; align-items: flex-end; gap: .2rem; overflow: visible; }
+  .gd-nav__link {
+    min-height: 30px; padding: 0; font-size: .58rem;
+    border-bottom: none; border-right: 2px solid transparent; padding-right: .7em;
+  }
+  .gd-nav__link.is-on { border-bottom-color: transparent; border-right-color: var(--olive); }
 
   .gd-open__media { height: 74svh; }
   .gd-open__inner { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3rem; align-items: end; }
@@ -345,61 +529,34 @@
   .gd-open__textos { grid-column: 8 / 13; }
   .gd-open__credit { margin-top: 1.2rem; }
 
-  .gd-manifiesto { grid-column: 3 / 11; }
-  .gd-manifiesto p { max-width: 24ch; }
-  .gd-manifiesto p:nth-child(2) { margin-left: clamp(2rem, 9vw, 9rem); }
+  .gd-expres { grid-template-columns: repeat(3, 1fr); gap: clamp(2rem, 4vw, 3.4rem); }
 
-  .gd-vision__head { grid-column: 1 / 7; }
-  .gd-vision__cuerpo { grid-column: 7 / 13; }
-  .gd-vision__dato { grid-column: 1 / 5; }
-
-  .gd-head { grid-column: 1 / 5; position: sticky; top: clamp(3rem, 12vh, 7rem); align-self: start; }
-  .gd-cuerpo { grid-column: 6 / 13; }
+  .gd-esc__row { grid-template-columns: auto minmax(0, 22rem) 1fr; align-items: baseline; gap: 1rem 1.4rem; }
+  .gd-esc__d { grid-column: 3; margin-top: 0; }
 
   .gd-fig__media { aspect-ratio: 16 / 9; }
   .gd-fig figcaption { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3rem; }
   .gd-fig__texto { grid-column: 6 / 12; }
 
-  .gd-angulos { grid-template-columns: repeat(3, 1fr); gap: clamp(2rem, 4vw, 3.4rem); }
-  .gd-cards { grid-template-columns: repeat(3, 1fr); }
-  .gd-camara { grid-template-columns: 1fr 1fr; gap: clamp(3rem, 6vw, 5rem); }
-  .gd-mov { grid-template-columns: repeat(2, 1fr); gap: 1.4rem; }
-  .gd-paleta { grid-template-columns: repeat(6, 1fr); }
-  .gd-def { grid-template-columns: repeat(2, 1fr); gap: 2rem 3rem; }
+  .gd-regla { margin-inline: auto; }
+  .gd-planos { grid-template-columns: repeat(3, 1fr); gap: clamp(2rem, 4vw, 3.4rem); }
   .gd-carril { grid-auto-columns: minmax(0, 30%); }
+  .gd-tabla { min-width: 0; }
 
   .gd-lenguaje { grid-column: 1 / 8; }
   .gd-lenguaje-lat { grid-column: 9 / 13; }
   .gd-caps, .gd-voz { margin-top: 0; }
 
-  .gd-contacto__head { grid-column: 1 / 7; }
-  .gd-contacto__datos { grid-column: 8 / 13; margin-top: 0; }
-  .gd-datos__row { grid-template-columns: minmax(120px, 34%) 1fr; gap: 1.2rem; align-items: baseline; }
+  .gd-dicc { grid-template-columns: repeat(3, 1fr); gap: 1.8rem 2.4rem; }
+  .gd-filtro { grid-template-columns: minmax(0, 20rem) 1fr; align-items: center; gap: 1.4rem; }
 
-  /* el tallo y el índice solo aparecen cuando hay margen para ellos */
-  .gd-spine {
-    display: block; position: fixed;
-    left: max(1rem, calc((100vw - var(--maxw)) / 2 - 2rem));
-    top: 0; height: 100vh; width: 2px; z-index: 3; pointer-events: none;
-  }
-  .gd-spine svg { width: 100%; height: 100%; overflow: visible; }
-  .gd-spine__path { fill: none; stroke: var(--olive); stroke-width: 1.2; opacity: .5; vector-effect: non-scaling-stroke; }
+  .gd-no { grid-template-columns: repeat(2, 1fr); gap: 1.1rem 3rem; }
 
-  .gd-index {
-    display: grid; position: fixed; right: clamp(.9rem, 2vw, 1.8rem); top: 50%;
-    z-index: 4; transform: translateY(-50%); gap: .5rem;
-  }
-  .gd-index__link {
-    display: flex; align-items: center; gap: .55rem; justify-content: flex-end;
-    text-decoration: none; color: var(--text-subtle);
-    font-size: .56rem; letter-spacing: .16em; text-transform: uppercase;
-    transition: color .35s var(--ease);
-  }
-  .gd-index__label { opacity: 0; transform: translateX(5px); transition: opacity .35s var(--ease), transform .35s var(--ease); }
-  .gd-index__dot { width: 4px; height: 4px; border-radius: 50%; flex: none; background: currentColor; transition: scale .35s var(--ease); }
-  .gd-index__link.is-on { color: var(--olive); }
-  .gd-index__link.is-on .gd-index__dot { scale: 2; }
-  .gd-index__link.is-on .gd-index__label,
-  .gd-index__link:hover .gd-index__label,
-  .gd-index__link:focus-visible .gd-index__label { opacity: 1; transform: none; }
+  .gd-casa { grid-column: 3 / 11; }
+  .gd-casa p { max-width: 26ch; }
+  .gd-casa p:nth-child(2) { margin-left: clamp(2rem, 9vw, 9rem); }
+
+  .gd-practico__head { grid-column: 1 / 5; position: sticky; top: clamp(3rem, 12vh, 7rem); align-self: start; }
+  .gd-practico__cuerpo { grid-column: 6 / 13; }
+  .gd-datos__row { grid-template-columns: minmax(120px, 30%) 1fr; gap: 1.2rem; align-items: baseline; }
 }

@@ -34,3 +34,52 @@ export const flores = [
 
 // La que queda en pie al final del vaciado va la ÚLTIMA de este array a propósito:
 // Newsletter.astro la saca de ahí, así que no hay dos sitios que puedan discrepar.
+
+// ── Diccionario de sabor ─────────────────────────────────────────────────────
+// Lo usa /creator-garden/. Sale de dos documentos del Drive: «FLORES Y USOS»
+// (cocina, flor por flor de esta carta) y «Características de las flores»
+// (ficha de sabor). Cuando discrepan MANDA COCINA: es la casa describiendo su
+// propio plato — p. ej. cosmos es «lechuga», no «chocolate suave».
+//
+// NO es el mismo array que `flores` de arriba y no tiene por qué serlo: las
+// flores se acaban dentro de una misma carta y entran otras en su sitio. Aquí
+// están las que cocina ha descrito; arriba, las que dan nombre a la estación.
+//
+// `decir` es opcional a propósito. Si las 34 llevaran frase, el bloque cogería
+// un ritmo uniforme que se lee a máquina. La llevan las que dan un momento a cámara.
+export const floresSabor = [
+  { n: 'guisante mariposa',    sabor: 'No sabe a nada. Está por el azul.',                    pase: 1,  decir: 'este azul es una flor, no colorante' },
+  { n: 'flor eléctrica',       sabor: 'Cosquillea y despierta las papilas',                   pase: 1,  decir: 'espera tres segundos' },
+  { n: 'margarita',            sabor: 'A campo. Sabe como huele.',                            pase: 2,  decir: 'sabe exactamente a como huele' },
+  { n: 'cosmos',               sabor: 'Recuerda a la lechuga',                                pase: 2,  decir: 'esta sabe a ensalada' },
+  { n: 'flor de albahaca',     sabor: 'Albahaca concentrada, y mide un centímetro',           pase: 2,  decir: 'tan pequeña y sabe más que la hoja' },
+  { n: 'flor de ajo',          sabor: 'Ajo explosivo. La más potente de las cinco.',          pase: 2,  decir: 'prepárate con esta' },
+  { n: 'oxalis',               sabor: 'Muy ácida. Limpia el ajo de golpe.',                   pase: 2,  decir: 'esta borra la anterior' },
+  { n: 'flor de tila',         sabor: 'Miel suave. Seca y molida, es la harina del taco.',    pase: 3,  decir: 'el taco está hecho de tila' },
+  { n: 'flor de aliso',        sabor: 'Huele a miel y sabe a mostaza',                        pase: 3,  decir: 'huele dulce y luego pica' },
+  { n: 'flor de anís estrellado', sabor: 'Anís marcado, infusionada en la crema',             pase: 4 },
+  { n: 'flor de geranio',      sabor: 'Afrutada y fresca. Baja el anís.',                     pase: 4 },
+  { n: 'farolillo japonés',    sabor: 'Es el recipiente, y deja un fondo a higo',             pase: 5,  decir: 'el cuenco también se come' },
+  { n: 'flor de orégano',      sabor: 'Herbal, dentro de la ponzu del atún',                  pase: 5 },
+  { n: 'kalanchoe',            sabor: 'No aporta sabor: aporta crujido',                      pase: 5,  decir: 'esta está aquí por la textura' },
+  { n: 'flor de borraja',      sabor: 'Pepino fresco',                                        pase: 6,  decir: 'esta sabe a pepino' },
+  { n: 'flor de hierbabuena',  sabor: 'En infusión. El melón se empapa de ella.',             pase: 6 },
+  { n: 'rosa',                 sabor: 'Seca, dentro del pan cuatro estaciones',               pase: 7,  decir: 'hay una flor dentro del pan' },
+  { n: 'amapola',              sabor: 'Sus semillas, en el pan de puerro',                    pase: 7 },
+  { n: 'lavanda',              sabor: 'Infusionada en la mantequilla, y seca en la sal',      pase: 7,  decir: 'mantequilla de flor' },
+  { n: 'capuchina',            sabor: 'Mostaza y rábano. Se usa hoja, pétalo y cáliz.',       pase: 8,  decir: 'esto pica, y es una flor' },
+  { n: 'flor de hinojo',       sabor: 'Anís intenso. También servida como aire.',             pase: 9,  decir: 'huele el aire antes de comértelo' },
+  { n: 'clavel',               sabor: 'Muy floral, dentro del gazpacho',                      pase: 9 },
+  { n: 'saúco',                sabor: 'Avellanado. Va en helado.',                            pase: 10, decir: 'esto va helado' },
+  { n: 'phlox estrellado',     sabor: 'Dulce. Acompaña al higo.',                             pase: 10 },
+  { n: 'dalia',                sabor: 'Cruje como fruta. Refrescante.',                       pase: 11, decir: 'cruje como una manzana' },
+  { n: 'tagete',               sabor: 'Cítrico y amargo, muy marcado',                        pase: 12 },
+  { n: 'caléndula',            sabor: 'Pimienta suave con fondo amargo',                      pase: 12 },
+  { n: 'flor de ajo/puerro',   sabor: 'Encurtida. Agridulce, sobre el rape.',                 pase: 12 },
+  { n: 'flor de begonia',      sabor: 'Ácida, casi cítrica. La hoja hace de recipiente.',     pase: 13, decir: 'la hoja también se come' },
+  { n: 'flor de hibiscus',     sabor: 'Frutos rojos y acidez. Reducida como una demi-glace.', pase: 13 },
+  { n: 'regaliz azteca',       sabor: 'Regaliz reconocible, dentro de la mousse',             pase: 14, decir: 'esto es regaliz de verdad' },
+  { n: 'lantana',              sabor: 'Muy aromática, con un punto anisado',                  pase: 14 },
+  { n: 'crisantemo',           sabor: 'Refrescante, de textura marcada',                      pase: 15, decir: 'dibuja un girasol en el plato' },
+  { n: 'girasol',              sabor: 'Sus pipas, saladas, cortan el dulce',                  pase: 15 },
+];

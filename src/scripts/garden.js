@@ -1,9 +1,9 @@
 /* ============================================================
-   CREATOR GARDEN · movimiento
+   CREATOR PLAYBOOK · movimiento e interacción
    Punto de entrada propio. NO importa main.js a propósito: esta
-   página no tiene nav, router, cookies, galería ni widget de reserva,
-   así que arrastrar ese árbol solo costaría descarga y trabajo por
-   frame.
+   página no tiene nav de sitio, router, cookies, galería ni widget
+   de reserva, así que arrastrar ese árbol solo costaría descarga y
+   trabajo por frame.
 
    Sí reutiliza scroll/scrollTrigger.js, que es donde se registran los
    plugins y donde el ticker de GSAP conduce a Lenis. Importar gsap por
@@ -14,6 +14,9 @@
    · lo que entra usa expo.out; lo que responde a un gesto, rápido
    · con prefers-reduced-motion no se crea NINGÚN tween: el CSS ya
      deja todo visible, así que la página se lee igual y sin trabajo
+
+   La interacción (escaleta, copiar, filtro, navegación) va SIEMPRE,
+   con o sin movimiento: es la herramienta, no el adorno.
    ============================================================ */
 import { gsap, ScrollTrigger, SplitText } from './scroll/scrollTrigger.js';
 import { reduceMotion } from './utils/motion.js';
@@ -22,6 +25,8 @@ import { reduceMotion } from './utils/motion.js';
    Si se parte antes, se mide con la fuente de reserva y los saltos de
    línea quedan donde no son: el reveal se ve descuadrado en carga fría. */
 const listo = document.fonts ? document.fonts.ready : Promise.resolve();
+
+/* ─── movimiento ─────────────────────────────────────────────── */
 
 /* La portada NO se anima con scroll. Todo lo que cae en la primera
    pantalla tiene que estar visible al cargar: con ScrollTrigger, un
@@ -97,37 +102,165 @@ function parallax() {
   });
 }
 
-/* El tallo: un trazo que se dibuja de arriba abajo con el scroll de la
-   página. Es el hilo que cose las escenas — la única pieza decorativa
-   de la página, y aun así va atada al progreso real, no a un bucle. */
-function tallo() {
-  const path = document.querySelector('.gd-spine__path');
-  if (!path) return;
-  const largo = path.getTotalLength();
-  gsap.set(path, { strokeDasharray: largo, strokeDashoffset: largo });
-  gsap.to(path, {
-    strokeDashoffset: 0, ease: 'none',
-    scrollTrigger: { start: 0, end: () => document.body.scrollHeight - innerHeight, scrub: 0.6 },
-  });
-}
+/* ─── interacción ────────────────────────────────────────────── */
 
-/* Índice lateral: marca la escena en la que estás. Es orientación, no
-   adorno — en una página tan larga hace falta saber dónde vas. */
-function indice() {
+/* Navegación: marca el bloque en el que estás. Es orientación, no
+   adorno — y en móvil es lo ÚNICO que orienta en una página larga. */
+function navegacion() {
   const enlaces = new Map(
-    [...document.querySelectorAll('.gd-index__link')].map((a) => [a.getAttribute('href').slice(1), a])
+    [...document.querySelectorAll('[data-gd-nav]')].map((a) => [a.dataset.gdNav, a])
   );
-  document.querySelectorAll('section[id]').forEach((sec) => {
-    const a = enlaces.get(sec.id);
-    if (!a) return;
-    const marcar = (on) => () => a.classList.toggle('is-on', on);
+  if (!enlaces.size) return;
+  enlaces.forEach((a, id) => {
+    const sec = document.getElementById(id);
+    if (!sec) return;
     ScrollTrigger.create({
-      trigger: sec, start: 'top 50%', end: 'bottom 50%',
+      trigger: sec, start: 'top 55%', end: 'bottom 55%',
       onToggle: (self) => a.classList.toggle('is-on', self.isActive),
-      onEnter: marcar(true), onEnterBack: marcar(true),
     });
   });
 }
+
+/* La escaleta se marca DENTRO del restaurante y se consulta en varias
+   visitas: sin persistir, cada recarga borra el trabajo y el bloque deja
+   de tener sentido. localStorage puede fallar (modo privado en iOS con
+   la cuota llena), así que todo va envuelto: si falla, la escaleta sigue
+   funcionando, solo que sin memoria. */
+const CLAVE = 'pipilacha-escaleta';
+
+function leerEstado() {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(CLAVE) || '[]'));
+  } catch { return new Set(); }
+}
+
+function guardarEstado(set) {
+  try { localStorage.setItem(CLAVE, JSON.stringify([...set])); } catch { /* sin memoria, pero usable */ }
+}
+
+function escaletaMarcable() {
+  const cajas = [...document.querySelectorAll('[data-gd-check]')];
+  if (!cajas.length) return;
+
+  const total = cajas.length;
+  const numero = document.querySelector('[data-gd-cuenta-n]');
+  const resumen = document.querySelector('[data-gd-resumen]');
+  const vacio = resumen ? resumen.textContent : '';
+  const marcados = leerEstado();
+
+  const pintar = () => {
+    const n = marcados.size;
+    if (numero) numero.textContent = String(n);
+    // el cierre cierra el bucle numérico que abre la portada
+    if (resumen) {
+      resumen.textContent = n === 0
+        ? vacio
+        : `${n} de ${total} momentos marcados.`;
+    }
+  };
+
+  cajas.forEach((caja) => {
+    const id = caja.dataset.gdCheck;
+    caja.checked = marcados.has(id);
+    caja.addEventListener('change', () => {
+      if (caja.checked) marcados.add(id); else marcados.delete(id);
+      guardarEstado(marcados);
+      pintar();
+    });
+  });
+
+  pintar();
+}
+
+/* Copiar al portapapeles: la interacción de mayor retorno de la página.
+   Recompensa inmediata y visible — es lo que crea el hábito de volver. */
+function copiar() {
+  const botones = [...document.querySelectorAll('[data-gd-copy]')];
+  if (!botones.length) return;
+
+  botones.forEach((b) => {
+    const original = b.textContent;
+    b.addEventListener('click', async () => {
+      const texto = b.dataset.gdCopy;
+      let ok = true;
+      try {
+        await navigator.clipboard.writeText(texto);
+      } catch {
+        // navegadores sin permiso de portapapeles o contexto no seguro
+        ok = respaldoCopia(texto);
+      }
+      b.textContent = ok ? 'Copiado' : 'Selecciona y copia';
+      b.classList.toggle('is-ok', ok);
+      clearTimeout(b._t);
+      b._t = setTimeout(() => {
+        b.textContent = original;
+        b.classList.remove('is-ok');
+      }, 1800);
+    });
+  });
+}
+
+function respaldoCopia(texto) {
+  const ta = document.createElement('textarea');
+  ta.value = texto;
+  ta.setAttribute('readonly', '');
+  ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+  document.body.appendChild(ta);
+  ta.select();
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch { ok = false; }
+  ta.remove();
+  return ok;
+}
+
+/* Diccionario: buscador + filtro por pase. Es reconocimiento, no
+   memoria: en la sala nadie recuerda un párrafo leído hace tres días,
+   pero sí reconoce el nombre de la flor que le acaban de servir. */
+function diccionario() {
+  const lista = document.querySelector('[data-gd-dicc]');
+  if (!lista) return;
+
+  const items = [...lista.querySelectorAll('[data-gd-flor]')];
+  const buscador = document.querySelector('[data-gd-buscar]');
+  const chips = [...document.querySelectorAll('[data-gd-pase]')];
+  const vacio = document.querySelector('[data-gd-vacio]');
+
+  let texto = '';
+  let pase = 'todos';
+
+  // sin acentos: quien busca "sauco" tiene que encontrar "saúco"
+  const plano = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+  const filtrar = () => {
+    let visibles = 0;
+    items.forEach((li) => {
+      const coincideTexto = !texto || plano(li.dataset.gdFlor).includes(texto);
+      const coincidePase = pase === 'todos' || li.dataset.gdFlorPase === pase;
+      const ok = coincideTexto && coincidePase;
+      li.hidden = !ok;
+      if (ok) visibles++;
+    });
+    if (vacio) vacio.hidden = visibles > 0;
+    ScrollTrigger.refresh();
+  };
+
+  if (buscador) {
+    buscador.addEventListener('input', () => {
+      texto = plano(buscador.value.trim());
+      filtrar();
+    });
+  }
+
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      pase = chip.dataset.gdPase;
+      chips.forEach((c) => c.classList.toggle('is-on', c === chip));
+      filtrar();
+    });
+  });
+}
+
+/* ─── arranque ───────────────────────────────────────────────── */
 
 function init() {
   if (!reduceMotion) {
@@ -135,9 +268,12 @@ function init() {
     titulares();
     revelados();
     parallax();
-    tallo();
   }
-  indice();          // la orientación se mantiene aunque no haya animación
+  // la herramienta va siempre, haya movimiento o no
+  navegacion();
+  escaletaMarcable();
+  copiar();
+  diccionario();
   ScrollTrigger.refresh();
 }
 
