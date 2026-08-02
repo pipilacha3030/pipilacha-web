@@ -56,7 +56,7 @@ export const mesa = {
       d: 'El primer pase lleva flor eléctrica y adormece el paladar unos segundos. La cara que pone la gente la primera vez suele ser lo mejor del servicio, y llega antes de que a nadie le dé tiempo a acomodarse.' },
     { k: 'Cinco flores, una a una', v: 'Pase 02',
       d: 'Antes del primer plato caliente llegan cinco flores sueltas, cada una con su sabor: campo, lechuga, albahaca, ajo y una ácida que limpia todo lo anterior.' },
-    { k: 'El cuenco que se come', v: 'Pase 05',
+    { k: 'Atún con fondo a higo', v: 'Pase 05',
       d: 'El tartar de atún viene servido dentro de un farolillo. La flor es el recipiente y deja un fondo a higo. Se come entero.' },
     { k: 'La barra', v: 'Ocho de dieciséis asientos',
       d: 'La mitad de la sala mira a la cocina, a dos metros. Desde ahí se ve el fuego y los pases montándose con pinza, flor a flor. Es un ángulo que no existe desde las mesas.' },
